@@ -1,0 +1,76 @@
+<head>
+	<title>UltiSite App</title>
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<meta content="no" name="msapplication-tap-highlight" />
+	<!-- Android Tags -->
+	<meta content="yes" name="mobile-web-app-capable">
+	<link rel="manifest" href="/chrome-manifest">
+	<!-- Remove default toolbars and menus -->
+	<meta content="yes" name="apple-mobile-web-app-capable" />
+	<!-- Customize home screen title. -->
+	<meta content="UltiSite App" name="apple-mobile-web-app-title">
+	<!-- Disable phone number detection. -->
+	<meta content="telephone=no" name="format-detection">
+
+	<!-- Touch Icons - iOS and Android 2.1+ 180x180 pixels in size. -->
+	<link rel="apple-touch-icon-precomposed" href="/dynamicAppIcon?size=180">
+
+	<!-- Firefox, Chrome, Safari, IE 11+ and Opera. 196x196 pixels in size. -->
+	<link href="/dynamicAppIcon?size=196" rel="shortcut icon" sizes="196x196">
+	<!-- non-retina iPhone vor iOS 7 -->
+	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=57" sizes="57x57">
+	<!-- non-retina iPad vor iOS 7 -->
+	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=72" sizes="72x72">
+	<!-- non-retina iPad iOS 7 -->
+	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=76" sizes="76x76">
+	<!-- retina iPhone vor iOS 7 -->
+	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=114" sizes="114x114">
+	<!-- retina iPhone iOS 7 -->
+	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=120" sizes="120x120">
+	<!-- retina iPad vor iOS 7 -->
+	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=144" sizes="144x144">
+	<!-- retina iPad iOS 7 -->
+	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=152" sizes="152x152">
+	<!-- retina iPad iOS 7 für iPhone 6 Plus -->
+	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=180" sizes="180x180">
+
+	<meta name="msapplication-TileColor" content=" #1c5f3c" />
+	<meta name="msapplication-square70x70logo" content="/dynamicAppIcon?size=70" />
+	<meta name="msapplication-square150x150logo" content="/dynamicAppIcon?size=150" />
+	<meta name="msapplication-square310x310logo" content="/dynamicAppIcon?size=310" />
+	<meta content="UltiSite App" name="application-name">
+	<meta name="msapplication-config" content="ieconfig.xml" />
+	<meta name="theme-color" content="#1c5f3c" />
+</head>
+
+<body></body>
+
+<template name="baseLayout">
+	<div class="ultisite-{{settings.design}} base-layout {{#if settings.imageTitleImage}}with-title-image{{/if}}">
+		{{> header}}
+		{{#if screenSizeMobile}}
+			{{> sidebar}}
+		{{/if}}
+		<div class="container-fluid page-content">
+			{{> Template.dynamic template=content}}
+		</div>
+		{{>loginDialog}} 
+		{{>confirmDialog}}
+		{{#if currentUser}}
+			{{>getTextDialog}} 
+			{{>editFileDialog}} 
+			{{>getHTMLTextDialog}}
+		{{else}}
+			{{>passwordResetDialog}}
+		{{/if}}
+		{{#each dialogTemplates}}
+			{{>Template.dynamic template=this}}
+		{{/each}}
+		<nav class="hidden-xs navbar navbar-default navbar-footer">
+			<div class="container-fluid">
+				{{> footer}}
+			</div>
+		</nav>
+		<div class="content-overlay"></div>
+	</div>
+</template>

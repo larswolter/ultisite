@@ -1,0 +1,10 @@
+{
+    "jscodehints.detectedExclusions": [
+        "/home/lars/Develop/ultisite/client/lib/ol.js",
+        "/home/lars/Develop/ultisite/server/accessRules.js",
+        "/home/lars/Develop/ultisite/server/contentVersions.js",
+        "/home/lars/Develop/ultisite/server/publishing.js",
+        "/home/lars/Develop/ultisite/client/wikipage.js",
+        "/home/lars/Develop/ultisite/public/libs/ol.js"
+    ]
+}

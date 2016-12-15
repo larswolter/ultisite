@@ -1,0 +1,85 @@
+<template name="afObjectField_address">
+    <label {{bsFieldLabelAtts}}>{{afFieldLabelText name=this.name}}</label>
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+            <div class="form-horizontal">
+                <div class="form-group {{#if afFieldIsInvalid name='address.country'}}has-error{{/if}}" data-required="true">
+                    <label class="col-sm-3">{{afFieldLabelText name="address.country"}}</label>
+                    <div class="col-sm-9 dropdown-country dropdown">
+                        <div class="input-group" data-toggle="dropdown">
+                            <input value="Deutschland" class="form-control address-country-search" autocomplete="off" />
+                        </div>
+                        <ul class="dropdown-menu">
+                            {{#each countrySearchResults}}
+                                <li role="presentation">
+                                    <a href="#" title="{{name}}" class="country-select" >
+                                        <img src="/icons/countries/{{_id}}.png" title="{{name}}" style="height:20px;"/>
+                                        {{name}}
+                                    </a>
+                                </li>
+                            {{/each}}
+                        </ul>
+                        {{> afFieldInput name="address.country" class="form-control address-country" type="hidden"}}
+                    </div>
+                </div>
+                <div class="form-group {{#if afFieldIsInvalid name='address.city'}}has-error{{/if}}" data-required="true">
+                    <label class="col-sm-3">{{afFieldLabelText name="address.city"}}</label>
+                    <div class="col-sm-9 dropdown-city dropdown">
+                        <div class="input-group" data-toggle="dropdown">
+                            {{> afFieldInput name="address.city" class="form-control address-city" autocomplete="off"}}
+                        </div>
+                        <ul class="dropdown-menu">
+                            {{#each citySearchResults}}
+                                <li role="presentation">
+                                    <a href="#" title="{{name}}" class="city-select" >
+                                        {{name}}
+                                    </a>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group {{#if afFieldIsInvalid name='address.postcode'}}has-error{{/if}}" data-required="false">
+                    <label class="col-sm-3">{{afFieldLabelText name="address.postcode"}}</label>
+                    <div class="col-sm-4">
+                    {{> afFieldInput name="address.postcode" size="5" class="form-control" }}
+                    </div>
+                </div>
+                <div class="form-group {{#if afFieldIsInvalid name='address.street'}}has-error{{/if}}" data-required="false">
+                    <label class="col-sm-3">{{afFieldLabelText name="address.street"}}</label>
+                    <div class="col-sm-9 dropdown-street dropdown">
+                        <div class="input-group" data-toggle="dropdown">
+                            {{> afFieldInput name="address.street" class="form-control address-street" autocomplete="off"}}
+                        </div>
+                        <ul class="dropdown-menu">
+                            {{#each streetSearchResults}}
+                                <li role="presentation">
+                                    <a href="#" title="{{display_name}}" class="street-select" >
+                                        {{display_name}}
+                                    </a>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+                {{> afFieldInput name="address.geocoords" type="hidden" value=currentCoords}}
+                
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-7 col-lg-8">
+            {{#with currentCoords}}
+                {{>ultisiteMap geocoords=currentCoords mapClick=mapClickCallback zoom=currentZoom marker=currentCoords}}
+            {{/with}}
+        </div>
+    </div>
+    <span class="help-block">{{{afFieldMessage name="address.country"}}}</span>
+</template>
+<template name="afFormGroup_address">
+  <div class="form-group {{#if afFieldIsInvalid name=this.name}}has-error{{/if}}" data-required={{required}}>
+    {{#unless skipLabel}}
+    <label {{bsFieldLabelAtts}}>{{#if this.labelText}}{{this.labelText}}{{else}}{{afFieldLabelText name=this.name}}{{/if}}</label>
+    {{/unless}}
+    {{> afFieldInput this.afFieldInputAtts}}
+    <span class="help-block">{{{afFieldMessage name=this.name}}}</span>
+  </div>
+</template>

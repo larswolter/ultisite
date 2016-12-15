@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<tile>
+  <visual lang="en-US" version="2">  
+  {{>content}}
+  </visual>
+</tile>

@@ -1,0 +1,62 @@
+<template name="imageViewer">
+    {{#with imageFile}}
+    <div class="container-fluid image-viewer">
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 start-content">
+                <img class="" src="{{url 800}}">
+                {{#if prevImage}}
+                <a href={{prevImage}} class="image-control prev">
+                    <span class="fa fa-chevron-left"></span>
+                </a>
+                {{/if}}
+                {{#if nextImage}}
+                <a href={{nextImage}} class="image-control next">
+                    <span class="fa fa-chevron-right"></span>
+                </a>
+                {{/if}}
+            </div>
+            <div class="col-xs-12 col-sm-4 start-content">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5>
+                            {{name}}
+                        </h5>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            <a href="{{url}}" target="_top">
+                                <span class="fa fa-download"></span> Runterladen
+                            </a>                
+                        </div>
+                        <div>
+                            <h4>
+                                Hängt zusammen mit
+                            </h4>
+                            {{#each associated}}
+                                {{#unless equals this.type "user"}}
+                                    <a href="{{link}}">{{this.name}}</a>
+                                {{/unless}}
+                            {{/each}}
+                            <br/>
+                        </div>
+                        <div>
+                            <h4>
+                                {{settings.multiplePlayers}} auf dem Bild
+                            </h4>
+                            {{#each associated}}
+                                {{#if equals this.type "user"}}
+                                    <a href="{{link}}">{{this.name}}</a><button data-id="{{_id}}" class="btn btn-link remove-associated" style="padding:3px 3px"><span class="fa fa-close"></span></button>
+                                    &nbsp;&nbsp;
+                                {{/if}}
+                            {{/each}}
+                            <br />
+                            Weitere {{settings.multiplePlayers}} hinzufügen:
+                            {{>searchField searchType="Users" onResultClick=associateWithUser}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/with}}
+</template>

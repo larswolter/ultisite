@@ -1,0 +1,61 @@
+<template name="wysiwygEditor">
+	<div class="editing-container{{#if editingEnabled}} active{{/if}}">
+		<div class="editing-mark btn-edit">
+			<span class="fa fa-edit"></span>
+			<div>Editieren</div>
+		</div>
+		<textarea class="ulti-editor hidden">{{>Template.contentBlock}}</textarea>
+		{{#unless editingEnabled}}
+			{{>Template.contentBlock}}
+		{{/unless}}
+	</div>
+</template>
+
+<template name="popoverIcon">
+	<span data-toggle="tooltip" title="{{text}}" placement="auto">
+        {{>Template.contentBlock}}
+    </span>
+</template>
+
+<template name="helpIcon">
+	{{#popoverIcon text=text}}
+		<span class="fa fa-question-circle fa-fw"></span>
+	{{/popoverIcon}}
+</template>
+
+
+<template name="Loading">
+	<div class="text-center text-muted" style="margin:25px;">
+		{{#if meteorStatus.connected}}
+			<span class="fa fa-spinner fa-spin fa-3x"></span>
+			<h2>
+				{{#if text}}{{text}}{{else}}Lade Daten{{/if}}
+			</h2>
+		{{else}}
+			<span class="fa fa-offline fa-3x"></span>
+			<h4>Keine Verbindung zum Server, du musst mit dem Internet verbunden sein, um die Inhalte anzuzeigen</h4>
+			{{#if equals meteorStatus.status 'connecting'}}
+				<h4><span class="fa fa-spinner fa-spin"></span> Versuche Verbindungsaufbau</h4>
+			{{else}}
+				<button class="btn btn-default btn-block action-reconnect">
+                Verbindungsversuch starten
+            </button>
+			{{/if}}
+		{{/if}}
+	</div>
+</template>
+
+<template name="Empty">
+	<div class="text-center text-muted" style="margin:25px;">
+		<span class="fa fa-list fa-3x"></span>
+		<h2>
+			{{#if text}}{{text}}{{else}}Keine Einträge vorhanden{{/if}}
+		</h2>
+	</div>
+</template>
+<template name="EmptySmall">
+	<div class="text-center text-muted" style="margin:15px;">
+		<span class="fa fa-list"></span>
+		{{#if text}}{{text}}{{else}}Keine Einträge vorhanden{{/if}}
+	</div>
+</template>

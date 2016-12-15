@@ -1,0 +1,74 @@
+@import "lib/custom.bootstrap.import.less";
+.folder-tree-item .folder-tree-item {
+    padding-left: 20px;
+}
+
+.file-browser-item {
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    div.col-xs-12 {
+        text-overflow:ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        a {
+            text-shadow: 0px 0px 3px white,0px 0px 4px white,0px 0px 5px white;
+        }
+    }
+}
+
+#imageViewDialog .thumbnail {
+    width: 100%;
+}
+
+#imageViewDialog .modal-dialog {
+    width: 95%;
+}
+.modal-dialog .file-browser-gallery-item li a.edit-file {
+    display:none;
+}
+
+.file-browser-gallery-item {
+    width: 162px;
+    height: 160px;
+    float: left;
+    margin: 5px;
+    border: 1px solid lightgray;
+}
+
+.file-browser-gallery-item:hover {
+    cursor: pointer;
+    background-color: lightgray;
+}
+
+.file-browser-gallery-item .title {
+    text-align: center;
+    font-size: 0.8em;
+}
+
+.file-browser-gallery-item .image {
+    width: 160px;
+    height: 135px;
+    margin: 1px;
+    border: none;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.new-gallery-item {
+    width: 162px;
+    height: 160px;
+    float: left;
+    margin: 3px;
+    border: 3px dashed lightgray;
+    border-radius: 5px;
+    color: lightgray;
+    padding: 5px;
+}
+
+.new-gallery-item button {
+    font-size: 0.8em;
+    margin-top: 10px;
+    white-space: normal;
+}

@@ -1,0 +1,48 @@
+<template name="tweets">
+    <div class="modal fade" id="tweeterDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    <form class="tweeter-form">
+                        <div class="tweet-count text-mute">{{tweetLength}}</div>
+                        <input type="hidden" class="tweet-reference" value="">
+                        <div class="input-group">
+                            <span class="input-group-addon tweet-type">Sprich</span>
+                            <input type="text" class="form-control tweet-content" autofocus maxlength="160" />
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default send-tweet"><span class="fa fa-send"></span></button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="btn-group btn-group-justified">
+        <a href="#" class="btn btn-default btn-say"><span class="fa fa-comment"></span><span class="hidden-xs"> Sag auch was!</span></a>
+        {{#unless viewAll}}
+            <a href="#" class="btn btn-default btn-all-tweets"><span class="fa fa-tasks"></span><span class="hidden-xs"> Zeige Alle</span></a>
+        {{/unless}}
+    </div>
+    {{#each tweets}}
+        <div class="well well-sm tweet">
+            <div class="btn-reply"><span class="fa fa-mail-reply" data-id="{{_id}}"></span></div>
+            <div class="date">{{formatDateTime date}}</div>
+            {{content}}
+            {{#if replyTo}}
+                <div class="reply">{{replyTo}}</div>
+            {{/if}}
+        </div>
+    {{else}}
+        <div class="well well-sm tweet">
+            {{#if viewAll}}
+                {{>Empty}}
+            {{else}}
+                {{>EmptySmall}}
+            {{/if}}
+        </div>
+    {{/each}}
+</template>

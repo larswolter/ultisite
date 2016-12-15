@@ -1,0 +1,21 @@
+    {{#if image}}
+        <binding template="TileSquare150x150PeekImageAndText04" branding="name">
+            <image id="1" src="{{image}}"/>
+            <text id="1">{{header}}</text> 
+        </binding>
+        <binding template="TileWide310x150ImageAndText01" branding="name">
+            <image id="1" src="{{image}}"/>
+            <text id="1">{{header}}</text> 
+        </binding>
+        <binding template="TileSquare310x310ImageAndText01" branding="name">
+            <image id="1" src="{{image}}"/>
+            <text id="1">{{header}}</text> 
+        </binding>
+    {{else}}
+    <binding template="TileSquare150x150Text01" fallback="TileSquareText01">
+      <text id="1">{{header}}</text>
+      <text id="2">{{text1}}</text>
+      <text id="3">{{text2}}</text>
+      <text id="4">{{text3}}</text>
+    </binding>    
+    {{/if}}

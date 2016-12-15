@@ -1,0 +1,352 @@
+
+<template name="tournamentInsert">
+</template>
+
+<template name="tournamentUpdate">
+    {{#if currentUser}}
+    <div class="modal fade" id="tournamentUpdateDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Turnierdaten editieren</h4>
+                </div>
+                <div class="modal-body">
+                {{#if isVisible}}
+                    {{#autoForm schema=tournamentSchema collection="UltiSite.Tournaments" doc=this id="tournamentUpdateForm" type="update"}}
+                      <fieldset class="row">
+                        <div class="col-xs-7">
+                            {{> afQuickField name='name'}}
+                        </div>
+                        <div class="col-xs-5">
+                            {{> afQuickField name='category' }}
+                        </div>
+                        <div class="col-xs-8">
+                            {{> afQuickField name='date' data-date-format='dd.mm.yyyy' data-date-language='de-DE'}}
+                        </div>
+                        <div class="col-xs-4">
+                            {{> afQuickField name='numDays'}}
+                        </div>
+                        <div class="col-xs-12">
+                            {{> afObjectField name='address' template="address"}}
+                        </div>
+                        <div class="col-xs-12">
+                            {{> afQuickField name='surfaces' type='select-checkbox-inline'}}
+                        </div>
+                        <div class="col-xs-12">
+                            {{> afQuickField name='divisions' type='select-checkbox-inline'}}
+                        </div>
+                        <div class="col-xs-6">
+                            {{> afQuickField name='tournamentDirector'}}
+                        </div>
+                        <div class="col-xs-6">
+                            {{> afQuickField name='website'}}
+                        </div>
+                      </fieldset>
+                      <button type="submit" class="btn btn-primary">Speichern</button>
+                      {{/autoForm}}
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+</template>
+<template name="tournamentCreate">
+    {{#if currentUser}}
+    <div class="modal fade" id="tournamentCreateDialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Turnier eintragen</h4>
+                    Nach dem Eintragen des Turniers müssen diesem noch ein Team hinzugefügt werden, damit sich Spieler eintragen können.
+                </div>
+                {{#if isVisible}}
+                    {{#autoForm schema=tournamentSchema collection="UltiSite.Tournaments" doc=prefill id="tournamentCreateForm" type="insert"}}
+                    <div class="modal-body">
+                        <fieldset class="row">
+                            <div class="col-xs-7">
+                                {{> afQuickField name='name'}}
+                            </div>
+                            <div class="col-xs-5">
+                                {{> afQuickField name='category'}}
+                            </div>
+                            <div class="col-xs-8">
+                                {{> afQuickField name='date' value=prefill.date data-date-format='dd.mm.yyyy' data-date-language='de-DE'}}
+                            </div>
+                            <div class="col-xs-4">
+                                {{> afQuickField name='numDays'}}
+                            </div>
+                            <div class="col-xs-12">
+                                {{> afObjectField name='address' template="address"}}
+                            </div>
+                            <div class="col-xs-12">
+                                {{> afQuickField name='surfaces' type='select-checkbox-inline'}}
+                            </div>
+                            <div class="col-xs-12">
+                                {{> afQuickField name='divisions' type='select-checkbox-inline'}}
+                            </div>
+                            <div class="col-xs-6">
+                                {{> afQuickField name='tournamentDirector'}}
+                            </div>
+                            <div class="col-xs-6">
+                                {{> afQuickField name='website'}}
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Anlegen</button>
+                        <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-default">Abbrechen</button>
+                    </div>
+                    {{/autoForm}}
+                {{else}}
+                    <div class="modal-body">
+                        {{>Loading}}
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    {{/if}}
+</template>
+
+<template name="tournament">
+    {{#with tournament}}
+        {{>tournamentUpdate this}}
+        {{>teamUpdate tournamentId=this._id}}
+        {{>participateDialog tournamentId=this._id}}
+        {{>teamHistoricView}}
+        <div class="panel panel-default">
+            <div class="panel-heading tournament-heading">
+                {{#if currentUser}}
+                <div class="right-aligned-buttons hidden-xs hidden-sm">
+                {{! TODO: Mein mitspiel status button}}
+
+                    <div>
+                        <button class="btn btn-{{#if teamObjects}}default{{else}}primary{{/if}}" title="Team anlegen" type="button" data-toggle="modal" data-target="#teamUpdateDialog">
+                            <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
+                            <span class=""> Team anlegen</span>
+                        </button>
+                        <button class="btn btn-default" title="Turnier editieren" type="button" data-toggle="modal" data-target="#tournamentUpdateDialog">
+                            <span class="fa fa-edit"></span><span class=""> editieren</span>
+                        </button>
+                        {{#unless teamObjects.count}}
+                        <button class="btn btn-danger tournament-remove" title="Turnier löschen" type="button">
+                            <span class="fa fa-trash"></span><span class=""> löschen</span>
+                        </button>
+                        {{/unless}}
+                    </div>
+                </div>
+                <div class="right-aligned-buttons btn-group visible-xs visible-sm">
+                    <div class="dropdown">
+                    <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span class="fa fa-ellipsis-v"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <li>
+                            <a title="Team anlegen" type="button" data-toggle="modal" href="#" data-target="#teamUpdateDialog">
+                                <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub> Team anlegen
+                            </a>
+                        </li>
+                        <li>
+                            <a title="Turnier editieren" type="button" data-toggle="modal" href="#" data-target="#tournamentUpdateDialog">
+                                <span class="fa fa-edit"></span> Editieren
+                            </a>
+                        </li>
+                        {{#unless teamObjects.count}}
+                        <li>
+                            <a title="Turnier löschen" type="button" class="tournament-remove" href="#">
+                                <span class="fa fa-trash"></span> löschen
+                            </a>
+                        </li>
+                        {{/unless}}
+                    </ul>
+                    </div>
+                </div>
+                {{/if}}
+                {{dayOfDate date}}.{{monthOfDate date}}.
+                <strong>{{name}}</strong>
+                {{#if address}}
+                    in {{address.city}}
+                    <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" style="height:24px;"/>
+                {{/if}}
+                {{category}}
+            </div>
+            <div class="panel-body {{#unless tournamentBodyVisible}}compressed{{/unless}}" id="turnierBody">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2 info-area">
+                        <div class="tournament-value">
+                            <span class="fa fa-clock-o fa-fw"></span>
+                            {{#if equals numDays 1}}Ein Tag{{else}}{{numDays}} Tage{{/if}}
+                        </div>
+                        <div class="tournament-value">
+                            <span class="fa fa-list fa-fw"></span>
+                            Divisionen - Untergrund
+                            {{#each divisions}}
+                                <div class="small">{{division}} - {{surface}} {{#with numPlayers}} - {{this}} Spieler{{/with}}</div>
+                            {{/each}}
+                        </div>
+                        {{#if tournamentBodyVisible}}
+                            {{#if contact.detail}}
+                            <div class="tournament-value">
+                                <span class="fa fa-envelope fa-fw"></span>
+                                {{contact.detail}}
+                            </div>
+                            {{/if}}
+                            {{#if website}}
+                            <div class="tournament-value">
+                                <span class="fa fa-link fa-fw"></span>
+                                <div class="cutoff-text"><a class="" href="{{website}}">{{website}}</a></div>
+                            </div>
+                            {{/if}}
+                            {{#if address}}
+                            <div class="tournament-value">
+                                <span class="fa fa-map-marker fa-fw"></span>
+                                {{#with address.street}}{{this}},{{/with}}
+                                {{address.postcode}} {{address.city}}
+                                <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" style="height:24px;"/>
+                            </div>
+                            {{/if}}
+                            {{#if address.geocoords}}
+                            <div class="tournament-value">
+                                <span class="fa fa-map-o fa-fw"></span>
+                                <a href ="{{mapsLink}}" target="map" class="">
+                                    Google Maps
+                                </a>
+                            </div>
+                            {{/if}}
+                            <div class="tournament-value">
+                                <span class="fa fa-files-o fa-fw"></span>
+                                <a href="#" class="action-show-files">{{fileCount}} Dokumente</a>
+                            </div>
+                            <div class="tournament-value">
+                                <span class="fa fa-trophy fa-fw"></span>
+                                Turniere im selben Zeitraum
+                                {{#each parallelTournaments}}
+                                <div class="cutoff-text small"><a href="{{pathFor route='tournament' _id=_id}}">{{name}}</a></div>
+                                {{else}}
+                                <div class="cutoff-text small">Keine parallelen Turniere</div>
+                                {{/each}}
+                            </div>
+                        {{/if}}
+                    </div>
+                    <div class="{{#unless tournamentBodyVisible}}hidden-xs{{/unless}} col-xs-12 col-sm-8 col-md-9 col-lg-10">
+                        {{#if or tournamentBodyVisible noDescription}}
+                            <span class="fa fa-info fa-fw"></span>
+                            Informationen zum Turnier <span class="badge">{{description.length}}</span>
+                            {{#if currentUser}}
+                            <button type="button" class="btn btn-link action-add-infos">
+                                <span class="fa fa-plus"></span> Infos hinzufügen
+                            </button>
+                            {{/if}}
+                        {{/if}}
+                        <div class="tournament-value tournament-description">
+                            {{#each description}}
+                            <blockquote>
+                                <p>
+                                    {{{content}}}
+                                </p>
+                                <footer>
+                                    {{{getAlias editor}}} - {{formatDate date}} 
+                                    {{#if myContent}}
+                                    <button type="button" class="btn btn-link action-edit-infos">
+                                        <span class="fa fa-edit"></span> editieren
+                                    </button>
+                                    <button type="button" class="btn btn-link action-remove-infos">
+                                        <span class="fa fa-trash"></span> löschen
+                                    </button>
+                                    {{/if}}
+                                </footer>
+                            </blockquote>
+                            {{else}}
+                                <div class="">
+                                    Keine Informationen vorhanden
+                                </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button class="btn btn-default btn-block btn-xs toggle-tournament-body" type="button" >
+                        {{#if tournamentBodyVisible}}
+                        <span class="fa fa-caret-up"></span><span class="fa fa-caret-up"></span><span class="fa fa-caret-up"></span>
+                        {{else}}
+                        <span class="fa fa-caret-down"></span><span class="fa fa-caret-down"></span><span class="fa fa-caret-down"></span>
+                        {{/if}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                {{#each teamObjects}}
+                    {{#if over}}
+                        {{>teamReport}}
+                    {{else}}
+                        {{>team}}
+                    {{/if}}
+                {{/each}}
+            </div>
+        </div>
+        {{#if over}}
+            {{>fileBrowserGallery this}}
+            <div class="panel panel-default">
+                <div class="panel-heading element-relative">
+                    {{#if currentUser}}
+                        <div class="right-aligned-buttons">
+                            <button class="btn btn-default action-add-report" title="Bericht anlegen">
+                                <span class="fa fa-plus"></span> <span class="hidden-xs">Bericht anlegen</span>
+                            </button>
+                        </div>
+                    {{/if}}
+                    <strong>Turnierberichte</strong> <span class="badge">{{reports.length}}</span>
+                </div>
+                <div class="panel-body tournament-reports">
+                    {{#each reports}}
+                    <blockquote>
+                        <p>
+                            {{{content}}}
+                        </p>
+                        <footer>
+                            {{{getAlias editor}}} - {{formatDate date}} 
+                            {{#if myContent}}
+                            <button type="button" class="btn btn-link action-edit-report">
+                                <span class="fa fa-edit"></span> editieren
+                            </button>
+                            <button type="button" class="btn btn-link action-remove-report">
+                                <span class="fa fa-trash"></span> löschen
+                            </button>
+                            {{/if}}
+                        </footer>
+                    </blockquote>
+                    {{else}}
+                        <div class="">
+                            Keine Berichte vorhanden
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        {{else}}
+            {{#if currentUser}}
+                {{#if teamObjects.count}}
+                    <button class="visible-xs visible-sm btn btn-primary btn-floating" title="Mitspielen" type="button" data-toggle="modal" data-target="#participateDialog">
+                        <span class="fa fa-plus fa-lg"></span>
+                    </button>
+                {{else}}            
+                    <button class="visible-xs visible-sm btn btn-default btn-floating" title="Team anlegen" type="button" data-toggle="modal" data-target="#teamUpdateDialog">
+                        <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
+                    </button>
+                {{/if}}
+            {{/if}}
+        {{/if}}
+    {{else}}
+    {{>Loading}}
+    {{/with}}
+</template>

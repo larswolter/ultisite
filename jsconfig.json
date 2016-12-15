@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+		"target":"es6"
+	},
+    "module": "ultisite",
+	"files.exclude": {
+		"node_modules":true,
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.meteor/local": true,
+		"**/.DS_Store": true
+	}
+}

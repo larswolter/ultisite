@@ -1,0 +1,359 @@
+<template name="adminPanel">
+{{#if isAdmin}}
+{{> linksEditDialog}}
+{{> mailServerDialog}}
+<div>
+    {{#with AdminNotifications}}
+    <div class="row">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>Aufgaben für den Administrator</h4></div>
+                <div class="list-group">
+                    {{#each this}}
+                    <div class="list-group-item">
+                        {{text}}
+                        <button class="btn btn-default pull-right btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="true">Zugriff erlauben</button>
+                        <button class="btn btn-warning pull-right btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="false">Zugriff ablehnen</button>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/with}}
+    <div class="row">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>Konfiguration</h4></div>
+                <div class="panel-body">
+                    <div class="form-group row">
+                        <label class="col-xs-12 col-sm-2 control-label">Links in der Titelleiste</label>
+                        {{#each settings.objectHeaderLinks.links}}
+                            <div class="col-xs-12 col-sm-2 {{#if loggedIn}}{{#if loggedOut}}text-success{{else}}text-warning{{/if}}{{else}}{{#if loggedOut}}text-info{{/if}}{{/if}}">
+                                {{text}}<br/>
+                                <small>{{target}}</small>
+                                {{#each submenu}}
+                                    <br/><span class="fa fa-level-up fa-rotate-90"></span>
+                                    {{text}}<br/>
+                                    <small>{{target}}</small>
+                                {{/each}}
+                            </div>
+                        {{/each}}
+                        <div class="col-sm-1">
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#linksEditDialog">
+                                <span class="fa fa-edit"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <form class="form-horizontal direct-admin">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Zuordnung der Wikiseiten</label>
+                            <div class="dropdown col-sm-2 wiki-association">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                                    Start: {{wikiPageName settings.wikiStart}}
+                                    <span class="fa fa-caret-down"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    {{#each wikiPages}}
+                                    <li role="presentation">
+                                        <a href="#" role="menuitem" data-name="wikiStart" data-id="{{_id}}">{{name}}</a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                            <div class="dropdown col-sm-2 wiki-association">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                                    <small>Trainings:</small> {{wikiPageName settings.wikiPractice}}
+                                    <span class="fa fa-caret-down"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    {{#each wikiPages}}
+                                    <li role="presentation">
+                                        <a href="#" role="menuitem" data-name="wikiPractice" data-id="{{_id}}">{{name}}</a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                            <div class="dropdown col-sm-2 wiki-association">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                                    Impressum: {{wikiPageName settings.wikiImpressum}}
+                                    <span class="fa fa-caret-down"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    {{#each wikiPages}}
+                                    <li role="presentation">
+                                        <a href="#" role="menuitem" data-name="wikiImpressum" data-id="{{_id}}">{{name}}</a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Design</label>
+                            <div class="dropdown col-sm-2 wiki-association">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                                    {{settings.design}}
+                                    <span class="fa fa-caret-down"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    {{#each designs}}
+                                    <li role="presentation">
+                                        <a href="#" role="menuitem" class="action-select-design">{{this}}</a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                            <div class="col-sm-2">
+                                <input name="titleImageHeight" type="number" class="form-control" value="{{settings.titleImageHeight}}" placeholder="Titelbildhöhe" title="Höhe des Bildes über der Titelleiste">                            
+                            </div>
+                            <div class="col-sm-2">
+                                <input name="backgroundColor" type="color" class="form-control" value="{{settings.backgroundColor}}" placeholder="HIntergrundfarbe" title="Hintergrundfarbe">                            
+                            </div>
+                            <div class="col-sm-2">
+                                <input name="themeColor" type="color" class="form-control" value="{{settings.themeColor}}" placeholder="Primärfarbe" title="Primärfarbe">                            
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Bilder</label>
+                            {{#each imageProperties}}
+                            <div class="col-sm-2">
+                                <button class="btn btn-default image-setting" data-name="{{this.name}}" type="button">
+                                    {{this.name}}
+                                    {{#with imageLookup this.id}}
+                                    <div style="background-image:url('{{this.url 120}}')" ></div>
+                                    {{/with}}
+                                </button>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Optionen</label>
+                            <div class="col-sm-10">
+                                <label class="radio-inline">
+                                    <input type="checkbox" name="showPracticeCalendar" checked={{settings.showPracticeCalendar}}>
+                                    Trainingskalender anzeigen
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Registrierung</label>
+                            <div class="col-sm-8">
+                                <label class="radio-inline">
+                                    <input type="radio" name="siteRegistration" checked={{equals settings.siteRegistration "password"}} value="password">
+                                    Mit Passwort
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="siteRegistration" checked={{equals settings.siteRegistration "invitation"}} value="invitation">
+                                    Durch Nutzer
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="siteRegistration" checked={{equals settings.siteRegistration "admin"}} value="admin">
+                                    Nur durch Admins
+                                </label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input name="sitePassword" class="form-control" value="" placeholder="Registrierungspasswort" title="Registrierungspasswort">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">E-Mail</label>
+                            <div class="col-sm-2">
+                                <input name="emailServer" class="form-control" value="{{settings.emailServer}}" placeholder="smtp://mail.server.de" title="SMTP Server">
+                            </div>
+                            <div class="col-sm-2">
+                                <input name="emailLogin" class="form-control" value="{{settings.emailLogin}}" placeholder="SMTP Login" title="SMTP Login">
+                            </div>
+                            <div class="col-sm-2">
+                                <input name="emailPassword" class="form-control" value="" placeholder="SMTP Password" title="SMTP Password">
+                            </div>
+                            <div class="col-sm-2">
+                                <input name="emailFrom" class="form-control" value="{{settings.emailFrom}}" placeholder="Sending email Address" title="Mail From Address">
+                            </div>
+                            <div class="col-sm-2">
+                                <button class="btn btn-default btn-update-mailserver" type="button">
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Bezeichner</label>
+                            <div class="col-sm-3">
+                                <input name="siteTitle" class="form-control" value="{{settings.siteTitle}}" placeholder="Seitentitel" title="Seitentitel">
+                            </div>
+                            <div class="col-sm-3">
+                                <input name="siteSubTitle" class="form-control" value="{{settings.siteSubTitle}}" placeholder="Seitenuntertitel" title="Seitenuntertitel">
+                            </div>
+                            <div class="col-sm-3">
+                                <input name="teamname" class="form-control" value="{{settings.teamname}}" placeholder="Teamname" title="Teamname">
+                            </div>
+                            <div class="col-sm-3">
+                                <input name="singlePlayer" class="form-control" value="{{settings.singlePlayer}}" placeholder="Einzelspieler" title="Einzelspieler">
+                            </div>
+                            <div class="col-sm-3">
+                                <input name="multiplePlayers" class="form-control" value="{{settings.multiplePlayers}}" placeholder="Mehrere Spieler" title="Mehrere Spieler">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Divisionen</label>
+                            <div class="col-sm-10">
+                                <input name="arrayDivisions" class="form-control" value="{{settings.arrayDivisions}}" placeholder="a,b,c" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Kategorien</label>
+                            <div class="col-sm-10">
+                                <input name="arrayCategorys" class="form-control" value="{{settings.arrayCategorys}}" placeholder="a,b,c" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Untergründe</label>
+                            <div class="col-sm-10">
+                                <input name="arraySurfaces" class="form-control" value="{{settings.arraySurfaces}}" placeholder="a,b,c" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Vereinsstatii</label>
+                            <div class="col-sm-10">
+                                <input name="arrayClubStates" class="form-control" value="{{settings.arrayClubStates}}" placeholder="a,b,c" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Mailinglisten</label>
+                            <div class="col-sm-10">
+                                {{#each settings.mailingListConfigs}}
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default disabled">
+                                        {{#if this.from}}
+                                            {{this.from}}
+                                        {{else}}
+                                            &lt;leer&gt;
+                                        {{/if}}
+                                    </button>
+                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#mailServerDialog" data-index="{{@index}}">
+                                        <span class="fa fa-edit"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-default action-remove-mailinglist">
+                                        <span class="fa fa-close"></span>
+                                    </button>
+                                </div>
+                                {{/each}}
+                                <button type="button" class="btn btn-default action-add-mailinglist">
+                                    <span class="fa fa-plus"></span>
+                                </button>
+                            </div>
+                        </div>
+                        {{#each additionalAdminPageTemplates}}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{this.name}}</label>
+                            <div class="col-sm-10">
+                                {{>Template.dynamic template=this.template}}
+                            </div>
+                        </div>
+                        {{/each}}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    MySQL Importer
+                </div>
+                {{#if mysqlImportAvailable}}
+                    {{>Template.dynamic template="mysqlImport"}}
+                {{else}}
+                <div class="panel-body">
+                    Package nicht installiert
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-10 col-md-offset-1">
+            <div class="panel panel-default">
+                <div class="panel-heading all-settings-header pointer">
+                    <button class="btn btn-default pull-right action-add-setting">
+                        <span class="fa fa-plus"></span>
+                    </button>
+                    <h3>Alte Konfiguration</h3>
+                </div>
+                {{#if viewAll}}
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        {{#each settingsForm}}
+                        <div class="form-group">
+                            <label for="{{label}}" class="col-xs-4 col-sm-2 control-label">{{label}}</label>
+                            <div class="col-xs-8 col-sm-10">
+                                <input type="text" class="form-control input-sm" name="{{label}}" value="{{value}}"/>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </form>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 col-md-4 col-md-offset-4">
+            Collection Status:<br/>
+            {{#each collectionStatus}}
+                {{this.name}}: {{this.count}}<br />
+            {{/each}}
+            <button class="btn btn-danger btn-recreate-collections">Datenbank neu erstellen</button>
+        </div>
+    </div>
+</div>
+{{/if}}
+</template>
+
+
+<template name="linksEditDialog">
+    <div class="modal fade" id="linksEditDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Links editieren</h4>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="20" class="form-control">{{jsonLinks}}</textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="mailServerDialog">
+    <div class="modal fade" id="mailServerDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    <h4 class="modal-title">Mailserver editieren</h4>
+                </div>
+                <div class="modal-body">
+                    {{> quickForm schema=schema
+                        doc=mailConfig
+                        id="mailServerForm"
+                        buttonContent=false}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

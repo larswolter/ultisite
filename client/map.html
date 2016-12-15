@@ -1,0 +1,16 @@
+<template name="ultisiteMap">
+    <div class="map-container">
+        <div class="map">
+        </div>
+        {{#if showMapCapture}}
+            <div class="ol-control custom">
+                <button type="button" class="action-capture">
+                    <span class="fa fa-camera"></span>
+                </button>
+            </div>
+        {{/if}}
+        <div style="display:none">
+            <div id="popup" title="Turniere"></div>
+        </div>
+    </div>
+</template>

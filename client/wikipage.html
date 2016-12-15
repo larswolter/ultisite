@@ -1,0 +1,146 @@
+<template name="wikipage">
+	<div class="wikipage">
+		{{#unless withoutControls}}
+			<ul class="nav nav-tabs hidden-xs wikipage-nav" role="tablist">
+				<li role="presentation" class="active"><a href="#" aria-controls="article" role="tab">Artikel</a></li>
+				<li role="presentation"><a href="#" aria-controls="discussion" role="tab">Diskussion ({{discussions.length}})</a></li>
+				<li role="presentation"><a href="#" aria-controls="edit" role="tab">Bearbeiten</a></li>
+				<li role="presentation"><a href="#" aria-controls="history" role="tab">Historie ({{histories.length}})</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="dropdown visible-xs pull-right">
+					<button aria-expanded="false" class="btn btn-link dropdown-toggle" data-toggle="dropdown" type="button">
+                        <span class="fa fa-ellipsis-v"></span>
+                    </button>
+					<ul class="dropdown-menu dropdown-menu-right wikipage-nav" role="menu">
+						<li role="presentation" class="active"><a href="#" aria-controls="article">Artikel</a></li>
+						<li role="presentation"><a href="#" aria-controls="discussion">Diskussion ({{discussions.length}})</a></li>
+						<li role="presentation"><a href="#" aria-controls="edit">Bearbeiten</a></li>
+						<li role="presentation"><a href="#" aria-controls="history">Historie ({{histories.length}})</a></li>
+					</ul>
+				</div>
+				<div role="tabpanel" class="tab-pane active" id="article">
+					{{#if showDiscussions}}
+						{{#unless insertingDiscussion}}
+							<div class="">
+								<h4 class="visible-xs">
+									{{name}}
+									<small>{{discussions.length}} Diskussionsbeiträge</small>
+								</h4>
+								{{#wysiwygEditor light=true startEnabled=true}}{{{remarks}}}{{/wysiwygEditor}}
+								<div class="text-right">
+									<button class="btn btn-default action-add-discussion">
+                                    {{#if discussions.length}}
+                                    Antworten
+                                    {{else}}
+                                    Diskussion starten
+                                    {{/if}}
+                                </button>
+								</div>
+							</div>
+					{{else}}
+						<div>
+							<span class="fa fa-spin fa-spinner"></span> Füge Diskussionsbeitrag hinzu
+						</div>
+						{{/unless}}
+						<div class="list-group">
+							{{#each discussions}}
+								<div class="list-group-item">
+									<small> {{getAlias editor}} {{formatDateTime date}}</small>
+									<div class="">
+										{{{content}}}
+									</div>
+								</div>
+							{{/each}}
+						</div>
+					{{else}}
+						{{#with wikiEntry}}
+							<h3>
+								{{name}}
+								{{#if locked}}
+									<small class="page-details">Wird gerade bearbeitet von {{getAlias locked}}</small>
+								{{else}}
+									<small class="page-details">Zuletzt geändert von {{getAlias editor}} am {{formatDateTime lastChange}}</small>
+								{{/if}}
+							</h3>
+					{{else}}
+						<h4><span class="fa fa-exclamation-triangle"></span> Seite nicht gefunden</h4>
+						{{/with}}
+						<hr/>
+						{{#if showHistory}}
+							{{#each histories}}
+								<div class="list-group-item {{#if equals wikiEntry.contentId _id}}active{{/if}}">
+									Von:{{getAlias author}}, vom:{{formatDateTime date}}
+									<button class="btn btn-default action-select-version {{#if equals wikiEntry.contentId _id}}disabled{{/if}}">
+                                        anzeigen
+                                    </button>
+								</div>
+							{{/each}}
+							<hr/>
+						{{/if}}
+						{{#if editMode}}
+							{{#unless canEdit}}
+								<h4>
+									<span class="fa fa-exclamation-triangle text-danger"></span> Diese Seite wird gerade von {{getAlias wikiEntry.locked}}
+									bearbeitet
+								</h4>
+						{{else}}
+							{{#wysiwygEditor startEnabled=true onInit=froalaInit source=wikiEntry}}{{{wikiEntry.content}}}{{/wysiwygEditor}}
+							<button class="btn btn-primary action-save">Übernehmen</button>
+							{{/unless}}
+						{{else}}
+							{{#if Template.subscriptionsReady}}
+								{{{wikiEntry.content}}}
+							{{else}}
+								{{>Loading}}
+							{{/if}}
+						{{/if}}
+					{{/if}}
+				</div>
+			</div>
+			{{else}}
+				{{#if Template.subscriptionsReady}}
+					{{#with wikiEntry}}
+						{{{content}}}
+						<hr />
+						<h6>
+							<small class="page-details">
+                            Zuletzt geändert am {{formatDate lastChange}}
+                            {{#if currentUser}}
+                            <a href="/wikipage/{{_id}}" class="">bearbeiten</a>
+                            {{/if}}
+                        </small>
+						</h6>
+				{{else}}
+					<h4><span class="fa fa-exclamation-triangle"></span> Seite nicht gefunden</h4>
+					{{/with}}
+				{{else}}
+					{{>Loading}}
+				{{/if}}
+		{{/unless}}
+	</div>
+</template>
+<template name="wikipageOverview">
+	{{#if currentUser}}
+		<h4>Alle Wikiseiten</h4>
+		{{#each wikiPages}}
+			<div title="{{name}}">
+				<a href="{{pathFor route='wikipage' _id=_id}}">{{name}}</a>
+				{{#if canRemove}}
+					<button class="btn btn-link action-remove-page" data-id="{{_id}}">
+                        <span class="fa fa-close"></span>
+                    </button>
+				{{/if}}
+			</div>
+		{{/each}}
+		<h4>Neue Wikiseite anlegen</h4>
+		<form class="" id="new-wikipage">
+			<div class="form-group">
+				<div class="form-inline">
+					<input type="text" class="wiki-page-name" placeholder="Name der Wikiseite">
+					<button type="submit" class="btn btn-primary">Seite anlegen</button>
+				</div>
+			</div>
+		</form>
+	{{/if}}
+</template>

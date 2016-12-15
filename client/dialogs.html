@@ -1,0 +1,84 @@
+
+<template name="confirmDialog">
+    <div class="modal fade" id="confirmDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    Bestätigung
+                </div>
+                <div class="modal-body">
+                    {{options.text}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Abbrechen
+                    </button>
+                    <button type="button" class="btn btn-default action-confirm">
+                        Bestätigen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="getTextDialog">
+    <div class="modal fade" id="getTextDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form >
+                   {{#with options}}
+                    <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                            <span class="fa fa-close"></span>
+                        </button>
+                    <h4 class="modal-title">{{#if header}}{{header}}{{else}}Text eingeben{{/if}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" class="form-control text-input" value="{{text}}" autofocus />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="btn btn-default send-text">
+                            Übernehmen
+                        </button>
+                    </div>
+                    {{/with}}
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="getHTMLTextDialog">
+    <div class="modal fade" id="getHTMLTextDialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                {{#with options}}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    <h4 class="modal-title">{{#with this.header}}{{this}}{{else}}Text eingeben{{/with}}</h4>
+                </div>
+                <div class="">
+                    {{#wysiwygEditor light=false startEnabled=true}}{{{content}}}{{/wysiwygEditor}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Abbrechen
+                    </button>
+                    <button type="button" class="btn btn-primary action-save">
+                        Übernehmen
+                    </button>
+                </div>
+                {{/with}}
+            </div>
+        </div>
+    </div>
+</template>

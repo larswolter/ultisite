@@ -1,0 +1,183 @@
+
+<template name="uoodleStart">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>
+            {{#if uoodles.count}}
+                Aktuelle Umfragen
+            {{else}}
+                Keine Umfragen
+            {{/if}}
+            </strong>
+            <a href="#" class="pull-right action-go">
+              Neue Anlegen
+            </a>
+        </div>
+        {{#if uoodles.count}}
+            <div class="list-group">
+                {{#each uoodles}}
+                    <a href="#" class="list-group-item no-overflow">
+                    {{name}}
+                    </a>
+                {{/each}}
+            </div>
+        {{/if}}
+    </div>                
+</template>
+
+<template name="uoodles">
+    <div class="uoodle-view">
+        {{#with uoodle}}
+            <a href="/uoodle">Zur Umfragenübersicht</a>
+            {{> uoodleDetails}}
+        {{else}}
+        <div class="panel panel-default">
+            <div class="panel-heading element-relative">
+                <button class=" hidden-xs hidden-sm btn btn-default right-aligned-buttons action-add-uoodle">
+                    <span class="fa fa-plus"></span>
+                    Hinzufügen
+                </button>
+                <strong>Aktuelle Umfragen</strong>
+            </div>
+            {{#if Template.subscriptionsReady}}
+            <div class="list-group">
+                {{#each uoodles}}
+                    <li class="list-group-item">
+                    {{>uoodleItem}}
+                    </li>
+                {{else}}
+                    {{>Empty}}
+                {{/each}}
+            </div>
+            {{else}}
+                {{>Loading}}
+            {{/if}}
+        </div>
+        <button class="visible-xs visible-sm btn btn-primary btn-floating action-add-uoodle" 
+            title="Umfrage anlegen" type="button">
+            <span class="fa fa-plus fa-lg"></span>
+        </button>
+        {{/with}}
+    </div>
+</template>
+
+<template name="uoodleItem">
+    <div class="pull-right text-right">
+        {{#if participants}}
+            {{participants.length}} haben schon zwischen {{options.length}} Optionen gewählt
+        {{else}}
+            Niemand hat bisher zwischen {{options.length}} Optionen gewählt
+        {{/if}}
+        {{#if equals owner currentUser._id}}
+            <button class="btn btn-danger action-remove">
+                <span ><span class="fa fa-close"></span></span>
+            </button>
+            {{#unless participants}}
+                <button class="btn btn-default action-edit">
+                    <span ><span class="fa fa-edit"></span></span>
+                </button>
+            {{/unless}}
+        {{/if}}
+    </div>
+    <h4>
+        <a href="#" class="action-open-uoodle">{{name}}<br/>
+        <small>{{description}}</small></a>
+    </h4>
+</template>
+
+<template name="uoodleDetails">
+    <div class="pull-right">Von {{getAlias owner}}</div>
+    <h3>{{name}}<br/><small>{{description}}</small></h3>
+    <div>
+    Es haben bisher {{participants.length}} Person(en) abgestimmt.
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nutzer</th>
+                {{#each options}}
+                <th>
+                    {{#if date}}
+                        {{formatDateTime date}}
+                    {{/if}}
+                    {{name}}
+                </th>
+                {{/each}}
+            </tr>
+            <tr>
+                <td>{{participants.length}}</td>
+                {{#each options}}
+                <td>
+                    <span class='text-success'>{{stats.yes}}</span> 
+                    <span class='text-warning'>{{stats.maybe}}</span> 
+                    <span class='text-danger'>{{stats.no}}</span>
+                </td>
+                {{/each}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#each participants}}
+                <tr>
+                    {{#if equals this currentUser._id}}
+                        <th>{{getAlias this}}</th>
+                    {{else}}
+                        <td>{{getAlias this}}</td>
+                    {{/if}}
+                    {{#each participantOptions}}
+                        <td class={{css}}>
+                            {{#if equals .. currentUser._id}}
+                                <button class="btn btn-default btn-xs action-choose" data-value='1'>Ja</button>
+                                <button class="btn btn-default btn-xs action-choose" data-value='0'>Evtl.</button>
+                                <button class="btn btn-default btn-xs action-choose" data-value='-1'>Nein</button>
+                            {{else}}
+                                {{text}}
+                            {{/if}}
+                        </td>
+                    {{/each}}
+                </tr>
+            {{/each}}
+            {{#unless alreadyVoted}}
+                <tr class='me'>
+                    <th>{{getAlias currentUser}}</th>
+                    {{#each options}}
+                        <td>
+                            <button class="btn btn-default btn-xs action-choose" data-value='1'>Ja</button>
+                            <button class="btn btn-default btn-xs action-choose" data-value='0'>Evtl.</button>
+                            <button class="btn btn-default btn-xs action-choose" data-value='-1'>Nein</button>
+                        </td>
+                    {{/each}}
+                </tr>
+            {{/unless}}
+        </tbody>
+    </table>
+</template>
+
+<template name="uoodleAddDialog">
+    {{#if currentUser}}
+        <div class="modal fade" id="uoodleAddDialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span class="fa fa-close"></span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            Neuen Uoodle Anlegen
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        {{#autoForm schema=uoodleSchema collection=uoodleCollection doc=current type=autoFormType id="uoodleAddForm" buttonContent=false}}
+                            {{>afQuickFields omitFields="options"}}
+                            {{>afQuickField name="options" multicol=true}}
+                        {{/autoForm}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary">Speichern</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/if}}
+</template>
+

@@ -1,0 +1,21 @@
+<template name="mysqlImport">
+    <form class="mysql-import">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <h4>Vereine</h4>
+                {{#each clubs}}
+                    <div class="mysql-club pointer"><span class="fa fa-fw fa{{#if selected}}-check{{/if}}-square-o"></span> {{name}}</div>
+                {{/each}}
+            </li>
+            <li class="list-group-item">
+                <h4>Nutzer</h4>
+                {{#each users}}
+                    <div class="mysql-user pointer"><span class="fa fa-fw fa{{#if selected}}-check{{/if}}-square-o"></span> {{username}} ({{vor_name}} {{nach_name}})</div>
+                {{/each}}
+            </li>
+            <li class="list-group-item">
+                <button type="submit" class="btn btn-default">Import starten</button>
+            </li>
+        </ul>
+    </form>
+</template>

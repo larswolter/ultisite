@@ -1,0 +1,233 @@
+<template name="blogs">
+    <div class="panel panel-default">
+        <div class="list-group">
+        {{#each blogs}}
+            <div class="list-group-item">
+                {{>blogPreview}}
+            </div>
+        {{/each}}
+        {{#if currentUser}}
+            <div class="list-group-item">
+                <a href="{{pathFor route='blog' edit='edit' _id='_'}}">
+                    <span class="fa fa-plus"></span>
+                    Neuen Artikel erstellen
+                </a>
+            </div>
+        {{/if}}
+        </div>
+    </div>
+</template>
+
+<template name="blogUpdate">
+    <div class="container">
+        {{#if Template.subscriptionsReady}}
+        <div class="row">
+            <div class="">
+                <h4>
+                    {{#if blog.title}}'{{blog.title}}' bearbeiten{{else}}Neuen Artikel anlegen{{/if}}
+                </h4>
+                <form class="blogUpdateForm">
+                    <input type="hidden" class="id" value="{{blog._id}}">
+                    <div class="form-group">
+                        <label>Titel</label>
+                        <input class="form-control title" value="{{blog.title}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Inhalt</label>
+                        {{#wysiwygEditor light=true startEnabled=true}}{{{blog.content}}}{{/wysiwygEditor}}
+                    </div>
+                    <div class="form-group">
+                        <label>Bild</label>
+                        {{#if blog._id}}
+                        <div class="thumbnail" style="background-image:url('{{imageUrl}}')">
+                            {{#if imageUrl}}
+                                <button type="button" class="btn btn-default btn-sm btn-edit-image">
+                                    <span class="fa fa-edit"></span>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm btn-remove-image">
+                                    <span class="fa fa-close"></span>
+                                </button>
+                            {{else}}
+                            <div class="text-center">
+                                <button type="button" class="btn btn-default btn-lg btn-edit-image">
+                                    <span class="fa fa-plus"></span> <span class="fa fa-image"></span>
+                                </button>
+                            </div>
+                            {{/if}}
+                            <input type="hidden" class="image" value="{{imageId}}">
+                        </div>
+                        {{else}}
+                        <div>Um ein Bild hinzuzufügen, bitte erst den Artikel erstellenund dann editieren.</div>
+                        {{/if}}
+                    </div>
+                    <div class="form-group">
+                        <label>Veröffentlichung</label>
+                        <div class="radio">
+                              <span class="fa fa-check-square-o fa-fw btn-public {{#if isPublic}}inactive{{/if}}"></span>
+                              <span class="fa fa-square-o fa-fw btn-public {{#unless isPublic}}inactive{{/unless}}"></span>
+                                Interner Artikel, ist nur für angemeldete Persoenen zu sehen.
+                        </div>
+                        <div class="radio">
+                              <span class="fa fa-check-square-o fa-fw btn-public {{#unless isPublic}}inactive{{/unless}}"></span>
+                              <span class="fa fa-square-o fa-fw btn-public {{#if isPublic}}inactive{{/if}}"></span>
+                            Öffentlicher Artikel, dieser wird auf der Startseite angezeigt und
+                            kann auch von nicht angemeldeten Benutzern gelesen werden
+                        </div>
+                    </div>
+                    <div class="form-group text-right">
+                        <button type="button" class="btn btn-default btn-cancel">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            {{#if blog.title}}Speichern{{else}}Artikel anlegen{{/if}}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{else}}
+        {{>Loading}}
+        {{/if}}
+    </div>
+</template>
+
+<template name="blog">
+    {{#if blog}}
+    <div class="container">
+        <div class="row">
+            <div class="blog col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2">
+                <h4 class="blog-title">
+                    {{#if currentUser}}
+                        <a class="btn btn-default btn-sm pull-right" href="{{pathFor route='blog' _id=blog._id edit='edit'}}">Artikel bearbeiten</a>
+                    {{/if}}
+                    {{blog.title}}
+                    <br />
+                    <small>
+                        <span class="date">{{formatDateTime blog.date}}</span>
+                        {{#if currentUser}}
+                            <span class="author">{{getAlias blog.author}}</span>
+                            {{#if blog.public}}
+                                <span class="remarks">Öffentlicher Artikel</span>
+                            {{else}}
+                                <span class="remarks">Interner Artikel</span>
+                            {{/if}}
+                        {{/if}}
+                    </small>
+                </h4>
+                {{#if imageUrl}}
+                    <div class="blog-image hidden-xs" style="background-image:url('{{imageUrl}}')"></div>
+                    <img src="{{imageUrl}}" class="visible-xs" style="width:100%">
+                {{/if}}
+                <div class="blog-content">
+                    {{{blog.content}}}
+                </div>
+            </div>
+        </div>
+        <div class="row blog-files">
+            <hr/>
+            {{>fileList blog}}
+        </div>
+    </div>
+    {{else}}
+        {{>Loading}}
+    {{/if}}
+</template>
+
+<template name="blogPreview">
+    {{#if blog}}
+    <div class="blog-preview">
+        <h4 class="blog-title">
+            <a class = "" href= {{pathFor route='blog' _id=_id}}>{{blog.title}}</a>
+            <br />
+            <small>
+                {{#if currentUser}}
+                    <span class="author">{{getAlias blog.author}}</span>
+                {{/if}}
+                <span class="date">{{formatDateTime blog.date}}</span>
+                {{#if blog.public}}
+                    <span class="remarks">Öffentlicher Artikel</span>
+                {{/if}}
+            </small>
+        </h4>
+        <div class="blog-container">
+            {{#if imageUrl}}
+            <div class="blog-content">
+                <div class="blog-image" style="background-image:url('{{imageUrl}}')"></div>
+                {{{blog.preview}}}... <a href= {{pathFor route='blog' _id=_id}}>weiter lesen</a>
+            </div>
+            {{else}}
+            <div class="blog-preview-text">
+                {{{blog.preview}}}... <a href= {{pathFor route='blog' _id=_id}}>weiter lesen</a>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+    <div class="action-preview-extender text-center">
+        <span class="fa fa-caret-down"></span><span class="fa fa-caret-down"></span><span class="fa fa-caret-down"></span>
+    </div>
+    {{else}}
+        {{>Loading}}
+    {{/if}}
+</template>
+<!--
+<template name="blogLayoutWideImage">
+    <div class="wide-image">
+        <div class="blog-image">
+        </div>
+        <div class="blog-title">
+        </div>
+        <div class="blog-content">
+        </div>
+    </div>
+</template>
+<template name="blogLayoutSmallImage">
+    <div class="small-image">
+        <div class="blog-image">
+        </div>
+        <div class="blog-title">
+        </div>
+        <div class="blog-content">
+        </div>
+    </div>
+</template>
+<template name="blogLayoutWideImageCenter">
+    <div class="wide-image">
+        <div class="blog-title">
+        </div>
+        <div class="blog-content">
+        </div>
+        <div class="blog-image">
+        </div>
+        <div class="blog-content">
+        </div>
+    </div>
+</template>
+<template name="blogLayoutSmallImageCenter">
+    <div class="small-image">
+        <div class="blog-title">
+        </div>
+        <div class="blog-content">
+        </div>
+        <div class="blog-image">
+        </div>
+        <div class="blog-content">
+        </div>
+    </div>
+</template>
+<template name="blogLayoutDoubleImage">
+    <div class="wide-image">
+        <div class="blog-image">
+        </div>
+        <div class="blog-title">
+        </div>
+        <div class="blog-content">
+        </div>
+    </div>
+    <div class="small-image">
+        <div class="blog-image">
+        </div>
+        <div class="blog-content">
+        </div>
+    </div>
+</template>
+-->

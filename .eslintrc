@@ -1,0 +1,57 @@
+{
+    "globals": {
+        "_": true,
+        "UltiSite": true,
+        "Meteor": true,
+        "ReactiveVar": true,
+        "Template": true,
+        "Session": true,
+        "$": true,
+        "FS": true,
+        "FlowRouter": true,
+        "Tracker": true,
+        "HTTP": true,
+        "WebApp":true,
+        "Npm":true,
+        "Assets":true,
+        "moment":true,
+        "Roles":true,
+        "Accounts":true
+    },
+    "rules": {
+        "indent": [
+            1,
+            4
+        ],
+        "quotes": [
+            0,
+            "single"
+        ],
+        "linebreak-style": [
+            0
+        ],
+        "semi": [
+            2,
+            "always"
+        ],
+        "no-undef": [
+          2
+        ],
+        "no-unused-vars": [
+          1
+        ],
+        "no-console": [
+          0
+        ]
+    },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "env": {
+        "es6": true,
+        "node": true,
+        "browser": true
+    },
+    "extends": "eslint:recommended"
+}

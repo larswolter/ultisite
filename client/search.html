@@ -1,0 +1,40 @@
+<template name="searchField">
+	<div class="form-group dropdown" style="{{#if inline}}display:inline-flex;vertical-align:middle;margin:0px;{{/if}}">
+		{{#if equals type "button"}}
+			<button class="btn btn-default" data-toggle="dropdown">
+            <span class="{{#if icon}}{{icon}}{{else}}fa fa-search{{/if}}"></span> {{buttonText}}
+        </button>
+		{{else}}
+			<div class="input-group" data-toggle="dropdown">
+				<input type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
+			</div>
+		{{/if}}
+		<ul class="{{#unless inlineResults}}dropdown-menu {{#unless leftMenu}}dropdown-menu-right{{/unless}}{{/unless}}" role="menu">
+			{{#if equals type "button"}}
+				<li role="presentation">
+					<div class="input-group">
+						<input type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
+					</div>
+				</li>
+			{{/if}}
+			{{#each fileSearchResults }}
+				<li role="presentation">
+					{{#if name}}
+						<a href="{{link}}" title="{{name}}" data-id="{{id}}" data-type="{{type}}" data-thumb="{{url 32}}">
+                            {{#with url 32}}
+                                <img src="{{this}}" style="width:160px;height:120px;" title="{{../name}}"/>
+                            {{else}}
+                                <span class="fa {{icon}}"></span> {{name}}
+                                {{#if additional}}
+                                    <small class="hidden-xs">{{additional}}</small>
+                                {{/if}}
+                            {{/with}}
+                        </a>
+					{{else}}
+						{{{this}}}
+					{{/if}}
+				</li>
+			{{/each}}
+		</ul>
+	</div>
+</template>

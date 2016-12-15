@@ -1,0 +1,43 @@
+@import "lib/custom.bootstrap.import.less";
+.tweet {
+    position: relative;
+    border-top: 1px solid @panel-default-border;
+    margin-bottom: 5px;
+}
+
+.tweet:first-child {
+    border-top: none;
+}
+
+.tweet .btn-reply {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    padding:10px;
+    cursor: pointer;
+}
+
+.tweet .btn-reply .fa {
+    color:darkgreen;
+
+}
+
+.tweet .reply {
+    font-size: 0.8em;
+    border-left: 3px solid @panel-default-border;
+    padding-left: 5px;
+}
+
+.tweet .date {
+    font-size: 0.8em;
+    padding-right:50px;
+    float:right;
+}
+
+.tweet-count {
+    position: absolute;
+    bottom: 14px;
+    right: 80px;
+    z-index: 1000;
+    font-size: 0.8em;
+}

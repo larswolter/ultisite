@@ -1,0 +1,106 @@
+@import "lib/custom.bootstrap.import.less";
+.fix-wysiwyg {
+    position: fixed;
+    top: 50px;
+    left:0px;
+    padding-top:10px;
+    z-index: 1000;
+}
+
+.wysiwyg-toolbar {
+    background-color: white;
+    white-space: normal;
+    .wysiwyg-toolbar-icon {
+        color:black;
+    }
+}
+
+.wysiwyg-editor {
+    background-color: white;
+    min-height: 10em;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.25) inset;
+}
+
+.opt-editable-field,.opt-editable-field:hover,.opt-editable-field:focus {
+    border: none;
+    background-color: transparent;
+    
+}
+
+.user-base .opt-editable-field,.user-contacts .opt-editable-field {
+    width: 100%;
+    padding: 1px 10px;
+}
+
+.opt-is-editable .user-base .opt-editable-field:hover,.opt-is-editable .user-contacts .opt-editable-field:hover {
+    border: 1px solid @input-border;
+    padding: 0px 9px;
+}
+
+.cutoff-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.editing-container {
+    border-radius: 3px;
+    position: relative;
+    padding: 4px;
+    padding-right: 20px;
+    min-height: 25px;
+}
+
+.editing-container:hover {
+    border: 1px solid lightgray;
+    padding: 3px;
+    padding-right: 19px;
+}
+
+.editing-container:hover .editing-mark {
+    display: block;
+}
+
+.editing-container.active:hover .editing-mark {
+    display: none;
+}
+
+.editing-container.active {
+    padding: 0px;
+    border: none;
+    border-radius: 0px;
+}
+
+.editing-container.active:hover {
+    padding: 0px;
+    border: none;
+    border-radius: 0px;
+}
+
+.editing-mark {
+    cursor: pointer;
+    display: none;
+    position: absolute;
+    top: 0px;
+    padding-top: 5px;
+    padding-left: 5px;
+    right: 0px;
+    background-color: lightgray;
+    height: 100%;
+    width: 25px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.editing-mark > div {
+    float: left;
+    margin-top: -10px;
+    margin-left: -2px;
+    width: 135px;
+    transform-origin: bottom left;
+    transform: rotate(90deg);
+}
+
+.editable-image {
+    display: inline-block;
+}

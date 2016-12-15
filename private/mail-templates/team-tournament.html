@@ -1,0 +1,11 @@
+
+<p>
+    {{infoText}}
+</p>
+<h4>{{tournament.name}} am {{formatedDate}} in {{tournament.address.city}} {{tournament.address.country}}</h4>
+<h4>Team {{team.name}}</h4>
+<ul>
+    {{#each participants}}
+        <li>{{this.state}}% - {{this.username}}</li>
+    {{/each}}
+</ul>            

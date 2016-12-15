@@ -1,0 +1,292 @@
+<template name="tournamentList">
+    {{>tournamentCreate}}
+    <div>
+        <div class="row">
+            <div class="col-xs-12 visible-xs tournament-tabs navbar-default">
+                {{#if currentUser}}
+                    <a href="#" class="{{#if showPlanned}}active{{/if}}" data-target="planned" role="tab">Geplant</a>
+                    <a href="#" class="{{#if showPlayed}}active{{/if}}" data-target="played" role="tab">Gespielt</a> 
+                {{/if}}
+                <a href="#" class="{{#if showTournamentsMonth}}active{{/if}}" data-target="month" role="tab">Monate</a>
+                <a href="#" class="{{#if showTournamentsFilter}}active{{/if}}" data-target="filter" role="tab">Filter</a>
+                <a href="#" class="{{#if showTournamentsMap}}active{{/if}} hidden-xs" data-target="map" role="tab">Karte</a>
+            </div>
+            <div class="tournament-filter-offset">
+                {{#with newTournament}}
+                    <div class="col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="list-group">
+                                {{>tournamentListItem}}
+                            </div>
+                        </div>
+                    </div>
+                {{/with}}
+                {{#if currentUser}} 
+                    {{#if showPlanned}}
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading hidden-xs">
+                                    <strong>Geplante Turniere</strong> 
+                                    {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Vereins-Team eingetragen ist, die nicht abgesagt wurden oder du auf der Liste stehst."}}
+                                </div>
+                                <div class="list-group">
+                                    {{#each plannedTournaments}} {{>detailedTournamentListItem}} {{else}} {{>EmptySmall}} {{/each}}
+                                </div>
+                            </div>
+                        </div>
+                    {{/if}} 
+                    {{#if showPlayed}}
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading hidden-xs">
+                                    <strong>Gespielte Turniere</strong> {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Vereins-Team oder du gespielt haben"}}
+                                </div>
+                                <div class="list-group">
+                                    {{#each playedTournaments}} {{>detailedTournamentListItem}} {{else}} {{>EmptySmall}} {{/each}}
+                                </div>
+                            </div>
+                        </div>
+                    {{/if}} 
+                {{/if}} 
+                <div class="col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading btn-group btn-group-justified hidden-xs">
+                            <div class="btn-group">
+                                <button class="btn btn-default action-use-month {{#if showTournamentsMonth}}active{{/if}}">
+                                    <span class="fa fa-list"></span> Monate
+                                </button>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-default action-use-filter {{#if showTournamentsFilter}}active{{/if}}">
+                                    <span class="fa fa-filter"></span> Mit Filtern
+                                </button>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-default action-use-map {{#if showTournamentsMap}}active{{/if}}">
+                                    <span class="fa fa-map-o"></span> Mit Karte
+                                </button>
+                            </div>
+                        </div>
+                        {{#if showTournamentsMonth}}
+                            {{#with activeMonth}}
+                            <div class="panel-heading text-center tournament-heading">
+                                <button class="btn btn-default right-aligned-buttons action-next-month">
+                                    <span class="fa fa-chevron-right"></span>
+                                </button>
+                                <button class="btn btn-default left-aligned-buttons action-prev-month">
+                                    <span class="fa fa-chevron-left"></span>
+                                </button>
+                                <strong>{{formatMonth month}} {{year}}</strong>
+                            </div>
+                            <div class="list-group">
+                                {{#each tournaments month year}} 
+                                    {{>tournamentListItem}} 
+                                {{else}} 
+                                    {{>EmptySmall}} 
+                                {{/each}}
+                            </div>
+                            {{/with}}
+                        {{/if}} 
+                        {{#if showTournamentsFilter}}
+                            <div class="panel-heading">
+                                {{#if currentUser}}
+                                <button class="btn btn-default btn-floating" title="Turnier anlegen" type="button" data-toggle="modal" data-target="#tournamentCreateDialog">
+                                    <span class="fa fa-plus fa-lg"></span>
+                                </button>
+                                {{/if}} 
+                                {{>tournamentFilter}}
+                            </div>
+                            <div class="list-group">
+                                {{#each filteredTournaments}} {{>tournamentListItem}} {{else}} {{>EmptySmall}} {{/each}}
+                            </div>
+                        {{/if}} 
+                        {{#if showTournamentsMap}} 
+                            <div class="panel-body map-panel-body">
+                                {{>ultisiteMap getElementsMethod="tournamentCoordinates"}} 
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+            {{#if currentUser}}
+            <button class="btn btn-default btn-floating" title="Turnier anlegen" type="button" data-toggle="modal" data-target="#tournamentCreateDialog">
+                <span class="fa fa-plus fa-lg"></span>
+            </button>
+            {{/if}}
+        </div>
+    </div>
+</template>
+
+<template name="tournamentMap">
+    <div class="tournament-map">
+        
+        
+        <div class='popup'>
+            {{#each popupInfos}}
+            <div>
+                {{formatDate date}} - <a href="{{pathFor 'tournament' _id=this._id}}">{{name}}</a>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</template>
+
+<template name="tournamentFilter">
+    <div class="row tournament-filter">
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <small style="vertical-align:super">Untergrund</small>
+                <br/> {{surface}}
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a data-target="tournament.surface" href="#">Alle</a></li>
+                <li class="divider"></li>
+                {{#each settings.arraySurfaces}}
+                <li><a data-target="tournament.surface" href="#">{{this}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <small style="vertical-align:super">Klasse</small>
+                <br/> {{division}}
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a data-target="tournament.division" href="#">Alle</a></li>
+                <li class="divider"></li>
+                {{#each settings.arrayDivisions}}
+                <li><a data-target="tournament.division" href="#">{{this}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <small style="vertical-align:super">Typ</small>
+                <br/> {{type}}
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a data-target="tournament.type" href="#">Alle</a></li>
+                <li class="divider"></li>
+                {{#each settings.arrayCategorys}}
+                <li><a data-target="tournament.type" href="#">{{this}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <small style="vertical-align:super">Zeitraum</small>
+                <br/> {{#if year}}{{year}}{{else}}Kommende{{/if}}
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a data-target="tournament.year" href="#">Kommende</a></li>
+                <li class="divider"></li>
+                {{#each tournamentYears}}
+                <li><a data-target="tournament.year" href="#">{{this}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <button type="button" class="btn btn-default btn-mit-teams {{#if withTeams}}checked{{/if}}" data-target="tournament.teams">
+                <small style="vertical-align:super">Mit Teams</small>
+                <br/>
+                <span class="fa {{#if withTeams}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
+            </button>
+        </div>
+    </div>
+</template>
+
+
+<template name="detailedTournamentListItem">
+    <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item tournament-list-item" title="{{name}}">
+        <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="visible-xs"/>
+        <div class="row">
+            <div class="col-xs-2 col-sm-2 col-md-1">
+                {{dayOfDate date}}.{{monthOfDate date}}.
+            </div>
+            <div class="col-xs-8 col-sm-8 col-md-10 cutoff-text">
+                <strong>{{name}}</strong> in {{address.city}}
+                <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="hidden-xs"/>
+            </div>
+            <div class="col-xs-2 col-sm-2 col-md-1 cutoff-text">
+                {{#if over}}
+                <span class="badge" title="Anzahl Berichte">{{reports.length}}</span> {{else}} {{#each tags}}<span class="fa fa-{{this}}"></span>{{/each}} {{/if}}
+            </div>
+        </div>
+        {{#each teaminfo}}
+        <div class="row">
+            <div class="col-xs-2 col-md-1">
+                {{#with myTeamState}}
+                <div class=" text-right">
+                    <span class="fa fa-user text-{{colorState this.state}}" title="Ich bin dabei"></span>
+                </div>
+                {{/with}}
+            </div>
+            {{#if over}}
+            <div class="col-xs-8">
+                {{#if teamfotoUrl}}
+                <div class="detail-team-image pull-right" style="background-image:url('{{teamfotoUrl}}'); text-center;width:40px;height:30px">
+                </div>
+                {{/if}}
+                <span class="fa fa-{{divisionIcon}}  fa-fw"></span> {{name}} auf Platz {{results.placement}} 
+            </div>
+            {{else}}
+            <div class="col-xs-7 cutoff-text">
+                <span class="fa fa-{{divisionIcon}} fa-fw"></span> 
+                <span class="">{{name}}</span> - 
+                <small class="text-{{stateColor}}">
+                    {{state}}
+                    {{#if equals stateColor "danger"}}
+                    <span class="fa fa-exclamation-triangle"></span>
+                    {{/if}} 
+                    {{#if equals stateColor "success"}}
+                    <span class="fa fa-check-circle"></span>
+                    {{/if}} 
+                </small>
+            </div>
+            <div class="col-xs-3">
+                {{#if gte teamCount.spots 10}} Spieler gesucht! {{else}} {{>teamCountBar this}} {{/if}}
+            </div>
+            {{/if}}
+        </div>
+        {{/each}}
+    </a>
+</template>
+
+
+<template name="tournamentListItem">
+    <a href='{{pathFor "tournament" _id=this._id}}' data-id="{{this._id}}" class="list-group-item tournament-list-item">
+        <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="visible-xs"/>
+        <div class="row">
+            <div class="col-xs-2 col-sm-1 {{dateState}}">
+                {{dayOfDate date}}.{{monthOfDate date}}.
+            </div>
+            <div class="col-xs-10 col-sm-6">
+                <strong>{{name}}</strong> 
+                {{#if address.city}}
+                    <span class="hidden-xs">in {{address.city}}</span>
+                {{/if}}
+                <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="hidden-xs"/>
+            </div>
+            <div class="col-xs-12 col-sm-5">
+                {{#if address.city}}
+                    <span class="fa fa-map-marker visible-xs-inline"></span>
+                    <small class="visible-xs-inline">{{address.city}}</small>
+                {{/if}}
+                {{#each tags}}
+                    {{#if icon}}
+                    <span class="fa fa-{{this.icon}}"></span>
+                    {{/if}}    
+                    {{#if img}}
+                    <img src="{{img}}" style="" />
+                    {{/if}}    
+                    <span class="xs-hidden small">{{this.text}}</span> 
+                {{/each}}
+                {{#if teams.length}}
+                    <span class="fa fa-group"></span> <span class="xs-hidden small">Mit Team</span>
+                {{/if}}
+            </div>
+            {{!-- TODO: Schnelleintragung für vergangene Turniere --}}
+        </div>
+    </a>
+
+</template>

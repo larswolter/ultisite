@@ -1,0 +1,86 @@
+<template name="start">
+    <div class="container-fluid">
+        {{#if currentUser}}
+            <div class="row">
+                <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-xs-12 start-content">
+                    {{#each additionalStartPageTemplates}}
+                        {{>Template.dynamic template=this.template}}
+                    {{/each}}
+                    {{>blogs limit=3}}
+                </div>
+                <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
+                    {{>eventList}}
+                </div>
+            </div>
+        {{else}}
+            <div class="row">
+                <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-xs-12 start-content">
+                    {{#with settings}} 
+                        {{>wikipage pageName=this.wikiStart}} 
+                    {{/with}}
+                    {{>blogs limit=3}}
+                </div>
+                <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
+                    {{>practices}}
+                </div>
+            </div>
+        {{/if}}
+    </div>
+</template>
+
+<template name="startImageCarousel">
+    {{#if Template.subscriptionsReady}}
+        <div class="cutoff-text" style="height:160px;width:100%;">
+            {{#each logos}}
+                <img src="{{this}}" style="height:160px" />
+            {{/each}}
+        </div>
+    {{/if}}
+</template>
+
+<template name="eventList">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>Ereignisse</strong>
+        </div>
+        {{#if Template.subscriptionsReady}}
+        <div class="list-group">
+            {{#each events}}
+                <span class="list-group-item">
+                      {{>eventItem}}
+                </span>
+            {{else}}
+                    {{>Empty}}
+            {{/each}}
+        </div>
+        {{else}}
+            {{>Loading}}
+        {{/if}}
+    </div>
+</template>
+
+<template name="eventItem">
+    <div class="event-item">
+    <h5 class="list-group-item-heading cutoff-text action-go-event">
+        <a href="#">
+            {{name}}
+            <small>{{additional}}</small>
+        </a>
+    </h5>
+    {{#each detail}}
+        <p class="list-group-item-text small cutoff-text">
+            {{formatDateRelative time}} - {{alias}}: {{text}}
+            {{#if images}}
+                <br />
+                {{#each images}}
+                    <a href="{{pathFor route='image' _id=this associated=../../groupBy}}">
+                        {{#with fileObj}}
+                            <img src="{{url 32}}" class="image"/>
+                        {{/with}}
+                    </a>
+                {{/each}}
+            {{/if}}
+        </p>
+    {{/each}}
+    </div>
+</template>

@@ -1,0 +1,20 @@
+
+        <p>
+            auf der Webseite hat sich innerhalb der letzten 24 Stunden folgendes getan:
+        </p>
+        <ul>
+            {{#each events}}
+            <li>
+                <h4><a href="{{url}}">{{name}}</a></h4>
+                <div>{{additional}}</div>
+                {{#each detail}}
+                    <div>{{timeFormatted}} - {{alias}}: {{text}}</div>
+                {{/each}}
+            </li>
+            {{/each}}
+        </ul>
+        <p>
+            Falls du nicht zu allen Ereignissen E-Mails bekommen willst, oder über manche Dinge sofort per Mail 
+            informaiert werden willst, kannst du den Mail Versand in deinem <a href="{{profilUrl}}">Profil</a> anpassen 
+        </p>
+            

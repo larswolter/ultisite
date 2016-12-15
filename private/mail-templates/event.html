@@ -1,0 +1,16 @@
+
+        <p>
+            auf der Webseite hat sich folgendes getan:
+        </p>
+        <h4>
+            <a href="{{url}}">{{event.name}}</a>
+            <small>{{event.additional}}</small>
+        </h4>
+        {{#each detail}}
+            <div>{{timeFormatted}} - {{alias}}: {{text}}</div>
+        {{/each}}
+        <p>
+            Falls du nicht zu allen Ereignissen E-Mails bekommen willst, oder über manche Dinge nur täglich per Mail 
+            informaiert werden willst, kannst du den Mail Versand in deinem <a href="{{profilUrl}}">Profil</a> anpassen 
+        </p>
+            

@@ -1,0 +1,117 @@
+@import "lib/custom.bootstrap.import.less";
+.blog-title {
+    font-size: 1.5em;
+    margin-bottom: 0.7em;
+    margin-top: 1em;
+}
+
+.blog-image {
+    width: 320px;
+    height: 240px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    float: left;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.btn-public.inactive {
+    display: none;
+}
+
+.blog-content {
+    text-align: justify;
+}
+
+.blog .author {
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.blog .date,
+.blog .remarks {
+    font-size: 0.8em;
+}
+
+.blog-preview {
+    position: relative;
+    padding-bottom: 5px;
+    margin-bottom: 0px;
+}
+
+.blog-preview .blog-title {
+    font-size: 1.25em;
+}
+.blog-files {
+    li {
+        display: block;
+        border: 1px solid gray;
+        padding: 3px 15px;
+        background-color: white;
+        margin-top:5px;
+    }
+    li a.add-file  , li.divider {
+        display:none;
+    }
+}
+@media (min-width: @screen-md-min) {
+    .blog-preview .blog-image {
+        width: 160px;
+        height: 120px;
+        left: 0px;
+        position: absolute;
+        background-position: center;
+        background-size: contain;
+    }
+    .blog-preview .blog-content {
+        position: relative;
+        padding-left: 170px;
+        min-height: 125px;
+    }
+    .action-preview-extender {
+        display:none;
+    }
+}
+
+@media (max-width: @screen-sm-max) {
+    .blog-preview {
+        h4.blog-title {
+            font-size:1em;
+            margin-top:0px;
+        }
+        .blog-container {
+            max-height:30px;
+            overflow:hidden;
+            text-overflow: ellipsis;
+            transition: max-height 250ms;
+            font-size:0.85em;
+        }
+        .blog-container.extended {
+            max-height: 200px;
+        }
+        .blog-image {
+            width: 40px;
+            height: 30px;
+            float: left;
+        }
+        .blog-content {
+            position: relative;
+            overflow:hidden;
+            text-overflow: ellipsis;
+        }
+    }
+    .action-preview-extender {
+        position: absolute;
+        bottom:0px;
+        width:100%;
+        font-size:0.8em;
+    }
+}
+
+.blogUpdateForm .thumbnail {
+    height: 120px;
+    width: 160px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
