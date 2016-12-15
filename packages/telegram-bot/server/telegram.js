@@ -1,4 +1,4 @@
-var APIKEY='212617522:AAGTfwysQy1D8eI_AiASOVnI9ug4WelbV_E';
+var APIKEY='XXX';
 
 Meteor.methods({
     getUpdates: function() {
