@@ -56,6 +56,9 @@ Meteor.startup(function () {
     Template.registerHelper("imageLookup", function (id) {
         return UltiSite.Images.findOne(id);
     });
+    Template.registerHelper("imageUrl", function (id, size) {
+        return '/_image?imageId='+id+(isNaN(size)?'':'&size='+size);
+    });
     Template.registerHelper("getPageSearch", function (id) {
         if (!Meteor.userId())
             return false;

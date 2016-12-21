@@ -39,8 +39,8 @@
                     <div class="form-group">
                         <label>Bild</label>
                         {{#if blog._id}}
-                        <div class="thumbnail" style="background-image:url('{{imageUrl}}')">
-                            {{#if imageUrl}}
+                        <div class="thumbnail" style="background-image:url('{{imageUrl imageId 120}}')">
+                            {{#if imageId}}
                                 <button type="button" class="btn btn-default btn-sm btn-edit-image">
                                     <span class="fa fa-edit"></span>
                                 </button>
@@ -105,7 +105,7 @@
                     <small>
                         <span class="date">{{formatDateTime blog.date}}</span>
                         {{#if currentUser}}
-                            <span class="author">{{getAlias blog.author}}</span>
+                            <span class="author">{{getAlias blog.authorName}}</span>
                             {{#if blog.public}}
                                 <span class="remarks">Öffentlicher Artikel</span>
                             {{else}}
@@ -114,9 +114,9 @@
                         {{/if}}
                     </small>
                 </h4>
-                {{#if imageUrl}}
-                    <div class="blog-image hidden-xs" style="background-image:url('{{imageUrl}}')"></div>
-                    <img src="{{imageUrl}}" class="visible-xs" style="width:100%">
+                {{#if blog.image}}
+                    <div class="blog-image hidden-xs" style="background-image:url('{{imageUrl blog.image 800}}')"></div>
+                    <img src="{{imageUrl blog.image 800}}" class="visible-xs" style="width:100%">
                 {{/if}}
                 <div class="blog-content">
                     {{{blog.content}}}
@@ -141,7 +141,7 @@
             <br />
             <small>
                 {{#if currentUser}}
-                    <span class="author">{{getAlias blog.author}}</span>
+                    <span class="author">{{getAlias blog.authorName}}</span>
                 {{/if}}
                 <span class="date">{{formatDateTime blog.date}}</span>
                 {{#if blog.public}}
@@ -150,9 +150,9 @@
             </small>
         </h4>
         <div class="blog-container">
-            {{#if imageUrl}}
+            {{#if blog.image}}
             <div class="blog-content">
-                <div class="blog-image" style="background-image:url('{{imageUrl}}')"></div>
+                <div class="blog-image" style="background-image:url('{{imageUrl blog.image 120}}')"></div>
                 {{{blog.preview}}}... <a href= {{pathFor route='blog' _id=_id}}>weiter lesen</a>
             </div>
             {{else}}

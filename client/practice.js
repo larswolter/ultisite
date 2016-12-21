@@ -10,7 +10,7 @@ Meteor.startup(function () {
 
 Template.practice.created = function () {
     this.subscribe(this.data._id);
-    this.subscribe("WikiPage", UltiSite.Settings.findOne({}).wikiPractice);
+    this.subscribe("WikiPage", UltiSite.settings().wikiPractice);
 };
 
 Template.practiceEdit.onCreated(function () {});

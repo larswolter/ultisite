@@ -22,14 +22,6 @@ UltiSite.Folders.allow(allowByUser);
 UltiSite.Documents.allow(allowByUser);
 UltiSite.Images.allow(allowByUser);
 
-UltiSite.Settings.allow({
-    update: function (userId, doc, fields) {
-        console.log("Settings:", fields);
-        if (userId)
-            return true;
-        return false;
-    },
-});
 UltiSite.Folders.deny({
     remove: function (userId, doc) {
         if (userId) {

@@ -583,13 +583,6 @@ var helpers = {
             }, team);
         });
     },
-    teamfotoUrl: function () {
-        var teamImage = UltiSite.Images.findOne({
-            associated: this._id
-        });
-        if (teamImage)
-            return teamImage.url(60);
-    }
 };
 Template.tournamentListItem.helpers(helpers);
 Template.detailedTournamentListItem.helpers(helpers);

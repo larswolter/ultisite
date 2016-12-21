@@ -3,15 +3,10 @@ var lastConnectedStatus = true;
 Meteor.startup(function () {
     Session.set("searchResults", ['Mind. drei Zeichen']);
     Session.setDefault("message", {});
-    Tracker.autorun(function () {
-        if (UltiSite.Settings.findOne({})) {
-            document.title = UltiSite.settings().siteTitle +
-                (UltiSite.settings().siteSubTitle ? ' - ' + UltiSite.settings().siteSubTitle : '');
-            $('meta[name=application-name]').attr('content', document.title);
-            $('meta[name=apple-mobile-web-app-name]').attr('content', document.title);
-        }
-    });
-
+    document.title = UltiSite.settings().siteTitle +
+        (UltiSite.settings().siteSubTitle ? ' - ' + UltiSite.settings().siteSubTitle : '');
+    $('meta[name=application-name]').attr('content', document.title);
+    $('meta[name=apple-mobile-web-app-name]').attr('content', document.title);
 });
 
 Template.header.events({

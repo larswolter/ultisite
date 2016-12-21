@@ -493,7 +493,8 @@
             {{#if equals this.state "dabei"}}
             <div class="panel-body">
                 <div class="row">                    
-                    <div class="image col-xs-12 col-sm-4 col-md-3 col-lg-2" style="background-image:url('{{teamfotoUrl}}'); text-center">
+                    <div class="image col-xs-12 col-sm-4 col-md-3 col-lg-2" 
+                        style="background-image:url('{{#if image}}{{imageUrl image 160}}{{else}}/placeholder/team.svg{{/if}}'); text-center">
                         <button class="btn btn-default btn-sm action-team-image">
                             <span class="fa fa-edit"></span>
                         </button>

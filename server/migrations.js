@@ -58,80 +58,56 @@ Meteor.startup(function(){
                 }
             });
     });
-  */
     UltiSite.Teams.find({state:{$exists:false}}).forEach((t)=>{
         UltiSite.Teams.update(t._id,{$set:{state:'geplant'}});
     });
     UltiSite.Images.find({size:{$exists:false},base64:{$exists:true}}).forEach((img)=>{
         UltiSite.Images.update(img._id,{$set:{size:(img.base64.length - 814) / 1.37}});
     });
-    UltiSite.OldImages.find().forEach((fo) => {
-      if (!fo.isUploaded())
-        return;
-      if (!fo.hasStored('images'))
-        return;
-      console.log('migrating ', fo.name());
-      var Readable = Npm.require('stream').Readable;
-      var readStream = new Readable().wrap(fo.createReadStream('images'));
-      const buffers = [];
-      readStream.on('data', data => buffers.push(data));
-      readStream.on('end', Meteor.bindEnvironment(function () {
-        const buffer = Buffer.concat(buffers);
-        UltiSite.Images.upsert(fo._id,_.extend({}, {
-            _id:fo._id,
-          associated: fo.associated,
-          tags:fo.tags,
-          size:fo.original.size,
-          creator:fo.creator,
-          name:fo.name(),
-          base64: buffer.toString('base64'),
-          type: fo.original.type,
-          created: fo.uploadedAt,
-        }));
-        UltiSite.OldImages.remove(fo._id);
-      }));
-    });    
-    if(gridFS)
-    UltiSite.OldDocuments.find().forEach((fo) => {
-      if (!fo.isUploaded())
-        return;
-      if (!fo.hasStored('documents'))
-        return;
-      if(!fo._id)
-        return;
-      const docId = fo._id+''; 
-      console.log('migrating ', fo.name(),docId);
-      var Readable = Npm.require('stream').Readable;
-      var readStream = new Readable().wrap(fo.createReadStream('documents'));
-        gridFS.createWriteStream({
-            filename: fo.name(),
-            content_type: fo.type
-        },Meteor.bindEnvironment(function(err,wstream) {
-            if(err)
-                console.log('gridFs Error:',err);
-            else
-                wstream.on('close',Meteor.bindEnvironment(function(fileObj) {
-                    const file = {
-                        _id:fo._id,
-                        associated: fo.associated,
-                        tags:fo.tags,
-                        size:fo.original.size,
-                        creator:fo.creator,
-                        name:fo.name(),
-                        gridId: fileObj._id+'',
-                        type: fo.original.type,
-                        created: fo.uploadedAt,
-                    };
-                    UltiSite.Documents.upsert(file._id,file, (err) => {
-                        if(err)
-                            console.log('Mongo Error:',err,file);
-                        else {
-                            UltiSite.OldDocuments.remove(docId);
-                            console.log('migrated ', fo.name());
-                        }
-                    });
-                }));
-            readStream.pipe(wstream);
-        }));
-    });    
+  */
+    UltiSite.Teams.find({image:{$exists:false}}).forEach((t)=>{
+        const image = UltiSite.Images.findOne({associated:t._id});
+        if(image)
+            UltiSite.Teams.update(t._id,{
+                $set:{
+                    image: image._id
+                }
+            });
+    });
+    UltiSite.Blogs.find({author:{$ne:null},authorName:{$exists:false}}).forEach((t)=>{
+        const user = Meteor.users.findOne(t.author);
+        if(user)
+            UltiSite.Blogs.update(t._id,{
+                $set:{
+                    authorName:user.username
+                }
+            });
+    });
+    UltiSite.WikiPages.find({editor:{$ne:null},editorName:{$exists:false}}).forEach((t)=>{
+        const user = Meteor.users.findOne(t.editor);
+        if(user)
+            UltiSite.WikiPages.update(t._id,{
+                $set:{
+                    editorName:user.username
+                }
+            });
+    });
+    UltiSite.WikiPageDiscussions.find({editor:{$ne:null},editorName:{$exists:false}}).forEach((t)=>{
+        const user = Meteor.users.findOne(t.editor);
+        if(user)
+            UltiSite.WikiPageDiscussions.update(t._id,{
+                $set:{
+                    editorName:user.username
+                }
+            });
+    });
+    UltiSite.ContentVersions.find({author:{$ne:null},authorName:{$exists:false}}).forEach((t)=>{
+        const user = Meteor.users.findOne(t.author);
+        if(user)
+            UltiSite.ContentVersions.update(t._id,{
+                $set:{
+                    authorName:user.username
+                }
+            });
+    });
 });

@@ -46,7 +46,7 @@
 						<div class="list-group">
 							{{#each discussions}}
 								<div class="list-group-item">
-									<small> {{getAlias editor}} {{formatDateTime date}}</small>
+									<small> {{editorName}} {{formatDateTime date}}</small>
 									<div class="">
 										{{{content}}}
 									</div>
@@ -58,9 +58,9 @@
 							<h3>
 								{{name}}
 								{{#if locked}}
-									<small class="page-details">Wird gerade bearbeitet von {{getAlias locked}}</small>
+									<small class="page-details">Wird gerade bearbeitet von {{lockedName}}</small>
 								{{else}}
-									<small class="page-details">Zuletzt geändert von {{getAlias editor}} am {{formatDateTime lastChange}}</small>
+									<small class="page-details">Zuletzt geändert von {{editorName}} am {{formatDateTime lastChange}}</small>
 								{{/if}}
 							</h3>
 					{{else}}
@@ -70,7 +70,7 @@
 						{{#if showHistory}}
 							{{#each histories}}
 								<div class="list-group-item {{#if equals wikiEntry.contentId _id}}active{{/if}}">
-									Von:{{getAlias author}}, vom:{{formatDateTime date}}
+									Von:{{authorName}}, vom:{{formatDateTime date}}
 									<button class="btn btn-default action-select-version {{#if equals wikiEntry.contentId _id}}disabled{{/if}}">
                                         anzeigen
                                     </button>
@@ -81,7 +81,7 @@
 						{{#if editMode}}
 							{{#unless canEdit}}
 								<h4>
-									<span class="fa fa-exclamation-triangle text-danger"></span> Diese Seite wird gerade von {{getAlias wikiEntry.locked}}
+									<span class="fa fa-exclamation-triangle text-danger"></span> Diese Seite wird gerade von {{wikiEntry.lockedName}}
 									bearbeitet
 								</h4>
 						{{else}}

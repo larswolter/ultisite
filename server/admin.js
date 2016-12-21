@@ -1,4 +1,24 @@
+UltiSite.Settings = new Meteor.Collection("Settings");
+
+function syncSettings() {
+    Meteor.settings = UltiSite.Settings.findOne();
+    __meteor_runtime_config__.PUBLIC_SETTINGS = _.omit(Meteor.settings, (value, key) => {
+        return key.toLowerCase().indexOf('password') >= 0;
+    });
+    WebAppInternals.generateBoilerplate();
+    console.log('synced settings');
+}
+Meteor.startup(function(){
+    syncSettings();
+});
+
 Meteor.methods({
+    updateSettings: function(modifier) {
+        if(!UltiSite.isAdmin(this.userId))
+            throw new Meteor.error('access-denied','Zugriff nur für Admins');
+        UltiSite.Settings.update({},modifier);
+        syncSettings();
+    },
     recreateCollections: function () {
         Meteor.call('cleanDatabases');
         Meteor.call('createDatabases');

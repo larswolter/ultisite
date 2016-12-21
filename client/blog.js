@@ -1,7 +1,9 @@
 var activeImage = new ReactiveVar(null);
 var activePublication = new ReactiveVar(false);
 Template.blogs.onCreated(function(){
-    this.subscribe('Blogs');
+    this.autorun(()=>{
+        this.subscribe('Blogs', this.data.limit);
+    });
 });
 
 Template.blogs.helpers({
@@ -10,7 +12,6 @@ Template.blogs.helpers({
             sort: {
                 date: -1,
             },
-            limit: this.limit
         });
     }
 });
@@ -18,8 +19,8 @@ Template.blogs.helpers({
 
 Template.blog.onCreated(function () {
     var self = this;
-    self.autorun(function () {
-        self.subscribe('Blogs',FlowRouter.getParam("_id"));
+    self.autorun(() => {
+        self.subscribe('Blog',FlowRouter.getParam("_id"));
     });
     self.autorun(function () {
         var blog = getBlog();
@@ -75,10 +76,7 @@ Template.blogPreview.events({
 Template.blogUpdate.onCreated(function () {
     var self = this;
     self.autorun(function () {
-        self.subscribe('Blogs',FlowRouter.getParam("_id"));
-    });
-    self.autorun(function () {
-        self.subscribe('Files',activeImage.get());
+        self.subscribe('Blog',FlowRouter.getParam("_id"));
     });
     self.autorun(function () {
         var blog = getBlog();

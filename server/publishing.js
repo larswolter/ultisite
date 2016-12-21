@@ -1,29 +1,21 @@
 Meteor.startup(function () {
-    Meteor.publishComposite("Blogs", function (id) {
-        var search = {};
+    Meteor.publish("Blogs", function (limit) {
+        const search = {};
         if (!this.userId)
             search.public = true;
-        if (id)
-            search._id = id;
-        return {
-            find: function () {
-                return UltiSite.Blogs.find(search, id ? {} : {
-                    fields: {
-                        content: 0
-                    }
-                });
+
+        return UltiSite.Blogs.find(search, {
+            limit,
+            sort: {
+                date: -1
             },
-            children: [{
-                find: function (blog) {
-                    return Meteor.users.find(blog.author);
-                }
-            }, {
-                find: function (blog) {
-                    return UltiSite.Documents.find({ associated: blog._id });
-                }
-            },
-            ]
-        }
+            fields: {
+                content: 0
+            }
+        });
+    });
+    Meteor.publish("Blog", function (_id) {
+        return UltiSite.Blogs.find({_id});
     });
     Meteor.publish(null, function () {
 
@@ -64,32 +56,6 @@ Meteor.startup(function () {
             });
         }
         self.ready();
-    });
-
-
-    Meteor.publish("Settings", function () {
-        var settings = UltiSite.settings();
-        return [UltiSite.Settings.find({}, {
-            fields: {
-                sitePassword: 0,
-                'mailingListConfigs.password': 0,
-                emailPassword: 0
-            }
-        }), UltiSite.Images.find({
-            _id: {
-                $in: [
-                    settings.imageLogo,
-                    settings.imageTitleImage,
-                    settings.imageMobileLogo,
-                    settings.imageIcon,
-                    settings.imageBackground,
-                    settings.imageUserGroup,
-                    settings.imageUserW,
-                    settings.imageUserM,
-                ]
-            }
-        },{fields:{base64:0}})
-        ];
     });
     Meteor.publish("Statistics", function (target) {
         const res = UltiSite.Statistics.find({
@@ -180,31 +146,12 @@ Meteor.startup(function () {
             },
             children: [{
                 find: function (team) {
-                    return UltiSite.Images.find({
-                        associated: team._id
-                    },{fields:{base64:0}});
-                }
-            }, {
-                find: function (team) {
                     return UltiSite.Tournaments.find({
                         _id: {
                             $in: [tournamentId, team.tournamentId]
                         }
                     });
                 }
-                /*, {
-                        find: function (tournament) {
-                            return UltiSite.Images.find({
-                                associated: tournament._id
-                            });
-                        }
-                    }, {
-                        find: function (tournament) {
-                            return UltiSite.Documents.find({
-                                associated: tournament._id
-                            });
-                        }
-                    }*/
             }]
         };
     });
@@ -232,58 +179,20 @@ Meteor.startup(function () {
         Meteor.Collection._publishCursor(UltiSite.Tournaments.find(query, options), this, "tournamentList");
     });
 
-    Meteor.publishComposite("WikiPage", function (id) {
-        return {
-            find: function () {
-                return UltiSite.WikiPages.find({
-                    $or: [{
-                        _id: id
-                    }, {
-                        name: id
-                    }]
-                });
-            },
-            children: [{
-                find: function (page) {
-                    return UltiSite.Images.find({
-                        associated: page._id
-                    });
-                }
-
+    Meteor.publish("WikiPageDiscussions", function (id) {
+        return UltiSite.WikiPageDiscussions.find({pageId: id});
+    });
+    Meteor.publish("WikiPageVersions", function (id) {
+        return UltiSite.ContentVersions.find({associated: id}, { fields: { content: 0 } });
+    });
+    Meteor.publish("WikiPage", function (id) {
+        return UltiSite.WikiPages.find({
+            $or: [{
+                _id: id
             }, {
-                find: function (page) {
-                    return UltiSite.WikiPageDiscussions.find({
-                        pageId: page._id
-                    });
-                },
-                children: [{
-                    find: function (discussion) {
-                        return Meteor.users.find({
-                            _id: discussion.editor
-                        }, { fields: { username: 1 } });
-                    }
-                }]
-            }, {
-                find: function (page) {
-                    return UltiSite.ContentVersions.find({
-                        associated: page._id
-                    }, { fields: { content: 0 } });
-                },
-                children: [{
-                    find: function (version) {
-                        return Meteor.users.find({
-                            _id: version.author
-                        }, { fields: { username: 1 } });
-                    }
-                }]
-            }, {
-                find: function (page) {
-                    return Meteor.users.find({
-                        _id: page.editor
-                    }, { fields: { username: 1 } });
-                }
+                name: id
             }]
-        };
+        });
     });
 
     Meteor.publish("ContentVersion", function (id) {
@@ -310,8 +219,4 @@ Meteor.startup(function () {
     Meteor.publish("Places", function (country) {
         return UltiSite.Countries.find();
     });
-    /*
-        FastRender.onAllRoutes(function () {
-            this.subscribe('Settings');
-        });*/
 });

@@ -123,8 +123,6 @@ _.extend(UltiSite, {
     },
     initialSubsReady: new ReactiveVar(false),
     LookupId: new Ground.Collection(null),
-    Settings: new Ground.Collection("Settings", {
-    }),
     LastChanges: new Meteor.Collection('LastChanges'),
     WikiPages: new Meteor.Collection("WikiPages"),
     WikiPageDiscussions: new Meteor.Collection("WikiPagDiscussiones"),
@@ -176,19 +174,6 @@ _.extend(UltiSite, {
             });
         }
     }),
-    OldImages: new FS.Collection("images", {
-        stores: [
-            new FS.Store.GridFS("thumbs", {
-                transformWrite: function (fileObj, readStream, writeStream) {
-                }
-            }),
-            new FS.Store.GridFS("previews", {
-                transformWrite: function (fileObj, readStream, writeStream) {
-                }
-            }),
-            new FS.Store.GridFS("images")
-        ]
-    }),
     Documents: new Meteor.Collection("documents", {
         transform: function (doc) {
             return _.extend(doc, {
@@ -202,9 +187,6 @@ _.extend(UltiSite, {
                 }
             });
         }
-    }),
-    OldDocuments: new FS.Collection("documents", {
-        stores: [new FS.Store.GridFS("documents")]
     }),
     Folders: new Ground.Collection("Folders", {
     }),
@@ -286,7 +268,10 @@ _.extend(UltiSite, {
         return host;
     },
     settings: function () {
-        return UltiSite.Settings.findOne()||{};
+        if(Meteor.isClient)
+            return Meteor.settings.public;
+        else
+            return Meteor.settings;
     },
     isAdmin: function (userid, con) {
         if (!userid && Meteor.isServer)

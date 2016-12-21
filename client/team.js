@@ -508,6 +508,7 @@ Template.teamReport.events({
                     }
                 });
             }
+            UltiSite.Teams.update(teamId,{$set:file && file._id});
             UltiSite.fileBrowserHideDialog();
         });
     },
@@ -560,15 +561,6 @@ Template.teamReport.helpers({
             return true;
         };
     },
-    teamfotoUrl: function () {
-        var teamImage = UltiSite.Images.findOne({
-            associated: this._id
-        });
-        if (teamImage)
-            return teamImage.url(160);
-        else
-            return "/placeholder/team.svg";
-    }
 });
 
 Template.teamHistoricView.onCreated(function () {

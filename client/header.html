@@ -3,12 +3,8 @@
 	<nav class="navbar navbar-default navbar-fixed-top">
 		{{#unless screenSizeMobile}}
 			<div class="title-image hidden-xs" style="{{settings.titleImageHeight}}px">
-				{{#with imageLookup settings.imageTitleImage}}
-					<div style="background-image:url('{{this.url}}')"> </div>
-				{{/with}}
-				{{#with imageLookup settings.imageLogo}}
-					<img src="{{this.url}}" />
-				{{/with}}
+				<div style="background-image:url('{{imageUrl settings.imageTitleImage}}')"> </div>
+				<img src="{{imageUrl settings.imageLogo}}" />
 			</div>
 		{{/unless}}
 
@@ -101,7 +97,7 @@
 </template>
 <template name="sidebar">
 	<div class="navigation-area sidebar">
-		<div class="title" style="{{#with imageLookup settings.imageMobileLogo}}background-image:url('{{this.url}}'){{/with}}">
+		<div class="title" style="background-image:url('{{imageUrl settings.imageMobileLogo}}')">
 		</div>
 		<div class="title" style="background-color:rgba(0,0,0,0.5);position:absolute;top:0px;">
 			<a class="title-link" href="{{pathFor route='/'}}">{{settings.siteTitle}}</a>

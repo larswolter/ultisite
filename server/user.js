@@ -65,6 +65,11 @@ Meteor.methods({
                     responsibleName: user.username
                 }
             }, { multi: true });
+            UltiSite.Blogs.update({ author: userId }, {
+                $set: {
+                    authorName: user.username
+                }
+            }, { multi: true });
         }
     }
 });

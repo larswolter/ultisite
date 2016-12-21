@@ -35,7 +35,7 @@ Template.linksEditDialog.events({
         e.preventDefault();
         try {
             const links = JSON.parse(t.$('textarea').val());
-            UltiSite.Settings.update(UltiSite.settings()._id, { $set: { objectHeaderLinks: links } });
+            Meteor.call('updateSettings', { $set: { objectHeaderLinks: links } });
             t.$('.modal').modal('hide');
         } catch (err) {
             t.$('textarea').notify('Fehlerhafte Syntax:' + err, 'error');
@@ -140,13 +140,13 @@ Template.adminPanel.events({
         e.preventDefault();
         var val = {};
         val[t.$(e.currentTarget).attr('data-name')] = t.$(e.currentTarget).attr('data-id');
-        UltiSite.Settings.update(UltiSite.settings()._id, {
+        Meteor.call('updateSettings', {
             $set: val
         });
     },
     'click .action-select-design': function (e, t) {
         e.preventDefault();
-        UltiSite.Settings.update(UltiSite.settings()._id, {
+        Meteor.call('updateSettings', {
             $set: { design: this + '' }
         });
     },
@@ -155,7 +155,7 @@ Template.adminPanel.events({
         UltiSite.fileBrowserShowDialog(UltiSite.fileRootFolder()._id, function (fileObj) {
             var val = {};
             val[name] = fileObj ? fileObj._id : null;
-            UltiSite.Settings.update(UltiSite.settings()._id, {
+            Meteor.call('updateSettings', {
                 $set: val
             });
             if (name === 'imageIcon') {
@@ -174,7 +174,7 @@ Template.adminPanel.events({
 
         val[name] = value;
         console.log("Updating:", val);
-        UltiSite.Settings.update(settings._id, {
+        Meteor.call('updateSettings', {
             $set: val
         });
     },
@@ -189,7 +189,7 @@ Template.adminPanel.events({
         if (name) {
             var upd = {};
             upd[name] = "";
-            UltiSite.Settings.update(UltiSite.settings()._id, {
+            Meteor.call('updateSettings', {
                 $set: upd
             });
         }
@@ -199,11 +199,11 @@ Template.adminPanel.events({
     },
     'click .action-add-mailinglist': function (e, t) {
         e.preventDefault();
-        UltiSite.Settings.update(UltiSite.settings()._id, { $push: { mailingListConfigs: { id: Random.id() } } });
+        Meteor.call('updateSettings', { $push: { mailingListConfigs: { id: Random.id() } } });
     },
     'click .action-remove-mailinglist': function (e, t) {
 
-        UltiSite.Settings.update(UltiSite.settings()._id, { $pull: { mailingListConfigs: { id: this.id } } });
+        Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: this.id } } });
     }
 });
 
@@ -212,8 +212,8 @@ AutoForm.hooks({
         // Called when any submit operation succeeds
         onSubmit: function (insertDoc, updateDoc, currentDoc) {
             console.log(insertDoc, currentDoc);
-            UltiSite.Settings.update(UltiSite.settings()._id, { $pull: { mailingListConfigs: { id: currentDoc.id } } });
-            UltiSite.Settings.update(UltiSite.settings()._id, { $push: { mailingListConfigs: insertDoc } }, (err, res) => {
+            Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: currentDoc.id } } });
+            Meteor.call('updateSettings', { $push: { mailingListConfigs: insertDoc } }, (err, res) => {
                 this.done(err);
             });
             return false;

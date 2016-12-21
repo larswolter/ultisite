@@ -12,14 +12,12 @@ UltiSite.renderMailTemplate = function(layout,source,context){
 Meteor.startup(function() {
     UltiSite.Nodemailer = nodemailer; 
     UltiSite.Mail = {};
-    UltiSite.Settings.find().forEach(function(club) {
-        setupMailServer(club);
-    });
+    setupMailServer(UltiSite.settings());
 });
 
 Meteor.methods({
     updateMailserver: function() {
-        setupMailServer(UltiSite.settings(this.connection));
+        setupMailServer(UltiSite.settings());
     }
 });
 

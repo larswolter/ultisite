@@ -1,16 +1,11 @@
+
+
 Template.startImageCarousel.onCreated(function () {
-    UltiSite.subscribeFiles(UltiSite.Settings.findOne({}).wikiStart);
 });
 
 Template.startImageCarousel.helpers({
     logos: function () {
-        return UltiSite.Images.find({
-            associated: UltiSite.Settings.findOne({}).wikiStart
-        }).map(function (img) {
-            return img.url({
-                store: 'images'
-            });
-        });
+        return [];
     }
 });
 

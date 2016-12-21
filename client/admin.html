@@ -119,9 +119,7 @@
                             <div class="col-sm-2">
                                 <button class="btn btn-default image-setting" data-name="{{this.name}}" type="button">
                                     {{this.name}}
-                                    {{#with imageLookup this.id}}
-                                    <div style="background-image:url('{{this.url 120}}')" ></div>
-                                    {{/with}}
+                                    <div style="background-image:url('{{imageUrl this.id 120}}')" ></div>
                                 </button>
                             </div>
                             {{/each}}

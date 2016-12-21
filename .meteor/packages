@@ -13,9 +13,6 @@ accounts-password@1.3.3
 momentjs:moment
 mizzao:user-status
 reywood:publish-composite
-cfs:standard-packages
-cfs:gridfs
-cfs:ui
 aldeed:autoform
 aldeed:simple-schema
 reactive-var@1.0.11

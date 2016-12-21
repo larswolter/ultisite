@@ -69,12 +69,6 @@ FlowRouter.route('/files/:_id?', {
     }
 });
 
-FlowRouter.route('/cfs/files/documents/:_id/:name', {
-    triggersEnter: [function (context, redirect) {
-        window.location = context.path;
-    }]
-});
-
 FlowRouter.route('/practices/:edit?', {
     name: "practices",
     action: function () {

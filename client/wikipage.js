@@ -14,7 +14,21 @@ Template.wikipage.onCreated(function() {
                 Meteor.subscribe('ContentVersion',this.contentVersion.get());
             this.subscribe('WikiPage',FlowRouter.getParam('_id'));
         });
-
+    this.autorun(()=> {
+        if(!this.withoutControls) {
+            let page = UltiSite.WikiPages.findOne({
+                $or: [{
+                    name: FlowRouter.getParam('_id')
+                }, {
+                    _id: FlowRouter.getParam('_id')
+                }]
+            });
+            if(page) {
+                this.subscribe('WikiPageDiscussions',page._id);
+                this.subscribe('ContentVersions',page._id);
+            }
+        }        
+    });
     this.autorun(()=> {
         let page = UltiSite.WikiPages.findOne({
             $or: [{

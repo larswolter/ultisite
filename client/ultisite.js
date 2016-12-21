@@ -22,8 +22,6 @@ $.notify.defaults({
 
 UltiSite.screenSize = new ReactiveVar(window.innerWidth);
 
-Meteor.subscribe("Settings");
-
 Meteor.startup(function () {
 
     Tracker.autorun(function () {

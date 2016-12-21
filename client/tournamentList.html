@@ -223,8 +223,8 @@
             </div>
             {{#if over}}
             <div class="col-xs-8">
-                {{#if teamfotoUrl}}
-                <div class="detail-team-image pull-right" style="background-image:url('{{teamfotoUrl}}'); text-center;width:40px;height:30px">
+                {{#if image}}
+                <div class="detail-team-image pull-right" style="background-image:url('{{imageUrl image 60}}'); text-center;width:40px;height:30px">
                 </div>
                 {{/if}}
                 <span class="fa fa-{{divisionIcon}}  fa-fw"></span> {{name}} auf Platz {{results.placement}} 
