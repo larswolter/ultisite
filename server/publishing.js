@@ -103,8 +103,9 @@ Meteor.startup(function () {
     Meteor.publish("Events", function () {
         if (!this.userId)
             return undefined;
-        return UltiSite.Events.find({}, {
-            limit: 40,
+        return UltiSite.Events.find({
+        }, {
+            limit: 30,
             sort: { 'detail.time': -1 }
         });
     });
@@ -182,7 +183,7 @@ Meteor.startup(function () {
     Meteor.publish("WikiPageDiscussions", function (id) {
         return UltiSite.WikiPageDiscussions.find({pageId: id});
     });
-    Meteor.publish("WikiPageVersions", function (id) {
+    Meteor.publish("ContentVersions", function (id) {
         return UltiSite.ContentVersions.find({associated: id}, { fields: { content: 0 } });
     });
     Meteor.publish("WikiPage", function (id) {

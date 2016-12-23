@@ -4,6 +4,7 @@ const gridFS=Grid(UltiSite.Documents.rawDatabase(),Npm.require('mongodb'),'docum
 
 
 Meteor.startup(function(){
+    console.log('starting migrations...');
     // Update participants without safestateDate
 /*
     UltiSite.Participants.find({safeStateDate:{$exists:false}}).forEach((p)=>{
@@ -110,4 +111,5 @@ Meteor.startup(function(){
                 }
             });
     });
+    console.log('migrations finished');
 });

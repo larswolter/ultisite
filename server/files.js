@@ -55,16 +55,26 @@ Meteor.methods({
                 const existing = UltiSite.Images.findOne(metadata._id);
                 fs.appendFileSync(os.tmpdir()+'/'+metadata._id+'.image.temp', base64, {encoding:'base64'});
                 imgId = existing._id;
-                UltiSite.Images.update(imgId,{$set:{progress:metadata.progress}});
+                UltiSite.Images.update(imgId,{$set:{progress:Math.floor(metadata.progress)}});
             }
             if(lastPackage) {
+                const fileStats = fs.statSync(os.tmpdir()+'/'+imgId+'.image.temp');
                 fs.readFile(os.tmpdir()+'/'+imgId+'.image.temp', {encoding:'base64'},Meteor.bindEnvironment(function(err,data) {
                     if(err) {
                         console.log(err);
                         throw err;
                     }
-                    UltiSite.Images.update(imgId,{$set:{base64:data},$unset:{progress:1}});
+                    UltiSite.Images.update(imgId,{$set:{base64:data,size:fileStats.size},$unset:{progress:1}});
                     fs.unlink(os.tmpdir()+'/'+imgId+'.image.temp');
+                    const ref = UltiSite.getAnyById(metadata.associated[0]);
+                    Meteor.call("addEvent", {
+                        type: "files",
+                        _id: metadata.associated[0],
+                        text: 'Neues Bild hinzugefügt',
+                        name: ref && ref.name,
+                        additional: ref && ref.type,
+                        images: [imgId]
+                    });                    
                 }));
             }
             return imgId;
@@ -99,6 +109,14 @@ Meteor.methods({
                     wstream.on('close',Meteor.bindEnvironment(function(fileObj) {
                         UltiSite.Documents.update(docId,{$set:{gridId:fileObj._id+''},$unset:{progress:1}});
                         fs.unlink(os.tmpdir()+'/'+docId+'.doc.temp');
+                        const ref = UltiSite.getAnyById(metadata.associated[0]);
+                        Meteor.call("addEvent", {
+                            type: "files",
+                            _id: metadata.associated[0],
+                            text: 'Neues Dokument hinzugefügt',
+                            name: ref && ref.name,
+                            additional: ref && ref.type
+                        });                    
                     }));
                     fs.createReadStream(os.tmpdir()+'/'+docId+'.doc.temp', {encoding:'base64'}).pipe(wstream);
                 }));

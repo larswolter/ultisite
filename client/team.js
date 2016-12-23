@@ -508,7 +508,7 @@ Template.teamReport.events({
                     }
                 });
             }
-            UltiSite.Teams.update(teamId,{$set:file && file._id});
+            UltiSite.Teams.update(teamId,{$set:{image:file && file._id}});
             UltiSite.fileBrowserHideDialog();
         });
     },

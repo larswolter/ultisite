@@ -21,17 +21,9 @@ Template.eventList.onCreated(function () {
 });
 
 Template.eventItem.onCreated(function () {
-    this.subscribe('files', this.data._id);
 });
 
 Template.eventItem.helpers({
-    fileObj: function () {
-        var file = UltiSite.Images.findOne({
-            _id: this + ""
-        });
-        console.log("EventItem:", file);
-        return file;
-    },
 });
 
 Template.eventItem.events({

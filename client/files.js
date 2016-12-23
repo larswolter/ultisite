@@ -126,16 +126,6 @@ var fileUploadEvents = {
             metadata.type = file.type;
             
             uploadQueue.push({file,metadata});
-            /*
-                Meteor.call("addEvent", {
-                    type: "files",
-                    _id: newFile.associated[0],
-                    text: 'Neues Bild hinzugefügt',
-                    name:UltiSite.getAnyById(newFile.associated[0]).name,
-                    additional:'Dokumentordner',
-                    images: [fileObj._id]
-                });
-                */
         }
         UltiSite.triggerUpload();
     }
@@ -219,7 +209,9 @@ Template.fileBrowserItem.events({
     },
     'click .remove-file': function(e, t) {
         e.preventDefault();
-        Meteor.call('removeFile',this._id);
+        UltiSite.confirmDialog(`Willst du die Datei ${this.name} wirklich löschen?`,() => {         
+            Meteor.call('removeFile',this._id);
+        });
     },
     'click .edit-file': function(e) {
         e.preventDefault();
@@ -462,17 +454,8 @@ Template.fileBrowserGalleryItem.events({
     },
     'click .remove-file': function(e, t) {
         e.preventDefault();
-        let name = this.file.name;
-        console.log('removinf file '+name);
-        this.file.remove((err)=>{
-            if(!err)
-                Meteor.call("addEvent", {
-                    type: "files",
-                    _id: this.file.associated[0],
-                    text: 'Datei entfernt',
-                    name: name,
-                    additional:'Datei'
-                });
+        UltiSite.confirmDialog(`Willst du die Datei ${this.file.name} wirklich löschen?`,() => {         
+            Meteor.call('removeFile',this.file._id);
         });
     },
     'click .edit-file': function(e) {

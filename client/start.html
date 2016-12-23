@@ -50,7 +50,7 @@
                       {{>eventItem}}
                 </span>
             {{else}}
-                    {{>Empty}}
+                    {{>EmptySmall}}
             {{/each}}
         </div>
         {{else}}
@@ -74,9 +74,7 @@
                 <br />
                 {{#each images}}
                     <a href="{{pathFor route='image' _id=this associated=../../groupBy}}">
-                        {{#with fileObj}}
-                            <img src="{{url 32}}" class="image"/>
-                        {{/with}}
+                        <img src="{{imageUrl this 32}}" class="image"/>
                     </a>
                 {{/each}}
             {{/if}}

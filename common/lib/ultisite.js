@@ -271,7 +271,7 @@ _.extend(UltiSite, {
         if(Meteor.isClient)
             return Meteor.settings.public;
         else
-            return Meteor.settings;
+            return UltiSite.Settings.findOne() || {};
     },
     isAdmin: function (userid, con) {
         if (!userid && Meteor.isServer)

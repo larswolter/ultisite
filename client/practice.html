@@ -57,9 +57,9 @@
                         <div class="form-group">
                             <label>Vorschaubild</label>
                             <div>
-                                {{#with mapImage}}
-                                    <img class="practice-map-preview-image" src="{{url}}">
-                                {{/with}}
+                                {{#if mapImage}}
+                                    <img class="practice-map-preview-image" src="{{imageUrl mapImage}}">
+                                {{/if}}
                             </div>
                         </div>
                         <div class="form-group">
@@ -196,9 +196,9 @@
                 <small>{{skillLevel}}</small>
             </h4>
         </div>
-        {{#with mapImage}}
-            <div class="practice-map-image" style="background-image:url('{{url}}')"></div>
-        {{/with}}
+        {{#if mapImage}}
+            <div class="practice-map-image" style="background-image:url('{{imageUrl mapImage}}')"></div>
+        {{/if}}
         <div class="caption">
             Trainer: {{trainer}}
             <br />

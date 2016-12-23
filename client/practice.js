@@ -9,19 +9,12 @@ Meteor.startup(function () {
 });
 
 Template.practice.created = function () {
-    this.subscribe(this.data._id);
-    this.subscribe("WikiPage", UltiSite.settings().wikiPractice);
 };
 
 Template.practiceEdit.onCreated(function () {});
 
 
 Template.practiceEdit.helpers({
-    mapImage: function () {
-        return UltiSite.Images.findOne({
-            associated: this._id
-        });
-    },
     mapClickCallback:function() {
         var template = Template.instance();
         return function(geocoords) {
@@ -43,9 +36,10 @@ Template.practiceEdit.helpers({
             fsFile.name = "practice-" + self._id;
             fsFile.tags = ['Karte', 'Training'];
             fsFile.creator = Meteor.userId();
-            UltiSite.Images.insert(fsFile, function (err) {
+            UltiSite.Images.insert(fsFile, function (err, res) {
                 if (err) console.log(err);
-                else console.log("saved image");
+                else 
+                    UltiSite.Practices.update(self._id,{$set:{mapImage:res}});
             });
         };
     },
@@ -202,13 +196,6 @@ Template.practiceSmall.events({
 
 
 Template.practice.helpers({
-    mapImage: function () {
-        var i = UltiSite.Images.findOne({
-            associated: this._id
-        });
-        console.log("Image:" + i);
-        return i;
-    },
     weekdayText: function () {
         console.log(this);
         switch (Number(this.weekday)) {

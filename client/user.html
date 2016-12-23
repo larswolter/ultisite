@@ -280,7 +280,7 @@
                                 <small>Auf Bildern</small>
                                 <div class="image-array">
                                     {{#each imagesWithUser}}
-                                    <a href="{{pathFor route='image' _id=this._id associated=../_id}}" style="background-image:url('{{url 160}}')"></a>
+                                    <a href="{{pathFor route='image' _id=this._id associated=../_id}}" style="background-image:url('{{imageUrl _id 160}}')"></a>
                                     {{/each}}
                                 </div>
                             </li>
