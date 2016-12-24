@@ -23,6 +23,14 @@ moment.locale("de", {
 Ground.Collection(Meteor.users, {
     
 });
+if(Meteor.isServer) {
+    const appCacheConfig = {
+        onlineOnly: ['/icons/countries/']
+    };
+    if(Meteor.absoluteUrl('').indexOf('localhost') > -1)
+        appCacheConfig.chrome = false;
+    Meteor.AppCache.config(appCacheConfig);
+}
 
 var subCallbacks = {
     onReady: function () {

@@ -57,7 +57,8 @@ Meteor.startup(function () {
             return eventList.length + " Digest events send to " + result + " users";
         }
     });
-//    SyncedCron.start();
+    if(Meteor.absoluteUrl('').indexOf('localhost') === -1)
+        SyncedCron.start();
 });
 
 
