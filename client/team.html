@@ -2,10 +2,10 @@
     <div class="panel panel-default">
         <div class="panel-heading tournament-heading">
             {{#if isMyTeam}}
-            <div class="btn-group visible-xs visible-sm right-aligned-buttons">
-                <div class="dropdown">
-                    <button aria-expanded="false" class="btn btn-link dropdown-toggle" data-toggle="dropdown" type="button">
-                        <span class="fa fa-ellipsis-v"></span>
+            <div class="btn-group visible-xs visible-sm">
+                <div class="dropdown pull-right">
+                    <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+                        <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right" role="menu">
                         <li>
@@ -410,10 +410,10 @@
         <div class="panel panel-default">
             <div class="panel-heading tournament-heading">
                 {{#unless noChangeRights}}
-                    <div class="btn-group visible-xs visible-sm right-aligned-buttons">
+                    <span class="visible-xs-inline pull-right">
                         <div class="dropdown">
-                            <button aria-expanded="false" class="btn btn-link dropdown-toggle" data-toggle="dropdown" type="button">
-                                <span class="fa fa-ellipsis-v"></span>
+                            <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+                                <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-right" role="menu">
                                 {{#if teamRemovable}}
@@ -445,10 +445,18 @@
                                     </a>
                                 {{/if}}
                                 </li>
+                                <li>
+                                    <a data-target="#teamHistoricView" data-team-id="{{_id}}" data-toggle="modal" href="#">
+                                        <span class="fa fa-line-chart"></span> Historie
+                                    </a>
+                                </li>                                
                             </ul>
                         </div>
-                    </div>
+                    </span>
                     <span class="hidden-xs">
+                    <button data-target="#teamHistoricView" data-team-id="{{_id}}" data-toggle="modal" class="btn btn-default pull-right">
+                        <span class="fa fa-line-chart"></span> Historie
+                    </button>
                     {{#if teamRemovable}}
                         <button class="btn btn-danger action-delete-team pull-right" title="Team löschen">
                             Team löschen

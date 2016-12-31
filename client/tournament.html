@@ -124,7 +124,7 @@
         <div class="panel panel-default">
             <div class="panel-heading tournament-heading">
                 {{#if currentUser}}
-                <div class="right-aligned-buttons hidden-xs hidden-sm">
+                <div class="hidden-xs hidden-sm pull-right">
                 {{! TODO: Mein mitspiel status button}}
 
                     <div>
@@ -142,10 +142,10 @@
                         {{/unless}}
                     </div>
                 </div>
-                <div class="right-aligned-buttons btn-group visible-xs visible-sm">
+                <div class="btn-group visible-xs visible-sm pull-right text-right">
                     <div class="dropdown">
-                    <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        <span class="fa fa-ellipsis-v"></span>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right" role="menu">
                         <li>
@@ -169,13 +169,15 @@
                     </div>
                 </div>
                 {{/if}}
-                {{dayOfDate date}}.{{monthOfDate date}}.
-                <strong>{{name}}</strong>
-                {{#if address}}
-                    in {{address.city}}
-                    <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" style="height:24px;"/>
-                {{/if}}
-                {{category}}
+                <span class="btn-height-text">
+                    {{dayOfDate date}}.{{monthOfDate date}}.
+                    <strong>{{name}}</strong>
+                    {{#if address}}
+                        in {{address.city}}
+                        <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" style="height:24px;"/>
+                    {{/if}}
+                    {{category}}
+                </span>
             </div>
             <div class="panel-body {{#unless tournamentBodyVisible}}compressed{{/unless}}" id="turnierBody">
                 <div class="row">
@@ -296,7 +298,7 @@
             </div>
         </div>
         {{#if over}}
-            {{>fileBrowserGallery this}}
+            {{>fileBrowser inline=true}}
             <div class="panel panel-default">
                 <div class="panel-heading element-relative">
                     {{#if currentUser}}

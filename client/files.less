@@ -1,4 +1,5 @@
 @import "lib/custom.bootstrap.import.less";
+
 .folder-tree-item .folder-tree-item {
     padding-left: 20px;
 }
@@ -24,8 +25,33 @@
 #imageViewDialog .modal-dialog {
     width: 95%;
 }
-.modal-dialog .file-browser-gallery-item li a.edit-file {
-    display:none;
+.modal-dialog {
+    .nav-tabs {
+        >li.active {
+            >a.action-switch-source {
+                background-color: @panel-default-heading-bg;
+            }
+        }
+    }
+    .tab-content {
+        box-shadow:none;
+        .panel.panel-default {
+            border-top:none;
+        }
+    }
+    .file-browser-gallery-item li a.edit-file {
+        display:none;
+    }
+}
+.file-browser-gallery {
+    .file-uploader {
+        width: 162px;
+        height: 160px;
+        float: left;
+        margin: 5px;
+        text-align: center;
+        border: 3px dashed lightgray;
+    }
 }
 
 .file-browser-gallery-item {
@@ -34,28 +60,31 @@
     float: left;
     margin: 5px;
     border: 1px solid lightgray;
+    .title {
+        text-align: center;
+        font-size: 0.8em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .icon-image {
+        font-size: 100px;
+        color: @text-muted;
+        text-align: center;
+    }
+    .image {
+        width: 160px;
+        height: 135px;
+        margin: 1px;
+        border: none;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
 }
-
 .file-browser-gallery-item:hover {
     cursor: pointer;
     background-color: lightgray;
 }
-
-.file-browser-gallery-item .title {
-    text-align: center;
-    font-size: 0.8em;
-}
-
-.file-browser-gallery-item .image {
-    width: 160px;
-    height: 135px;
-    margin: 1px;
-    border: none;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-
 .new-gallery-item {
     width: 162px;
     height: 160px;

@@ -66,13 +66,15 @@ Meteor.methods({
                     }
                     UltiSite.Images.update(imgId,{$set:{base64:data,size:fileStats.size},$unset:{progress:1}});
                     fs.unlink(os.tmpdir()+'/'+imgId+'.image.temp');
-                    const ref = UltiSite.getAnyById(metadata.associated[0]);
+                    let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
+                    if(!ref || ref.length === 0)
+                        ref = [{type:'files',name:'Bilder'}];
                     Meteor.call("addEvent", {
-                        type: "files",
+                        type: ref[0].type,
                         _id: metadata.associated[0],
                         text: 'Neues Bild hinzugefügt',
-                        name: ref && ref.name,
-                        additional: ref && ref.type,
+                        name: ref[0].name,
+                        additional: ref[0].type,
                         images: [imgId]
                     });                    
                 }));
@@ -94,9 +96,10 @@ Meteor.methods({
                 const existing = UltiSite.Documents.findOne(metadata._id);
                 fs.appendFileSync(os.tmpdir()+'/'+metadata._id+'.doc.temp', base64, {encoding:'base64'});
                 docId = existing._id;
-                UltiSite.Documents.update(docId,{$set:{progress:metadata.progress}});
+                UltiSite.Documents.update(docId,{$set:{progress:Math.floor(metadata.progress)}});
             }
             if(lastPackage) {
+                const fileStats = fs.statSync(os.tmpdir()+'/'+docId+'.doc.temp');
                 gridFS.createWriteStream({
                     filename: metadata.name,
                     content_type: metadata.type
@@ -107,15 +110,18 @@ Meteor.methods({
                         throw err;
                     }
                     wstream.on('close',Meteor.bindEnvironment(function(fileObj) {
-                        UltiSite.Documents.update(docId,{$set:{gridId:fileObj._id+''},$unset:{progress:1}});
+                        UltiSite.Documents.update(docId,{$set:{gridId:fileObj._id+'',size:fileStats.size},$unset:{progress:1}});
                         fs.unlink(os.tmpdir()+'/'+docId+'.doc.temp');
-                        const ref = UltiSite.getAnyById(metadata.associated[0]);
+
+                        let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
+                        if(!ref || ref.length === 0)
+                            ref = [{type:'files',name:'Dokumente'}];
                         Meteor.call("addEvent", {
-                            type: "files",
+                            type: ref[0].type,
                             _id: metadata.associated[0],
                             text: 'Neues Dokument hinzugefügt',
-                            name: ref && ref.name,
-                            additional: ref && ref.type
+                            name: ref[0].name,
+                            additional: ref[0].type
                         });                    
                     }));
                     fs.createReadStream(os.tmpdir()+'/'+docId+'.doc.temp', {encoding:'base64'}).pipe(wstream);

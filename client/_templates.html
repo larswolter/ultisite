@@ -47,7 +47,11 @@
 
 <template name="Empty">
 	<div class="text-center text-muted" style="margin:25px;">
-		<span class="fa fa-list fa-3x"></span>
+		{{#if icon}}
+			<span class="fa fa-{{icon}} fa-3x"></span>
+		{{else}}
+			<span class="fa fa-list fa-3x"></span>
+		{{/if}}
 		<h2>
 			{{#if text}}{{text}}{{else}}Keine Einträge vorhanden{{/if}}
 		</h2>

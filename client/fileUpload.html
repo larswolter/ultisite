@@ -1,0 +1,18 @@
+
+
+<template name="fileUploader">
+    <button type="button" class="btn btn-default btn-block file-uploader {{#if dragndrop}}drag-here{{/if}} add-file">
+        {{#if uploading}}
+            <span class="fa fa-spin fa-spinner"></span> Verarbeite Dateien
+        {{else}}
+            Datei(en)
+            {{#if dragndrop}}
+                hierher ziehen, oder
+            {{/if}}
+            auswählen
+        {{/if}}
+    </button>
+    <form class="form" style="display:none">
+        <input type="file" class="file-upload" multiple="true" />
+    </form>
+</template>

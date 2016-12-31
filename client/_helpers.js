@@ -57,7 +57,7 @@ Meteor.startup(function () {
         return UltiSite.Images.findOne(id);
     });
     Template.registerHelper("imageUrl", function (id, size) {
-        return '/_image?imageId='+id+(isNaN(size)?'':'&size='+size);
+        return '/_image?imageId='+id+((size===undefined) || (typeof size === 'object')?'':'&size='+size);
     });
     Template.registerHelper("getPageSearch", function (id) {
         if (!Meteor.userId())

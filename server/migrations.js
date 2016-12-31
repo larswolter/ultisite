@@ -66,6 +66,14 @@ Meteor.startup(function(){
         UltiSite.Images.update(img._id,{$set:{size:(img.base64.length - 814) / 1.37}});
     });
   */
+
+    Meteor.users.find({'profile.avatar':{$exists:false}}).forEach((u)=>{
+        const uImg = UltiSite.Images.findOne({name:'user-'+u._id});
+        if(uImg) {
+           Meteor.users.update(u._id,{$set:{'profile.avatar':uImg._id}});
+        }
+    });
+
     UltiSite.Teams.find({image:{$exists:false}}).forEach((t)=>{
         const image = UltiSite.Images.findOne({associated:t._id});
         if(image)

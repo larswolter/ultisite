@@ -203,13 +203,12 @@
             <div class="col-xs-2 col-sm-2 col-md-1">
                 {{dayOfDate date}}.{{monthOfDate date}}.
             </div>
-            <div class="col-xs-8 col-sm-8 col-md-10 cutoff-text">
+            <div class="col-xs-10 col-md-11 cutoff-text">
+                {{#if over}}
+                    <span class="badge pull-right" title="Anzahl Berichte">{{reports.length}}</span> 
+                {{/if}}
                 <strong>{{name}}</strong> in {{address.city}}
                 <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="hidden-xs"/>
-            </div>
-            <div class="col-xs-2 col-sm-2 col-md-1 cutoff-text">
-                {{#if over}}
-                <span class="badge" title="Anzahl Berichte">{{reports.length}}</span> {{else}} {{#each tags}}<span class="fa fa-{{this}}"></span>{{/each}} {{/if}}
             </div>
         </div>
         {{#each teaminfo}}
@@ -224,7 +223,7 @@
             {{#if over}}
             <div class="col-xs-8">
                 {{#if image}}
-                <div class="detail-team-image pull-right" style="background-image:url('{{imageUrl image 60}}'); text-center;width:40px;height:30px">
+                <div class="detail-team-image pull-right" style="background-image:url('{{imageUrl image '80x60'}}'); text-center;width:40px;height:30px">
                 </div>
                 {{/if}}
                 <span class="fa fa-{{divisionIcon}}  fa-fw"></span> {{name}} auf Platz {{results.placement}} 

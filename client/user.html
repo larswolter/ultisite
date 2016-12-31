@@ -27,12 +27,11 @@
         <div class="user-display {{#if isEditable}}opt-is-editable{{/if}}">
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
-                    <div class="thumbnail" style="background-image:url('{{userImage}}')">
-                        <h4>{{getAlias}}</h4>
+                    <div class="thumbnail" style="background-image:url('{{#if profile.avatar}}{{imageUrl profile.avatar 800}}{{else}}/placeholder/player.svg{{/if}}')">
+                        <h4>{{username}}</h4>
                         <button class="btn btn-default btn-xs btn-edit-image" type="button">
                             <span class="fa fa-edit"></span>
                         </button>
-                        <input class="user-image" style="display:none" type="file" />
                     </div>
                     <div class="panel panel-default">
                         <ul class="list-group user-base">

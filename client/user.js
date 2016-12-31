@@ -20,24 +20,6 @@ var userHelper = {
             return true;
         return false;
     },
-    userImage: function () {
-        var userImageFile = UltiSite.Images.findOne({
-            "original.name": "user-" + this._id
-        });
-        if (userImageFile)
-            return userImageFile.url({
-                store: 'previews'
-            });
-        return "/placeholder/player.svg";
-    },
-    userImageThumb: function () {
-        var userImageFile = UltiSite.Images.findOne({
-            "original.name": "user-" + this._id
-        });
-        if (userImageFile)
-            return userImageFile.url(160);
-        return undefined;
-    },
     imagesWithUser: function () {
         return UltiSite.Images.find({
             associated: this._id
@@ -166,8 +148,19 @@ Template.user.onCreated(function () {
 
 Template.user.events({
     'click .btn-edit-image': function (e, t) {
-        t.$('input.user-image').trigger("click");
-        console.log("clicked");
+        e.preventDefault();
+        const userId = FlowRouter.getParam('_id');
+        UltiSite.fileBrowserShowDialog(userId, function (file) {
+            if (file)
+                UltiSite.Images.update(file._id, {
+                    $addToSet: {
+                        associated: userId,
+                        tags: 'Mitglieder'
+                    }
+                });
+            Meteor.users.update(userId,{$set:{'profile.avatar':file && file._id}});
+            UltiSite.fileBrowserHideDialog();
+        });
     },
     'click .user-contacts .btn-remove': function (e, t) {
         e.preventDefault();
@@ -297,21 +290,6 @@ Template.user.events({
                 if (name === 'profile.sex')
                     Meteor.call('correctParticipants', userId);
             }));
-    },
-    'change input.user-image': function (e, t) {
-        UltiSite.Images.find({
-            associated: FlowRouter.getParam('_id')
-        }).forEach(function (img) {
-            img.remove();
-        });
-/* TODO: image upload
-            const fsFile = {};
-            fsFile.base64 = canvas.toDataURL('image/jpg', 0.5);
-            fsFile.associated = [FlowRouter.getParam('_id')];
-            fsFile.associatedType = "user";
-            fsFile.name = "user-" + FlowRouter.getParam('_id');
-            UltiSite.Images.insert(fsFile, UltiSite.userFeedbackFunction('Bild speichern'));
-            */
     },
     'click .action-check-notification-permissions': function (e, t) {
         if (!("Notification" in window))

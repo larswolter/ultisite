@@ -3,7 +3,7 @@
     <div class="container-fluid image-viewer">
         <div class="row">
             <div class="col-xs-12 col-sm-8 start-content">
-                <img class="" src="{{url 800}}">
+                <img class="" src="{{imageUrl this._id 800}}">
                 {{#if prevImage}}
                 <a href={{prevImage}} class="image-control prev">
                     <span class="fa fa-chevron-left"></span>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="panel-body">
                         <div>
-                            <a href="{{url}}" target="_top">
+                            <a href="{{imageUrl this._id}}" target="_blank">
                                 <span class="fa fa-download"></span> Runterladen
                             </a>                
                         </div>
@@ -48,11 +48,21 @@
                                     <a href="{{link}}">{{this.name}}</a><button data-id="{{_id}}" class="btn btn-link remove-associated" style="padding:3px 3px"><span class="fa fa-close"></span></button>
                                     &nbsp;&nbsp;
                                 {{/if}}
+                            {{else}}
+                                <span class="text-mute">keine</span>
                             {{/each}}
                             <br />
                             Weitere {{settings.multiplePlayers}} hinzufügen:
                             {{>searchField searchType="Users" onResultClick=associateWithUser}}
                         </div>
+                        {{#if exif}}
+                        <div>
+                            <h4>
+                                Weitere Bildinformationen
+                            </h4>
+                            
+                        </div>
+                        {{/if}}
                     </div>
                 </div>
             </div>

@@ -7,6 +7,34 @@ Meteor.startup(function () {
         (UltiSite.settings().siteSubTitle ? ' - ' + UltiSite.settings().siteSubTitle : '');
     $('meta[name=application-name]').attr('content', document.title);
     $('meta[name=apple-mobile-web-app-name]').attr('content', document.title);
+
+    $( window ).scroll(()=> {
+        const imgHeight = Number(UltiSite.settings().titleImageHeight || 150);
+        if (UltiSite.screenSize.get() >= 768) {
+            const titleHeight = Math.max(0,imgHeight - $(window).scrollTop());
+            $('.page-content').css('padding-top',imgHeight + 90);
+            $('.title-image').css('height',titleHeight);
+        }
+        else {
+            $('.page-content').css('padding-top',60);
+            $('.title-image').css('height',0);
+        }
+    });    
+});
+
+Template.header.onRendered(function(){
+    this.autorun(()=>{
+        const imgHeight = Number(UltiSite.settings().titleImageHeight || 150);
+        if (UltiSite.screenSize.get() >= 768) {
+            const titleHeight = Math.max(0,imgHeight - $(window).scrollTop());
+            $('.page-content').css('padding-top', imgHeight+ 90);
+            $('.title-image').css('height',titleHeight);
+        }
+        else {
+            $('.page-content').css('padding-top',60);
+            $('.title-image').css('height',0);
+        }
+    });    
 });
 
 Template.header.events({

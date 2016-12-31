@@ -32,31 +32,6 @@ Meteor.startup(function () {
     window.onresize = function () {
         UltiSite.screenSize.set(window.innerWidth);
     };
-
-    $( window ).scroll(()=> {
-        const imgHeight = Number(UltiSite.settings().titleImageHeight || 150);
-        if (UltiSite.screenSize.get() >= 768) {
-            const titleHeight = Math.max(0,imgHeight - $(window).scrollTop());
-            $('.page-content').css('padding-top',imgHeight + 90);
-            $('.title-image').css('height',titleHeight);
-        }
-        else {
-            $('.page-content').css('padding-top',60);
-            $('.title-image').css('height',0);
-        }
-    });
-    Tracker.autorun(()=>{
-        const imgHeight = Number(UltiSite.settings().titleImageHeight || 150);
-        if (UltiSite.screenSize.get() >= 768) {
-            const titleHeight = Math.max(0,imgHeight - $(window).scrollTop());
-            $('.page-content').css('padding-top', imgHeight+ 90);
-            $('.title-image').css('height',titleHeight);
-        }
-        else {
-            $('.page-content').css('padding-top',60);
-            $('.title-image').css('height',0);
-        }
-    });
 });
 Template.baseLayout.helpers({
     dialogTemplates() {

@@ -29,38 +29,12 @@ Template.blog.onCreated(function () {
 });
 
 Template.blog.helpers({
-    imageUrl: function () {
-        var img = UltiSite.Images.findOne({
-            _id: getBlog().image
-        });
-        if(img)
-            return img.url({
-                store: 'previews'
-            });
-    },
-    thumbUrl: function () {
-        var img = UltiSite.Images.findOne({
-            _id: getBlog().image
-        });
-        if(img)
-            return img.url(120);
-    },
     blog: function () {
         return getBlog();
     }
 });
 
 Template.blogPreview.helpers({
-    imageUrl: function () {
-        if (!Template.instance().data.image)
-            return "";
-        var img = UltiSite.Images.findOne({
-            _id: Template.instance().data.image
-        });
-        if (img)
-            return img.url(120);
-        return "";
-    },
     blog: function () {
         return this;
     }
@@ -92,13 +66,6 @@ Template.blogUpdate.helpers({
     },
     imageId: function () {
         return activeImage.get();
-    },
-    imageUrl: function () {
-        var img = UltiSite.Images.findOne({
-            _id: activeImage.get()
-        });
-        if(img)
-            return img.url(120);
     },
     blog: function () {
         return getBlog();

@@ -19,8 +19,13 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
       resp.writeHead(200);
       resp.end(new Buffer(image.thumb[size], 'base64'));
     } else {
+        const scale=size.split('x').map(x=>Number(x));
+        if(scale.length===1)
+          scale.push(scale[0]);
+        console.log('resizing image', scale);
         sharp(new Buffer(image.base64, 'base64'))
-            .resize(Number(size))
+            .resize(scale[0],scale[1])
+            .max()
             .toBuffer()
             .then( data => {
                 resp.writeHead(200);

@@ -22,9 +22,11 @@
 					<div class="row user-list-item h5">
 						<div class="col-xs-12 col-sm-1">
 							Bild
+							<span class="fa fa-sort" data-sort="profile.avatar"></span>
 						</div>
 						<div class="col-xs-12 col-sm-2">
 							Name
+							<span class="fa fa-sort-desc" data-sort="username"></span>
 						</div>
 						<div class="col-xs-6 col-sm-2">
 							Vorname
@@ -86,8 +88,8 @@
 <template name="userItem">
 	<div class="row">
 		<div class="col-xs-3 col-sm-1">
-			{{#if userImageThumb}}
-				<img src="{{userImageThumb}}">
+			{{#if profile.avatar}}
+				<img src="{{imageUrl profile.avatar 160}}">
 			{{else}}
 				<img src="/placeholder/player.svg">
 			{{/if}}

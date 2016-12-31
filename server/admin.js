@@ -5,6 +5,9 @@ function syncSettings() {
     __meteor_runtime_config__.PUBLIC_SETTINGS = _.omit(Meteor.settings, (value, key) => {
         return key.toLowerCase().indexOf('password') >= 0;
     });
+    __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (UltiSite.Folders.findOne({
+        name: "/"
+    })||{})._id;
     WebAppInternals.generateBoilerplate();
     console.log('synced settings');
 }

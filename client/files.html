@@ -10,23 +10,24 @@
                 </div>
                 <div class="modal-body">
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="{{#if equals activePane "element"}}active{{/if}}"><a href="#" class="action-switch-source" data-value="element" role="tab">Elementordner</a></li>
-                        <li role="presentation" class="{{#if equals activePane "root"}}active{{/if}}"><a href="#" class="action-switch-source" data-value="root" role="tab">Allgemeine Dateien</a></li>
+                        <li role="presentation" class="{{#if equals activePane initialFolder}}active{{/if}}"><a href="#" class="action-switch-source" data-value="{{initialFolder}}" role="tab">Elementordner</a></li>
+                        <li role="presentation" class="{{#if equals activePane settings.rootFolderId}}active{{/if}}"><a href="#" class="action-switch-source" data-value="{{settings.rootFolderId}}" role="tab">Allgemeine Dateien</a></li>
                         <li role="presentation" class="{{#if equals activePane "search"}}active{{/if}}"><a href="#" class="action-switch-source" data-value="search" role="tab">Suche</a></li>
                         <li role="presentation" ><a href="#" class="action-select-nothing" role="tab">Nichts auswählen</a></li>
                     </ul>
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active">
-                            {{#if equals activePane "element"}}
-                                {{#with fileBrowserDialogSource}}
-                                    {{>fileBrowserGallery this}}
-                                {{/with}}
-                            {{/if}}
-                            {{#if equals activePane "root"}}
-                                {{>fileBrowserGallery fileRootFolder}}
-                            {{/if}}
                             {{#if equals activePane "search"}}
-                                {{>searchField searchType="Images" onResultClick=dialogSelection inlineResults=true}}
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        Suche nach Dateien
+                                    </div>
+                                    <div class="panel-body">
+                                        {{>searchField class="form-control" searchType="Images" onResultClick=dialogSelection inlineResults=true}}
+                                    </div>
+                                </div>
+                            {{else}}
+                                {{>fileBrowser inline=true}}
                             {{/if}}
                         </div>
                     </div>
@@ -37,202 +38,129 @@
 </template>
 
 <template name="fileBrowser">
-    <div class="container">
+    <div class="{{#unless inline}}container{{/unless}}">
         {{#with curFolder}}
-        <div class="row">
-            <div class="col-sm-4 col-xs-12 start-content">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Verzeichnisse
-                    </div>
-                    <div class="panel-body">
-                        {{>folderTreeItem name="Neue" _id="newest"}}
-                        {{>folderTreeItem name="Verwaiste" _id="abandoned"}}
-                        {{>folderTreeItem rootFolder}}
+        <div class="{{#unless ../inline}}row{{/unless}}">
+            {{#unless ../inline}}
+                <div class="col-sm-4 col-xs-12 start-content">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Verzeichnisse
+                        </div>
+                        <div class="panel-body">
+                            {{>folderTreeItem rootFolder}}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-8 col-xs-12 start-content">
-                {{#if this._id}}
-                    {{#if galleryView}}
-                        {{>fileBrowserGallery}}
-                    {{else}}
-                        {{>fileBrowserList}}
-                    {{/if}}
-                {{/if}}
-                {{#if equals this.special "newest"}}
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Neuste Dateien
-                        </div>
-                        <div class="list-group">
-                        {{#each newFiles}}
-                            {{>fileBrowserItem this}}
-                        {{else}}
-                        <div class="list-group-item text-center text-muted">
-                            <span class="fa fa-files-o fa-3x"></span><br>
-                            Keine Dateien
-                        </div>
-                        {{/each}}
-                        </div>
-                    </div>
-                {{/if}}
-                {{#if equals this.special "abandoned"}}
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Verwaiste Dateien
-                        </div>
-                        <div class="list-group">
-                        {{#each abandonedFiles}}
-                            {{>fileBrowserItem this}}
-                        {{else}}
-                            <div class="list-group-item text-center text-muted">
-                                <span class="fa fa-files-o fa-3x"></span><br>
-                                Keine Dateien
+            {{/unless}}
+            <div class="{{#unless ../inline}}col-sm-8 col-xs-12 start-content{{/unless}}">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-8 btn-height-text">
+                                {{#if ../inline}}
+                                    Dokumente und Bilder
+                                {{else}}
+                                    <span class="visible-lg-inline">Dateien in</span>
+                                    {{this.name}}
+                                {{/if}}
                             </div>
-                        {{/each}}
+                            <div class="col-xs-4 text-right">
+                                <button class="btn btn-default toggle-gallery-view">
+                                    <span class="fa fa-{{#if galleryView}}list{{else}}th{{/if}}"></span>
+                                    <span class="visible-lg-inline">
+                                        {{#if galleryView}}Liste{{else}}Symbole{{/if}}
+                                    </span>
+                                </button>
+                                <button class="btn btn-default btn-new-folder">
+                                    <span class="fa fa-folder-o"></span>
+                                    <span class="fa fa-plus"></span>
+                                    <span class="visible-lg-inline">Neuer Ordner</span>                                    
+                                </button>
+                            </div>
+                        {{#if readme}}
+                            <div class="col-xs-12">
+                                {{#markdown}}{{{readme}}}{{/markdown}}
+                            </div>
+                        {{/if}}
                         </div>
                     </div>
-                {{/if}}
+                    {{#if this._id}}
+                        {{#if Template.subscriptionsReady}}
+                            {{#if galleryView}}
+                                {{>fileBrowserGallery}}
+                            {{else}}
+                                {{>fileBrowserList}}
+                            {{/if}}
+                        {{else}}
+                            <div class="panel-body">
+                                {{>Loading}}
+                            </div>
+                        {{/if}}                    
+                    {{/if}}
+                </div>
             </div>
         </div>
         {{/with}}
     </div>
 </template>
 
-<template name="fileBrowserGallery">
+
+
+<template name="fileBrowserList">
+    <div class="list-group">
     {{#with folder}}
-    <div class="panel panel-default">
-        <div class="panel-heading element-relative">
-            <div class="right-aligned-buttons">
-                <button class="btn btn-default btn-new-folder">Neuer Ordner</button>
-            </div>
-            <span class="hidden-xs">Dateien in</span>
-            {{this.name}}
-        </div>
-        <div class="panel-body">
-            <div class="row">
-            {{#with parentFolder}}
-                <div class="file-browser-gallery-item">
-                    <span class="fa fa-folder-o"></span>
-                    <a class="folder-link" href="{{pathFor route='files' _id=this._id}}">..</a>
-                </div>
-            {{/with}}
-            {{#each folders}}
-                <div class="file-browser-gallery-item">
-                    <div class="btn-group pull-right" role="group">
-                      <button type="button"
-                              class="btn btn-default btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
-                         <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
-                        <li><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
-                      </ul>
+        {{#with parentFolder}}
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <span class="fa fa-folder-o"></span>
+                        <a class="folder-link" href="{{pathFor route='files' _id=this._id}}">..</a>
                     </div>
-                    <span class="fa fa-folder-o"></span>
+                </div>
+            </div>
+        {{/with}}
+        {{#each folders}}
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-sm-11 col-xs-10">
+                    <span class="fa fa-{{#if isParent}}level-up fa-flip-horizontal{{else}}folder-o{{/if}}"></span>
                     {{#if rename}}
                         <input value="{{name}}" data-id="{{_id}}" class="folder-name">
                     {{else}}
                         <a class="folder-link" href="{{pathFor route='files' _id=_id}}">{{name}}</a>
                     {{/if}}
                 </div>
-            {{/each}}
-            {{#each files}}
-                {{>fileBrowserGalleryItem file=this associatedId=../_id}}
-            {{/each}}
-            {{#if currentUser}}
-                <div class="new-gallery-item text-center">
-                    Dateien hierher ziehen, um sie hochzuladen
-                    <button href="#" class="btn btn-default add-file">Datei auswählen</button>
-                    <form class="form" style="display:none">
-                        <input type="file" class="fileInput" multiple="true">
-                    </form>
+                <div class="col-sm-1 col-xs-2">
+                    {{#unless isParent}}
+                    <div class="btn-group pull-right" role="group">
+                        <button type="button"
+                                class="btn btn-default btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
+                        <li><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
+                        </ul>
+                    </div>
+                    {{/unless}}
                 </div>
-            {{/if}}
             </div>
         </div>
-    </div>
-    {{else}}
-    Kein Dokumentenordner gewählt
+        {{/each}}
+        {{#each files}}
+            {{>fileBrowserItem this}}
+        {{else}}
+            <div class="list-group-item">
+                {{>Empty text="Keine Dateien" icon="files-o"}}
+            </div>
+        {{/each}}
+        {{#if currentUser}}
+        <div class="list-group-item text-center">
+            {{> fileUploader associatedId=_id}}
+        </div>
+        {{/if}}
     {{/with}}
-</template>
-
-
-<template name="fileBrowserList">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <button class="btn btn-default btn-sm pull-right btn-new-folder">Neuer Ordner</button>
-
-            <span class="xs-hidden">Dateien in</span>
-            {{folder.name}}
-            {{#if readme}}
-            <div>
-                {{#markdown}}{{{readme}}}{{/markdown}}
-            </div>
-            {{/if}}
-        </div>
-        <div class="list-group">
-        {{#with folder}}
-            {{#with parentFolder}}
-                <div class="list-group-item">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <span class="fa fa-folder-o"></span>
-                            <a class="folder-link" href="{{pathFor route='files' _id=this._id}}">..</a>
-                        </div>
-                    </div>
-                </div>
-            {{/with}}
-            {{#each folders}}
-            <div class="list-group-item">
-                <div class="row">
-                    <div class="col-sm-11 col-xs-10">
-                        <span class="fa fa-folder-o"></span>
-                        {{#if rename}}
-                            <input value="{{name}}" data-id="{{_id}}" class="folder-name">
-                        {{else}}
-                            <a class="folder-link" href="{{pathFor route='files' _id=_id}}">{{name}}</a>
-                        {{/if}}
-                    </div>
-                    <div class="col-sm-1 col-xs-2">
-                        <div class="btn-group pull-right" role="group">
-                          <button type="button"
-                                  class="btn btn-default btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
-                             <span class="caret"></span>
-                          </button>
-                          <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
-                            <li><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
-                          </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {{/each}}
-            {{#each files}}
-                {{>fileBrowserItem this}}
-            {{else}}
-                <div class="list-group-item">
-                    {{#if Template.subscriptionsReady}}
-                        {{>Empty text="Keine Dateien"}}
-                    {{else}}
-                        {{>Loading}}
-                    {{/if}}
-                </div>
-            {{/each}}
-            {{#if currentUser}}
-            <div class="list-group-item">
-                <div class="row text-center">
-                    <a href="#" class="add-file">Neues Dokument anlegen</a>
-                    <form class="form" style="display:none">
-                        <input type="file" class="fileInput" multiple="true">
-                    </form>
-                </div>
-            </div>
-            {{/if}}
-        {{/with}}
-        </div>
     </div>
 </template>
 
@@ -244,13 +172,21 @@
                         <span class="fa fa-spin fa-spinner fa-fw"></span>
                         {{progress}} % - {{name}}
                     {{else}}
-                        {{#with url 32}}
-                            <img src="{{this}}">
-                            <a href="{{pathFor route='image' _id=../_id associated=../../../_id}}">{{../name}}</a>
+                        {{#if url 32}}
+                            <img src="{{url 32}}">
+                            {{#if needsSelect}}
+                                {{name}}
+                            {{else}}
+                                <a href="{{pathFor route='image' _id=_id associated=../../_id}}">{{name}}</a>
+                            {{/if}}
                         {{else}}
                             <span class="fa {{icon}} fa-fw"></span>
-                            <a href="{{url}}" target="_top">{{name}}</a>
-                        {{/with}}
+                            {{#if needsSelect}}
+                                {{name}}
+                            {{else}}
+                                <a href="{{url}}" target="_top">{{name}}</a>
+                            {{/if}}
+                        {{/if}}
                     {{/if}}
                 </div>
                 <div class="col-sm-3 col-xs-6">
@@ -281,52 +217,16 @@
 </template>
 
 
-<template name="fileBrowserGalleryItem">
-    <div class="file-browser-gallery-item">
-        <div class="btn-group pull-right" role="group">
-          <button type="button"
-                  class="btn btn-default btn-sm dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
-             <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="{{file.url}}" target="_top"><span class="fa fa-download"></span> runterladen</a></li>
-            <li><a href="#" class="edit-file"><span class="fa fa-edit"></span> bearbeiten</a></li>
-            <li><a href="#" class="remove-file"><span class="fa fa-close"></span> löschen</a></li>
-              {{#each fileActions}}
-              <li><a href="#" class="custom-action" > {{text}}</a></li>
-              {{/each}}
-          </ul>
-        </div>
-        
-        {{#if file.progress}}
-            <div class="image text-center">
-                <span class="fa fa-spin fa-spinner fa-fw fa-2x"></span><br/>
-                {{file.progress}} %
-            </div>
-        {{else}}
-            {{#if file.isImage}}
-            <div class="image text-center" style="background-image:url('{{file.url 160}}');">
-            </div>
-            {{else}}
-            <div class="image text-center">
-                <span class="fa {{icon}}" style="font-size:3em"></span>
-            </div>
-            {{/if}}
-        {{/if}}
-        <div class="title">
-            {{file.name}}
-        </div>
-    </div>
-</template>
 
 <template name="folderTreeItem">
     <div class="folder-tree-item">
         {{#if isSelectedFolder}}
         <span class='fa fa-folder-open-o'></span>
+        <b><a href="{{pathFor route='files' _id=_id}}">{{name}}</a></b>
         {{else}}
         <span class='fa fa-folder-o'></span>
-        {{/if}}
         <a href="{{pathFor route='files' _id=_id}}">{{name}}</a>
+        {{/if}}
         {{#each folders}}
             {{>folderTreeItem}}
         {{/each}}
@@ -361,7 +261,7 @@
                         <span class="fa fa-close"></span>
                     </button>
                     <h4 class="modal-title" id="myModalLabel">
-                        {{original.name}}
+                        {{name}}
                     </h4>
                 </div>
                 <div class="modal-body">

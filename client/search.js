@@ -4,6 +4,8 @@ Template.searchField.created = function () {
 
 Template.searchField.events({
     'shown.bs.dropdown .dropdown-menu': function(e,t) {
+        t.$('.search-field').val("");
+        t.results.set(['Mind. zwei Zeichen']);
         t.$('.dropdown-menu input').focus();
     },
     'keyup .search-field': function (e, t) {
