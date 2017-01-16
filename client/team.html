@@ -578,7 +578,7 @@
                         {{username}}
                         <div class="blocks progress">
                             {{#each historicBlocks}}
-                            <div class='progress-bar {{stateClass}}' style='width:{{width}}%;'>
+                            <div class='progress-bar {{stateClass}}' style='width:{{width}}%;{{#if equals @index 0}}margin-left:{{offset}}%{{/if}}'>
                             </div>
                             {{/each}}
                         </div>

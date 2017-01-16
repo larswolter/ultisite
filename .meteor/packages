@@ -16,7 +16,6 @@ reywood:publish-composite
 aldeed:autoform
 aldeed:simple-schema
 reactive-var@1.0.11
-raix:localforage
 fortawesome:fontawesome
 deps@1.0.12
 ground:db

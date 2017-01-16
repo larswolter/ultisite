@@ -75,6 +75,9 @@ Meteor.startup(function () {
                 return "Blogs";
         }
     });
+    Template.registerHelper("routeName", function () {
+        return FlowRouter.getRouteName();
+    });
     Template.registerHelper("sitePageHeader", function () {
         var name = FlowRouter.getRouteName();
         switch (name) {
@@ -97,7 +100,7 @@ Meteor.startup(function () {
                     return { name: user.username, back: "Mitglieder", link: "/users" };
                 return { name: "Mitglieder", link: "/" };
             case "tournament":
-                var tournament = UltiSite.Tournaments.findOne(FlowRouter.getParam('_id'));
+                var tournament = UltiSite.getTournament(FlowRouter.getParam('_id'));
                 if (tournament)
                     return { name: tournament.name, back: "Turniere", link: "/tournaments" };
                 return { name: "Turnier", back: "Turniere", link: "/tournaments" };

@@ -32,31 +32,6 @@ Meteor.startup(function () {
             });
         return UltiSite.LastChanges.find();
     });
-    Meteor.publish("AdminNotifications", function () {
-        var self = this;
-        if (UltiSite.isAdmin(this.userId, this.connection)) {
-            Meteor.users.find({
-                'profile.unverified': {
-                    $exists: true
-                },
-            }).observeChanges({
-                added: function (id, fields) {
-                    self.added("AdminNotifications", id, {
-                        text: "Der Nutzer " + fields.username + " verlangt nach Zugriff auf die Webseite",
-                        link: FlowRouter.path("user", {
-                            _id: id
-                        }),
-                        _id: id,
-                        method: "userVerification"
-                    });
-                },
-                removed: function (id, fields) {
-                    self.removed('AdminNotifications', id);
-                }
-            });
-        }
-        self.ready();
-    });
     Meteor.publish("Statistics", function (target) {
         const res = UltiSite.Statistics.find({
             target
@@ -78,7 +53,7 @@ Meteor.startup(function () {
                     $in: associatedIds
                 }
             }]
-        },{fields:{base64:0}}), UltiSite.Documents.find({
+        },{fields:{base64:0,thumb:0}}), UltiSite.Documents.find({
             $or: [{
                 associated: {
                     $in: associatedIds
@@ -94,11 +69,19 @@ Meteor.startup(function () {
     Meteor.publish("UserDetails", function (userId) {
         if (!this.userId)
             return this.ready();
-        return [Meteor.users.find({
+        return Meteor.users.find({
             _id: { $in: [userId, this.userId] }
-        }), UltiSite.Images.find({
-            associated: userId
-        },{fields:{base64:0}})];
+        },{
+            fields:{
+                profile:1,
+                status:1,
+                settings:1,
+                club:1,
+                username:1,
+                roles:1,
+                emails:1,
+                downloadToken:1
+            }});
     });
     Meteor.publish("Events", function () {
         if (!this.userId)
@@ -203,19 +186,11 @@ Meteor.startup(function () {
     });
 
     Meteor.publish("Practices", function () {
-        var practices = UltiSite.Practices.find({
+        return UltiSite.Practices.find({
             end: {
                 $gt: new Date()
             }
         });
-        var pracIds = practices.map(function (p) {
-            return p._id;
-        });
-        return [practices, UltiSite.Images.find({
-            associated: {
-                $in: pracIds
-            }
-        },{fields:{base64:0}})];
     });
     Meteor.publish("Places", function (country) {
         return UltiSite.Countries.find();

@@ -9,59 +9,72 @@
 		{{/unless}}
 
 		<div class="container-fluid">
-			{{#if currentUser}}
-				<div class="hidden-xs pull-right">
-					{{>userHeader}}
-				</div>
-				{{#if getPageSearch}}
-					<div class="navbar-search-field pull-right">
-						{{>searchField searchType=getPageSearch}}
-					</div>
+			<ul class="nav navbar-nav pull-right">
+				{{#if currentUser}}
+					<li class="{{#if equals routeName 'search'}}active{{/if}}">
+						<a href="#" class="action-search">
+							<span class="fa fa-search fa-lg"></span>
+						</a>
+					</li>
+					<li class="hidden-xs {{#if equals routeName 'help'}}active{{/if}}">
+						<a href="{{pathFor route='help'}}">
+							<span class="fa fa-question-circle fa-lg"></span>
+						</a>
+					</li>
+					<li class="hidden-xs dropdown">
+						<a href="#" class="text-{{#unless meteorStatus.connected}}danger{{else}}{{#if AdminNotifications.count}}info{{else}}default{{/if}}{{/unless}} dropdown-toggle"
+							data-toggle="dropdown" aria-expanded="true">
+							<span class="fa fa-user fa-lg"></span>
+						</a>
+						{{>userHeader}}
+					</li>
 				{{else}}
-					<div class="navbar-search-field pull-right">
-						{{>searchField searchType="Users,Images,Tournaments,Documents,WikiPages,Blogs"}}
-					</div>
+					<li class="dropdown">
+						<a href="{{pathFor route='login'}}" class="btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
+							<span class="fa fa-user"></span> Anmelden
+						</a>
+					</li>
+				{{/if}}					
+				{{#if isAdmin}}
+					<li class="hidden-xs {{#if equals routeName 'admin'}}active{{/if}}">
+						<a href="{{pathFor route='admin'}}">
+							<span class="fa fa-cog fa-lg"></span>
+						</a>
+					</li>
 				{{/if}}
-			{{else}}
-				<div class="pull-right">
-					{{>userHeader}}
-				</div>
-			{{/if}}
-			<div class="navbar-header">
-				{{#unless currentUser}}
-					<div class="visible-xs pull-right">
-
-					</div>
-				{{/unless}}
-				<button type="button" class="btn navbar-btn btn-default pull-left action-toggle-sidebar visible-xs">
-                    <span class="{{#unless meteorStatus.connected}}text-danger{{else}}{{#if AdminNotifications.count}}text-info{{/if}}{{/unless}} fa fa-bars"></span>
-                    <span class="sr-only">Toggle navigation</span>
-                </button>
-				<a class="hidden-xs navbar-brand" href="/">{{settings.teamname}}</a>
-				<div class="">
-					{{#with sitePageHeader}}
-						<div class="mobile-site-header no-overflow visible-xs">
-							{{#if this.link}}
-								<a href="{{this.link}}">
-                                {{#if this.back}}
-                                    {{this.back}}
-                                {{else}}
-                                    <span class="fa fa-home fa-lg"></span>
-                                {{/if}}
-                            </a>
-								{{#if this.name}}
-									<span class="fa fa-caret-right"></span>
-									<span>
-                                    {{this.name}}
-                                </span>
-								{{/if}}
+			</ul>
+			<ul class="nav navbar-nav pull-left visible-xs">
+				<li>
+					<a href="#" class="action-toggle-sidebar">
+						<span class="{{#unless meteorStatus.connected}}text-danger{{else}}{{#if AdminNotifications.count}}text-info{{/if}}{{/unless}} fa fa-bars fa-lg"></span>
+						<span class="sr-only">Toggle navigation</span>
+					</a>
+				</li>
+				{{#with sitePageHeader}}
+					{{#if this.link}}
+						<li>
+							<a href="{{this.link}}">
+							{{#if this.back}}
+								{{this.back}}
 							{{else}}
-								<span>{{this.name}}</span>
+								<span class="fa fa-arrow-left fa-lg"></span>
 							{{/if}}
-						</div>
-					{{/with}}
-				</div>
-			</div>
+							</a>
+						</li>
+						{{#if this.name}}
+							<li>
+								<a href="#">
+									{{this.name}}
+								</a>
+							</li>
+						{{/if}}
+					{{else}}
+						<li>
+							<a href="#">{{this.name}}</a>
+						</li>
+					{{/if}}
+				{{/with}}
+			</ul>
 			<ul class="nav navbar-nav hidden-xs">
 				{{>navLinks}}
 			</ul>
@@ -110,9 +123,8 @@
 			{{/unless}}
 			{{#if currentUser}}
 				<div class="user-header">
-					<button class="btn btn-link toggle-user-menu" type="button">
-                        <small>{{currentUser.profile.name}} ({{currentUser.username}})</small>
-                        <span class="fa fa-caret-down"></span>
+					<button class="btn btn-link" type="button">
+                        <small>{{currentUser.profile.name}} {{currentUser.profile.surname}} ({{currentUser.username}})</small>
                     </button>
 				</div>
 			{{/if}}
@@ -152,22 +164,26 @@
 					{{/if}}
 				{{/if}}
 			{{/each}}
+			<a href="{{pathFor route='user' _id=currentUser._id}}" class="list-group-item bg-{{this.style}}">
+				<span class="fa fa-user fa-fw"></span> Einstellungen
+			</a>
+			<a href="{{pathFor route='help'}}" class="list-group-item bg-{{this.style}}">
+				<span class="fa fa-question-circle fa-fw"></span> Hilfe
+			</a>
+			<a href="#" class="list-group-item bg-{{this.style}} action-logout">
+				<span class="fa fa-sign-out fa-fw"></span> Abmelden
+			</a>
 			{{#if isAdmin}}
 				<a href="{{pathFor route='admin'}}" class="list-group-item bg-{{this.style}}">
-					<span class="fa fa-gears"></span> Admin
+					<span class="fa fa-cog fa-fw"></span> Administration
 					{{#with AdminNotifications}}
 						<span class="badge">{{this.count}}</span>
 					{{/with}}
 				</a>
 			{{/if}}
-		</div>
-		<div class="footer list-group">
 			<a class="list-group-item" href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">
-				<span class="fa fa-justice"></span> Impressum
+				<span class="fa fa-info-circle"></span> Impressum
 			</a>
-			<div class="copyright-note list-group-item">
-				<span class="fa fa-copyright"></span> {{settings.copyright_note}}
-			</div>
 		</div>
 	</div>
 
@@ -175,53 +191,43 @@
 
 <template name="userHeader">
 	{{#if currentUser}}
-		<div class="dropdown pull-right">
-			<button class="btn navbar-btn btn-{{#unless meteorStatus.connected}}danger{{else}}{{#if AdminNotifications.count}}info{{else}}default{{/if}}{{/unless}} dropdown-toggle"
-				type="button" id="dropdownUserMenu" data-toggle="dropdown" aria-expanded="true">
-                <span class="fa fa-bars"></span>
-            </button>
-			<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownUserMenu">
+		<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownUserMenu">
+			<li class="dropdown-header">
+				{{currentUser.username}} ({{currentUser.profile.name}} {{currentUser.profile.surname}})
+			</li>
+			<li role="presentation">
+				<a class="goto-user-profile" role="menuitem" tabindex="-1" href="{{pathFor route='user' _id=currentUser._id }}">
+					<span class="fa fa-user"></span> Einstellungen
+				</a>
+			</li>
+			<li role="presentation">
+				<a class="action-logout" role="menuitem" tabindex="-1" href="#">
+					<span class="fa fa-sign-out"></span> Abmelden
+				</a>
+			</li>
+			{{#unless meteorStatus.connected}}
+				<li role="separator" class="divider"></li>
 				<li class="dropdown-header">
-					{{currentUser.username}} ({{currentUser.profile.name}} {{currentUser.profile.surname}})
+					Keine Verbindung zum Server!
 				</li>
-				<li role="presentation">
-					<a class="goto-user-profile" role="menuitem" tabindex="-1" href="{{pathFor route='user' _id=currentUser._id }}">
-						<span class="fa fa-user"></span> Einstellungen
+				<li>
+					<a href="#" class="action-reconnect">
+						<span class="fa fa-plug"></span> Neu verbinden
 					</a>
 				</li>
+			{{/unless}}
+			{{#if isAdmin}}
+				<li role="separator" class="divider"></li>
 				<li role="presentation">
-					<a class="action-logout" role="menuitem" tabindex="-1" href="#">
-						<span class="fa fa-sign-out"></span> Abmelden
-					</a>
+					<a href="{{pathFor route='admin'}}">
+					{{#with AdminNotifications}}
+					<span class="badge pull-right">{{this.count}}</span>
+					{{/with}}
+					<span class="fa fa-cog"></span> Admin
+				</a>
 				</li>
-				{{#unless meteorStatus.connected}}
-					<li role="separator" class="divider"></li>
-					<li class="dropdown-header">
-						Keine Verbindung zum Server!
-					</li>
-					<li>
-						<a href="#" class="action-reconnect">
-							<span class="fa fa-plug"></span> Neu verbinden
-						</a>
-					</li>
-				{{/unless}}
-				{{#if isAdmin}}
-					<li role="separator" class="divider"></li>
-					<li role="presentation">
-						<a href="{{pathFor route='admin'}}">
-                        {{#with AdminNotifications}}
-                        <span class="badge pull-right">{{this.count}}</span>
-                        {{/with}}
-                        <span class="fa fa-gears"></span> Admin
-                    </a>
-					</li>
-				{{/if}}
-			</ul>
-		</div>
-	{{else}}
-		<a href="{{pathFor route='login'}}" class="btn navbar-btn pull-right btn-primary btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
-			<span class="fa fa-user"></span> Anmelden
-		</a>
+			{{/if}}
+		</ul>
 	{{/if}}
 </template>
 

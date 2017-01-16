@@ -53,14 +53,17 @@ Template.fileUploader.events({
 const uploadQueue = [];
 const CHUNK_SIZE = 256*1024;
 
+UltiSite.uploadQueue = uploadQueue;
+
 UltiSite.triggerUpload = function() {
     if(uploadQueue.length===0)
         return;
+    console.log('uploading from queue',uploadQueue[0].metadata && uploadQueue[0].metadata.name);
     if(!uploadQueue[0].progress) {
         uploadQueue[0].errors=0;
         uploadQueue[0].progress = {
             offset: 0,
-            total: uploadQueue[0].file.size
+            total: uploadQueue[0].file?uploadQueue[0].file.size: uploadQueue[0].base64.length
         };
     }
     if(uploadQueue[0].file) {
@@ -86,21 +89,10 @@ UltiSite.triggerUpload = function() {
             });
         };
         reader.readAsDataURL(blobSlice);
-    } else if(uploadQueue[0].base64) {
-        const lastPackage = (uploadQueue[0].progress.offset + CHUNK_SIZE) >= uploadQueue[0].progress.total;
-        Meteor.call('fileUploadChunk', uploadQueue[0].base64.substr(uploadQueue[0].progress.offset,CHUNK_SIZE()), uploadQueue[0].metadata, lastPackage, (err,res)=>{
-            if(err && uploadQueue[0].errors > 3)
-                return uploadQueue[0].error=err;
-            if(err)
-                uploadQueue[0].errors++;
-            uploadQueue[0].metadata._id = res;
-            uploadQueue[0].progress.offset += CHUNK_SIZE;
-            uploadQueue[0].progress.total =uploadQueue[0].base64.length;
-            if(lastPackage)
-                uploadQueue.shift();
-            UltiSite.triggerUpload();
-        });
     }
+};
+UltiSite.pushToUploadQueue = function(fileData) {
+    uploadQueue.push(fileData);
 };
 
 UltiSite.uploadFiles = function(files, associatedId, template) {
@@ -123,7 +115,7 @@ UltiSite.uploadFiles = function(files, associatedId, template) {
                         if(imgMeta && imgMeta.exif)
                             metadata.exif = imgMeta.exif.getAll();
                         img.toBlob((file)=>{
-                            uploadQueue.push({file,metadata});
+                            UltiSite.pushToUploadQueue({file,metadata});
                             filesToUpload--;
                             if(!filesToUpload) {
                                 template.uploading.set(false);
@@ -141,7 +133,7 @@ UltiSite.uploadFiles = function(files, associatedId, template) {
                     maxHeigth: 2400
                 });
             } else {
-                uploadQueue.push({file,metadata});
+                UltiSite.pushToUploadQueue({file});
                 filesToUpload--;
                 if(!filesToUpload) {
                     template.uploading.set(false);

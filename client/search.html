@@ -6,14 +6,14 @@
         </button>
 		{{else}}
 			<div class="input-group" data-toggle="{{#unless inlineResults}}dropdown{{/unless}}">
-				<input type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
+				<input autofocus="autofocus" type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
 			</div>
 		{{/if}}
 		<ul class="{{#unless inlineResults}}dropdown-menu {{#unless leftMenu}}dropdown-menu-right{{/unless}}{{else}}list-group{{/unless}}" role="menu">
 			{{#if equals type "button"}}
 				<li role="presentation">
 					<div class="input-group">
-						<input type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
+						<input autofocus="autofocus" type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
 					</div>
 				</li>
 			{{/if}}

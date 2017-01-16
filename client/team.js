@@ -395,7 +395,7 @@ Template.teamUpdate.helpers({
     },
     tournamentDivisions: function () {
         if (FlowRouter.getRouteName() === "tournament") {
-            var t = UltiSite.Tournaments.findOne(FlowRouter.getParam('_id'));
+            var t = UltiSite.getTournament(FlowRouter.getParam('_id'));
             if (t && t.divisions)
                 return t.divisions.map(function (d) {
                     return {
@@ -414,7 +414,7 @@ Template.teamUpdate.helpers({
         var maxPlayers = 12;
         var minFemale = 0;
         if (FlowRouter.getRouteName() === "tournament") {
-            var t = UltiSite.Tournaments.findOne(FlowRouter.getParam('_id'));
+            var t = UltiSite.getTournament(FlowRouter.getParam('_id'));
             if (t && t.divisions && (t.divisions.length > 0)) {
                 division = t.divisions[0].division;
                 if (division.indexOf('Mixed') === 0)
@@ -588,43 +588,57 @@ Template.teamHistoricView.helpers({
         if (!team)
             return;
         let earlyReg = _.sortBy(team.participants, 'entryDate');
-        var turnier = UltiSite.Tournaments.findOne(team.tournamentId);
+        const turnier = UltiSite.getTournament(team.tournamentId);
         let start = moment();
         if (earlyReg.length > 0)
             start = moment(earlyReg[0].entryDate);
-        var ende = moment(turnier.date);
-        return [{
+        const ende = moment(turnier.date);
+        const drawing = moment(team.drawingDate);
+        const diff = 100.0 / start.diff(ende, 'minutes');
+        const marks = [{
             stateClass: 'mark-left',
             width: 25,
             offset: 0,
             text: start.format('DD.MM HH:mm')
-        }, {
+        }];
+        if(team.drawingDate) {
+            const offset = start.diff(drawing, 'minutes') * diff;
+            marks.push({
+                stateClass: offset < 60?'mark-left':'mark-right',
+                width: 30,
+                offset: offset >= 60 ? offset - 30:offset,
+                text: 'Auslosung'
+            });
+        }
+        marks.push({
             stateClass: 'mark-right',
             width: 25,
             offset: 75,
             text: ende.format('DD.MM HH:mm')
-        }];
+        });
+        return marks;
     },
     historicBlocks: function () {
         var team = UltiSite.Teams.findOne(Template.instance().teamId.get());
         if (!team)
             return;
         let earlyReg = _.sortBy(team.participants, 'entryDate');
-        var turnier = UltiSite.Tournaments.findOne(team.tournamentId);
+        var turnier = UltiSite.getTournament(team.tournamentId);
         let start = moment();
         if (earlyReg.length > 0)
             start = moment(earlyReg[0].entryDate);
         var ende = moment(turnier.date);
         var diff = 100.0 / start.diff(ende, 'minutes');
-        var last = start.clone();
+        var entryDate = moment(this.entryDate).clone();
+        var last = entryDate.clone();
         var results = this.history && this.history.map(function (block) {
             var width = last.diff(moment(block.until).clone(), 'minutes');
-            var offset = start.diff(last, 'minutes');
+            var startOffset = start.diff(entryDate, 'minutes');
             last = moment(block.until).clone();
             return {
                 stateClass: ' ' + (block.state < 10 ? 'progress-bar-muted' : block.state < 70 ? 'progress-bar-danger' : block.state < 100 ? 'progress-bar-warning' : 'progress-bar-success'),
                 width: width * diff,
-                offset: offset * diff
+                offset: startOffset * diff
             };
         }) || [];
         var width = last.diff(ende, 'minutes');

@@ -227,7 +227,7 @@ var helpers = {
         if (!element)
             return [];
         if (element.type === "tournament") {
-            var turnier = UltiSite.Tournaments.findOne(element._id);
+            var turnier = UltiSite.getTournament(element._id);
             if (!turnier)
                 return [];
             var elems = UltiSite.Teams.find({

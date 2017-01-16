@@ -27,6 +27,7 @@ Meteor.methods({
         UltiSite.WikiPageDiscussions.insert({
             content: text,
             editor: this.userId,
+            editorName: Meteor.users.findOne(this.userId).username,
             date:new Date(),
             pageId: pageId
         });        

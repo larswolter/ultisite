@@ -25,6 +25,7 @@
     "handlebars": "^4.0.6",
     "imap": "^0.8.17",
     "jquery": "^2.2.4",
+    "localforage": "^1.4.3",
     "meteor-node-stubs": "^0.2.3",
     "nodemailer": "^2.7.0",
     "quoted-printable": "^1.0.0",

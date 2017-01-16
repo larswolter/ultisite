@@ -1,3 +1,26 @@
+<template name="searchDialog">
+    <div class="modal fade" id="confirmDialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    <h4 class="modal-title">Suche</h4>
+                </div>
+                <div class="modal-body">
+                    {{>searchField inlineResults=true searchType="Users,Images,Tournaments,Documents,WikiPages,Blogs"}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        Schließen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
 
 <template name="confirmDialog">
     <div class="modal fade" id="confirmDialog">
@@ -7,7 +30,7 @@
                     <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
                         <span class="fa fa-close"></span>
                     </button>
-                    Bestätigung
+                    <h4 class="modal-title">Bestätigung</h4>
                 </div>
                 <div class="modal-body">
                     {{options.text}}

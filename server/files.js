@@ -39,6 +39,12 @@ Meteor.methods({
         });
     },
     fileUploadChunk: function(base64, metadata,lastPackage) {
+        let meteorCall;
+        if(metadata._meteorCall) {
+            meteorCall = metadata._meteorCall;
+            delete metadata._meteorCall;
+        }
+        console.log('recieved file chunk, last:',lastPackage);
         if(metadata.type.indexOf('image')===0) {
             let imgId;
             if(!metadata._id) {
@@ -49,7 +55,6 @@ Meteor.methods({
                     })
                 );
                 fs.writeFileSync(os.tmpdir()+'/'+imgId+'.image.temp', base64, {encoding:'base64'});
-                return imgId;
             }
             else {
                 const existing = UltiSite.Images.findOne(metadata._id);
@@ -59,6 +64,7 @@ Meteor.methods({
             }
             if(lastPackage) {
                 const fileStats = fs.statSync(os.tmpdir()+'/'+imgId+'.image.temp');
+                console.log('writing image to database');
                 fs.readFile(os.tmpdir()+'/'+imgId+'.image.temp', {encoding:'base64'},Meteor.bindEnvironment(function(err,data) {
                     if(err) {
                         console.log(err);
@@ -66,17 +72,22 @@ Meteor.methods({
                     }
                     UltiSite.Images.update(imgId,{$set:{base64:data,size:fileStats.size},$unset:{progress:1}});
                     fs.unlink(os.tmpdir()+'/'+imgId+'.image.temp');
-                    let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
-                    if(!ref || ref.length === 0)
-                        ref = [{type:'files',name:'Bilder'}];
-                    Meteor.call("addEvent", {
-                        type: ref[0].type,
-                        _id: metadata.associated[0],
-                        text: 'Neues Bild hinzugefügt',
-                        name: ref[0].name,
-                        additional: ref[0].type,
-                        images: [imgId]
-                    });                    
+                    console.log('finished image upload');
+                    if(meteorCall)
+                        Meteor.call(meteorCall,UltiSite.Images.findOne(imgId));
+                    else {
+                        let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
+                        if(!ref || ref.length === 0)
+                            ref = [{type:'files',name:'Bilder'}];
+                        Meteor.call("addEvent", {
+                            type: ref[0].type,
+                            _id: metadata.associated[0],
+                            text: 'Neues Bild hinzugefügt',
+                            name: ref[0].name,
+                            additional: ref[0].type,
+                            images: [imgId]
+                        });
+                    }
                 }));
             }
             return imgId;
@@ -90,7 +101,6 @@ Meteor.methods({
                     })
                 );
                 fs.writeFileSync(os.tmpdir()+'/'+docId+'.doc.temp', base64, {encoding:'base64'});
-                return docId;
             }
             else {
                 const existing = UltiSite.Documents.findOne(metadata._id);
@@ -112,17 +122,21 @@ Meteor.methods({
                     wstream.on('close',Meteor.bindEnvironment(function(fileObj) {
                         UltiSite.Documents.update(docId,{$set:{gridId:fileObj._id+'',size:fileStats.size},$unset:{progress:1}});
                         fs.unlink(os.tmpdir()+'/'+docId+'.doc.temp');
-
-                        let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
-                        if(!ref || ref.length === 0)
-                            ref = [{type:'files',name:'Dokumente'}];
-                        Meteor.call("addEvent", {
-                            type: ref[0].type,
-                            _id: metadata.associated[0],
-                            text: 'Neues Dokument hinzugefügt',
-                            name: ref[0].name,
-                            additional: ref[0].type
-                        });                    
+                        console.log('finished file upload');
+                        if(meteorCall)
+                            Meteor.call(meteorCall,UltiSite.Documents.findOne(docId));
+                        else {
+                            let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
+                            if(!ref || ref.length === 0)
+                                ref = [{type:'files',name:'Dokumente'}];
+                            Meteor.call("addEvent", {
+                                type: ref[0].type,
+                                _id: metadata.associated[0],
+                                text: 'Neues Dokument hinzugefügt',
+                                name: ref[0].name,
+                                additional: ref[0].type
+                            });                    
+                        }
                     }));
                     fs.createReadStream(os.tmpdir()+'/'+docId+'.doc.temp', {encoding:'base64'}).pipe(wstream);
                 }));

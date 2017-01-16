@@ -10,6 +10,7 @@ function syncSettings() {
     })||{})._id;
     WebAppInternals.generateBoilerplate();
     console.log('synced settings');
+    return __meteor_runtime_config__.PUBLIC_SETTINGS;
 }
 Meteor.startup(function(){
     syncSettings();
@@ -20,7 +21,7 @@ Meteor.methods({
         if(!UltiSite.isAdmin(this.userId))
             throw new Meteor.error('access-denied','Zugriff nur für Admins');
         UltiSite.Settings.update({},modifier);
-        syncSettings();
+        return syncSettings();
     },
     recreateCollections: function () {
         Meteor.call('cleanDatabases');

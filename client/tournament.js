@@ -3,16 +3,10 @@ Template.tournament.onCreated(function () {
     var self = this;
 
     self.bodyVisible = new ReactiveVar(!Meteor.user());
-    self.localVersion = new ReactiveVar(null);
-
-
-    UltiSite.localStore.getItem(FlowRouter.getParam('_id'), function (err, res) {
-        self.localVersion.set(res);
-    });
 
     self.autorun(function () {
 
-        let t = UltiSite.Tournaments.findOne(FlowRouter.getParam('_id'));
+        let t = UltiSite.getTournament(FlowRouter.getParam('_id'));
         if (!t)
             return;
 
@@ -42,7 +36,7 @@ Template.tournament.events({
         e.preventDefault();
         UltiSite.confirmDialog("Willst du das Turnier wirklich löschen?", () => {
             UltiSite.Tournaments.remove(FlowRouter.getParam('_id'), UltiSite.userFeedbackFunction("Turnier löschen"));
-            UltiSite.localStore.removeItem(FlowRouter.getParam('_id'));
+            UltiSite.offlineRemoveTournament(FlowRouter.getParam('_id'));
             FlowRouter.go("tournaments");
         });
     },
@@ -134,7 +128,7 @@ Template.tournamentUpdate.helpers({
 
 Template.tournament.helpers({
     over: function () {
-        var t = UltiSite.Tournaments.findOne(FlowRouter.getParam('_id'));
+        var t = UltiSite.getTournament(FlowRouter.getParam('_id'));
 
         if (t && moment(t.date).isBefore(moment(), "day"))
             return true;
@@ -146,7 +140,7 @@ Template.tournament.helpers({
     tournament: function () {
         if(!FlowRouter.getParam('_id'))
             return;
-        var t = UltiSite.Tournaments.findOne(FlowRouter.getParam('_id'));
+        var t = UltiSite.getTournament(FlowRouter.getParam('_id'));
         if (!t)
             t = Template.instance().localVersion.get();
         return t;
@@ -239,11 +233,11 @@ Template.tournament.helpers({
         return !!Meteor.userId();
     },
     address: function () {
-        var t = UltiSite.Tournaments.findOne(FlowRouter.getParam('_id')) || {};
+        var t = UltiSite.getTournament(FlowRouter.getParam('_id')) || {};
         return t.address;
     },
     contact: function () {
-        var t = UltiSite.Tournaments.findOne(FlowRouter.getParam('_id')) || {};
+        var t = UltiSite.getTournament(FlowRouter.getParam('_id')) || {};
         var address = {};
         if (t.contactDetails)
             t.contactDetails.forEach(function (elem) {

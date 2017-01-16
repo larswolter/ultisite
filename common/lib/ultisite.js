@@ -134,6 +134,7 @@ _.extend(UltiSite, {
     },
     initialSubsReady: new ReactiveVar(false),
     LookupId: new Ground.Collection(null),
+    AdminNotifications: new Meteor.Collection("AdminNotifications"),
     LastChanges: new Meteor.Collection('LastChanges'),
     WikiPages: new Meteor.Collection("WikiPages"),
     WikiPageDiscussions: new Meteor.Collection("WikiPagDiscussiones"),
@@ -278,9 +279,16 @@ _.extend(UltiSite, {
             host = host.substr(0, host.length - 1);
         return host;
     },
-    settings: function () {
-        if(Meteor.isClient)
+    settingsDep: new Tracker.Dependency(),
+    settings: function (upd) {
+        if(Meteor.isClient) {
+            this.settingsDep.depend();
+            if(upd){
+                Meteor.settings.public = upd;
+                this.settingsDep.changed();
+            }
             return Meteor.settings.public;
+        }
         else
             return UltiSite.Settings.findOne() || {};
     },

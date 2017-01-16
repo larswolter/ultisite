@@ -38,7 +38,8 @@ Template.header.onRendered(function(){
 });
 
 Template.header.events({
-    'click .action-logout': function () {
+    'click .action-logout': function (e) {
+        e.preventDefault();
         Meteor.logout((err) => {
             if (err)
                 $.notify('Abmelden fehlgeschlagen', 'error');
@@ -47,7 +48,12 @@ Template.header.events({
             FlowRouter.go('/');
         });
     },
-    'click .action-toggle-sidebar': function () {
+    'click .action-search': function (e) {
+        e.preventDefault();
+        UltiSite.showModal('searchDialog');
+    },
+    'click .action-toggle-sidebar': function (e) {
+        e.preventDefault();
         UltiSite.toggleSidebar(true);
     }
 });
@@ -122,6 +128,8 @@ var linkHelper = {
     isActive: function () {
         FlowRouter.getRouteName();
         FlowRouter.getParam('_id');
+        if(this.target==='/')
+            return decodeURI(location.pathname) === '/';
         return 0 === decodeURI(location.pathname).indexOf(this.target);
     }
 };

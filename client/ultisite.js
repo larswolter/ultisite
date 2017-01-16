@@ -23,12 +23,6 @@ $.notify.defaults({
 UltiSite.screenSize = new ReactiveVar(window.innerWidth);
 
 Meteor.startup(function () {
-
-    Tracker.autorun(function () {
-        console.log("doing initial subscriptions for ");
-        Meteor.subscribe("AdminNotifications");
-    });
-
     window.onresize = function () {
         UltiSite.screenSize.set(window.innerWidth);
     };
@@ -129,5 +123,4 @@ _.extend(UltiSite, {
             }, options));
         }
     },
-    AdminNotifications: new Meteor.Collection("AdminNotifications")
 });

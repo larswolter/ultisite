@@ -21,28 +21,19 @@
 				</div>
 				<div role="tabpanel" class="tab-pane active" id="article">
 					{{#if showDiscussions}}
-						{{#unless insertingDiscussion}}
-							<div class="">
-								<h4 class="visible-xs">
-									{{name}}
-									<small>{{discussions.length}} Diskussionsbeiträge</small>
-								</h4>
-								{{#wysiwygEditor light=true startEnabled=true}}{{{remarks}}}{{/wysiwygEditor}}
-								<div class="text-right">
-									<button class="btn btn-default action-add-discussion">
-                                    {{#if discussions.length}}
-                                    Antworten
-                                    {{else}}
-                                    Diskussion starten
-                                    {{/if}}
-                                </button>
-								</div>
-							</div>
-					{{else}}
-						<div>
-							<span class="fa fa-spin fa-spinner"></span> Füge Diskussionsbeitrag hinzu
+						<div class="">
+							<h4 class="visible-xs">
+								{{name}}
+								<small>{{discussions.length}} Diskussionsbeiträge</small>
+							</h4>
+							<button class="btn btn-default action-add-discussion">
+								{{#if discussions.length}}
+									Diskussionsbeitrag hinzufügen
+								{{else}}
+									Diskussion starten
+								{{/if}}
+							</button>
 						</div>
-						{{/unless}}
 						<div class="list-group">
 							{{#each discussions}}
 								<div class="list-group-item">

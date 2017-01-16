@@ -83,12 +83,11 @@ Template.wikipage.events({
     },
     'click .action-add-discussion': function(e,t) {
         e.preventDefault();
-        t.insertingDiscussion.set(true);
-        Meteor.call('addWikiPageDiscussion',t.activePage.get()._id,t.$('.wiki-discussion .ulti-editor').val(),
-                    UltiSite.userFeedbackFunction("Beitrag hinzufügen", function(){
-                        t.insertingDiscussion.set(false);
-                    })
-        );
+        UltiSite.getHTMLTextDialog({ content: '', header:'Diskussionsbeitrag hinzufügen' }, (text) => {
+            Meteor.call('addWikiPageDiscussion',t.activePage.get()._id, text,
+                UltiSite.userFeedbackFunction("Beitrag hinzufügen", null)
+            );
+        });
     },
     'click .action-save': function(e,t) {
         let newContent = t.$('.ulti-editor').val();

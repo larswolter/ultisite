@@ -24,23 +24,21 @@ Template.practiceEdit.helpers({
     mapCaptureCallback: function() {
         var self=this;
         return function(canvas) {
-            UltiSite.Images.find({
-                associated: self._id
-            }).forEach(function (img) {
-                img.remove();
-            });
-
-            const fsFile = {};
-            fsFile.base64 = canvas.toDataURL('image/jpg', 0.5);
-            fsFile.associated = [self._id];
-            fsFile.name = "practice-" + self._id;
-            fsFile.tags = ['Karte', 'Training'];
-            fsFile.creator = Meteor.userId();
-            UltiSite.Images.insert(fsFile, function (err, res) {
-                if (err) console.log(err);
-                else 
-                    UltiSite.Practices.update(self._id,{$set:{mapImage:res}});
-            });
+            canvas.toBlob((blob)=>{
+                const fsFile = {
+                    file: blob, 
+                    metadata : {
+                        _meteorCall: 'updatePracticeImage',
+                        associated : [self._id],
+                        tags : ['Karte', 'Training'],
+                        creator : Meteor.userId(),
+                        name : "practice-" + self._id,
+                        type : 'image/jpg'
+                    }
+                };                
+                UltiSite.pushToUploadQueue(fsFile);
+                UltiSite.triggerUpload();
+            },'image/png');
         };
     },
     showState: function () {
@@ -197,7 +195,6 @@ Template.practiceSmall.events({
 
 Template.practice.helpers({
     weekdayText: function () {
-        console.log(this);
         switch (Number(this.weekday)) {
         case 0:
             return "Sonntags";

@@ -3,7 +3,14 @@
 .wikipage {
     .tab-content {
         background-color:white;
-        padding:15px;
+        @media(min-width:@screen-sm-min) {
+            padding:15px;
+        }
+        @media(max-width:@screen-xs-max) {
+            h3 {
+                padding:5px;
+            }
+        }
     }
     .historic {
         border: 3px solid red;

@@ -3,27 +3,20 @@ Template.adminPanel.onCreated(function () {
     Meteor.call("getWikiPageNames", function (err, res) {
         Session.set("wikiPageNames", res);
     });
+    Meteor.call("queryCollectionStatus", function (err, res) {
+        Session.set("collectionStatus", res);
+    });
     Session.set("adminPanel.viewAll", false);
 });
 
-Template.adminPanel.rendered = function () {
-    Tracker.autorun(function () {
-        var gesamt =
-            UltiSite.Tournaments.find().count() +
-            UltiSite.Teams.find().count() +
-            UltiSite.WikiPages.find().count() +
-            UltiSite.Practices.find().count() +
-            Meteor.users.find().count();
+function handleUpdate(err, res) {
+    if(res) {
+        UltiSite.settings(res);
+    }
+}
+Template.adminPanel.onRendered(function () {
 
-        Meteor.call("queryCollectionStatus", function (err, res) {
-            res.push({
-                name: "Gesamt",
-                count: gesamt
-            });
-            Session.set("collectionStatus", res);
-        });
-    });
-};
+});
 
 Template.linksEditDialog.helpers({
     jsonLinks: function () {
@@ -35,7 +28,7 @@ Template.linksEditDialog.events({
         e.preventDefault();
         try {
             const links = JSON.parse(t.$('textarea').val());
-            Meteor.call('updateSettings', { $set: { objectHeaderLinks: links } });
+            Meteor.call('updateSettings', { $set: { objectHeaderLinks: links } },handleUpdate);
             t.$('.modal').modal('hide');
         } catch (err) {
             t.$('textarea').notify('Fehlerhafte Syntax:' + err, 'error');
@@ -101,28 +94,6 @@ Template.adminPanel.helpers({
             });
         return name;
     },
-    settingsForm: function () {
-        if (!UltiSite.settings())
-            return [];
-        return $.map(UltiSite.settings(), function (element, key) {
-            return {
-                label: key,
-                value: element
-            };
-        }).filter(function (setting) {
-            if (setting.label.indexOf("col_") === 0)
-                return false;
-            if (setting.label.indexOf("image") === 0)
-                return false;
-            if (setting.label.indexOf("object") === 0)
-                return false;
-            if (setting.label.indexOf("array") === 0)
-                return false;
-            if (setting.label === "_id")
-                return false;
-            return true;
-        });
-    },
     collectionStatus: function () {
         return Session.get("collectionStatus");
     }
@@ -142,13 +113,13 @@ Template.adminPanel.events({
         val[t.$(e.currentTarget).attr('data-name')] = t.$(e.currentTarget).attr('data-id');
         Meteor.call('updateSettings', {
             $set: val
-        });
+        },handleUpdate);
     },
     'click .action-select-design': function (e, t) {
         e.preventDefault();
         Meteor.call('updateSettings', {
             $set: { design: this + '' }
-        });
+        },handleUpdate);
     },
     'click .image-setting': function (e, t) {
         var name = "image" + t.$(e.currentTarget).attr('data-name');
@@ -157,7 +128,7 @@ Template.adminPanel.events({
             val[name] = fileObj ? fileObj._id : null;
             Meteor.call('updateSettings', {
                 $set: val
-            });
+            },handleUpdate);
             if (name === 'imageIcon') {
 
             }
@@ -176,7 +147,7 @@ Template.adminPanel.events({
         console.log("Updating:", val);
         Meteor.call('updateSettings', {
             $set: val
-        });
+        },handleUpdate);
     },
     'click .btn-update-mailserver': function () {
         Meteor.call("updateMailserver", UltiSite.userFeedbackFunction("Update Mail Konfiguration"));
@@ -191,7 +162,7 @@ Template.adminPanel.events({
             upd[name] = "";
             Meteor.call('updateSettings', {
                 $set: upd
-            });
+            },handleUpdate);
         }
     },
     'click .all-settings-header': function () {
@@ -199,11 +170,11 @@ Template.adminPanel.events({
     },
     'click .action-add-mailinglist': function (e, t) {
         e.preventDefault();
-        Meteor.call('updateSettings', { $push: { mailingListConfigs: { id: Random.id() } } });
+        Meteor.call('updateSettings', { $push: { mailingListConfigs: { id: Random.id() } } },handleUpdate);
     },
     'click .action-remove-mailinglist': function (e, t) {
 
-        Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: this.id } } });
+        Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: this.id } } },handleUpdate);
     }
 });
 
@@ -212,8 +183,9 @@ AutoForm.hooks({
         // Called when any submit operation succeeds
         onSubmit: function (insertDoc, updateDoc, currentDoc) {
             console.log(insertDoc, currentDoc);
-            Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: currentDoc.id } } });
+            Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: currentDoc.id } } },handleUpdate);
             Meteor.call('updateSettings', { $push: { mailingListConfigs: insertDoc } }, (err, res) => {
+                handleUpdate(err,res);
                 this.done(err);
             });
             return false;

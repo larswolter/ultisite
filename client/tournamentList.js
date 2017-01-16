@@ -261,38 +261,6 @@ Template.tournamentList.onCreated(function () {
         }
     });
 
-    const offlineIds = [];
-    UltiSite.localStore.iterate(function (elem, key) {
-        offlineIds.push(key);
-        try {
-            months.upsert({
-                code: moment(elem.date).format('MM.YYYY')
-            }, {
-                    unix: moment(elem.date).unix(),
-                    code: moment(elem.date).format('MM.YYYY'),
-                    month: moment(elem.date).format('MMMM'),
-                    year: moment(elem.date).format('YYYY')
-                });
-            elem.date = moment(elem.date).toDate();
-            integratedTournamentList.upsert({
-                _id: elem._id
-            }, elem);
-        } catch (exc) {
-            console.log("exc:", key);
-
-        }
-    }, (err, res) => {
-        Meteor.call('offlineTournamentCheck', offlineIds, (err, res) => {
-            if (err)
-                $.notify('Error checking offline data:' + err, 'error');
-            else {
-                res.forEach((id) => {
-                    UltiSite.localStore.removeItem(id);
-                });
-            }
-        });
-    });
-
     self.autorun(function () {
         UltiSite.TournamentList.find().forEach(function (elem) {
             months.upsert({
@@ -304,7 +272,6 @@ Template.tournamentList.onCreated(function () {
                     year: moment(elem.date).format('YYYY')
                 });
             elem.lastSync = new Date();
-            UltiSite.localStore.setItem(elem._id, elem);
             integratedTournamentList.upsert({
                 _id: elem._id
             }, elem);
@@ -313,7 +280,6 @@ Template.tournamentList.onCreated(function () {
     self.autorun(function () {
         UltiSite.Tournaments.find().forEach(function (elem) {
             elem.lastSync = new Date();
-            UltiSite.localStore.setItem(elem._id, elem);
             integratedTournamentList.upsert({
                 _id: elem._id
             }, elem);
@@ -335,47 +301,12 @@ Template.tournamentList.helpers({
         }, { limit: 1, sort: { lastChanged: -1 } });
     },
     plannedTournaments: function () {
-        var options = {
-            sort: {
-                date: 1,
-                name: 1
-            }
-        };
-        var from = moment().toDate();
-        return integratedTournamentList.find({
-            teams: {
-                $in: UltiSite.myTeamIds.get()
-            },
-            date: {
-                $gte: from
-            }
-        }, options);
+        UltiSite.offlineDependency.depend();
+        return UltiSite.offlineTournaments.filter(t=>t.teams.length && moment().isBefore(t.date)).reverse();
     },
     playedTournaments: function () {
-        let to = moment().toDate();
-        let limit = integratedTournamentList.find({
-            teams: {
-                $in: UltiSite.myTeamIds.get()
-            },
-            date: {
-                $gte: to
-            }
-        }).count();
-        var options = {
-            limit: Math.max(5, limit),
-            sort: {
-                date: -1,
-                name: 1
-            }
-        };
-        return integratedTournamentList.find({
-            teams: {
-                $in: UltiSite.myTeamIds.get()
-            },
-            date: {
-                $lte: to
-            }
-        }, options);
+        UltiSite.offlineDependency.depend();
+        return UltiSite.offlineTournaments.filter(t=>t.teams.length && moment().isAfter(t.date));
     },
     showTournamentsFilter: function () {
         return _.contains(tabSelection.get(), "filter");
@@ -566,18 +497,7 @@ var helpers = {
         if (!this.teams)
             return [];
 
-        return UltiSite.Teams.find({
-            $and: [{
-                _id: {
-                    $in: this.teams
-                }
-            }, {
-                _id: {
-                    $in: UltiSite.myTeamIds.get()
-                }
-            }]
-
-        }).map(function (team) {
+        return this.teams.map(function (team) {
             return _.extend({
                 stateColor: UltiSite.stateColor(team.state)
             }, team);

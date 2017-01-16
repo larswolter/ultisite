@@ -30,7 +30,11 @@
                                     {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Vereins-Team eingetragen ist, die nicht abgesagt wurden oder du auf der Liste stehst."}}
                                 </div>
                                 <div class="list-group">
-                                    {{#each plannedTournaments}} {{>detailedTournamentListItem}} {{else}} {{>EmptySmall}} {{/each}}
+                                    {{#each plannedTournaments}} 
+                                        {{>detailedTournamentListItem}} 
+                                    {{else}} 
+                                        {{>EmptySmall}} 
+                                    {{/each}}
                                 </div>
                             </div>
                         </div>

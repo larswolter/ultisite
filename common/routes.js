@@ -91,6 +91,7 @@ FlowRouter.route('/admin', {
         });
     }
 });
+
 FlowRouter.route('/tournaments', {
     name: "tournaments",
     action: function () {
@@ -138,6 +139,15 @@ FlowRouter.route('/wikipage/:_id?/:historicId?', {
             BlazeLayout.render("baseLayout", {
                 content: "wikipageOverview"
             });
+    }
+});
+
+FlowRouter.route('/help', {
+    name: "help",
+    action: function () {
+        BlazeLayout.render("baseLayout", {
+            content: "help"
+        });
     }
 });
 

@@ -85,31 +85,3 @@ Template.imageViewer.helpers({
         }
     }
 });
-UltiSite.prepareImageUpload = function (base64Image, maxWidth, maxHeight) {
-    const img = document.createElement('img');
-    img.src = base64Image;
-    if (img.width > maxWidth || img.height > maxHeight) {
- 
-        if (img.width > img.height) {
-            maxHeight = img.height * (maxWidth / img.width);
-        } else {
-            maxWidth = img.width * (maxHeight / img.height);
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = maxWidth;
-        canvas.height = maxHeight;
-        canvas.getContext('2d').drawImage(img, 0, 0, maxWidth, maxHeight);
-        return canvas.toDataURL('image/jpg');
-    }
-    return base64Image;
-};
-/*
-'change #camera-input': function (event, t) {
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      Meteor.call('addImage', Geonam.Documents.prepareImageUpload(e.target.result, 3200, 3200), (err, res) => {
-      });
-    };
-    reader.readAsDataURL(event.currentTarget.files[0]);
-  }
-  */
