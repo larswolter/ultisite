@@ -1,5 +1,5 @@
 
-var visiblePractice = new ReactiveVar();
+const mapImageFile = new ReactiveVar();
 
 Meteor.startup(function () {
     UltiSite.maps = {};
@@ -11,112 +11,102 @@ Meteor.startup(function () {
 Template.practice.created = function () {
 };
 
-Template.practiceEdit.onCreated(function () {});
+Template.practice.helpers ({
+    formatedDuration() {
+        if(this.duration === 60)
+            return 'eine Stunde';
+        if(this.duration % 60 === 0)
+            return (this.duration/60) + ' Stunden';
+        if(this.duration === 90)
+            return '1,5 Stunden';
+        if(this.duration === 30)
+            return 'eine halbe Stunde';
+        if(this.duration === 150)
+            return '2,5 Stunden';
+        return this.duration + ' Minuten';
+    }
+});
 
+Template.practice.events ({
+    'click .action-edit': function(evt, tmpl) {
+        UltiSite.showModal('practiceDialog', this);
+    }
+});
 
-Template.practiceEdit.helpers({
+Template.practice.onCreated(function () {
+
+});
+
+Template.practiceDialog.events({
+    'click .action-clear-image': function(evt, tmpl) {
+        tmpl.$('input[name="imageMapCenter"]').val('');
+        tmpl.$('input[name="imageMapZoom"]').val('');
+        mapImageFile.set(undefined);
+    }
+});
+Template.practiceDialog.helpers({
+    practiceSchema() {
+        return UltiSite.schemas.practice.get();
+    },
     mapClickCallback:function() {
         var template = Template.instance();
         return function(geocoords) {
             template.$('input[name="geocoords"]').val(geocoords);
         };
     },
+    getGeocoords() {
+        return AutoForm.getFieldValue('address.geocoords');
+    },
+    mapImage() {
+        if(mapImageFile.get())
+            return mapImageFile.get().toDataURL();
+    },
     mapCaptureCallback: function() {
-        var self=this;
-        return function(canvas) {
+        var template = Template.instance();
+        return function(canvas, map) {
+            template.$('input[name="imageMapCenter"]').val(map.getView().getCenter());
+            template.$('input[name="imageMapZoom"]').val(map.getView().getZoom());
             canvas.toBlob((blob)=>{
-                const fsFile = {
-                    file: blob, 
-                    metadata : {
-                        _meteorCall: 'updatePracticeImage',
-                        associated : [self._id],
-                        tags : ['Karte', 'Training'],
-                        creator : Meteor.userId(),
-                        name : "practice-" + self._id,
-                        type : 'image/jpg'
-                    }
-                };                
-                UltiSite.pushToUploadQueue(fsFile);
-                UltiSite.triggerUpload();
+                mapImageFile.set(blob);
             },'image/png');
         };
     },
-    showState: function () {
-        return this.showOnPage;
-    },
-    weekdayText: function () {
-        console.log(this);
-        switch (Number(this.weekday)) {
-        case 0:
-            return "Sonntags";
-        case 1:
-            return "Montags";
-        case 2:
-            return "Dienstags";
-        case 3:
-            return "Mittwochs";
-        case 4:
-            return "Donnerstags";
-        case 5:
-            return "Freitags";
-        case 6:
-            return "Samstags";
-        default:
-            return "Nulltag";
+});
+
+AutoForm.hooks({
+    practiceDialogForm: {
+        // Called when any submit operation succeeds
+        onSubmit: function (insertDoc, updateDoc, currentDoc) {
+            const id = currentDoc && currentDoc._id;
+            Meteor.call('updatePractice',id, id?updateDoc:insertDoc, (err, res) => {
+                if(mapImageFile) {
+                    const fsFile = {
+                        file: mapImageFile, 
+                        metadata : {
+                            _meteorCall: 'updatePracticeImage',
+                            associated : [res],
+                            tags : ['Karte', 'Training'],
+                            creator : Meteor.userId(),
+                            name : "Trainingskarte.png",
+                            type : 'image/jpg'
+                        }
+                    };                
+                    UltiSite.pushToUploadQueue(fsFile);
+                    UltiSite.triggerUpload();
+                }
+                this.done(err);
+            });
+            return false;
+        },
+        onSuccess: function () {
+            UltiSite.hideModal();
+        },
+        // Called when any submit operation fails
+        onError: function (formType, error) {
+            UltiSite.notify('Fehler beim SPeichern des Trainings:' + error.message, "error");
         }
-    },
-    visiblePractice: function () {
-        return visiblePractice.get();
-    }
-
-});
-
-Template.practiceEdit.events({
-    'click .action-open-practice': function (e, t) {
-        visiblePractice.set(t.data._id);
-    },
-    'submit form': function (e, t) {
-        e.preventDefault();
-        var data = t.$(e.currentTarget).serializeObject();
-        data.start = moment(data.start + " " + data.startTime, "YYYY-MM-DD HH:mm").toDate();
-        data.end = moment(data.end + " " + data.endTime, "YYYY-MM-DD HH:mm").toDate();
-        data.endTime = undefined;
-        data.startTime = undefined;
-        if (!data.geocoords)
-            data.geocoords = UltiSite.settings().stadt_geocoords;
-        console.log(data);
-        UltiSite.Practices.update({
-            _id: this._id
-        }, {
-            $set: data
-        });
-    },
-    'click .btn-remove-practice': function () {
-        UltiSite.Practices.remove({
-            _id: this._id
-        });
-    },
-    'click .btn-show-here': function (e, t) {
-        e.preventDefault();
-        console.log("switch");
-        if ($(e.currentTarget).hasClass("btn-success"))
-            UltiSite.Practices.update({
-                _id: t.data._id
-            }, {
-                showOnPage: false
-            });
-        else
-            UltiSite.Practices.update({
-                _id: t.data._id
-            }, {
-                showOnPage: true
-            });
-    },
-    'click .btn-search-address': function () {},
-    'click .btn-cpature-image': function (e, t) {
     }
 });
-
 
 Template.practices.helpers({
     clubPractices: function () {
@@ -143,30 +133,12 @@ Template.practicesDetailed.helpers({
         });
     }
 });
-Template.practicesEditing.helpers({
-    clubPractices: function () {
-        return UltiSite.Practices.find({}, {
-            sort: {
-                weekday: 1,
-                start: 1,
-                club: -1,
-                hostingTeam: 1
-            }
-        });
-    }
-});
-Template.practicesEditing.events({
-    'click .btn-add-practice': function () {
-        UltiSite.Practices.insert({
-            hostingTeam: "",
-            start: new Date(),
-            city: UltiSite.settings().stadt,
-            geocoords: UltiSite.settings().stadt_geocoords,
-            end: moment().add(90, "Days").toDate()
-        });
-    }
-});
 
+Template.practicesDetailed.events({
+    'click .action-new': function(evt, tmpl) {
+        UltiSite.showModal('practiceDialog');
+    }
+});
 
 Template.practiceCalendar.helpers({
     practices: function (selWeekday) {

@@ -130,7 +130,8 @@ _.extend(UltiSite, {
         user: new ReactiveVar(null),
         userRegister: new ReactiveVar(null),
         blog: new ReactiveVar(null),
-        emailServerSchema: new ReactiveVar(null)
+        emailServerSchema: new ReactiveVar(null),
+        practice: new ReactiveVar(null)
     },
     initialSubsReady: new ReactiveVar(false),
     LookupId: new Ground.Collection(null),

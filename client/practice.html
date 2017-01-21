@@ -23,10 +23,17 @@
         <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <strong>Trainingszeiten</strong>
-                    {{#if currentUser}}
-                        <a href="{{pathFor route='practices' edit='edit'}}" class="btn btn-default pull-right"><i class="fa fa-edit"></i></a>
-                    {{/if}}
+                    <div class="row">
+                        <div class="col-xs-8 btn-height-text">
+                        <strong>Trainingszeiten</strong>
+                        </div>
+                        {{#if currentUser}}
+                        <div class="col-xs-4">
+                            <button class="btn btn-default pull-right action-new"><i class="fa fa-plus"></i></button>
+                        </div>
+                        {{/if}}
+
+                    </div>
                 </div>
                 <div class="list-group">
                     {{#each clubPractices}}
@@ -38,138 +45,86 @@
     </div>
 </template>
 
-<template name="practiceEdit">
-    <div class="list-group-item">
-        <form>
-            <div class="row">
-                <div class="col-xs-12">
-                    {{hostingTeam}} {{weekdayText}} in {{city}}
-                    <button type="button" class="btn btn-default pull-right action-open-practice" data-toggle="collapse" data-target="#practice_{{_id}}">
-                        <i class="fa fa-caret-down"></i>
+
+
+
+<template name="practiceDialog">
+    <div class="modal fade" id="practiceDialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="fa fa-close"></span>
                     </button>
+                    <h4 class="modal-title">
+                        Training {{#if this._id}}bearbeiten{{else}}anlegen{{/if}}
+                    </h4>
                 </div>
+                {{#autoForm schema=practiceSchema doc=this id="practiceDialogForm"}}
+                    <div class="modal-body">
+                      <fieldset class="row">
+                        <div class="col-xs-6">
+                            {{> afQuickField name='hostingTeam'}}
+                        </div>
+                        <div class="col-xs-6">
+                            {{> afQuickField name='weekday' }}
+                        </div>
+                        <div class="col-xs-3">
+                            {{> afQuickField name='start' data-date-format='dd.mm.yyyy' data-date-language='de-DE'}}
+                        </div>
+                        <div class="col-xs-3">
+                            {{> afQuickField name='end' data-date-format='dd.mm.yyyy' data-date-language='de-DE'}}
+                        </div>
+                        <div class="col-xs-3">
+                            {{> afQuickField name='startTime'}}
+                        </div>
+                        <div class="col-xs-3">
+                            {{> afQuickField name='duration' }}
+                        </div>
+                        <div class="col-xs-12">
+                            {{> afObjectField name='address' template="address"}}
+                        </div>
+                        <div class="col-xs-4">
+                            {{> afQuickField name='contact' }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{> afQuickField name='contactPhone' }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{> afQuickField name='website' }}
+                        </div>
+                        <div class="col-xs-6">
+                            {{> afQuickField name='trainer' }}
+                        </div>
+                        <div class="col-xs-6">
+                            {{> afQuickField name='skillLevel' }}
+                        </div>
+                        <div class="col-xs-12">
+                            {{> afQuickField name='description' }}
+                        </div>
+                        <div class="col-xs-12">
+                        {{#if mapImage}}
+                            <img src="{{mapImage}}" height="64px" /> <br />
+                        {{/if}}
+                        {{#if getGeocoords}}
+                            {{>ultisiteMap geocoords=getGeocoords zoom=10 marker=getGeocoords mapClick=mapClickCallback mapCapture=mapCaptureCallback}}
+                        {{/if}}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">Abbrechen</button>
+                      <button type="submit" class="btn btn-primary">Speichern</button>
+                    </div>
+                {{/autoForm}}
             </div>
-            {{#if equals _id visiblePractice}}
-            <div class="" id="practice_{{_id}}">
-                <div class="row">
-                    <div class="col-xs-12 col-md-6">
-                        {{>ultisiteMap geocoords=this.geocoords marker=this.geocoords mapClick=mapClickCallback mapCapture=mapCaptureCallback}}
-                        <div class="form-group">
-                            <label>Vorschaubild</label>
-                            <div>
-                                {{#if mapImage}}
-                                    <img class="practice-map-preview-image" src="{{imageUrl mapImage}}">
-                                {{/if}}
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="address">Adresse</label>
-                            <div class="form-inline">
-                                <input type="text" class="form-control" name="city" placeholder="Stadt" value="{{city}}">
-                                <input type="text" class="form-control" name="address" placeholder="kleine Straße, 12345 Stadt" value="{{address}}">
-                            </div>
-                            <input type="text" name="geocoords" value="{{geocoords}}">
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-md-6">
-                        <div class="form-group">
-                            <label for="hostingTeam">Veranstalter</label>
-                            <div class="form-inline">
-                                <div class="input-group">
-                                    <span class="input-group-addon">Team</span>
-                                    <input type="text" class="form-control" name="hostingTeam" placeholder="Teamname" value="{{hostingTeam}}">
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-addon">Trainer</span>
-                                    <input type="text" class="form-control" name="trainer" size="10" placeholder="Trainer" value="{{trainer}}">
-                                </div>
-                                <div class="input-group">
-                                    <input type="checkbox" name="club" checked="{{foreign}}"> Fremdes Training
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="skillLevel">Zielgruppe</label>
-                            <input type="text" class="form-control" name="skillLevel" placeholder="Zielgruppe" value="{{skillLevel}}">
-                        </div>
-                        <div class="form-group">
-                            <label for="time">Trainingszeit</label>
-                            <div class="form-inline">
-                                <select class="form-control" name="weekday">
-                                    <option value="0" selected= {{equals weekday "0"}}>Sonntags</option>
-                                    <option value="1" selected= {{equals weekday "1"}}>Montags</option>
-                                    <option value="2" selected= {{equals weekday "2"}}>Dienstags</option>
-                                    <option value="3" selected= {{equals weekday "3"}}>Mittwochs</option>
-                                    <option value="4" selected= {{equals weekday "4"}}>Donnerstags</option>
-                                    <option value="5" selected= {{equals weekday "5"}}>Freitags</option>
-                                    <option value="6" selected= {{equals weekday "6"}}>Smastags</option>
-                                </select>
-                                <div class="input-group">
-                                    <span class="input-group-addon">von</span>
-                                    <input type="time" class="form-control" name="startTime" value="{{formatTime start}}">
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-addon">bis</span>
-                                    <input type="time" class="form-control" name="endTime" value="{{formatTime end}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="start">Zeitraum in dem das Training stattfindet</label>
-                            <div class="form-inline">
-                                <div class="input-group">
-                                    <span class="input-group-addon">von</span>
-                                    <input type="date" class="form-control" name="start" value="{{formatDateInput start}}">
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-addon">bis</span>
-                                    <input type="date" class="form-control" name="end" value="{{formatDateInput end}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact">Kontakt</label>
-                            <div class="form-inline">
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <span class="fa fa-envelope"></span>
-                                    </span>
-                                    <input type="email" class="form-control" name="contact" placeholder="contact@team.de" value="{{contact}}">
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <span class="fa fa-link"></span>
-                                    </span>
-                                    <input type="text" class="form-control" name="website" placeholder="http://...." value="{{website}}">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="info">Beschreibung</label>
-                            <input type="text" class="form-control" name="description" value="{{description}}" placeholder="Das Haus mit dem blauen Dach, links davon das Tor benutzen...">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="form-group">
-                            <div class="input-group">
-                                <button type="submit" class="btn btn-primary">Änderungen speichern</button>
-                                <button type="button" class="btn btn-link btn-remove-practice">Training löschen</button>
-                                {{#unless club}}
-                                    <button type="button" class="btn btn-show-here btn-{{#if showState}}success{{else}}disabled{{/if}}">
-                                        {{#if showState}}Wird angezeigt{{else}}Wird nicht angezeigt{{/if}}
-                                    </button>
-                                {{/unless}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {{/if}}
-        </form>
+        </div>
     </div>
 </template>
+
+
+
+
 
 <template name="practices">
     <div class="panel panel-default">
@@ -190,8 +145,11 @@
 <template name="practice">
     <div class="list-group-item">
         <div class="caption">
+            <button class="btn btn-default pull-right action-edit">
+                <span class="fa fa-edit"></span>
+            </button>
             <h4>
-                {{hostingTeam}} {{weekdayText}} {{formatTime start}} bis {{formatTime end}}
+                {{hostingTeam}} {{weekdayText}} {{startTime}} für {{formatedDuration}}
                 <br />
                 <small>{{skillLevel}}</small>
             </h4>
@@ -200,17 +158,34 @@
             <div class="practice-map-image" style="background-image:url('{{imageUrl mapImage}}')"></div>
         {{/if}}
         <div class="caption">
-            Trainer: {{trainer}}
+            {{#if trainer}}
+                Trainer: {{trainer}}
+            {{else}}
+                Einer aus dem Trainerstab
+            {{/if}}
+            {{#if website}}
             <br />
-            <a href="{{website}}" class="">
-                <span class="fa fa-link"></span> {{website}}</a>
-            <br />
-            <a href="mailto:{{contact}}" class="">
-                <span class="fa fa-envelope"></span> {{contact}}</a>
-            <br />
-            <a href="http://maps.google.de/maps?q={{address}}">
-                <span class="fa fa-map-marker"></span> {{address}}</a>
-            <div>{{desccription}}</div>
+                <a href="{{website}}" class="">
+                    <span class="fa fa-link"></span> {{website}}</a>
+            {{/if}}
+            {{#if contact}}
+                <br />
+                <a href="mailto:{{contact}}" class="">
+                    <span class="fa fa-envelope"></span> {{contact}}</a>
+            {{/if}}
+            {{#if contactPhone}}
+                <br />
+                <a href="tel:{{contactPhone}}" class="">
+                    <span class="fa fa-phone"></span> {{contactPhone}}</a>
+            {{/if}}
+            {{#if address}}
+                <br />
+                <a href="http://maps.google.de/maps?q={{address.city}} {{address.street}}">
+                    <span class="fa fa-map-marker"></span> {{address.street}}, {{address.plz}} {{address.city}}</a>
+            {{/if}}
+            {{#if description}}
+                <div>{{desccription}}</div>
+            {{/if}}
         </div>
     </div>
 </template>

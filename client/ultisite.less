@@ -1,5 +1,6 @@
 /* CSS declarations go here */
 @import "lib/custom.bootstrap.import.less";
+@import "css/hallunken.design.less";
 
 @progress-bar-muted-bg: @gray-light;
 
@@ -35,6 +36,11 @@ blockquote {
     border: 2px solid gray;
     border-radius:3px;
     font-size:0.8em;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    left: 0px;
+
     div.symbol {
         position:absolute;
         padding:8px;
@@ -192,4 +198,34 @@ blockquote {
 
 .progress-bar-muted {
   .progress-bar-variant(@progress-bar-muted-bg);
+}
+
+.notification-info {
+    position: fixed;
+    bottom: 0px;
+    left:0px;
+    width:100%;
+    background-color: rgba(30,30,30,0.9);    
+    color: lightgray;
+    overflow: hidden;
+    transition: all 250ms;
+    padding: 10px 15px;
+    font-size:0.9em;
+    font-weight:thin;
+    max-width:@screen-sm-min;
+    @media(min-width:@screen-sm-min) {
+        width:300px;
+        left:50%;
+        margin-left:-150px;
+        bottom: 35px;
+        box-shadow: 1px 1px 3px rgba(0.5,0.5,0.5,0.5);
+    }
+    a {
+        float: right;
+        color: @hallunkenOrange;
+    }
+}
+.notification-info.away {
+    padding: 0px 15px;
+    height: 0px;
 }

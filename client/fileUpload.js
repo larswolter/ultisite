@@ -109,7 +109,7 @@ UltiSite.uploadFiles = function(files, associatedId, template) {
             if(file.type.indexOf('image') === 0) {
                 blueimp(file, (img, imgMeta) => {
                     if(img.type === "error") {
-                        $.notify("Fehler beim vorbereiten des Bildes");
+                        UltiSite.notify("Fehler beim vorbereiten des Bildes");
                         console.log(`Error, parsing image`,img);
                     } else {
                         if(imgMeta && imgMeta.exif)

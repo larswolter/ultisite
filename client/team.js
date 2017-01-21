@@ -12,7 +12,7 @@ Template.participant.events({
         UltiSite.getTextDialog({text:self.comment,header:'Kommentar eingeben'}, function (comment) {
             Meteor.call('participationComment', teamId, self.user, comment, function (err) {
                 if (err)
-                    t.$('button.action-comment').notify('Konnte Kommentar nicht speicher', 'error');
+                    UltiSite.notify('Konnte Kommentar nicht speicher', 'error');
             });
         });
     },
@@ -289,11 +289,11 @@ Template.team.helpers({
                     }
                 }, function (err) {
                     if (err)
-                        $.notify("Error saving team:" + err, "error");
+                        UltiSite.notify("Error saving team:" + err, "error");
 
                     else {
                         Meteor.call("storeContentVersion", self._id, newContent);
-                        $.notify("Anmerkungen gespeichert", "success");
+                        UltiSite.notify("Anmerkungen gespeichert", "success");
                         finished();
                     }
                 });

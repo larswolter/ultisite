@@ -66,6 +66,7 @@
 		{{#each dialogTemplates}}
 			{{>Template.dynamic template=this}}
 		{{/each}}
+		{{>notificationArea}}
 		<nav class="hidden-xs navbar navbar-default navbar-footer">
 			<div class="container-fluid">
 				{{> footer}}
@@ -73,6 +74,31 @@
 		</nav>
 		<div class="content-overlay"></div>
 	</div>
+</template>
+
+<template name="notificationArea">
+	<div class="notification-info {{#unless currentNotification}}away{{/unless}}">
+		{{#with currentNotification}}
+			{{>Template.dynamic template=this.template data=this.data}}
+		{{/with}}
+	</div>
+</template>
+
+<template name="notificationMessage">
+	{{msg}}
+</template>
+
+<template name="offlineInfo">
+	Keine Verbindung zum Server!
+	{{#if equals meteorStatus.status "offline"}}
+		<a href="#" class="action-reconnect">Verbinden</a>
+	{{/if}}			
+	{{#if equals meteorStatus.status "waiting"}}
+		{{nextTry}} zum nächsten Versuch <a href="#" class="action-reconnect">Jetzt verbinden</a>
+	{{/if}}			
+	{{#if equals meteorStatus.status "connecting"}}
+		Versuche zu verbinden <span class="fa fa-spin fa-spinner"></span>
+	{{/if}}			
 </template>
 
 <template name="help">

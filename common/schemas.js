@@ -366,7 +366,103 @@ var setSchemas = function () {
             optional: true
         }
     }));
-
+    UltiSite.schemas.practice.set(new SimpleSchema({
+        hostingTeam: {
+            type: String,
+            label: "Team",
+            defaultValue:UltiSite.settings().teamname, 
+            optional: false
+        },
+        weekday: {
+            type:Number,
+            label: "Wochentag",
+            autoform: {
+                options: [
+                    {label:'Montags',value:1},
+                    {label:'Dienstags',value:2},
+                    {label:'Mittwochs',value:3},
+                    {label:'Donnerstags',value:4},
+                    {label:'Freitags',value:5},
+                    {label:'Samstags',value:6},
+                    {label:'Sonntags',value:0},
+                ]
+            }
+        },
+        trainer: {
+            type: String,
+            label: "Trainer",
+            optional: true
+        },
+        contact: {
+            type: String,
+            label: "Kontaktmail",
+            optional: true
+        },
+        contactPhone: {
+            type: String,
+            label: "Kontaktnummer",
+            optional: true
+        },
+        website: {
+            type: String,
+            label: "Webseite",
+            optional: true
+        },
+        description: {
+            type: String,
+            label: "Beschreibung",
+            optional: true
+        },
+        skillLevel:{
+            type:String,
+            optional: true,
+            label: "Zielgruppe"
+        },
+        address: {
+            label: "Adresse",
+            type: addressSchema
+        },
+        startTime: {
+            type: String,
+            min:3,
+            max:5,
+            defaultValue: '18:00',
+            custom() {
+                if(this.isSet)
+                    return !!this.value.match(/[0-2][0-9]:[0-5][0-9]/);
+            }
+        },
+        start: {
+            type: Date,
+            optional:true,
+            defaultValue: new Date(),
+            autoform: {
+                type: "bootstrap-datepicker",
+                datePickerOptions: {
+                    language: "de-DE",
+                    format: "dd.mm.yyyy"
+                }
+            },
+        },
+        end: {
+            type: Date,
+            optional:true,
+            defaultValue: moment().add(6,'month').toDate(),
+            autoform: {
+                type: "bootstrap-datepicker",
+                datePickerOptions: {
+                    language: "de-DE",
+                    format: "dd.mm.yyyy"
+                }
+            },
+        },
+        duration: {
+            type: Number,
+            label: "Dauer",
+            defaultValue: 120,
+            optional:false,
+        }
+    }));
 };
 SimpleSchema.messages({
     "invalid-username": "Ungültiger Nutzername",

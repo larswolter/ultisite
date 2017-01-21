@@ -95,7 +95,7 @@ Template.passwordChangeDialog.events({
         var newPassword = template.find('#newPassword').value;
         var newPassword2 = template.find('#newPassword2').value;
         if(newPassword2 !== newPassword)
-            $('#newPassword2').notify("Passwörter stimmen nicht überein!","error");
+            UltiSite.notify("Passwörter stimmen nicht überein!","error");
         else
         Accounts.changePassword(oldPassword, newPassword, UltiSite.userFeedbackFunction("Neues Passwort setzen",$('#oldPassword'), function () {
             $('#passwordChange').modal('hide');

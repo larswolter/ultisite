@@ -42,9 +42,9 @@ Template.header.events({
         e.preventDefault();
         Meteor.logout((err) => {
             if (err)
-                $.notify('Abmelden fehlgeschlagen', 'error');
+                UltiSite.notify('Abmelden fehlgeschlagen', 'error');
             else
-                $.notify('Erfolgreich abgemeldet', 'success');
+                UltiSite.notify('Erfolgreich abgemeldet', 'success');
             FlowRouter.go('/');
         });
     },
@@ -101,9 +101,9 @@ Template.sidebar.events({
     'click .action-logout': function (e, t) {
         Meteor.logout((err) => {
             if (err)
-                $.notify('Abmelden fehlgeschlagen', 'error');
+                UltiSite.notify('Abmelden fehlgeschlagen', 'error');
             else
-                $.notify('Erfolgreich abgemeldet', 'success');
+                UltiSite.notify('Erfolgreich abgemeldet', 'success');
             FlowRouter.go('/');
             t.$('.list-group.link-list').addClass('visible-actions');
         });

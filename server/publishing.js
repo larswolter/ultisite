@@ -186,11 +186,7 @@ Meteor.startup(function () {
     });
 
     Meteor.publish("Practices", function () {
-        return UltiSite.Practices.find({
-            end: {
-                $gt: new Date()
-            }
-        });
+        return UltiSite.Practices.find({});
     });
     Meteor.publish("Places", function (country) {
         return UltiSite.Countries.find();

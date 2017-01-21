@@ -128,7 +128,7 @@ AutoForm.hooks({
         // Called when any submit operation fails
         onError: function (formType, error) {
             console.log('tournamentUpdateForm:', error);
-            $.notify('Fehler beim Turnier ändern:' + error.message, "error");
+            UltiSite.notify('Fehler beim Turnier ändern:' + error.message, "error");
         }
     },
     tournamentCreateForm: {
@@ -157,7 +157,7 @@ AutoForm.hooks({
         onSuccess: function (formType, result) {
             console.log("inserting tournament successfull", result);
             $('#tournamentCreateDialog').modal('hide');
-            $.notify('Turnier angelegt', "success");
+            UltiSite.notify('Turnier angelegt', "success");
             FlowRouter.go("tournament", {
                 _id: result
             });
@@ -165,7 +165,7 @@ AutoForm.hooks({
 
         // Called when any submit operation fails
         onError: function (formType, error) {
-            $.notify('Fehler beim Turnier anlegen:' + error.message, "error");
+            UltiSite.notify('Fehler beim Turnier anlegen:' + error.message, "error");
         }
     }
 });

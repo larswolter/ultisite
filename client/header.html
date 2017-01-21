@@ -22,7 +22,7 @@
 						</a>
 					</li>
 					<li class="hidden-xs dropdown">
-						<a href="#" class="text-{{#unless meteorStatus.connected}}danger{{else}}{{#if AdminNotifications.count}}info{{else}}default{{/if}}{{/unless}} dropdown-toggle"
+						<a href="#" class="text-default dropdown-toggle"
 							data-toggle="dropdown" aria-expanded="true">
 							<span class="fa fa-user fa-lg"></span>
 						</a>
@@ -46,7 +46,7 @@
 			<ul class="nav navbar-nav pull-left visible-xs">
 				<li>
 					<a href="#" class="action-toggle-sidebar">
-						<span class="{{#unless meteorStatus.connected}}text-danger{{else}}{{#if AdminNotifications.count}}text-info{{/if}}{{/unless}} fa fa-bars fa-lg"></span>
+						<span class="{{#if AdminNotifications.count}}text-info{{/if}} fa fa-bars fa-lg"></span>
 						<span class="sr-only">Toggle navigation</span>
 					</a>
 				</li>
@@ -115,12 +115,6 @@
 		<div class="title" style="background-color:rgba(0,0,0,0.5);position:absolute;top:0px;">
 			<a class="title-link" href="{{pathFor route='/'}}">{{settings.siteTitle}}</a>
 			<a class="sub-title-link" href="{{pathFor route='/'}}">{{settings.siteSubTitle}}</a>
-			{{#unless meteorStatus.connected}}
-				<span class="info-title text-warning">
-                Keine Verbindung zum Server, einige Funktionen stehen evtl. nicht zur Verfügung<br/>
-                <button href="#" class="btn btn-link action-reconnect">Neu verbinden</button>
-            </span>
-			{{/unless}}
 			{{#if currentUser}}
 				<div class="user-header">
 					<button class="btn btn-link" type="button">
@@ -205,17 +199,6 @@
 					<span class="fa fa-sign-out"></span> Abmelden
 				</a>
 			</li>
-			{{#unless meteorStatus.connected}}
-				<li role="separator" class="divider"></li>
-				<li class="dropdown-header">
-					Keine Verbindung zum Server!
-				</li>
-				<li>
-					<a href="#" class="action-reconnect">
-						<span class="fa fa-plug"></span> Neu verbinden
-					</a>
-				</li>
-			{{/unless}}
 			{{#if isAdmin}}
 				<li role="separator" class="divider"></li>
 				<li role="presentation">

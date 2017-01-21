@@ -1,25 +1,4 @@
 
-$.notify.addStyle('ultisite', {
-    html: "<div>" +
-        "<div class='symbol'>" +
-        "<span class='fa fa-check text-success'></span>" +
-        "<span class='fa fa-exclamation-triangle text-warning'></span>" +
-        "<span class='fa fa-close text-danger'></span>" +
-        "<span class='fa fa-exclamation-circle text-info'></span>" +
-        "</div>" +
-        "<span data-notify-text/>" +
-        "</div>"
-});
-$.notify.defaults({
-    autoHide: true,
-    autoHideDelay: 4000,
-    showAnimation: "fadeIn",
-    hideAnimation: "fadeOut",
-    hideDuration: 300,
-    showDuration: 300,
-    style: "ultisite"
-});
-
 UltiSite.screenSize = new ReactiveVar(window.innerWidth);
 
 Meteor.startup(function () {
@@ -33,6 +12,12 @@ Template.baseLayout.helpers({
     }
 });
 
+Template.offlineInfo.helpers({
+    nextTry() {
+        return moment.duration(Meteor.status().retryTime - (new Date()).getTime()).humanize(true);
+    }
+});
+
 Template.baseLayout.events({
     'click .content-overlay': function (e) {
         e.preventDefault();
@@ -42,6 +27,11 @@ Template.baseLayout.events({
     'scroll .content-overlay': function (e) {
         e.preventDefault();
         e.stopPropagation();
+    },
+    'click .action-reconnect': function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        Meteor.reconnect();
     },
 });
 
@@ -94,31 +84,19 @@ _.extend(UltiSite, {
     userFeedbackFunction: function (text, element, successCallback) {
         if (!text)
             text = "Aktion";
-        if (element) {
-            return function (err) {
-                if (err) {
-                    $(element).notify(text + " fehlgeschlagen:" + err, "error");
-                } else {
-                    $(element).notify(text + " erfolgreich", "success");
-                    if (successCallback)
-                        successCallback();
-                }
+        return function (err) {
+            if (err) {
+                UltiSite.notify(text + " fehlgeschlagen:" + err, "error");
+            } else {
+                UltiSite.notify(text + " erfolgreich", "success");
+                if (successCallback)
+                    successCallback();
             }
-        } else {
-            return function (err) {
-                if (err) {
-                    $.notify(text + " fehlgeschlagen:" + err, "error");
-                } else {
-                    $.notify(text + " erfolgreich", "success");
-                    if (successCallback)
-                        successCallback();
-                }
-            };
-        }
+        };
     },
     notifyUser: function (title, text, options) {
         if (("Notification" in window) && Notification.permission === 'granted') {
-            var notification = new Notification(title, _.extend({
+            new Notification(title, _.extend({
                 body: text
             }, options));
         }

@@ -72,9 +72,9 @@ UltiSite.offlineFetch = _.throttle((update) => {
             localStorage.setItem('offlineLastSync', new Date());
             UltiSite.offlineDependency.changed();
         } else if (err)
-            $.notify(err, 'error');
+            UltiSite.notify(err, 'error');
         else
-            $.notify('Es konnten keine Daten abgerufen werden', 'warning');
+            UltiSite.notify('Es konnten keine Daten abgerufen werden', 'warning');
     });
 }, 1000);
 

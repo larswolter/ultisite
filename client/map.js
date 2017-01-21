@@ -13,6 +13,9 @@ Template.ultisiteMap.onRendered(function() {
     var template = this;
     var setupMap = function() {
         let coords=[10,52];
+        let markerCoords = [0,0];
+        if(template.data.marker)
+            markerCoords = template.data.marker.split(',');
         if (template.data.geocoords)
             coords = template.data.geocoords.split(",");
 
@@ -34,21 +37,18 @@ Template.ultisiteMap.onRendered(function() {
         });
 
         if(template.data.marker || template.data.mapClick) {
-            let markerCoords = [0,0];
-            if(template.data.marker)
-                markerCoords = template.data.marker.split(',');
             markerCoords = ol.proj.transform([parseFloat(markerCoords[0]), parseFloat(markerCoords[1])], 'EPSG:4326', 'EPSG:3857');
-            var marker = createIcon(new ol.geom.Point(markerCoords));
+            template.map.marker = createIcon(new ol.geom.Point(markerCoords));
             template.map.addLayer(new ol.layer.Vector({
                 source: new ol.source.Vector({
-                    features: [marker]
+                    features: [template.map.marker]
                 })
             }));
             if(template.data.mapClick) {
                 template.map.on('click', (evt) => {
-                    marker.setGeometry(new ol.geom.Point(evt.coordinate));
+                    template.map.marker.setGeometry(new ol.geom.Point(evt.coordinate));
                     
-                    template.data.mapClick(ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326').join(","));
+                    template.data.mapClick(ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326').join(","), template.map);
                 });
             }
         }
@@ -117,6 +117,11 @@ Template.ultisiteMap.onRendered(function() {
                 let coords = Template.currentData().geocoords.split(",");
                 template.map.getView().setCenter(ol.proj.transform([parseFloat(coords[0]), parseFloat(coords[1])], 'EPSG:4326', 'EPSG:3857'));
             }
+            if(Template.currentData().marker && template.map.marker) {
+                markerCoords = Template.currentData().marker.split(',');
+                markerCoords = ol.proj.transform([parseFloat(markerCoords[0]), parseFloat(markerCoords[1])], 'EPSG:4326', 'EPSG:3857');
+                template.map.marker.setGeometry(new ol.geom.Point(markerCoords));
+            }
             if(Template.currentData().zoom) {         
                 var zoom = ol.animation.zoom({
                     duration: 1000,
@@ -146,7 +151,7 @@ Template.ultisiteMap.helpers({
 Template.ultisiteMap.events({
     'click .action-capture': function(e,t) {
         t.map.once('postcompose', function (event) {
-            t.data.mapCapture(event.context.canvas);
+            t.data.mapCapture(event.context.canvas, t.map);
         });
         t.map.renderSync();
     }

@@ -163,7 +163,7 @@ AutoForm.hooks({
         },
         // Called when any submit operation succeeds
         onSuccess: function (formType, result) {
-            $.notify('Umfrage angelegt', "success");
+            UltiSite.notify('Umfrage angelegt', "success");
             UltiSite.hideModal();    
             if(formType==='insert')
                 Meteor.call('addEvent', {
@@ -177,7 +177,7 @@ AutoForm.hooks({
 
         // Called when any submit operation fails
         onError: function (formType, error) {
-            $.notify('Fehler beim Anlegen der Planung:' + error.message, "error");
+            UltiSite.notify('Fehler beim Anlegen der Planung:' + error.message, "error");
         }
     }
 });

@@ -31,7 +31,7 @@ Template.linksEditDialog.events({
             Meteor.call('updateSettings', { $set: { objectHeaderLinks: links } },handleUpdate);
             t.$('.modal').modal('hide');
         } catch (err) {
-            t.$('textarea').notify('Fehlerhafte Syntax:' + err, 'error');
+            UltiSite.notify('Fehlerhafte Syntax:' + err, 'error');
         }
     }
 });
@@ -196,7 +196,7 @@ AutoForm.hooks({
         },
         // Called when any submit operation fails
         onError: function (formType, error) {
-            $.notify('Fehler Mail server speichern:' + error.message, "error");
+            UltiSite.notify('Fehler Mail server speichern:' + error.message, "error");
         }
     },
 });
