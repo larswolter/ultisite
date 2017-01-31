@@ -2,14 +2,14 @@
 <browserconfig>
   <msapplication>
     <tile>
-      <square70x70logo src="dynamicAppIcon?size=70&amp;type=png"/>
-      <square150x150logo src="dynamicAppIcon?size=150&amp;type=jpg"/>
-      <square310x310logo src="dynamicAppIcon?size=310&amp;type=jpg"/>
+      <square70x70logo src="http://localhost:3000/dynamicAppIcon?size=70&amp;type=png"/>
+      <square150x150logo src="http://localhost:3000/dynamicAppIcon?size=150&amp;type=jpg"/>
+      <square310x310logo src="http://localhost:3000/dynamicAppIcon?size=310&amp;type=jpg"/>
       <TileColor>#1c5f3c</TileColor>
     </tile>
     <notification>
-      <polling-uri  src="msxmltiles?content=images"/>
-      <polling-uri2  src="msxmltiles?content=events"/>
+      <polling-uri  src="http://localhost:3000/msxmltiles?content=images"/>
+      <polling-uri2  src="http://localhost:3000/msxmltiles?content=events"/>
       <frequency>30</frequency>
       <cycle>1</cycle>
     </notification>

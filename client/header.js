@@ -5,8 +5,9 @@ Meteor.startup(function () {
     Session.setDefault("message", {});
     document.title = UltiSite.settings().siteTitle +
         (UltiSite.settings().siteSubTitle ? ' - ' + UltiSite.settings().siteSubTitle : '');
-    $('meta[name=application-name]').attr('content', document.title);
-    $('meta[name=apple-mobile-web-app-name]').attr('content', document.title);
+    $('meta[name=application-name]').attr('content', UltiSite.settings().siteTitle);
+    $('meta[name=msapplication-tooltip]').attr('content', UltiSite.settings().siteSubTitle||UltiSite.settings().siteTitle);
+    $('meta[name=apple-mobile-web-app-name]').attr('content', UltiSite.settings().siteTitle);
 
     $( window ).scroll(()=> {
         const imgHeight = Number(UltiSite.settings().titleImageHeight || 150);

@@ -34,12 +34,17 @@
 	<!-- retina iPad iOS 7 für iPhone 6 Plus -->
 	<link rel="apple-touch-icon" href="/dynamicAppIcon?size=180" sizes="180x180">
 
-	<meta name="msapplication-TileColor" content=" #1c5f3c" />
-	<meta name="msapplication-square70x70logo" content="/dynamicAppIcon?size=70" />
-	<meta name="msapplication-square150x150logo" content="/dynamicAppIcon?size=150" />
-	<meta name="msapplication-square310x310logo" content="/dynamicAppIcon?size=310" />
+	<meta name="msapplication-TileColor" content="#1c5f3c" />
+	<meta name="msapplication-TileImage" content="dynamicAppIcon?size=150" />
+	<meta name="msapplication-tooltip" content="Turnierplaner" />
+	<meta name="msapplication-square70x70logo" content="dynamicAppIcon?size=70" />
+	<meta name="msapplication-square150x150logo" content="dynamicAppIcon?size=150" />
+	<meta name="msapplication-square310x310logo" content="dynamicAppIcon?size=310" />
+	<meta name="msapplication-notification" 
+     content="frequency=30;polling-uri=http://localhost:3000/msxmltiles?content=events;polling-uri2=http://localhost:3000/msxmltiles?content=images">
 	<meta content="UltiSite App" name="application-name">
-	<meta name="msapplication-config" content="ieconfig.xml" />
+
+	<!-- meta name="msapplication-config" content="ieconfig.xml" /-->
 	<meta name="theme-color" content="#1c5f3c" />
 </head>
 

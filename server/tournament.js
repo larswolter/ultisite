@@ -238,6 +238,7 @@ Meteor.methods({
             throw new Meteor.Error("already-there", "Der Spieler ist bereits beim Team dabei");
         delete (params.alias);
         params.user = user._id;
+        params.drawing = 1000;
         params.username = user.username;
         params.sex = user.profile.sex;
         params.responsible = this.userId;
@@ -265,7 +266,7 @@ Meteor.methods({
         if (!activeUser)
             throw new Meteor.Error("access-denied", "Sie müssen angemeldet sein");
 
-        UltiSite.Teams.update({ 'participants.user': params.userid, _id: teamId }, { $set: { 'participants.$.state': 0 } });
+        UltiSite.Teams.update({ 'participants.user': params.userid, _id: teamId }, { $set: { 'participants.$.state': 0, 'participants.$.drawing': 1000 } });
     },
     tournamentCoordinates: function () {
         return UltiSite.Tournaments.find({
@@ -309,12 +310,20 @@ Meteor.startup(function () {
             let result = {
                 date: new Date()
             };
-            for (let i = 0; i < partCount; i++)
-                numbers[i] = i;
-            _.filter(team.participants, (p) => { return p.state === 100; }).forEach((part) => {
+            for (let i = 1; i <= partCount; i++)
+                numbers[i - 1] = i;
+            const orderedParticipants = _.sortBy(_.sortBy(team.participants, 'safeStateDate'), (p) => {
+                return 100 - p.state;
+            });
+
+            orderedParticipants.forEach((part, idx) => {
                 let selection = (Math.random() * numbers.length).toFixed();
                 let pos = numbers[selection];
                 numbers = _.without(numbers, pos);
+                if(idx < (team.maxPlayers / 2))
+                    pos = 0;
+                if(part.state !== 100)
+                    pos = 1000;
                 UltiSite.Teams.update({ _id: team._id, 'participants.user': part.user }, {
                     $set: { 'participants.$.drawing': pos }
                 });
