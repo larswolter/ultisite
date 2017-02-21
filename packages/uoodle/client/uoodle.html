@@ -10,7 +10,7 @@
             {{/if}}
             </strong>
             <a href="#" class="pull-right action-go">
-              Neue Anlegen
+              Umfragenübersicht
             </a>
         </div>
         {{#if uoodles.count}}
@@ -86,10 +86,13 @@
 </template>
 
 <template name="uoodleDetails">
-    <div class="pull-right">Von {{getAlias owner}}</div>
+    <div class="pull-right">Von {{uoodleUser owner}}</div>
     <h3>{{name}}<br/><small>{{description}}</small></h3>
     <div>
     Es haben bisher {{participants.length}} Person(en) abgestimmt.
+    {{#unless isOpen}}
+    <br /> Diese Umfrage ist bereits zu Ende
+    {{/unless}}
     </div>
     <table class="table">
         <thead>
@@ -98,7 +101,7 @@
                 {{#each options}}
                 <th>
                     {{#if date}}
-                        {{formatDateTime date}}
+                        {{formatDate date}}
                     {{/if}}
                     {{name}}
                 </th>
@@ -118,14 +121,10 @@
         <tbody>
             {{#each participants}}
                 <tr>
-                    {{#if equals this currentUser._id}}
-                        <th>{{getAlias this}}</th>
-                    {{else}}
-                        <td>{{getAlias this}}</td>
-                    {{/if}}
+                    <th>{{uoodleUser this}}</th>
                     {{#each participantOptions}}
                         <td class={{css}}>
-                            {{#if equals .. currentUser._id}}
+                            {{#if and (equals .. currentUser._id) isOpen}}
                                 <button class="btn btn-default btn-xs action-choose" data-value='1'>Ja</button>
                                 <button class="btn btn-default btn-xs action-choose" data-value='0'>Evtl.</button>
                                 <button class="btn btn-default btn-xs action-choose" data-value='-1'>Nein</button>
@@ -136,18 +135,20 @@
                     {{/each}}
                 </tr>
             {{/each}}
-            {{#unless alreadyVoted}}
-                <tr class='me'>
-                    <th>{{getAlias currentUser}}</th>
-                    {{#each options}}
-                        <td>
-                            <button class="btn btn-default btn-xs action-choose" data-value='1'>Ja</button>
-                            <button class="btn btn-default btn-xs action-choose" data-value='0'>Evtl.</button>
-                            <button class="btn btn-default btn-xs action-choose" data-value='-1'>Nein</button>
-                        </td>
-                    {{/each}}
-                </tr>
-            {{/unless}}
+            {{#if and isOpen currentUser}}
+                {{#unless alreadyVoted}}
+                    <tr class='me'>
+                        <th>{{getAlias currentUser}}</th>
+                        {{#each options}}
+                            <td>
+                                <button class="btn btn-default btn-xs action-choose" data-value='1'>Ja</button>
+                                <button class="btn btn-default btn-xs action-choose" data-value='0'>Evtl.</button>
+                                <button class="btn btn-default btn-xs action-choose" data-value='-1'>Nein</button>
+                            </td>
+                        {{/each}}
+                    </tr>
+                {{/unless}}
+            {{/if}}
         </tbody>
     </table>
 </template>

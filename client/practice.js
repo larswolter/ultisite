@@ -1,5 +1,6 @@
 
-const mapImageFile = new ReactiveVar();
+let mapImageFile;
+const mapImageUrl = new ReactiveVar();
 
 Meteor.startup(function () {
     UltiSite.maps = {};
@@ -34,14 +35,17 @@ Template.practice.events ({
 });
 
 Template.practice.onCreated(function () {
-
+    if(this.data.mapImage)
+        mapImageUrl.set('/_image?imageId='+this.data.mapImage);
 });
 
 Template.practiceDialog.events({
     'click .action-clear-image': function(evt, tmpl) {
+        evt.preventDefault();
         tmpl.$('input[name="imageMapCenter"]').val('');
         tmpl.$('input[name="imageMapZoom"]').val('');
-        mapImageFile.set(undefined);
+        mapImageUrl.set(undefined);
+        mapImageFile = undefined;
     }
 });
 Template.practiceDialog.helpers({
@@ -58,8 +62,8 @@ Template.practiceDialog.helpers({
         return AutoForm.getFieldValue('address.geocoords');
     },
     mapImage() {
-        if(mapImageFile.get())
-            return mapImageFile.get().toDataURL();
+        if(mapImageUrl.get())
+            return mapImageUrl.get();
     },
     mapCaptureCallback: function() {
         var template = Template.instance();
@@ -67,8 +71,9 @@ Template.practiceDialog.helpers({
             template.$('input[name="imageMapCenter"]').val(map.getView().getCenter());
             template.$('input[name="imageMapZoom"]').val(map.getView().getZoom());
             canvas.toBlob((blob)=>{
-                mapImageFile.set(blob);
+                mapImageFile = blob;
             },'image/png');
+            mapImageUrl.set(canvas.toDataURL());
         };
     },
 });

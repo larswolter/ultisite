@@ -26,12 +26,20 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
         sharp(new Buffer(image.base64, 'base64'))
             .resize(scale[0],scale[1])
             .max()
+            .withoutEnlargement()
+            .toFormat('jpeg')
             .toBuffer()
-            .then( data => {
+            .then( Meteor.bindEnvironment(data => {
+                if((scale[0]+scale[1] < 400) || (scale[0]+scale[1] === 1600)) {
+                  const thumb = {};
+                  thumb['thumb.'+size] = data.toString('base64');
+                  UltiSite.Images.update(image._id,{$set:thumb});
+                }
                 resp.writeHead(200);
                 resp.end(data);                
-            } )
+            } ))
             .catch( err => {
+                console.log(err);
                 resp.writeHead(500);
                 resp.end(JSON.stringify(err));
             } );

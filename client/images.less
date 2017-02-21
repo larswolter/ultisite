@@ -9,10 +9,14 @@
             width:auto;
         }
     }
-    img {
+    img.big-image {
         max-width:100%;
         height:auto;
         transition: all 200ms;
+        opacity: 1;
+    }
+    img.big-image.not-available {
+        opacity: 0;
     }
     .start-content {
         position: relative;

@@ -29,7 +29,7 @@ Template.team.created = function () {
     this.teamEmails = new ReactiveVar();
     this.autorun(() => {
         if (this.data.participants)
-            Meteor.call('retrieveEmails', this.data.participants.map(p => p.user), (err, res) => {
+            Meteor.call('retrieveEmails', this.data.participants.filter(p => p.state > 0).map(p => p.user), (err, res) => {
                 this.teamEmails.set(res);
             });
     });

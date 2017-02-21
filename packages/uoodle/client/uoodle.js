@@ -56,10 +56,32 @@ Template.uoodleItem.events({
     }
 });
 
+Template.uoodleDetails.onCreated(function() {
+    this.userMapping = new ReactiveVar({});
+    this.autorun(() => {
+        if(FlowRouter.getParam('_id'))
+            Meteor.call('uoodleParticipantNames',FlowRouter.getParam('_id') , (err,res) => {
+                if(err)
+                    console.log(err);
+                else
+                    this.userMapping.set(res);
+            });
+    });
+});
+
 Template.uoodleDetails.helpers({
     alreadyVoted: function () {
         var uoodle = Uoodles.findOne(FlowRouter.getParam('_id'));
-        return _.contains(uoodle.participants, Meteor.userId());
+        if(uoodle)
+            return _.contains(uoodle.participants, Meteor.userId());
+    },
+    uoodleUser(id) {
+        return Template.instance().userMapping.get()[id];
+    },
+    isOpen() {
+        var uoodle = Uoodles.findOne(FlowRouter.getParam('_id'));
+        if(uoodle)
+            return moment(uoodle.validUntil).isAfter(moment());
     },
     stats: function () {
         var result = {

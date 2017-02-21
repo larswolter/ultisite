@@ -79,8 +79,15 @@ UltiSite.offlineFetch = _.throttle((update) => {
 }, 1000);
 
 Meteor.startup(function () {
-    localForage.getItem('Tournaments', (err, tournaments) => {
-        UltiSite.offlineTournaments = tournaments||[];
-        UltiSite.offlineDependency.changed();
+    Tracker.autorun((comp) => {
+        if(Meteor.user()) {
+            localForage.getItem('Tournaments', (err, tournaments) => {
+                UltiSite.offlineTournaments = tournaments||[];
+                UltiSite.offlineDependency.changed();
+                if(err || !tournaments)
+                    UltiSite.offlineFetch();
+            });
+            comp.stop();
+        }
     });
 });

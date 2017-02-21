@@ -1,16 +1,24 @@
 Template.imageViewer.onCreated(function () {
-    var self = this;
-    self.autorun(function () {
-        self.subscribe('Files',FlowRouter.getParam("associated")||FlowRouter.getParam("_id"));
+    this.imageStatus = new ReactiveVar();
+    this.autorun(() => {
+        this.subscribe('Files',FlowRouter.getParam("associated")||FlowRouter.getParam("_id"));
     });
-    self.autorun(function () {
+    this.autorun(() => {
         var file = UltiSite.Images.findOne(FlowRouter.getParam("_id"));
         if (file)
             UltiSite.getAnyById(file.associated);
+        this.imageStatus.set(undefined);
     });
 });
 
 Template.imageViewer.events({
+    'load img.big-image': function(e, t) {
+        t.imageStatus.set('loaded');
+    },/*
+    'error img.big-image': function(e, t) {
+        console.log('image load error:', e);
+        t.imageStatus.set('error');
+    },*/
     'click .remove-associated': function (e, t) {
         var userId = t.$(e.currentTarget).attr("data-id");
         console.log();
@@ -56,6 +64,19 @@ Template.imageViewer.helpers({
                 return FlowRouter.url('image',{_id:others[idx-1],associated:assoc});
         }
         return false;
+    },
+    imageLoadStatus() {
+        if(Template.instance().imageStatus.get() === 'error')
+            return {
+                icon: 'exclamation-triangle',
+                text: 'Bild laden fehlgeschlagen'
+            };
+        if(Template.instance().imageStatus.get() === 'loaded')
+            return undefined;
+        return {
+            icon: 'spinner fa-spin',
+            text: 'Lade Bild'
+        };
     },
     imageFile: function () {
         return UltiSite.Images.findOne(FlowRouter.getParam("_id"));

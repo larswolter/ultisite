@@ -246,6 +246,7 @@ Template.tournamentList.events({
 
 Template.tournamentList.onCreated(function () {
     var self = this;
+    this.topListEntries = new ReactiveVar();
     self.autorun(function () {
         if (_.contains(tabSelection.get(), 'month')) {
             console.log("subscribing....");
@@ -302,11 +303,13 @@ Template.tournamentList.helpers({
     },
     plannedTournaments: function () {
         UltiSite.offlineDependency.depend();
-        return UltiSite.offlineTournaments.filter(t=>t.teams.length && moment().isBefore(t.date)).reverse();
+        const ts = UltiSite.offlineTournaments.filter(t=>t.teams.length && moment().isBefore(t.date)).reverse();
+        Template.instance().topListEntries.set(ts.length);
+        return ts;
     },
     playedTournaments: function () {
-        UltiSite.offlineDependency.depend();
-        return UltiSite.offlineTournaments.filter(t=>t.teams.length && moment().isAfter(t.date));
+        if(Template.instance().topListEntries.get())
+            return _.first(UltiSite.offlineTournaments.filter(t=>t.teams.length && moment().isAfter(t.date)), Template.instance().topListEntries.get());
     },
     showTournamentsFilter: function () {
         return _.contains(tabSelection.get(), "filter");

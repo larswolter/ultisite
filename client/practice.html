@@ -103,12 +103,20 @@
                             {{> afQuickField name='description' }}
                         </div>
                         <div class="col-xs-12">
-                        {{#if mapImage}}
-                            <img src="{{mapImage}}" height="64px" /> <br />
-                        {{/if}}
-                        {{#if getGeocoords}}
-                            {{>ultisiteMap geocoords=getGeocoords zoom=10 marker=getGeocoords mapClick=mapClickCallback mapCapture=mapCaptureCallback}}
-                        {{/if}}
+                            <label>Kartenausschnitt</label>
+                            {{#if mapImage}}
+                                <div class="practice-map-image" style="background-image:url('{{mapImage}}')">
+                                    <button class="btn btn-default action-clear-image">
+                                        <span class="fa fa-trash"></span>
+                                    </button>
+                                </div>
+                            {{else}}
+                                {{#if getGeocoords}}
+                                    <div class="practice-map-image">
+                                    {{>ultisiteMap geocoords=getGeocoords zoom=10 marker=getGeocoords mapClick=mapClickCallback mapCapture=mapCaptureCallback}}
+                                    </div>
+                                {{/if}}
+                            {{/if}}
                         </div>
                       </fieldset>
                     </div>

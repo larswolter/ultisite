@@ -8,7 +8,13 @@ Meteor.methods({
         let players = [];
 
         const teams = UltiSite.Teams.find({
-            'participants.user': userId
+            state: 'dabei',
+            'participants': { 
+                $elemMatch: {
+                    user: userId,
+                    state: 100
+                }
+            },
         }).map(function (team) {
             var tournament = UltiSite.Tournaments.findOne(team.tournamentId);
             if (!tournament)
@@ -17,9 +23,9 @@ Meteor.methods({
                 return undefined;
 
             if (Array.isArray(team.participants) && moment().isAfter(tournament.date))
-                players = players.concat(team.participants.map(function (participant) {
+                players = players.concat(team.participants.filter(part => (part._id !== userId) && (part.state === 100)).map(function (participant) {
                     return participant.user;
-                }).filter(pid => pid !== userId));
+                }));
 
             return {
                 name: tournament.name,

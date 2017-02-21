@@ -3,7 +3,12 @@
     <div class="container-fluid image-viewer">
         <div class="row">
             <div class="col-xs-12 col-sm-8 start-content">
-                <img class="" src="{{imageUrl this._id 800}}">
+                <img class="big-image {{#if imageLoadStatus}}not-available{{/if}}" src="{{imageUrl this._id 800}}">
+                {{#with imageLoadStatus}}
+                    <div class="text-center text-mute">
+                        <span class="fa fa-{{icon}}"></span> {{text}}
+                    </div>
+                {{/with}}
                 {{#if prevImage}}
                 <a href={{prevImage}} class="image-control prev">
                     <span class="fa fa-chevron-left"></span>
