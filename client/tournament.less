@@ -21,15 +21,21 @@
         border-bottom: 4px solid @brand-primary;
     }
 }
-
-.tournament-filter {
-    padding: 5px 10px;
-    >div {
-        padding: 0px;
-        .btn {
-            width: 100%;
+.filter-container {
+    transition: all 500ms;
+    height: 1px;
+    max-height: 1px;
+    .tournament-filter {
+        >div {
+            padding: 0px;
+            .btn {
+            }
         }
     }
+}
+.filter-container.active {
+    max-height:300px;
+    height:auto;
 }
 .tournament-list-item > img {
     position: absolute;
@@ -112,12 +118,13 @@
 }
 .team-player-state {
     margin-bottom: 2px;
-    height: 15px;
+    height: 20px;
+    line-height: 20px;
     font-size: 12px;
 }
 
 .team-player-state .progress-bar {
-    line-height: 15px;
+    line-height: 20px;
     overflow: hidden;
 }
 
@@ -127,7 +134,10 @@
 }
 
 .detail-team-image {
-    background-size: contain;
+    text-align:center;
+    width:90px;
+    height:60px;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }

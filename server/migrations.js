@@ -66,7 +66,6 @@ Meteor.startup(function(){
         UltiSite.Images.update(img._id,{$set:{size:(img.base64.length - 814) / 1.37}});
     });
   */
-
     Meteor.users.find({'profile.avatar':{$exists:false}}).forEach((u)=>{
         const uImg = UltiSite.Images.findOne({name:'user-'+u._id});
         if(uImg) {
@@ -120,4 +119,24 @@ Meteor.startup(function(){
             });
     });
     console.log('migrations finished');
+});
+Meteor.methods({
+    cleanupTournaments: function(id) {
+        if(!UltiSite.isAdmin(this.userId))
+            throw new Meteor.Error('access-denied');
+        const search = {teams:{$exists:true}};
+        if(id)
+            search._id = id;
+        UltiSite.Tournaments.find(search, {fields:{teams:1, name:1}}).forEach((t)=>{
+            const toRemove=[];
+            t.teams.forEach((team) => {
+                if(!UltiSite.Teams.findOne(team, {fields:{_id:1}}))
+                    toRemove.push(team);
+            });
+            if(toRemove) {
+                UltiSite.Tournaments.update(t._id, {$pullAll: { teams: toRemove }});
+                console.log('cleaned '+toRemove.length+' Teams from '+t.name);
+            }
+        });
+    }    
 });

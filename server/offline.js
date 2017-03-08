@@ -13,6 +13,16 @@ Meteor.startup(function() {
     });
 });
 
+Meteor.methods({
+    offlineCheckForNew(since) {
+        if(UltiSite.Tournaments.find({lastChange:{$gte:since}}).count() > 5)
+            return true;
+        if(UltiSite.Teams.find({lastChange:{$gte:since}}).count() > 5)
+            return true;
+        return false;
+    }
+});
+
 WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => {
     if (!req.query.accessToken) {
         response.writeHead(403);
@@ -27,20 +37,16 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
     }
     response.setHeader('Content-Type', 'application/json');
     response.writeHead(200);
-    const search = {date:{$gte:moment().subtract(1,'year').toDate()}};
+    const tournamentSearch = {date:{$gte:moment().subtract(1,'month').startOf('year').toDate()}};
+    const teamSearch = {tournamentDate:{$gte:moment().subtract(1,'month').startOf('year').toDate()}};
     if(req.query.since) {
-        search._lastChange = {$gte:moment(req.query.since).toDate()};
+        tournamentSearch._lastChange = {$gte:moment(req.query.since).toDate()};
+        teamSearch._lastChange = {$gte:moment(req.query.since).toDate()};
     }
     const offline = {
-        tournaments: UltiSite.Tournaments.find(search, {sort:{date:-1}}).map((t) => {
-            t.teams = t.teams.map((teamId) => {
-                const team = UltiSite.Teams.findOne(teamId);
-                if(_.find(team.participants,p=>p.userid === user._id))
-                    t.participating=true;
-                return team;
-            });
-            return t;
-        }),
+        tournaments: UltiSite.Tournaments.find(tournamentSearch, {sort:{date:-1}}).fetch(),
+        teams: UltiSite.Teams.find(teamSearch).fetch(),
+        removed:[]
     };
      
     console.log('LOAD tournaments as *.json');

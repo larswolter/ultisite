@@ -36,6 +36,12 @@ Template.uoodles.events({
     },
 });
 
+Template.uoodleItem.helpers({
+    canEdit: function () {
+        return UltiSite.isAdmin() || (this.owner === Meteor.userId()); 
+    }
+});
+
 Template.uoodleItem.events({
     'click .action-open-uoodle': function (e) {
         e.preventDefault();
@@ -178,6 +184,8 @@ AutoForm.hooks({
             console.log(form);
             return _.extend(form, {
                 owner: Meteor.userId(),
+                ownerName: Meteor.user().username,
+                created: new Date(),
                 options: form.options.map((o)=>{
                     return _.extend(o,{id:Random.id()});
                 })

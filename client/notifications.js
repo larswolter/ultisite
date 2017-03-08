@@ -12,6 +12,8 @@ function startNotification(notification) {
     },4000);
 }
 
+UltiSite.notificationQueue = notificationQueue;
+
 UltiSite.notify = function(msg, type, template = 'notificationMessage') {
     const notification = {
         data: { msg, type },

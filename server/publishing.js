@@ -92,75 +92,26 @@ Meteor.startup(function () {
             sort: { 'detail.time': -1 }
         });
     });
-    Meteor.publishComposite("tournamentDetails", function (tournamentId) {
+    Meteor.publish("tournamentDetails", function (tournamentId) {
         if (!this.userId)
             return undefined;
-        var userId = this.userId;
-        return {
-            find: function () {
-                return UltiSite.Teams.find({
-                    $or: [{
-                        tournamentDate: {
-                            $gte: moment().startOf('day').toDate()
-                        },
-                        state: { $ne: 'abgesagt' },
-                        clubTeam: true
-                    }, {
-                        tournamentDate: {
-                            $gte: moment().subtract(3, 'month').toDate()
-                        },
-                        state: 'dabei',
-                        clubTeam: true
-                    }, {
-                        tournamentDate: {
-                            $gte: moment().startOf('day').toDate()
-                        },
-                        'participants.user': userId
-                    }, {
-                        tournamentDate: {
-                            $gte: moment().subtract(3, 'month').toDate()
-                        },
-                        state: 'dabei',
-                        'participants.state': 100,
-                        'participants.user': userId
-                    }, {
-                        tournamentId: tournamentId
-                    }]
-                });
-            },
-            children: [{
-                find: function (team) {
-                    return UltiSite.Tournaments.find({
-                        _id: {
-                            $in: [tournamentId, team.tournamentId]
-                        }
-                    });
-                }
-            }]
-        };
+        return [
+            UltiSite.Tournaments.find({_id: tournamentId}),
+            UltiSite.Teams.find({tournamentId})];
     });
 
-    Meteor.publish("Tournaments", function (query, skip, limit) {
-        var options = {
-            fields: {
-                _id: 1,
-                date: 1,
-                name: 1,
-                teams: 1,
-                address: 1,
-                divisions: 1,
-                category: 1,
-                ffindr: 1
-            },
-            sort: {
-                date: 1,
-                name: 1,
-            },
-            skip: skip,
-            limit: limit
-        };
-
-        Meteor.Collection._publishCursor(UltiSite.Tournaments.find(query, options), this, "tournamentList");
+    Meteor.publish("Tournaments", function (since, query) {
+        if(!since && query) {
+            console.log('Publishing tournaments for ',query);
+            const tcursor = UltiSite.Tournaments.find(query,{fields:{description:0, 'reports.content':0}});
+            const teamIds = _.flatten(tcursor.map(t=>t.teams));
+            return [tcursor, UltiSite.Teams.find({_id: {$in:teamIds}})];
+        }
+        console.log('Publishing tournaments since ',since);
+        return [
+            UltiSite.Tournaments.find({lastChange:{$gte:since}}, {limit:5}),
+            UltiSite.Teams.find({lastChange:{$gte:since}}, {limit:5})
+        ];
     });
 
     Meteor.publish("WikiPageDiscussions", function (id) {

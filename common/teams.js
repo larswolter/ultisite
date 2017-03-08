@@ -9,7 +9,7 @@ _.extend(UltiSite, {
         }
     },
     participantList: function (teamId) {
-        let team = UltiSite.Teams.findOne(teamId);
+        let team = UltiSite.Teams.findOne(teamId) || UltiSite.getTeam(teamId);
         let participants = _.sortBy(_.sortBy(team.participants, 'safeStateDate'), (p) => {
             return 100 - p.state;
         });

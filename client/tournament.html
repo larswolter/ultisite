@@ -119,7 +119,7 @@
     {{#with tournament}}
         {{>tournamentUpdate this}}
         {{>teamUpdate tournamentId=this._id}}
-        {{>participateDialog tournamentId=this._id}}
+        {{>participateDialog tournamentId=this._id teams=this.teams}}
         {{>teamHistoricView}}
         <div class="panel panel-default">
             <div class="panel-heading tournament-heading">
@@ -135,7 +135,7 @@
                         <button class="btn btn-default" title="Turnier editieren" type="button" data-toggle="modal" data-target="#tournamentUpdateDialog">
                             <span class="fa fa-edit"></span><span class=""> editieren</span>
                         </button>
-                        {{#unless teamObjects.count}}
+                        {{#unless teamObjects.length}}
                         <button class="btn btn-danger tournament-remove" title="Turnier löschen" type="button">
                             <span class="fa fa-trash"></span><span class=""> löschen</span>
                         </button>
@@ -158,7 +158,7 @@
                                 <span class="fa fa-edit"></span> Editieren
                             </a>
                         </li>
-                        {{#unless teamObjects.count}}
+                        {{#unless teamObjects.length}}
                         <li>
                             <a title="Turnier löschen" type="button" class="tournament-remove" href="#">
                                 <span class="fa fa-trash"></span> löschen
@@ -337,7 +337,7 @@
             </div>
         {{else}}
             {{#if currentUser}}
-                {{#if teamObjects.count}}
+                {{#if teamObjects.length}}
                     <button class="visible-xs visible-sm btn btn-primary btn-floating" title="Mitspielen" type="button" data-toggle="modal" data-target="#participateDialog">
                         <span class="fa fa-plus fa-lg"></span>
                     </button>

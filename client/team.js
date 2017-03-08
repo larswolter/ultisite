@@ -53,27 +53,17 @@ Template.team.onRendered(function () {
 
 
 Template.team.events({
-    'click .registered': function (e, t) {
-        e.preventDefault();
-        UltiSite.Teams.update({
-            _id: this._id
-        }, {
-                $set: {
-                    state: "angemeldet"
-                }
-            });
-    },
     'click .action-edit-remarks': function(e,t) {
         UltiSite.getHTMLTextDialog({ content: this.remarks,header:'Anmerkungen zum Team bearbeiten' }, (text) => {
             UltiSite.Teams.update(this._id, {
-                    $set: {remarks:text}
-                });
+                $set: { remarks:text }
+            });
         });
     },
     'click .team-remove': function (e, t) {
         e.preventDefault();
         UltiSite.confirmDialog("Willst du wirklich das gesamte Team löschen?",() => {
-            UltiSite.Teams.remove(this._id, UltiSite.userFeedbackFunction('Team löschen'));
+            Meteor.call('teamRemove', this._id, UltiSite.userFeedbackFunction('Team löschen'));
         });
     },
     'click .action-set-state': function (e, t) {
@@ -91,10 +81,12 @@ Template.team.events({
         UltiSite.Teams.update({
             _id: this._id
         }, {
-                $set: {
-                    responsible: Meteor.userId()
-                }
-            });
+            $set: {
+                lastChange:new Date(),
+                responsible: Meteor.userId(),
+                responsibleName: Meteor.user().username,
+            }
+        });
     }
 });
 
@@ -110,7 +102,7 @@ Template.participateDialog.helpers({
         return Template.instance().teams.get();
     },
     femaleRequired: function () {
-        const team = UltiSite.Teams.findOne(Template.instance().selectedTeam.get());
+        const team = UltiSite.getTeam(Template.instance().selectedTeam.get());
         if (!team)
             return false;
         if (team.minFemale < team.maxPlayers)
@@ -168,12 +160,16 @@ Template.participateDialog.events({
         t.inserting.set(false);
         var dabei = false;
         if (teamId) {
-            t.teams.set(UltiSite.Teams.find({ _id: teamId }).fetch());
-            dabei = UltiSite.Teams.findOne({ _id: teamId, 'participants.user': Meteor.userId() });
+            const team = UltiSite.getTeam( teamId );
+            t.teams.set([team]);
+            dabei = _.find(team.participants, p => p.userId = Meteor.userId());
         }
         else {
-            t.teams.set(UltiSite.Teams.find({ tournamentId: this.tournamentId }, { sort: { clubTeam: -1 } }).fetch());
-            dabei = UltiSite.Teams.findOne({ tournamentId: this.tournamentId, 'participants.user': Meteor.userId() });
+            const teams = t.data.teams.map((t)=>{
+                return UltiSite.getTeam(t);
+            });
+            t.teams.set(teams);
+            dabei = _.find(teams, team => _.find(team.participants, p => p.userId = Meteor.userId()));
         }
 
         if (t.teams.get().length === 1)
@@ -285,6 +281,7 @@ Template.team.helpers({
                 _id: self._id
             }, {
                     $set: {
+                        lastChange:new Date(),
                         remarks: newContent.trim()
                     }
                 }, function (err) {
@@ -345,8 +342,8 @@ Template.participant.helpers({
         return UltiSite.textState(this.state);
     },
     noChangeRights: function () {
-        if (Meteor.userId())
-            return false;
+        if (!Meteor.userId())
+            return true;
         if (this.user === Meteor.userId())
             return false;
         if (UltiSite.isAdmin())
@@ -368,6 +365,7 @@ AutoForm.hooks({
             var self = this;
             console.log("teamUpdateForm onSubmit");
             if (currentDoc && currentDoc._id) {
+                updateDoc.$set.lastChange = new Date();
                 UltiSite.Teams.update({
                     _id: currentDoc._id
                 }, updateDoc);
@@ -407,7 +405,7 @@ Template.teamUpdate.helpers({
         return [];
     },
     team: function () {
-        var team = UltiSite.Teams.findOne(Template.instance().teamId.get());
+        var team = UltiSite.getTeam(Template.instance().teamId.get());
         if (team)
             return team;
         var division;
@@ -508,7 +506,7 @@ Template.teamReport.events({
                     }
                 });
             }
-            UltiSite.Teams.update(teamId,{$set:{image:file && file._id}});
+            UltiSite.Teams.update(teamId,{$set:{lastChange:new Date(),image:file && file._id}});
             UltiSite.fileBrowserHideDialog();
         });
     },
@@ -518,6 +516,7 @@ Template.teamReport.events({
         var node = $(e.currentTarget.parentNode);
         var toSet = {};
         toSet[name] = value;
+        toSet.lastChange = new Date();
         UltiSite.Teams.update({
             _id: this._id
         }, {
@@ -537,8 +536,8 @@ Template.teamReport.helpers({
         return true;
     },
     noChangeRights: function () {
-        if (Meteor.userId())
-            return false;
+        if (!Meteor.userId())
+            return true;
         if (_.find(this.participants, (p) => { return p.user === Meteor.userId(); }))
             return false;
         if (UltiSite.isAdmin())
@@ -579,12 +578,10 @@ Template.teamHistoricView.events({
 
 Template.teamHistoricView.helpers({
     participants: function () {
-        return (UltiSite.Teams.findOne({
-            _id: Template.instance().teamId.get()
-        }) || {}).participants;
+        return (UltiSite.getTeam(Template.instance().teamId.get()) || {}).participants;
     },
     marks: function () {
-        var team = UltiSite.Teams.findOne(Template.instance().teamId.get());
+        var team = UltiSite.getTeam(Template.instance().teamId.get());
         if (!team)
             return;
         let earlyReg = _.sortBy(team.participants, 'entryDate');
@@ -619,7 +616,7 @@ Template.teamHistoricView.helpers({
         return marks;
     },
     historicBlocks: function () {
-        var team = UltiSite.Teams.findOne(Template.instance().teamId.get());
+        var team = UltiSite.getTeam(Template.instance().teamId.get());
         if (!team)
             return;
         let earlyReg = _.sortBy(team.participants, 'entryDate');

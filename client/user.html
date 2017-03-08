@@ -312,6 +312,11 @@
                                     {{#each t}}
                                         {{#unless this.unsure}}
                                             <div class="{{#if this.unsure}}text-muted{{/if}}">
+                                                {{#if teamImage}}
+                                                    <a href="{{pathFor route='image' _id=teamImage associated=tournamentId}}">
+                                                        <img src="{{imageUrl teamImage 32}}" />
+                                                    </a>
+                                                {{/if}}
                                                 <a href="{{pathFor route='tournament' _id=tournamentId}}">{{name}}</a> {{formatDate date}} im Team {{teamname}}
                                             </div>
                                         {{/unless}}

@@ -1,26 +1,28 @@
 
 Template.tournament.onCreated(function () {
-    var self = this;
+    this.bodyVisible = new ReactiveVar(!Meteor.user());
 
-    self.bodyVisible = new ReactiveVar(!Meteor.user());
+    this.autorun(() => {
+        this.subscribe('tournamentDetails', FlowRouter.getRouteName() === 'tournament' ? FlowRouter.getParam('_id') : null, (err) => {
+        });
+    });
 
-    self.autorun(function () {
-
+    this.autorun(() => {
         let t = UltiSite.getTournament(FlowRouter.getParam('_id'));
         if (!t)
             return;
 
         let from = moment(t.date).clone().subtract(1, "days").toDate();
         let to = moment(t.date).clone().add(t.numDays + 1, "days").toDate();
-        self.subscribe("Tournaments", {
+        this.subscribe("Tournaments", {
             date: {
                 $gte: from,
                 $lte: to
             }
         });
 
-        if (((!t.teams) || (t.teams.length === 0)) && self.bodyVisible.get() === null)
-            self.bodyVisible.set(true);
+        if (((!t.teams) || (t.teams.length === 0)) && this.bodyVisible.get() === null)
+            this.bodyVisible.set(true);
     });
 });
 
@@ -50,18 +52,21 @@ Template.tournament.events({
             UltiSite.Tournaments.update({
                 _id: FlowRouter.getParam('_id')
             }, {
-                    $push: {
-                        description: {
-                            $each: [{
-                                _id: Random.id(),
-                                content: text,
-                                date: new Date(),
-                                editor: Meteor.userId()
-                            }],
-                            $position: 0
-                        }
+                $set:{
+                    lastChange:new Date()
+                },
+                $push: {
+                    description: {
+                        $each: [{
+                            _id: Random.id(),
+                            content: text,
+                            date: new Date(),
+                            editor: Meteor.userId()
+                        }],
+                        $position: 0
                     }
-                });
+                }
+            });
         });
     },
     'click .action-edit-infos': function (e) {
@@ -76,12 +81,15 @@ Template.tournament.events({
             UltiSite.Tournaments.update({
                 _id: FlowRouter.getParam('_id')
             }, {
-                    $pull: {
-                        description: {
-                            _id: this._id
-                        }
+                $set:{
+                    lastChange:new Date()
+                },
+                $pull: {
+                    description: {
+                        _id: this._id
                     }
-                });
+                }
+            });
         });
     },
     'click .action-edit-report': function (e) {
@@ -97,12 +105,15 @@ Template.tournament.events({
             UltiSite.Tournaments.update({
                 _id: FlowRouter.getParam('_id')
             }, {
-                    $pull: {
-                        reports: {
-                            _id: id
-                        }
+                $set:{
+                    lastChange:new Date()
+                },
+                $pull: {
+                    reports: {
+                        _id: id
                     }
-                });
+                }
+            });
         });
     },
     'click .action-add-report': function (e) {
@@ -140,10 +151,7 @@ Template.tournament.helpers({
     tournament: function () {
         if(!FlowRouter.getParam('_id'))
             return;
-        var t = UltiSite.getTournament(FlowRouter.getParam('_id'));
-        if (!t)
-            t = Template.instance().localVersion.get();
-        return t;
+        return UltiSite.getTournament(FlowRouter.getParam('_id'));
     },
     tournamentBodyVisible: function () {
         return Template.instance().bodyVisible.get();
@@ -158,30 +166,36 @@ Template.tournament.helpers({
             UltiSite.Tournaments.update({
                 _id: tournamentId
             }, {
-                    $pull: {
-                        description: {
-                            _id: self._id
-                        }
+                $set:{
+                    lastChange:new Date()
+                },
+                $pull: {
+                    description: {
+                        _id: self._id
                     }
-                });
+                }
+            });
             UltiSite.Tournaments.update({
                 _id: tournamentId
             }, {
-                    $push: {
-                        description: {
-                            $each: [{
-                                _id: self._id,
-                                content: newContent.trim(),
-                                date: self.date,
-                                editDate: new Date(),
-                                editor: Meteor.userId()
-                            }],
-                            $position: 0
-                        }
-                    }
-
+                $set:{
+                    lastChange:new Date()
                 },
-                finished);
+                $push: {
+                    description: {
+                        $each: [{
+                            _id: self._id,
+                            content: newContent.trim(),
+                            date: self.date,
+                            editDate: new Date(),
+                            editor: Meteor.userId()
+                        }],
+                        $position: 0
+                    }
+                }
+
+            },
+            finished);
         };
     },
     saveReport: function () {
@@ -191,30 +205,33 @@ Template.tournament.helpers({
             UltiSite.Tournaments.update({
                 _id: tournamentId
             }, {
-                    $pull: {
-                        reports: {
-                            _id: self._id
-                        }
+                $pull: {
+                    reports: {
+                        _id: self._id
                     }
-                });
+                }
+            });
             UltiSite.Tournaments.update({
                 _id: tournamentId
             }, {
-                    $push: {
-                        reports: {
-                            $each: [{
-                                _id: self._id,
-                                content: newContent.trim(),
-                                date: self.date,
-                                editDate: new Date(),
-                                editor: Meteor.userId()
-                            }],
-                            $position: 0
-                        }
-                    }
-
+                $set:{
+                    lastChange:new Date()
                 },
-                finished);
+                $push: {
+                    reports: {
+                        $each: [{
+                            _id: self._id,
+                            content: newContent.trim(),
+                            date: self.date,
+                            editDate: new Date(),
+                            editor: Meteor.userId()
+                        }],
+                        $position: 0
+                    }
+                }
+
+            },
+            finished);
         };
     },
     isEmpty: function () {
@@ -247,9 +264,14 @@ Template.tournament.helpers({
         return address;
     },
     teamObjects: function () {
-        return UltiSite.Teams.find({
-            tournamentId: FlowRouter.getParam('_id')
-        }, { sort: { clubTeam: -1, state: 1, name: 1 } });
+        const teams = this.teams || [];
+
+        return teams.map(function (id) {
+            const teamObj = UltiSite.getTeam(id) || {name: '-unbekannt-'};
+            return _.extend({
+                stateColor: UltiSite.stateColor(teamObj.state)
+            }, teamObj);
+        });
     }
 });
 

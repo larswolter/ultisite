@@ -32,6 +32,7 @@ Meteor.methods({
                 date: tournament.date,
                 teamname: team.name,
                 teamId: team._id,
+                teamImage: team.image,
                 tournamentId: tournament._id,
                 unsure: (team.state != "dabei") || (tournament.category == "Veranstaltung")
             };

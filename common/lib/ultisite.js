@@ -3,6 +3,10 @@ var collectionLookup = new Meteor.Collection(null);
 UltiSite = {};
 
 moment.locale("de", {
+    months : [
+        "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
+        "August", "September", "Oktober", "November", "Dezember"
+    ],
     relativeTime: {
         future: "%s noch",
         past: "%s her",
@@ -20,9 +24,8 @@ moment.locale("de", {
     }
 });
 
-Ground.Collection(Meteor.users, {
-    
-});
+Ground.Collection(Meteor.users);
+
 if(Meteor.isServer) {
     const appCacheConfig = {
         onlineOnly: ['/icons/countries/']
@@ -134,43 +137,21 @@ _.extend(UltiSite, {
         practice: new ReactiveVar(null)
     },
     initialSubsReady: new ReactiveVar(false),
-    LookupId: new Ground.Collection(null),
+    LookupId: new Meteor.Collection(null),
     AdminNotifications: new Meteor.Collection("AdminNotifications"),
     LastChanges: new Meteor.Collection('LastChanges'),
     WikiPages: new Meteor.Collection("WikiPages"),
     WikiPageDiscussions: new Meteor.Collection("WikiPagDiscussiones"),
     Blogs: new Meteor.Collection("Blogs"),
     Statistics: new Meteor.Collection("Statistics"),
-    Practices: new Ground.Collection("Practices"),
-    Tournaments: new Meteor.Collection("Tournaments", {
-        transform: function (doc) {
-            return _.extend(doc, {
-                teams: UltiSite.Teams.find({
-                    tournamentId: doc._id
-                }).map(function (team) {
-                    return team._id;
-                })
-            });
-        }
-    }),
-    TournamentList: new Meteor.Collection("tournamentList", {
-        transform: function (doc) {
-            return _.extend(doc, {
-                teams: UltiSite.Teams.find({
-                    tournamentId: doc._id
-                }).map(function (team) {
-                    return team._id;
-                })
-            });
-        }
-    }),
-    Teams: new Ground.Collection("Teams", {
-    }),
-    Participants: new Ground.Collection("Participants", {
-    }),
+    Practices: new Meteor.Collection("Practices"),
+    Tournaments: new Meteor.Collection("Tournaments"),
+    TournamentList: new Meteor.Collection("tournamentList"),
+    Teams: new Meteor.Collection("Teams"),
+    Participants: new Meteor.Collection("Participants"),
     Events: new Meteor.Collection("Events"),
     Ffindr: new Meteor.Collection("Ffindr"),
-    Countries: new Ground.Collection("Countries"),
+    Countries: new Meteor.Collection("Countries"),
     Cities: new Meteor.Collection("Cities"),
     ContentVersions: new Meteor.Collection("ContentVersions"),
     Images: new Meteor.Collection("photos", {
@@ -201,8 +182,7 @@ _.extend(UltiSite, {
             });
         }
     }),
-    Folders: new Ground.Collection("Folders", {
-    }),
+    Folders: new Meteor.Collection("Folders"),
 });
 
 _.extend(UltiSite, {

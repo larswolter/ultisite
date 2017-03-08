@@ -51,22 +51,26 @@ Meteor.methods({
         if (user) {
             UltiSite.Teams.update({ 'participants.user': userId }, {
                 $set: {
+                    lastChange:new Date(),
                     'participants.$.username': user.username,
                     'participants.$.sex': user.profile.sex
                 }
             }, { multi: true });
             UltiSite.Teams.update({ 'participants.responsible': userId }, {
                 $set: {
+                    lastChange:new Date(),
                     'participants.$.responsibleName': user.username
                 }
             }, { multi: true });
             UltiSite.Teams.update({ responsible: userId }, {
                 $set: {
+                    lastChange:new Date(),
                     responsibleName: user.username
                 }
             }, { multi: true });
             UltiSite.Blogs.update({ author: userId }, {
                 $set: {
+                    lastChange:new Date(),
                     authorName: user.username
                 }
             }, { multi: true });

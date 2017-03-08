@@ -68,7 +68,9 @@
         {{else}}
             Niemand hat bisher zwischen {{options.length}} Optionen gewählt
         {{/if}}
-        {{#if equals owner currentUser._id}}
+        <br />
+        Die Umfrage läuft noch bis zum {{formatDate validUntil}}
+        {{#if canEdit}}
             <button class="btn btn-danger action-remove">
                 <span ><span class="fa fa-close"></span></span>
             </button>
@@ -80,21 +82,31 @@
         {{/if}}
     </div>
     <h4>
-        <a href="#" class="action-open-uoodle">{{name}}<br/>
-        <small>{{description}}</small></a>
+        <a href="#" class="action-open-uoodle">{{name}}</a><br/>
+        <small>Angelegt von {{ownerName}}</small>
     </h4>
+    <small>{{description}}</small>
 </template>
 
 <template name="uoodleDetails">
-    <div class="pull-right">Von {{uoodleUser owner}}</div>
-    <h3>{{name}}<br/><small>{{description}}</small></h3>
+    <h3>
+        {{name}}
+        <small>von {{ownerName}}</small>
+    </h3>
     <div>
-    Es haben bisher {{participants.length}} Person(en) abgestimmt.
-    {{#unless isOpen}}
-    <br /> Diese Umfrage ist bereits zu Ende
-    {{/unless}}
+        <small>{{description}}</small>
     </div>
-    <table class="table">
+    <br />
+    <br />
+    <div>
+    Es haben bisher {{participants.length}} Person(en) abgestimmt.<br />
+    {{#if isOpen}}
+        Diese Umfrage läuft noch bis zum {{formatDate validUntil}}
+    {{else}}
+        Diese Umfrage ist bereits zu Ende
+    {{/if}}
+    </div>
+    <table class="table table-condensed table-bordered table-responsive">
         <thead>
             <tr>
                 <th>Nutzer</th>
