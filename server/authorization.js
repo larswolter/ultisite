@@ -59,6 +59,7 @@ Meteor.methods({
         var profile = {
             name: userData.name,
             surname: userData.surname,
+            sex: userData.sex
         };
         profile.clubProperties = {};
         if(Meteor.users.find().count() > 0) {

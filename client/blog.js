@@ -1,12 +1,26 @@
 var activeImage = new ReactiveVar(null);
 var activePublication = new ReactiveVar(false);
+
 Template.blogs.onCreated(function(){
+    this.limit = new ReactiveVar(10);
     this.autorun(()=>{
-        this.subscribe('Blogs', this.data.limit);
+        this.subscribe('Blogs',this.limit.get());
     });
+});
+Template.blogsStart.onCreated(function(){
+    this.subscribe('BlogsStart');
 });
 
 Template.blogs.helpers({
+    blogs: function () {
+        return UltiSite.Blogs.find({}, {
+            sort: {
+                date: -1,
+            },
+        });
+    }
+});
+Template.blogsStart.helpers({
     blogs: function () {
         return UltiSite.Blogs.find({}, {
             sort: {
@@ -107,7 +121,7 @@ Template.blogUpdate.events({
         var title = $('.blogUpdateForm input.title').val();
         var id = $('.blogUpdateForm input.id').val();
         var image = activeImage.get();
-        var public = activePublication.get();
+        var isPublic = activePublication.get();
         var div = document.createElement("div");
         div.innerHTML = content;
         var preview = (div.textContent || div.innerText || "").substr(0, 300);
@@ -120,7 +134,7 @@ Template.blogUpdate.events({
                     content: content,
                     image: image,
                     preview: preview,
-                    public: public
+                    public: isPublic
                 }
             }, function (err) {
                 if (err)
@@ -144,8 +158,9 @@ Template.blogUpdate.events({
                 title: title,
                 content: content,
                 preview: content.substr(0, 300),
-                public: public,
+                public: isPublic,
                 author: Meteor.userId(),
+                authorName: Meteor.user().username,
                 date: new Date()
             }, function (err, res) {
                 if (err)

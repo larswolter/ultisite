@@ -54,11 +54,11 @@ Template.loginDialog.helpers({
 });
 
 Accounts.onResetPasswordLink(function (token) {
-    Session.set("passwordResetToken", token);
+    Session.set("passwordResetToken", {token, type:'reset'});
 });
 
 Accounts.onEnrollmentLink(function (token) {
-    Session.set("passwordResetToken", token);
+    Session.set("passwordResetToken", {token, type:'enroll'});
 });
 
 Template.passwordResetDialog.rendered = function () {
@@ -67,7 +67,7 @@ Template.passwordResetDialog.rendered = function () {
 };
 
 Template.passwordResetDialog.helpers({
-    token: function () {
+    passwordReset: function () {
         return Session.get("passwordResetToken");
     }
 });

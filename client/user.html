@@ -368,11 +368,23 @@
                         </p>
                         {{/unless}}
                     {{/if}}
-                    <fieldset>
-                        {{> afQuickField name='alias'}} 
-                        {{> afQuickField name='email' type='email'}} 
-                        {{> afQuickField name='name'}} 
-                        {{> afQuickField name='surname'}} 
+                    <fieldset class="row">
+                        <div class="col-xs-6">
+                            {{> afQuickField name='alias'}} 
+                        </div>
+                        <div class="col-xs-6">
+                            {{> afQuickField name='sex'}} 
+                        </div>
+                        <div class="col-xs-12">
+                            {{> afQuickField name='email' type='email'}} 
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            {{> afQuickField name='name'}} 
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            {{> afQuickField name='surname'}} 
+                        </div>
+                        <div class="col-xs-12">
                         {{#unless setupNeeded}}
 
                             {{#if equals settings.siteRegistration "password"}} 
@@ -383,9 +395,11 @@
                             </p>
                             {{/if}}
                             <p>
-                                Nach dem Absenden dieser Anfrage wird eine E-Mail an die eingegebene Adresse verschickt, um die Gültigkeit sicherzustellen.
+                                Nach dem Absenden dieser Anfrage wird eine E-Mail an die eingegebene Adresse verschickt. 
+                                Um die Gültigkeit dieser sicherzustellen, müssen sie den Link darin öffnen.
                             </p>
                         {{/unless}}
+                        </div>
                     </fieldset>
                 </div>
                 <div class="modal-footer">

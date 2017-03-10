@@ -30,8 +30,8 @@
 					</li>
 				{{else}}
 					<li class="dropdown">
-						<a href="{{pathFor route='login'}}" class="btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
-							<span class="fa fa-user"></span> Anmelden
+						<a href="#" title="Anmelden" class="btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
+							<span class="fa fa-sign-in fa-lg fa-fw"></span> <span class="hidden-xs">Anmelden</span>
 						</a>
 					</li>
 				{{/if}}					
@@ -57,7 +57,7 @@
 							{{#if this.back}}
 								{{this.back}}
 							{{else}}
-								<span class="fa fa-arrow-left fa-lg"></span>
+								<span class="fa fa-angle-left fa-lg"></span>
 							{{/if}}
 							</a>
 						</li>
@@ -158,15 +158,17 @@
 					{{/if}}
 				{{/if}}
 			{{/each}}
-			<a href="{{pathFor route='user' _id=currentUser._id}}" class="list-group-item bg-{{this.style}}">
-				<span class="fa fa-user fa-fw"></span> Einstellungen
-			</a>
 			<a href="{{pathFor route='help'}}" class="list-group-item bg-{{this.style}}">
 				<span class="fa fa-question-circle fa-fw"></span> Hilfe
 			</a>
-			<a href="#" class="list-group-item bg-{{this.style}} action-logout">
-				<span class="fa fa-sign-out fa-fw"></span> Abmelden
-			</a>
+			{{#if currentUser}}
+				<a href="{{pathFor route='user' _id=currentUser._id}}" class="list-group-item bg-{{this.style}}">
+					<span class="fa fa-user fa-fw"></span> Einstellungen
+				</a>
+				<a href="#" class="list-group-item bg-{{this.style}} action-logout">
+					<span class="fa fa-sign-out fa-fw"></span> Abmelden
+				</a>
+			{{/if}}
 			{{#if isAdmin}}
 				<a href="{{pathFor route='admin'}}" class="list-group-item bg-{{this.style}}">
 					<span class="fa fa-cog fa-fw"></span> Administration

@@ -1,21 +1,29 @@
-<template name="blogs">
+<template name="blogsStart">
     <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>Aktuelles</strong>
+            <a href="{{pathFor route='blog'}}" class="pull-right">
+                Artikelübersicht
+            </a>
+        </div>
         <div class="list-group">
         {{#each blogs}}
             <div class="list-group-item">
                 {{>blogPreview}}
             </div>
         {{/each}}
-        {{#if currentUser}}
-            <div class="list-group-item">
-                <a href="{{pathFor route='blog' edit='edit' _id='_'}}">
-                    <span class="fa fa-plus"></span>
-                    Neuen Artikel erstellen
-                </a>
-            </div>
-        {{/if}}
         </div>
     </div>
+</template>
+<template name="blogs">
+    {{#each blogs}}
+        <div class="blog-separator">
+            {{>blogPreview}}
+        </div>
+    {{/each}}
+    <a class="btn btn-primary btn-floating" title="Artikel anlegen" href="{{pathFor route='blog' edit='edit' _id='_'}}" >
+        <span class="fa fa-plus fa-lg"></span>
+    </a>    
 </template>
 
 <template name="blogUpdate">
@@ -105,7 +113,7 @@
                     <small>
                         <span class="date">{{formatDateTime blog.date}}</span>
                         {{#if currentUser}}
-                            <span class="author">{{getAlias blog.authorName}}</span>
+                            <span class="author">{{blog.authorName}}</span>
                             {{#if blog.public}}
                                 <span class="remarks">Öffentlicher Artikel</span>
                             {{else}}
@@ -141,10 +149,10 @@
             <br />
             <small>
                 {{#if currentUser}}
-                    <span class="author">{{getAlias blog.authorName}}</span>
+                    <span class="author">{{blog.authorName}}</span>
                 {{/if}}
                 <span class="date">{{formatDateTime blog.date}}</span>
-                {{#if blog.public}}
+                {{#if and currentUser blog.public}}
                     <span class="remarks">Öffentlicher Artikel</span>
                 {{/if}}
             </small>

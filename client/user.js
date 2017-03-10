@@ -318,6 +318,13 @@ Template.userCreateDialog.onCreated(function () {
             UltiSite.showModal('userCreateDialog');
     });
 });
+Template.userCreateDialog.events({
+    'click button[type="submit"]': function(evt) {
+        AutoForm.removeStickyValidationError('userAddForm',"email");
+        AutoForm.removeStickyValidationError('userAddForm',"sitePassword");
+        AutoForm.removeStickyValidationError('userAddForm',"alias");
+    }
+});
 
 Template.userCreateDialog.helpers({
     setupNeeded: function () {
@@ -332,15 +339,19 @@ Template.userCreateDialog.helpers({
 });
 
 AutoForm.hooks({
-    userAddForm: {
+    userAddForm: {        
         onSuccess: function () {
             $('.modal').modal('hide');
             AutoForm.resetForm("userAddForm");
+            UltiSite.notify('Eine E-Mail wurde verschickt, prüfe deinen Posteingang');
         },
         onError: function (formType, err) {
+            console.log(formType, err);
             if (err.error === 'duplicate-email')
                 this.addStickyValidationError("email", err.error);
-            else
+            if (err.error === 'wrong-password')
+                this.addStickyValidationError("sitePassword", err.error);
+            if (err.error === 'duplicate-username')
                 this.addStickyValidationError("alias", err.error);
 
         }

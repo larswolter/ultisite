@@ -84,15 +84,16 @@ Meteor.startup(function () {
             case "tournaments": return { name: "Turniere", link: "/" };
             case "practices": return { name: "Trainingszeiten", link: "/" };
             case "admin": return { name: "Administrierung", link: "/" };
-            case "blog": return { name: "Administrierung", link: "/" };
+            case "blog": return { name: "Artikel", link: "/" };
             case "tweets": return { name: "Blabla", link: "/" };
             case "wikipage":
                 var wiki = UltiSite.WikiPages.findOne({
                     $or: [
-                        { _id: FlowRouter.getParam('_id') }, { title: FlowRouter.getParam('_id') }]
+                        { _id: FlowRouter.getParam('_id') }, 
+                        { name: FlowRouter.getParam('_id') }]
                 });
                 if (wiki)
-                    return { name: wiki.name, link: "/wikipage", back: 'Wikiseiten' };
+                    return { name: wiki.name, link: '/' };
                 return { name: "Wikiseiten", link: "/" };
             case "user":
                 var user = Meteor.users.findOne(FlowRouter.getParam('_id'));

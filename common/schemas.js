@@ -165,6 +165,19 @@ var setSchemas = function () {
             optional: false,
             max: 200
         },
+        "sex": {
+            type: String,
+            label: "Geschlecht",
+            optional: false,
+            allowedValues: ["W", "M"],
+            autoform: {
+                noselect: true,
+                options: [
+                    {value:'M', label:'Männlich'},                    
+                    {value:'W', label:'Weiblich'}
+                ]
+            }
+        },
         "club": {
             type: String,
             label: "Verein",
@@ -465,6 +478,7 @@ var setSchemas = function () {
     }));
 };
 SimpleSchema.messages({
+    'wrong-password': "Falsches Passwort",
     "invalid-username": "Ungültiger Nutzername",
     "duplicate-email": "E-Mail bereits vorhanden",
     "duplicate-username": "Nutzername bereits vorhanden"

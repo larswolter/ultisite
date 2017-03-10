@@ -14,6 +14,28 @@ Meteor.startup(function () {
             }
         });
     });
+    Meteor.publish("BlogsStart", function () {
+        const search = {
+        };
+        if (!this.userId)
+            search.public = true;
+        const newest = (UltiSite.Blogs.findOne(search, {sort:{date:-1}})||{})._id;
+        search.$or = [{ 
+            date: { 
+                $gte: moment().subtract(1,'month').toDate() 
+            }
+        }, { _id: newest }];
+
+        return UltiSite.Blogs.find(search, {
+            limit:5,
+            sort: {
+                date: -1
+            },
+            fields: {
+                content: 0
+            }
+        });
+    });
     Meteor.publish("Blog", function (_id) {
         return UltiSite.Blogs.find({_id});
     });
@@ -102,12 +124,10 @@ Meteor.startup(function () {
 
     Meteor.publish("Tournaments", function (since, query) {
         if(!since && query) {
-            console.log('Publishing tournaments for ',query);
             const tcursor = UltiSite.Tournaments.find(query,{fields:{description:0, 'reports.content':0}});
             const teamIds = _.flatten(tcursor.map(t=>t.teams));
             return [tcursor, UltiSite.Teams.find({_id: {$in:teamIds}})];
         }
-        console.log('Publishing tournaments since ',since);
         return [
             UltiSite.Tournaments.find({lastChange:{$gte:since}}, {limit:5}),
             UltiSite.Teams.find({lastChange:{$gte:since}}, {limit:5})

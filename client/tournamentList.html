@@ -11,21 +11,24 @@
             <div class="tournament-filter-offset">
                 {{#if currentUser}} 
                     {{#if showPlanned}}
-                        <div class="col-xs-12 col-sm-8">
-                            <button class="btn btn-link pull-right action-toggle-filter" type="button">
-                                <span class="fa fa-filter"></span> Filter 
-                                {{#if showFilter}}
-                                    ausblenden
-                                {{else}}
-                                    einblenden
-                                {{/if}}                            
-                            </button>
-                            <strong class="btn-height-text">{{filterAsText}}</strong> 
-                            <br /><br />
-                            <div class="filter-container {{#if showFilter}}active{{/if}}">
-                                {{#if showFilter}}
-                                    {{>tournamentFilter}}
-                                {{/if}}
+                        <div class="col-xs-12 col-sm-8 col-md-7">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <button class="btn btn-link pull-right action-toggle-filter" type="button">
+                                        <span class="fa fa-filter"></span> Filter 
+                                        {{#if showFilter}}
+                                            ausblenden
+                                        {{else}}
+                                            einblenden
+                                        {{/if}}                            
+                                    </button>
+                                    <strong class="btn-height-text">{{filterAsText}}</strong> 
+                                </div>
+                                <div class="panel-body {{#if showFilter}}active{{/if}} filter-container">
+                                    {{#if showFilter}}
+                                        {{>tournamentFilter}}
+                                    {{/if}}
+                                </div>
                             </div>
                             {{#each plannedTournaments}} 
                                 {{header}}
@@ -46,10 +49,11 @@
                         </div>
                     {{/if}} 
                     {{#if showPlayed}}
-                        <div class="col-xs-12 col-sm-4">
+                        <div class="col-xs-12 col-sm-4 col-md-5">
                             <div class="panel panel-default">
                                 <div class="panel-heading hidden-xs">
-                                    <strong>Gespielte Turniere</strong> {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Vereins-Team oder du gespielt haben"}}
+                                    <strong>Gespielte Turniere</strong> 
+                                    {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Team gespielt hat"}}
                                 </div>
                                 <div class="list-group">
                                     {{#each playedTournaments}} 
@@ -162,9 +166,9 @@
     <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item tournament-list-item" title="{{name}}">
         <div class="row">
             <div class="col-xs-12 cutoff-text">
-                <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="visible-xs pull-right"/>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="visible-xs pull-right"/>
                 {{dayOfDate date}}. <strong>{{name}}</strong> in {{address.city}}
-                <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="hidden-xs"/>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="hidden-xs"/>
             </div>
         </div>
         {{#each teaminfo}}
@@ -172,7 +176,7 @@
             <div class="col-xs-8 cutoff-text">
                 {{#with myTeamState}}
                 <div class="pull-right">
-                    <span class="fa fa-user text-{{colorState this.state}}" title="Ich bin dabei"></span>
+                    <span class="fa fa-user text-{{colorState this.state}}" title="{{this.state}}"></span>
                 </div>
                 {{/with}}
                 <span class="fa fa-{{divisionIcon}} fa-fw"></span> 
@@ -209,7 +213,7 @@
                 {{teamNames}} beim Turnier 
                 <span class="cutoff-text">am {{formatDate date}}</span>
                 <span class="cutoff-text">in {{address.city}} 
-                <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" /></span>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" /></span>
             </div>
         </div>
     </a>
@@ -218,7 +222,7 @@
 
 <template name="tournamentListItem">
     <a href='{{pathFor "tournament" _id=this._id}}' data-id="{{this._id}}" class="list-group-item tournament-list-item">
-        <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="visible-xs"/>
+        <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="visible-xs"/>
         <div class="row">
             <div class="col-xs-2 col-sm-1 {{dateState}}">
                 {{dayOfDate date}}.{{monthOfDate date}}.
@@ -228,7 +232,7 @@
                 {{#if address.city}}
                     <span class="hidden-xs">in {{address.city}}</span>
                 {{/if}}
-                <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" class="hidden-xs"/>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="hidden-xs"/>
             </div>
             <div class="col-xs-12 col-sm-5">
                 {{#if address.city}}

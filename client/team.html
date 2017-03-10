@@ -84,32 +84,33 @@
                 </div>
             </div>
             {{/if}}
-            <div class="">
-                <strong style="font-size:1.5em">{{name}}</strong>
+            <div class="team-name-status">
+                <strong class="btn-height-text">{{name}}</strong>
+                <span class="hidden-xs btn-height-text">das Team ist</span>
                 {{#if isResponsible}}
-                <div class="btn-group" role="group">
-                    <button aria-expanded="false" class="btn btn-{{teamColorState}} btn-xs dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
-                        {{state}}
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li>
-                            <a class="action-set-state" data-state="geplant" href="#">Geplant</a>
-                        </li>
-                        <li>
-                            <a class="bg-warning action-set-state" data-state="angemeldet" href="#">Angemeldet</a>
-                        </li>
-                        <li>
-                            <a class="bg-success action-set-state" data-state="dabei" href="#">Bestätigt</a>
-                        </li>
-                        <li>
-                            <a class="bg-danger action-set-state" data-state="auf Warteliste" href="#">auf Warteliste</a>
-                        </li>
-                        <li>
-                            <a class="bg-danger action-set-state" data-state="abgesagt" href="#">Abgesagt</a>
-                        </li>
-                    </ul>
-                </div>
+                    <div class="btn-group" role="group">
+                        <button aria-expanded="false" class="btn btn-{{teamColorState}} dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
+                            {{state}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a class="action-set-state" data-state="geplant" href="#">Geplant</a>
+                            </li>
+                            <li>
+                                <a class="bg-warning action-set-state" data-state="angemeldet" href="#">Angemeldet</a>
+                            </li>
+                            <li>
+                                <a class="bg-success action-set-state" data-state="dabei" href="#">Bestätigt</a>
+                            </li>
+                            <li>
+                                <a class="bg-danger action-set-state" data-state="auf Warteliste" href="#">auf Warteliste</a>
+                            </li>
+                            <li>
+                                <a class="bg-danger action-set-state" data-state="abgesagt" href="#">Abgesagt</a>
+                            </li>
+                        </ul>
+                    </div>
                 {{else}} 
                     {{state}} 
                 {{/if}}
@@ -481,7 +482,7 @@
                     <small>sind nicht angetreten</small>
                     {{/unless}}
                     {{#if myTeamState}}
-                        <span class="fa fa-user text-success" title="Ich bin dabei"></span>
+                        <span class="fa fa-user text-success" title="{{myTeamState}}"></span>
                     {{/if}}
                 </h4>
             </div>

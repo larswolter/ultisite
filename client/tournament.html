@@ -174,7 +174,7 @@
                     <strong>{{name}}</strong>
                     {{#if address}}
                         in {{address.city}}
-                        <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" style="height:24px;"/>
+                        <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" style="height:24px;"/>
                     {{/if}}
                     {{category}}
                 </span>
@@ -211,7 +211,7 @@
                                 <span class="fa fa-map-marker fa-fw"></span>
                                 {{#with address.street}}{{this}},{{/with}}
                                 {{address.postcode}} {{address.city}}
-                                <img src="/icons/countries/{{address.country}}.png" title="{{address.country}}" style="height:24px;"/>
+                                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" style="height:24px;"/>
                             </div>
                             {{/if}}
                             {{#if address.geocoords}}

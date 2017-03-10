@@ -33,15 +33,17 @@
     font-size: 0.8em;
 }
 
-.blog-preview {
-    position: relative;
-    padding-bottom: 5px;
-    margin-bottom: 0px;
+.panel {
+    .blog-preview {
+        position: relative;
+        padding-bottom: 5px;
+        margin-bottom: 0px;
+        .blog-title {
+            font-size: 1.25em;
+        }
+    }
 }
 
-.blog-preview .blog-title {
-    font-size: 1.25em;
-}
 .blog-files {
     li {
         display: block;
@@ -54,13 +56,21 @@
         display:none;
     }
 }
+.blog-separator {
+    max-width: 600px;
+    margin:35px auto;
+    clear: both;
+}
+.action-preview-extender {
+    display:none;
+}
 @media (min-width: @screen-md-min) {
     .blog-preview .blog-image {
         width: 160px;
         height: 120px;
         left: 0px;
         position: absolute;
-        background-position: center;
+        background-position: top center;
         background-size: contain;
     }
     .blog-preview .blog-content {
@@ -68,43 +78,52 @@
         padding-left: 170px;
         min-height: 125px;
     }
-    .action-preview-extender {
-        display:none;
-    }
 }
 
 @media (max-width: @screen-sm-max) {
     .blog-preview {
-        h4.blog-title {
-            font-size:1em;
-            margin-top:0px;
-        }
-        .blog-container {
-            max-height:30px;
-            overflow:hidden;
-            text-overflow: ellipsis;
-            transition: max-height 250ms;
-            font-size:0.85em;
-        }
-        .blog-container.extended {
-            max-height: 200px;
-        }
         .blog-image {
-            width: 80px;
-            height: 60px;
+            width: 160px;
+            height: 120px;
             float: left;
         }
-        .blog-content {
-            position: relative;
-            overflow:hidden;
-            text-overflow: ellipsis;
-        }
     }
-    .action-preview-extender {
-        position: absolute;
-        bottom:0px;
-        width:100%;
-        font-size:0.8em;
+    .panel {
+        .blog-preview {
+            h4.blog-title {
+                font-size:1em;
+                margin-top:0px;
+            }
+            .blog-container {
+                overflow:hidden;
+                text-overflow: ellipsis;
+                transition: max-height 250ms;
+                font-size:0.85em;
+            }
+            .blog-container.extended {
+                max-height: 200px;
+            }
+            .blog-image {
+                width: 80px;
+                height: 60px;
+            }
+            .blog-content {
+                position: relative;
+                overflow:hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        .blog-preview {
+            .blog-container {
+                max-height:30px;
+            }
+        }
+        .action-preview-extender {
+            position: absolute;
+            bottom:0px;
+            width:100%;
+            font-size:0.8em;
+        }
     }
 }
 

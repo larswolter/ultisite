@@ -20,12 +20,6 @@ FlowRouter.route('/', {
     }
 });
 
-FlowRouter.route('/login', {
-    action: function () {
-        $('#loginDialog').modal("show");
-    },
-    name: "login"
-});
 FlowRouter.route('/logout', {
     action: function () {
         BlazeLayout.render("baseLayout", {

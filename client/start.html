@@ -6,7 +6,10 @@
                     {{#each additionalStartPageTemplates}}
                         {{>Template.dynamic template=this.template}}
                     {{/each}}
-                    {{>blogs limit=3}}
+                    {{>blogsStart}}
+                    {{#with settings}} 
+                        {{>wikipage pageName=this.wikiStart}} 
+                    {{/with}}
                 </div>
                 <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
                     {{>eventList}}
@@ -18,7 +21,7 @@
                     {{#with settings}} 
                         {{>wikipage pageName=this.wikiStart}} 
                     {{/with}}
-                    {{>blogs limit=3}}
+                    {{>blogsStart}}
                 </div>
                 <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
                     {{>practices}}

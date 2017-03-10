@@ -39,6 +39,10 @@ Template.header.onRendered(function(){
 });
 
 Template.header.events({
+    'click .btn-login-link': function (e) {
+        e.preventDefault();
+        $('#loginDialog').modal('show');
+    },
     'click .action-logout': function (e) {
         e.preventDefault();
         Meteor.logout((err) => {
@@ -60,10 +64,6 @@ Template.header.events({
 });
 
 Template.userHeader.events({
-    'click .btn-login-link': function (e) {
-        e.preventDefault();
-        $('#loginDialog').modal('show');
-    },
     'click .action-reconnect': function (e) {
         e.preventDefault();
         Meteor.reconnect();
@@ -127,11 +127,12 @@ var linkHelper = {
         return Meteor.userId() ? this.loggedIn : this.loggedOut;
     },
     isActive: function () {
+        const matcher = this.activeMatch || this.target;
         FlowRouter.getRouteName();
         FlowRouter.getParam('_id');
-        if(this.target==='/')
+        if(matcher==='/')
             return decodeURI(location.pathname) === '/';
-        return 0 === decodeURI(location.pathname).indexOf(this.target);
+        return 0 === decodeURI(location.pathname).indexOf(matcher);
     }
 };
 

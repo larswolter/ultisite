@@ -23,8 +23,9 @@
 }
 .filter-container {
     transition: all 500ms;
-    height: 1px;
-    max-height: 1px;
+    height: 0px;
+    padding: 0px;
+    max-height: 0px;
     .tournament-filter {
         >div {
             padding: 0px;
@@ -35,6 +36,7 @@
 }
 .filter-container.active {
     max-height:300px;
+    padding: 15px;
     height:auto;
 }
 .tournament-list-item > img {
@@ -137,6 +139,8 @@
     text-align:center;
     width:90px;
     height:60px;
+    margin-right: 7px;
+    margin-bottom: 7px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
