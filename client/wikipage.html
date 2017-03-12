@@ -20,6 +20,7 @@
 					</ul>
 				</div>
 				<div role="tabpanel" class="tab-pane active" id="article">
+					<div class="page-heading">
 					{{#if showDiscussions}}
 						<div class="">
 							<h4 class="visible-xs">
@@ -54,8 +55,8 @@
 									<small class="page-details">Zuletzt geändert von {{editorName}} am {{formatDateTime lastChange}}</small>
 								{{/if}}
 							</h3>
-					{{else}}
-						<h4><span class="fa fa-exclamation-triangle"></span> Seite nicht gefunden</h4>
+						{{else}}
+							<h4><span class="fa fa-exclamation-triangle"></span> Seite nicht gefunden</h4>
 						{{/with}}
 						<hr/>
 						{{#if showHistory}}
@@ -69,6 +70,9 @@
 							{{/each}}
 							<hr/>
 						{{/if}}
+					{{/if}}
+					</div>
+					{{#unless showDiscussions}}
 						{{#if editMode}}
 							{{#unless canEdit}}
 								<h4>
@@ -86,7 +90,7 @@
 								{{>Loading}}
 							{{/if}}
 						{{/if}}
-					{{/if}}
+					{{/unless}}
 				</div>
 			</div>
 			{{else}}
