@@ -124,7 +124,7 @@ UltiSite.WikiPages.allow({
             return true;
         if((fieldNames.length===1) && (fieldNames[0]==="locked") && (!doc.locked || doc.locked === userId))
             return true;
-        if(modifier['$set'].editor!==userId)
+        if(doc.editor !== userId)
             return false;
         if (userId)
             return true;

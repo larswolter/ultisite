@@ -143,6 +143,7 @@ Template.user.onCreated(function () {
     this.autorun(function () {
         template.subscribe('UserDetails', FlowRouter.getParam('_id'));
         template.subscribe('Statistics', FlowRouter.getParam('_id'));
+        template.subscribe('Files', [FlowRouter.getParam('_id')]);
     });
 });
 
