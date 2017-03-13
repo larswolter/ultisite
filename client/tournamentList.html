@@ -15,12 +15,15 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <button class="btn btn-link pull-right action-toggle-filter" type="button">
-                                        <span class="fa fa-filter"></span> Filter 
-                                        {{#if showFilter}}
-                                            ausblenden
-                                        {{else}}
-                                            einblenden
-                                        {{/if}}                            
+                                        <span class="fa fa-filter"></span> 
+                                        <span class="hidden-xs">
+                                            Filter 
+                                            {{#if showFilter}}
+                                                ausblenden
+                                            {{else}}
+                                                einblenden
+                                            {{/if}}
+                                            </span>                            
                                     </button>
                                     <strong class="btn-height-text">{{filterAsText}}</strong> 
                                 </div>
