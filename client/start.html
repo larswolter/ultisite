@@ -1,12 +1,28 @@
 <template name="start">
     <div class="container-fluid">
-        {{#if currentUser}}
+        {{#if currentUser}} 
             <div class="row">
                 <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-xs-12 start-content">
-                    {{#each additionalStartPageTemplates}}
-                        {{>Template.dynamic template=this.template}}
-                    {{/each}}
-                    {{>blogsStart}}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <strong>Aktuelles</strong>
+                            {{#each startPageTemplates}}
+                                {{#unless equals @index 0}}
+                                    <span class="pull-right">
+                                        &nbsp;/&nbsp; 
+                                    </span>
+                                {{/unless}}
+                                <a href="{{pathFor route=this.route}}" class="pull-right">
+                                    {{this.name}}
+                                </a>
+                            {{/each}}
+                        </div>
+                        <div class="list-group">
+                            {{#each startPageTemplates}}
+                                {{>Template.dynamic template=this.template}}
+                            {{/each}}
+                        </div>
+                    </div>
                     {{#with settings}} 
                         {{>wikipage pageName=this.wikiStart}} 
                     {{/with}}

@@ -9,11 +9,13 @@ Template.startImageCarousel.helpers({
     }
 });
 
+Template.start.onCreated(function () {
+});
 
 Template.start.helpers({
-    additionalStartPageTemplates: function () {
+    startPageTemplates() {
         return UltiSite.startPageTemplates.find();
-    }
+    },
 });
 
 Template.eventList.onCreated(function () {

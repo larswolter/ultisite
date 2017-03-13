@@ -10,10 +10,24 @@ FlowRouter.route('/uoodle/:_id?', {
 });
 
 Meteor.startup(function () {
-    UltiSite.registerStartPageTemplate('uoodleStart', 'Uoodle Terminplaner');
+    UltiSite.registerStartPageTemplate({
+        name: 'Umfragen',
+        route: 'uoodle',
+        template: 'uoodleStart'
+    });
     UltiSite.registerDialogTemplate('uoodleAddDialog');
     UltiSite.Uoodles = Uoodles;
 });
+
+Template.uoodleStart.onCreated(function () {
+    this.subscribe('uoodleStart');
+});
+Template.uoodleStart.helpers({
+    uoodles: function () {
+        return Uoodles.find();
+    },
+});
+
 Template.uoodles.onCreated(function () {
     this.subscribe('uoodles');
 });

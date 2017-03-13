@@ -1,28 +1,21 @@
 
 <template name="uoodleStart">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <strong>
-            {{#if uoodles.count}}
-                Aktuelle Umfragen
-            {{else}}
-                Keine Umfragen
-            {{/if}}
-            </strong>
-            <a href="#" class="pull-right action-go">
-              Umfragenübersicht
-            </a>
-        </div>
-        {{#if uoodles.count}}
-            <div class="list-group">
-                {{#each uoodles}}
-                    <a href="#" class="list-group-item no-overflow">
-                    {{name}}
-                    </a>
-                {{/each}}
+    {{#each uoodles}}
+        <li class="list-group-item no-overflow">
+            <div class="blog-preview">
+                <h4 class="blog-title">
+                    <a href={{pathFor route='uoodle' _id=_id}} >Umfrage: {{name}}</a>
+                    <br />
+                    <small>
+                        Von {{ownerName}} bis zum {{formatDate validUntil}} 
+                    </small>
+                </h4>
+                <div class="blog-container">
+                {{description}}
+                </div>
             </div>
-        {{/if}}
-    </div>                
+        </li>
+    {{/each}}
 </template>
 
 <template name="uoodles">

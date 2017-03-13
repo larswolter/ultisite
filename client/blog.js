@@ -1,6 +1,14 @@
 var activeImage = new ReactiveVar(null);
 var activePublication = new ReactiveVar(false);
 
+Meteor.startup(function() {
+    UltiSite.registerStartPageTemplate({
+        name: 'Artikel',
+        template: 'blogsStart',
+        route: 'blogs'
+    });
+});
+
 Template.blogs.onCreated(function(){
     this.limit = new ReactiveVar(10);
     this.autorun(()=>{

@@ -25,9 +25,9 @@ Meteor.startup(function () {
                 $gte: moment().subtract(1,'month').toDate() 
             }
         }, { _id: newest }];
-
+        console.log('subscribing blogs');
         return UltiSite.Blogs.find(search, {
-            limit:5,
+            limit: 3,
             sort: {
                 date: -1
             },
@@ -35,6 +35,7 @@ Meteor.startup(function () {
                 content: 0
             }
         });
+
     });
     Meteor.publish("Blog", function (_id) {
         return UltiSite.Blogs.find({_id});

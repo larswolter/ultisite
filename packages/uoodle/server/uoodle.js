@@ -1,9 +1,17 @@
 var Uoodles = new Meteor.Collection('UltisiteUoodles');
 
+Meteor.publish('uoodleStart', function () {
+    return Uoodles.find({
+        validUntil: {
+            $gte: moment().subtract(1, 'day').toDate()
+        }
+    });
+});
+
 Meteor.publish('uoodles', function () {
     return Uoodles.find({
         validUntil: {
-            $gte: moment().subtract(1, 'week').toDate()
+            $gte: moment().subtract(1, 'month').toDate()
         }
     });
 });

@@ -1,19 +1,9 @@
 <template name="blogsStart">
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <strong>Aktuelles</strong>
-            <a href="{{pathFor route='blog'}}" class="pull-right">
-                Artikelübersicht
-            </a>
+    {{#each blogs}}
+        <div class="list-group-item">
+            {{>blogPreview}}
         </div>
-        <div class="list-group">
-        {{#each blogs}}
-            <div class="list-group-item">
-                {{>blogPreview}}
-            </div>
-        {{/each}}
-        </div>
-    </div>
+    {{/each}}
 </template>
 <template name="blogs">
     {{#each blogs}}

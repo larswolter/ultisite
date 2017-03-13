@@ -67,12 +67,8 @@ _.extend(UltiSite, {
             template: template,
         });
     },
-    registerStartPageTemplate: function (template, name) {
-        this.startPageTemplates.insert({
-            _id: template,
-            template: template,
-            name: name
-        });
+    registerStartPageTemplate: function (startElement) {
+        this.startPageTemplates.insert(startElement);
     },
     registerAdminPageTemplate: function (template, name) {
         this.adminPageTemplates.insert({
