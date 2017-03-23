@@ -133,7 +133,7 @@ UltiSite.uploadFiles = function(files, associatedId, template) {
                     maxHeigth: 2400
                 });
             } else {
-                UltiSite.pushToUploadQueue({file});
+                UltiSite.pushToUploadQueue({file,metadata});
                 filesToUpload--;
                 if(!filesToUpload) {
                     template.uploading.set(false);
