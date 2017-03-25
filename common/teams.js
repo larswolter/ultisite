@@ -15,7 +15,7 @@ _.extend(UltiSite, {
         });
         // adjust list by drawing result
         if (team.drawingResult) {
-            participants = _.sortBy(_.sortBy(team.participants, 'safeStateDate'), 'drawing');
+            participants = _.sortBy(_.sortBy(_.sortBy(team.participants.map(x=>x.drawing===null?_.extend(x,{drawing:1000}):x), 'safeStateDate'),p=>(100 - p.state)), 'drawing');
         }
         let partUser = participants.map(function (participant, idx) {
             let user = Meteor.users.findOne(participant.user);
@@ -25,7 +25,7 @@ _.extend(UltiSite, {
                     participant.user === Meteor.userId() ||
                     participant.responsible === Meteor.userId()),
                 iconState: participant.drawing === 0?'fa fa-clock-o':
-                    participant.drawing !== 1000?'fa fa-magic':
+                    participant.drawing && (participant.drawing !== 1000)?'fa fa-magic':
                     idx < (team.maxPlayers / 2) ? 'fa fa-clock-o' : 'fa fa-empty'
             }, user, participant);
             return p;
