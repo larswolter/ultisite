@@ -280,6 +280,7 @@ var setSchemas = function () {
             type: Date,
             label: "Datum",
             autoform: {
+                format:'DD.MM.YYYY',
                 type: "bootstrap-datepicker",
                 //                buttonClasses: "fa fa-calendar",
                 datePickerOptions: {
@@ -450,6 +451,7 @@ var setSchemas = function () {
             optional:true,
             defaultValue: new Date(),
             autoform: {
+                format:'DD.MM.YYYY',
                 type: "bootstrap-datepicker",
                 datePickerOptions: {
                     language: "de-DE",
@@ -462,6 +464,7 @@ var setSchemas = function () {
             optional:true,
             defaultValue: moment().add(6,'month').toDate(),
             autoform: {
+                format:'DD.MM.YYYY',
                 type: "bootstrap-datepicker",
                 datePickerOptions: {
                     language: "de-DE",

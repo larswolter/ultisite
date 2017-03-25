@@ -1,3 +1,4 @@
+import {AutoForm} from 'meteor/ultisite:autoform';
 
 Template.adminPanel.onCreated(function () {
     Meteor.call("getWikiPageNames", function (err, res) {

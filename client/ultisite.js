@@ -1,3 +1,4 @@
+import 'jquery';
 
 UltiSite.screenSize = new ReactiveVar(window.innerWidth);
 

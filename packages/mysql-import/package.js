@@ -21,7 +21,6 @@ Package.onUse(function (api) {
     'mongo',
     'blaze-html-templates',
     'session',
-    'jquery',
     'tracker',
     'logging',
     'reload',

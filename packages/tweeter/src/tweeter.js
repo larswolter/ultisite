@@ -1,6 +1,11 @@
+import { Meteor } from 'meteor/meteor';
+import './tweeter.html';
+
+
 var tweetLength = new ReactiveVar(0);
 
 Meteor.startup(function() {
+    console.log('startup tweets');
     UltiSite.Tweets = new Meteor.Collection("Tweets");
 
     FlowRouter.route('/tweets', {

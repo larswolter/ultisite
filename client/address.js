@@ -1,5 +1,6 @@
+import {AutoForm} from 'meteor/ultisite:autoform';
 
-Template.afObjectField_address.onCreated(function () {
+Template.ultisiteAddress.onCreated(function () {
     console.log("Address:",this);
     this.citySearch = new ReactiveVar([]);
     this.countrySearch = new ReactiveVar([]);
@@ -16,11 +17,11 @@ Template.afObjectField_address.onCreated(function () {
         }
     });
 });
-Template.afObjectField_address.onRendered(function () {
+Template.ultisiteAddress.onRendered(function () {
     checkAddress(this);
 });
 
-Template.afObjectField_address.helpers({
+Template.ultisiteAddress.helpers({
     currentCoords: function() {
         return Template.instance().geocoords.get();
     },
@@ -45,7 +46,7 @@ Template.afObjectField_address.helpers({
     }
 });
 
-Template.afObjectField_address.events({
+Template.ultisiteAddress.events({
     'keyup .address-street': function(e,t) {
         if(t.$('.address-country').val() && t.$('.address-city').val() && t.$('.address-street').val()) {
             let url = 'http://nominatim.openstreetmap.org/search';

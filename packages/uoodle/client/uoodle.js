@@ -1,3 +1,5 @@
+import { AutoForm } from 'meteor/ultisite:autoform';
+
 var Uoodles = new Meteor.Collection('UltisiteUoodles');
 
 FlowRouter.route('/uoodle/:_id?', {

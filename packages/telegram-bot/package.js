@@ -24,7 +24,6 @@ Package.onUse(function (api) {
     'mongo',
     'blaze-html-templates',
     'session',
-    'jquery',
     'tracker',
     'logging',
     'reload',
@@ -34,10 +33,7 @@ Package.onUse(function (api) {
     'check',
     'alanning:roles',
     'reactive-var',
-    'aldeed:autoform',
     'aldeed:simple-schema',
-    'rajit:bootstrap3-datepicker',
-    'aldeed:autoform-bs-datepicker',
             ]);
 
     api.addFiles(['client/config.html', 'client/config.js'], 'client');

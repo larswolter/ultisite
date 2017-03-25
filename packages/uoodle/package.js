@@ -1,5 +1,3 @@
-Npm.depends({});
-
 Package.describe({
     // Short two-sentence summary.
     summary: 'Appointment collaboration plugin for ultisite',
@@ -24,7 +22,6 @@ Package.onUse(function (api) {
         'mongo',
         'blaze-html-templates',
         'session',
-        'jquery',
         'tracker',
         'logging',
         'reload',
@@ -34,10 +31,8 @@ Package.onUse(function (api) {
         'check',
         'alanning:roles',
         'reactive-var',
-        'aldeed:autoform',
+        'ultisite:autoform',
         'aldeed:simple-schema',
-        'rajit:bootstrap3-datepicker',
-        'aldeed:autoform-bs-datepicker'
     ]);
 
     api.addFiles(['schema.js'], ['client']);

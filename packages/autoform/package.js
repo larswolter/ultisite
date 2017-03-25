@@ -1,25 +1,23 @@
-Npm.depends({});
-
 Package.describe({
     // Short two-sentence summary.
-    summary: 'Hat Info request plugin for ultisite',
+    summary: 'Formular plugin for ultisite with autform api',
     // Version number.
     version: '1.0.0',
     // Optional.  Default is package directory name.
-    name: 'ultisite:hatinfo',
+    name: 'ultisite:autoform',
     // Optional github URL to your source repository.
     git: '',
 });
 
 /* This defines your actual package */
 Package.onUse(function (api) {
-    api.versionsFrom('1.2.0.1');
+    api.versionsFrom('1.4.3.1');
     api.use(['less',
         'ecmascript',
-        'kadira:flow-router',
         'kadira:blaze-layout',
         'standard-minifiers',
         'meteor-base',
+        'modules',
         'mobile-experience',
         'mongo',
         'blaze-html-templates',
@@ -31,13 +29,12 @@ Package.onUse(function (api) {
         'ejson',
         'spacebars',
         'check',
-        'alanning:roles',
-        'reactive-var',
-        'aldeed:autoform',
-        'aldeed:simple-schema'
+        'aldeed:simple-schema',
+        'reactive-var'
     ]);
-
-    api.addFiles(['schema.js'], ['client','server']);
-    api.addFiles(['client/hat.html', 'client/hat.js', 'client/hat.less'], 'client');
-    api.addFiles('server/hat.js', 'server');
+//    api.addFiles('server.js','server');
+//    api.addFiles(['client.js', 'forms.html', 'forms.js'],'client');
+    api.mainModule('client.js', 'client');
+    api.mainModule('server.js', 'server');
+//    api.export('AutoForm', 'client');
 });

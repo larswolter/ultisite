@@ -1,4 +1,4 @@
-//import {AutoForm} from 'meteor/ultisite:autoform';
+import {AutoForm} from 'meteor/ultisite:autoform';
 
 var months = new Meteor.Collection(null);
 var integratedTournamentList = new Meteor.Collection(null);
@@ -240,12 +240,12 @@ Template.tournamentList.onCreated(function () {
     this.autorun(() => {
         UltiSite.offlineTournamentDependency.depend();
         UltiSite.offlineTournaments.forEach((t) => {
-            integratedTournamentList.upsert({_id:t._id,_live:{$exists:false}},t);
+            integratedTournamentList.upsert({_id:t._id,lastChange:{$lte:t.lastChange}},t);
         });
     });
     this.autorun(() => {
         if(this.subscriptionsReady())
-            UltiSite.Tournaments.find().forEach((t) => integratedTournamentList.upsert(t._id,_.extend(t,{_live:true})));
+            UltiSite.Tournaments.find().forEach((t) => integratedTournamentList.upsert(t._id,t));
     });
 
     this.autorun(() => {

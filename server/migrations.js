@@ -65,7 +65,6 @@ Meteor.startup(function(){
     UltiSite.Images.find({size:{$exists:false},base64:{$exists:true}}).forEach((img)=>{
         UltiSite.Images.update(img._id,{$set:{size:(img.base64.length - 814) / 1.37}});
     });
-  */
     Meteor.users.find({'profile.avatar':{$exists:false}}).forEach((u)=>{
         const uImg = UltiSite.Images.findOne({name:'user-'+u._id});
         if(uImg) {
@@ -118,6 +117,7 @@ Meteor.startup(function(){
                 }
             });
     });
+  */
     console.log('migrations finished');
 });
 Meteor.methods({

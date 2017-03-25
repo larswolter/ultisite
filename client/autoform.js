@@ -1,3 +1,5 @@
+import {AutoForm} from 'meteor/ultisite:autoform';
+
 Meteor.startup(function(){
     AutoForm.setDefaultTemplateForType('afArrayField','ultisite');    
     AutoForm.setDefaultTemplateForType('afObjectField','ultisite');    

@@ -1,3 +1,5 @@
+import {AutoForm} from 'meteor/ultisite:autoform';
+
 Template.participant.events({
     'click .action-participate': function (e, t) {
         e.preventDefault();

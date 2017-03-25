@@ -30,7 +30,7 @@
                             {{> afQuickField name='numDays'}}
                         </div>
                         <div class="col-xs-12">
-                            {{> afObjectField name='address' template="address"}}
+                            {{> afQuickField name='address' template="address"}}
                         </div>
                         <div class="col-xs-12">
                             {{> afQuickField name='surfaces' type='select-checkbox-inline'}}
@@ -77,13 +77,13 @@
                                 {{> afQuickField name='category'}}
                             </div>
                             <div class="col-xs-8">
-                                {{> afQuickField name='date' value=prefill.date data-date-format='dd.mm.yyyy' data-date-language='de-DE'}}
+                                {{> afQuickField name='date' value=prefill.date}}
                             </div>
                             <div class="col-xs-4">
                                 {{> afQuickField name='numDays'}}
                             </div>
                             <div class="col-xs-12">
-                                {{> afObjectField name='address' template="address"}}
+                                {{> afQuickField name='address' template="ultisiteAddress"}}
                             </div>
                             <div class="col-xs-12">
                                 {{> afQuickField name='surfaces' type='select-checkbox-inline'}}

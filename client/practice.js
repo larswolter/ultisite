@@ -1,3 +1,4 @@
+import {AutoForm} from 'meteor/ultisite:autoform';
 
 let mapImageFile;
 const mapImageUrl = new ReactiveVar();
