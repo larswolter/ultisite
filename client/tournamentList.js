@@ -68,40 +68,6 @@ Template.tournamentUpdate.events({
 
 AutoForm.hooks({
     tournamentUpdateForm: {
-        formToModifier: function (doc) {
-
-            if (doc.$set && doc.$set.divisions) {
-                doc.$set.divisions = doc.$set.divisions.map((d, idx) => {
-                    const surf = doc.$set.surfaces[Math.min(idx, doc.$set.surfaces.length - 1)];
-                    return {
-                        division: d,
-                        surface: surf,
-                        numPlayers: surf === 'Sand' || surf === 'Halle' ? 5 : 7
-                    };
-                });
-                doc.$set.surfaces = undefined;
-            }
-            return doc;
-        },
-        formToDoc: function (doc) {
-            doc.divisions = doc.divisions.map((d, idx) => {
-                const surf = doc.surfaces[Math.min(idx, doc.surfaces.length - 1)];
-                return {
-                    division: d,
-                    surface: doc.surfaces[Math.min(idx, doc.surfaces.length - 1)],
-                    numPlayers: surf === 'Sand' || surf === 'Halle' ? 5 : 7
-                };
-            });
-            doc.surfaces = undefined;
-            return doc;
-        },
-        docToForm: function (doc) {
-            doc.divisions = doc.divisions.map((d) => {
-                doc.surfaces = _.union(doc.surfaces || [], [d.surface]);
-                return d.division;
-            });
-            return doc;
-        },
         // Called when any submit operation succeeds
         onSuccess: function (formType, result) {
             $('#tournamentUpdateDialog').modal('hide');
@@ -113,27 +79,6 @@ AutoForm.hooks({
         }
     },
     tournamentCreateForm: {
-        formToDoc: function (doc) {
-            if (Array.isArray(doc.divisions))
-                doc.divisions = doc.divisions.map((d, idx) => {
-                    const surf = doc.surfaces[Math.min(idx, doc.surfaces.length - 1)];
-                    return {
-                        division: d,
-                        surface: doc.surfaces[Math.min(idx, doc.surfaces.length - 1)],
-                        numPlayers: surf === 'Sand' || surf === 'Halle' ? 5 : 7
-                    };
-                });
-            doc.surfaces = undefined;
-            return doc;
-        },
-        docToForm: function (doc) {
-            if (Array.isArray(doc.divisions))
-                doc.divisions = doc.divisions.map((d) => {
-                    doc.surfaces = _.union(doc.surfaces || [], [d.surface]);
-                    return d.division;
-                });
-            return doc;
-        },
         // Called when any submit operation succeeds
         onSuccess: function (formType, result) {
             console.log("inserting tournament successfull", result);

@@ -292,9 +292,10 @@ var setSchemas = function () {
         },
         surfaces: {
             type: [String],
-            minCount: 1,
+            min: 1,
             label: 'Untergründe',
             autoform: {
+                multi: true,
                 options: function () {
                     return UltiSite.settings().arraySurfaces.map(function (element) {
                         return { label: element, value: element };
@@ -304,44 +305,17 @@ var setSchemas = function () {
             optional: true
         },
         divisions: {
-            type: [Object],
-            minCount: 1,
+            type: [String],
+            min: 1,
+            label: 'Divisionen',
             autoform: {
+                multi: true,
                 options: function () {
                     return UltiSite.settings().arrayDivisions.map(function (element) {
                         return { label: element, value: element };
                     });
                 }
             }
-        },
-        "divisions.$.division": {
-            type: String,
-            label: "Division",
-            custom: validateSettingsList,
-            autoform: {
-                options: function () {
-                    return UltiSite.settings().arrayDivisions.map(function (element) {
-                        return { label: element, value: element };
-                    });
-                }
-            }
-        },
-        "divisions.$.surface": {
-            type: String,
-            label: "Untergrund",
-            custom: validateSettingsList,
-            autoform: {
-                options: function () {
-                    return UltiSite.settings().arraySurfaces.map(function (element) {
-                        return { label: element, value: element };
-                    });
-                }
-            }
-        },
-        "divisions.$.numPlayers": {
-            type: Number,
-            label: "Anzahl Spieler",
-            defaultValue: 7
         },
         numDays: {
             type: Number,

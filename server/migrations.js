@@ -118,6 +118,18 @@ Meteor.startup(function(){
             });
     });
   */
+    UltiSite.Tournaments.find({'divisions.division': {$exists:true}}).forEach( (t) => {
+        const surfaces=[];
+        const divisions = [];
+        t.divisions.forEach((d) => {
+            if(d.surface)
+                surfaces.push(d.surface);
+            if(d.division)
+                divisions.push(d.division);
+        });
+        UltiSite.Tournaments.update(t._id,{$set:{divisions:_.uniq(divisions),surfaces:_.uniq(surfaces)}});
+    });
+
     console.log('migrations finished');
 });
 Meteor.methods({

@@ -123,24 +123,38 @@ const helpers = {
         const content = AutoForm.content.findOne(form.formId).doc;
         if(!content)
             return '';
-        if(content[Template.currentData().name] === undefined)
+        let value = content;
+        Template.instance().data.name.split('.').forEach(x=>value=value[x]);
+        if(value === undefined)
             return '';
-        return form.validationContext.validateOne(content,Template.currentData().name)?'has-success':'has-error';
+        return form.validationContext.validateOne(content,Template.instance().data)?'has-success':'has-error';
+    },
+    isChecked() {
+        const form = formData();
+        if(!form)
+            return;
+        if(!Template.instance().data.name)
+            return console.log('fieldValue without name', Template.instance().data);
+        let content = AutoForm.content.findOne(form.formId).doc;
+        if(content) {
+            let value = content;
+            Template.instance().data.name.split('.').forEach(x=>value=value[x]);
+            if(this.value && Array.isArray(value))
+                return _.find(value,this.value);
+            return !!value;
+        }
     },
     getFieldValue() {
         const form = formData();
         if(!form)
             return;
-        if(!Template.currentData().name)
-            return console.log('fieldValue without name', this);
+        if(!Template.instance().data.name)
+            return console.log('fieldValue without name', Template.instance().data);
         let content = AutoForm.content.findOne(form.formId).doc;
         if(content) {
-            if(AutoForm._hooks[form.formId] && AutoForm._hooks[form.formId].docToForm) {
-                content = AutoForm._hooks[form.formId].docToForm(content);
-            }
             let value = content;
-            Template.currentData().name.split('.').forEach(x=>value=value[x]);
-            const fieldDef = form.schema._schema[Template.currentData().name];
+            Template.instance().data.name.split('.').forEach(x=>value=value[x]);
+            const fieldDef = form.schema._schema[Template.instance().data.name];
             if(fieldDef.type === Date) {
                 return moment(value).format(fieldDef.autoform && fieldDef.autoform.format);
             }
@@ -150,8 +164,8 @@ const helpers = {
     fieldData() {
         const form = formData();
         if(form)
-            return _.extend({formId: form.formId,placeholder:'',autocomplete:'on'}, form.schema._schema[Template.currentData().name],Template.currentData());
-        return Template.currentData();
+            return _.extend({formId: form.formId,placeholder:'',autocomplete:'on'}, form.schema._schema[Template.instance().data.name],Template.instance().data);
+        return Template.instance().data;
     }
 };
 Template.afQuickField.helpers(helpers);
@@ -180,6 +194,19 @@ Template.afQuickFields.helpers({
 });
 
 Template.afQuickField.events({
+    'click .autoform-checkbox.multi': function(evt, tmpl) {
+        evt.preventDefault();
+        const form = formData();
+        if(!form)
+            return;
+        const value = {};
+        value['doc.'+tmpl.data.name] = $(evt.currentTarget).attr('data-value');
+
+        if(!AutoForm.content.findOne(_.extend({_id: form.formId},value)))
+            return AutoForm.content.update(form.formId,{$addToSet:value});
+        else
+            return AutoForm.content.update(form.formId,{$pull:value});
+    },
     'change input, change textarea, change select': function(evt, tmpl) {
         evt.preventDefault();
         const form = formData();
@@ -189,8 +216,8 @@ Template.afQuickField.events({
         const value = {};
         if(fieldDef.type === Date)
             value['doc.'+tmpl.data.name] = moment(evt.currentTarget.value, fieldDef.autoform && fieldDef.autoform.format).toDate();
-        else
+        else {
             value['doc.'+tmpl.data.name] = evt.currentTarget.value;
-        AutoForm.content.update(form.formId,{$set:value});
+        }
     }
 });

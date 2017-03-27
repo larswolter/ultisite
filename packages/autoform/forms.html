@@ -41,11 +41,22 @@
                 <span class="control-static">{{value}}</span>
             {{else}}
                 {{#if autoform.options}}
-                    <select class="form-control">
-                    {{#each autoform.options}}
-                        <option value="{{value}}" selected={{equals value getFieldValue}}>{{label}}</option>
-                    {{/each}}
-                    </select> 
+                    {{#if autoform.multi}}
+                        <div>
+                            {{#each autoform.options}}
+                                <span class="autoform-checkbox multi" data-value="{{value}}" > 
+                                    <span class="fa fa-{{#if isChecked}}check-{{/if}}square-o fa-fw"></span>
+                                    {{label}}
+                                </span>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <select class="form-control">
+                        {{#each autoform.options}}
+                            <option value="{{value}}" selected={{equals value getFieldValue}}>{{label}}</option>
+                        {{/each}}
+                        </select> 
+                    {{/if}}
                 {{else}}
                     <input name="{{name}}" type="{{type}}" class="form-control" value="{{getFieldValue}}" autocomplete={{autocomplete}} placeholder={{placeholder}}/>
                 {{/if}}
