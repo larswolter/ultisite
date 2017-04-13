@@ -33,8 +33,7 @@ Package.onUse(function (api) {
         'check',
         'alanning:roles',
         'reactive-var',
-        'aldeed:autoform',
-        'aldeed:simple-schema'
+        'ultisite:autoform',
     ]);
 
     api.addFiles(['schema.js'], ['client','server']);

@@ -5,7 +5,7 @@ Meteor.startup(function() {
     UltiSite.registerStartPageTemplate({
         name: 'Artikel',
         template: 'blogsStart',
-        route: 'blogs'
+        route: 'blog'
     });
 });
 

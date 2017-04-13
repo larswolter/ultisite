@@ -1,0 +1,138 @@
+<template name="autoForm">
+    <form id="{{formId}}" class="ultisite-autoform">
+        {{>Template.contentBlock this}}
+    </form>
+</template>
+
+<template name="quickForm">
+    {{#autoForm}}
+        {{>afQuickFields}}
+    {{/autoForm}}
+</template>
+
+<template name="afQuickField">
+    {{#if this.template}}
+        {{>Template.dynamic template=template data=fieldData}}
+    {{else}}
+        {{#with fieldData}}
+            {{#if isObject}}
+                {{>afObjectField this}}
+            {{else}}
+                {{#if isArray}}
+                    {{>afArrayField this}}
+                {{else}}
+                    <div class="form-group {{validity}}" title="{{this.name}}">
+                        {{#unless or noLabel (equals autoform.type "hidden")}}
+                            <label class="control-label">{{this.label}}</label>
+                        {{/unless}}
+                        {{>afFieldInput this}}
+                        <span class="help-block">{{validityText}}</span>
+                    </div>
+                {{/if}}
+            {{/if}}
+        {{/with}}
+    {{/if}}
+</template>
+
+<template name="afFieldInput">
+    {{#with fieldData}}
+        {{#if or (equals autoform.type "hidden") (equals type "hidden")}}
+            <input name="{{name}}" type="hidden" value="{{getFieldValue}}"/>
+        {{else}}
+            {{#if readOnly}}
+                <div class="form-control-static">{{getFieldValue}}</div>
+            {{else}}
+                {{#if autoform.options}}
+                    {{#if autoform.multi}}
+                        <div>
+                            {{#each opt in autoform.options}}
+                                <span class="autoform-checkbox multi" data-value="{{opt.value}}" > 
+                                    <span class="fa fa-{{#if isChecked opt.value}}check-{{/if}}square-o fa-fw"></span>
+                                    {{opt.label}}
+                                </span>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <select class="form-control">
+                        <option value="" >
+                            {{#if autoform.firstOption}}
+                                {{autoform.firstOption}}
+                            {{else}}
+                                Bitte wählen
+                            {{/if}}
+                        </option>
+                        {{#each opt in autoform.options}}
+                            <option value="{{opt.value}}" selected={{equals opt.value getFieldValue}}>{{opt.label}}</option>
+                        {{/each}}
+                        </select> 
+                    {{/if}}
+                {{else}}
+                    {{#if isDate}}
+                        <div class="input-group">
+                          <input name="{{name}}" class="form-control" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
+                          <span class="input-group-btn">
+                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <span class="fa fa-calendar"></span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              {{>autoformCalendar}}
+                            </div>
+                            </span>
+                        </div>
+                    {{else}}
+                        <input name="{{name}}" type="{{type}}" class="form-control" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        {{/if}}
+    {{/with}}
+</template>
+
+<template name="afObjectField">
+    <div class="form-group">
+        {{#unless noLabel}}
+            <label class="control-label">{{this.label}}</label>
+        {{/unless}}
+        {{#each fields}}
+            {{>afQuickField this}}
+        {{/each}}
+    </div>
+</template>
+<template name="afArrayField">
+    <div class="form-group">
+        {{#unless noLabel}}
+            <label class="control-label">{{this.label}}</label>
+        {{/unless}}
+        <div class="list-group">
+            {{#each elements}}
+                <div class="list-group-item clearfix">
+                    <button class="btn btn-danger action-remove pull-right">
+                        <span class="fa fa-close"></span>
+                    </button>
+                    {{#each properties}}
+                        {{#if value}}
+                        <div class="pull-left af-array-property">
+                            <span class="strong">{{label}}</span>:
+                            <span>{{value}}</span>
+                        </div>
+                        {{/if}}
+                    {{/each}}            
+                </div>
+            {{/each}}
+            <div class="list-group-item {{#if autoform.inline}}form-inline{{/if}}">
+                {{>afQuickField subField}}
+            </div>
+            <div class="list-group-item text-right">
+                <button class="btn btn-primary action-insert">
+                    Hinzufügen
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="afQuickFields">
+    {{#each fields}}
+        {{>afQuickField}}
+    {{/each}}
+</template>

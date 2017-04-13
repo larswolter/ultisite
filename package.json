@@ -32,5 +32,9 @@
     "sharp": "0.11.4",
     "stream-to-buffer": "^0.1.0",
     "wysiwyg.js": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-plugin-meteor": "^4.0.1"
   }
 }

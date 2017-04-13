@@ -1,47 +1,47 @@
-import {AutoForm} from 'meteor/ultisite:autoform';
+import { AutoForm } from 'meteor/ultisite:autoform';
 
 let mapImageFile;
 const mapImageUrl = new ReactiveVar();
 
 Meteor.startup(function () {
     UltiSite.maps = {};
-    Tracker.autorun(function(){
-       Meteor.subscribe('Practices'); 
+    Tracker.autorun(function () {
+        Meteor.subscribe('Practices');
     });
 });
 
 Template.practice.created = function () {
 };
 
-Template.practice.helpers ({
+Template.practice.helpers({
     formatedDuration() {
-        if(this.duration === 60)
+        if (this.duration === 60)
             return 'eine Stunde';
-        if(this.duration % 60 === 0)
-            return (this.duration/60) + ' Stunden';
-        if(this.duration === 90)
+        if (this.duration % 60 === 0)
+            return (this.duration / 60) + ' Stunden';
+        if (this.duration === 90)
             return '1,5 Stunden';
-        if(this.duration === 30)
+        if (this.duration === 30)
             return 'eine halbe Stunde';
-        if(this.duration === 150)
+        if (this.duration === 150)
             return '2,5 Stunden';
         return this.duration + ' Minuten';
     }
 });
 
-Template.practice.events ({
-    'click .action-edit': function(evt, tmpl) {
+Template.practice.events({
+    'click .action-edit': function (evt, tmpl) {
         UltiSite.showModal('practiceDialog', this);
     }
 });
 
 Template.practice.onCreated(function () {
-    if(this.data.mapImage)
-        mapImageUrl.set('/_image?imageId='+this.data.mapImage);
+    if (this.data.mapImage)
+        mapImageUrl.set('/_image?imageId=' + this.data.mapImage);
 });
 
 Template.practiceDialog.events({
-    'click .action-clear-image': function(evt, tmpl) {
+    'click .action-clear-image': function (evt, tmpl) {
         evt.preventDefault();
         tmpl.$('input[name="imageMapCenter"]').val('');
         tmpl.$('input[name="imageMapZoom"]').val('');
@@ -53,9 +53,9 @@ Template.practiceDialog.helpers({
     practiceSchema() {
         return UltiSite.schemas.practice.get();
     },
-    mapClickCallback:function() {
+    mapClickCallback: function () {
         var template = Template.instance();
-        return function(geocoords) {
+        return function (geocoords) {
             template.$('input[name="geocoords"]').val(geocoords);
         };
     },
@@ -63,17 +63,17 @@ Template.practiceDialog.helpers({
         return AutoForm.getFieldValue('address.geocoords');
     },
     mapImage() {
-        if(mapImageUrl.get())
+        if (mapImageUrl.get())
             return mapImageUrl.get();
     },
-    mapCaptureCallback: function() {
+    mapCaptureCallback: function () {
         var template = Template.instance();
-        return function(canvas, map) {
+        return function (canvas, map) {
             template.$('input[name="imageMapCenter"]').val(map.getView().getCenter());
             template.$('input[name="imageMapZoom"]').val(map.getView().getZoom());
-            canvas.toBlob((blob)=>{
+            canvas.toBlob((blob) => {
                 mapImageFile = blob;
-            },'image/png');
+            }, 'image/png');
             mapImageUrl.set(canvas.toDataURL());
         };
     },
@@ -84,33 +84,29 @@ AutoForm.hooks({
         // Called when any submit operation succeeds
         onSubmit: function (insertDoc, updateDoc, currentDoc) {
             const id = currentDoc && currentDoc._id;
-            Meteor.call('updatePractice',id, id?updateDoc:insertDoc, (err, res) => {
-                if(mapImageFile) {
+            Meteor.call('updatePractice', id, id ? updateDoc : insertDoc, (err, res) => {
+                if (mapImageFile) {
                     const fsFile = {
-                        file: mapImageFile, 
-                        metadata : {
+                        file: mapImageFile,
+                        metadata: {
                             _meteorCall: 'updatePracticeImage',
-                            associated : [res],
-                            tags : ['Karte', 'Training'],
-                            creator : Meteor.userId(),
-                            name : "Trainingskarte.png",
-                            type : 'image/jpg'
+                            associated: [res],
+                            tags: ['Karte', 'Training'],
+                            creator: Meteor.userId(),
+                            name: "Trainingskarte.png",
+                            type: 'image/jpg'
                         }
-                    };                
+                    };
                     UltiSite.pushToUploadQueue(fsFile);
                     UltiSite.triggerUpload();
                 }
-                this.done(err);
+                if (err)
+                    UltiSite.notify('Fehler beim Speichern des Trainings:' + err.message, "error");
+                else
+                    UltiSite.hideModal();
             });
             return false;
         },
-        onSuccess: function () {
-            UltiSite.hideModal();
-        },
-        // Called when any submit operation fails
-        onError: function (formType, error) {
-            UltiSite.notify('Fehler beim SPeichern des Trainings:' + error.message, "error");
-        }
     }
 });
 
@@ -141,7 +137,7 @@ Template.practicesDetailed.helpers({
 });
 
 Template.practicesDetailed.events({
-    'click .action-new': function(evt, tmpl) {
+    'click .action-new': function (evt, tmpl) {
         UltiSite.showModal('practiceDialog');
     }
 });
@@ -174,22 +170,22 @@ Template.practiceSmall.events({
 Template.practice.helpers({
     weekdayText: function () {
         switch (Number(this.weekday)) {
-        case 0:
-            return "Sonntags";
-        case 1:
-            return "Montags";
-        case 2:
-            return "Dienstags";
-        case 3:
-            return "Mittwochs";
-        case 4:
-            return "Donnerstags";
-        case 5:
-            return "Freitags";
-        case 6:
-            return "Samstags";
-        default:
-            return "Nulltag";
+            case 0:
+                return "Sonntags";
+            case 1:
+                return "Montags";
+            case 2:
+                return "Dienstags";
+            case 3:
+                return "Mittwochs";
+            case 4:
+                return "Donnerstags";
+            case 5:
+                return "Freitags";
+            case 6:
+                return "Samstags";
+            default:
+                return "Nulltag";
         }
     }
 });

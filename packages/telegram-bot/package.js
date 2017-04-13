@@ -33,7 +33,6 @@ Package.onUse(function (api) {
     'check',
     'alanning:roles',
     'reactive-var',
-    'aldeed:simple-schema',
             ]);
 
     api.addFiles(['client/config.html', 'client/config.js'], 'client');

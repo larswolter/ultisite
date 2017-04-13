@@ -71,9 +71,11 @@ Meteor.methods({
         }
         if (teamData.teamType.toLowerCase().indexOf('verein') > -1)
             teamData.clubTeam = true;
-        else
+        else {
             teamData.clubTeam = false;
-
+            teamData.responsible = this.userId;
+            teamData.responsibleName = Meteor.users.findOne(this.userId).username;
+        }
         var id = UltiSite.Teams.insert(teamData);
         console.log("Created Team " + id + " and added");
         UltiSite.Tournaments.update(tournamentId, { 

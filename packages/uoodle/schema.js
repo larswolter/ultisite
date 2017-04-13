@@ -1,3 +1,4 @@
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';;
 
 uoodleSchema = new SimpleSchema({
     "name": {
@@ -6,23 +7,11 @@ uoodleSchema = new SimpleSchema({
         optional: false,
         max: 60
     },
-    "owner": {
-        type: String,
-        label: "Owner",
-        optional: false,
-        autoform: {
-            type: 'hidden'
-        }
-    },
     validUntil: {
         type: Date,
         label: "Läuft bis",
         autoform: {
-            type: "bootstrap-datepicker",
-            datePickerOptions: {
-                language: "de-DE",
-                format: "dd.mm.yyyy"
-            }
+            format: "DD.MM.YYYY"
         }
     },
     "description": {
@@ -31,29 +20,21 @@ uoodleSchema = new SimpleSchema({
         optional: true,
         max: 2000
     },
-    participants: {
-        type: [String],
-        min: 0,
-        defaultValue: [],
-        autoform: {
-            type: 'hidden'
-        }
-    },
     options: {
         type: [Object],
         max: 10,
-        min: 2
+        min: 2,
+        label: 'Auswahloptionen',
+        autoform:{
+            inline: true
+        }
+
     },
     "options.$.date": {
         type: Date,
         label: "Datum",
         autoform: {
-            type: "bootstrap-datepicker",
-            //buttonClasses: "fa fa-calendar",
-            datePickerOptions: {
-                language: "de-DE",
-                format: "dd.mm.yyyy"
-            }
+            format: "DD.MM.YYYY"
         },
         optional: true
     },
@@ -71,4 +52,7 @@ uoodleSchema = new SimpleSchema({
             type:'hidden'
         }
     }
+});
+Meteor.startup(function() {
+    UltiSite.schemas.uoodle = new ReactiveVar(uoodleSchema);
 });

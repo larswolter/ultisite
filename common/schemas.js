@@ -1,3 +1,5 @@
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+
 Meteor.startup(function () {
     if (Meteor.isClient)
         setSchemas();
@@ -173,8 +175,8 @@ var setSchemas = function () {
             autoform: {
                 noselect: true,
                 options: [
-                    {value:'M', label:'Männlich'},                    
-                    {value:'W', label:'Weiblich'}
+                    { value: 'M', label: 'Männlich' },
+                    { value: 'W', label: 'Weiblich' }
                 ]
             }
         },
@@ -280,7 +282,7 @@ var setSchemas = function () {
             type: Date,
             label: "Datum",
             autoform: {
-                format:'DD.MM.YYYY',
+                format: 'DD.MM.YYYY',
                 type: "bootstrap-datepicker",
                 //                buttonClasses: "fa fa-calendar",
                 datePickerOptions: {
@@ -292,7 +294,7 @@ var setSchemas = function () {
         },
         surfaces: {
             type: [String],
-            min: 1,
+            minCount: 1,
             label: 'Untergründe',
             autoform: {
                 multi: true,
@@ -306,7 +308,7 @@ var setSchemas = function () {
         },
         divisions: {
             type: [String],
-            min: 1,
+            minCount: 1,
             label: 'Divisionen',
             autoform: {
                 multi: true,
@@ -321,7 +323,7 @@ var setSchemas = function () {
             type: Number,
             label: "Anzahl Tage",
             defaultValue: 2,
-            min: 0,
+            min: 1,
             max: 14
         },
         category: {
@@ -344,7 +346,7 @@ var setSchemas = function () {
         },
         tournamentDirector: {
             type: String,
-            label: "Verantwortlicher",
+            label: "Kontaktperson",
             optional: true
         },
         website: {
@@ -358,21 +360,21 @@ var setSchemas = function () {
         hostingTeam: {
             type: String,
             label: "Team",
-            defaultValue:UltiSite.settings().teamname, 
+            defaultValue: UltiSite.settings().teamname,
             optional: false
         },
         weekday: {
-            type:Number,
+            type: Number,
             label: "Wochentag",
             autoform: {
                 options: [
-                    {label:'Montags',value:1},
-                    {label:'Dienstags',value:2},
-                    {label:'Mittwochs',value:3},
-                    {label:'Donnerstags',value:4},
-                    {label:'Freitags',value:5},
-                    {label:'Samstags',value:6},
-                    {label:'Sonntags',value:0},
+                    { label: 'Montags', value: 1 },
+                    { label: 'Dienstags', value: 2 },
+                    { label: 'Mittwochs', value: 3 },
+                    { label: 'Donnerstags', value: 4 },
+                    { label: 'Freitags', value: 5 },
+                    { label: 'Samstags', value: 6 },
+                    { label: 'Sonntags', value: 0 },
                 ]
             }
         },
@@ -401,8 +403,8 @@ var setSchemas = function () {
             label: "Beschreibung",
             optional: true
         },
-        skillLevel:{
-            type:String,
+        skillLevel: {
+            type: String,
             optional: true,
             label: "Zielgruppe"
         },
@@ -411,21 +413,23 @@ var setSchemas = function () {
             type: addressSchema
         },
         startTime: {
+            label: "Beginn",
             type: String,
-            min:3,
-            max:5,
+            min: 3,
+            max: 5,
             defaultValue: '18:00',
             custom() {
-                if(this.isSet)
+                if (this.isSet)
                     return !!this.value.match(/[0-2][0-9]:[0-5][0-9]/);
             }
         },
         start: {
+            label: "Erster Termin",
             type: Date,
-            optional:true,
+            optional: true,
             defaultValue: new Date(),
             autoform: {
-                format:'DD.MM.YYYY',
+                format: 'DD.MM.YYYY',
                 type: "bootstrap-datepicker",
                 datePickerOptions: {
                     language: "de-DE",
@@ -434,11 +438,12 @@ var setSchemas = function () {
             },
         },
         end: {
+            label: "Letzter Termin",
             type: Date,
-            optional:true,
-            defaultValue: moment().add(6,'month').toDate(),
+            optional: true,
+            defaultValue: moment().add(6, 'month').toDate(),
             autoform: {
-                format:'DD.MM.YYYY',
+                format: 'DD.MM.YYYY',
                 type: "bootstrap-datepicker",
                 datePickerOptions: {
                     language: "de-DE",
@@ -450,11 +455,42 @@ var setSchemas = function () {
             type: Number,
             label: "Dauer",
             defaultValue: 120,
-            optional:false,
+            optional: false,
         }
     }));
 };
 SimpleSchema.messages({
+    minString: "[label] muss mindestens [min] Zeichen haben",
+    maxString: "[label] darf maximal [max] Zeichen haben",
+    minNumber: "[label] must be at least [min]",
+    maxNumber: "[label] cannot exceed [max]",
+    minDate: "[label] must be on or after [min]",
+    maxDate: "[label] cannot be after [max]",
+    badDate: "[label] is not a valid date",
+    minCount: "You must specify at least [minCount] values",
+    maxCount: "You cannot specify more than [maxCount] values",
+    noDecimal: "[label] must be an integer",
+    notAllowed: "[value] is not an allowed value",
+    expectedString: "[label] muss Text sein",
+    expectedNumber: "[label] muss eine Zahl sein",
+    expectedBoolean: "[label] must be a boolean",
+    expectedArray: "[label] must be an array",
+    expectedObject: "[label] must be an object",
+    expectedConstructor: "[label] must be a [type]",
+    regEx: [
+        {msg: "[label] failed regular expression validation"},
+        {exp: SimpleSchema.RegEx.Email, msg: "[label] muss eine gültige E-Mail sein"},
+        {exp: SimpleSchema.RegEx.WeakEmail, msg: "[label] muss eine gültige E-Mail sein"},
+        {exp: SimpleSchema.RegEx.Domain, msg: "[label] must be a valid domain"},
+        {exp: SimpleSchema.RegEx.WeakDomain, msg: "[label] must be a valid domain"},
+        {exp: SimpleSchema.RegEx.IP, msg: "[label] must be a valid IPv4 or IPv6 address"},
+        {exp: SimpleSchema.RegEx.IPv4, msg: "[label] must be a valid IPv4 address"},
+        {exp: SimpleSchema.RegEx.IPv6, msg: "[label] must be a valid IPv6 address"},
+        {exp: SimpleSchema.RegEx.Url, msg: "[label] must be a valid URL"},
+        {exp: SimpleSchema.RegEx.Id, msg: "[label] must be a valid alphanumeric ID"}
+    ],
+    keyNotInSchema: "[key] is not allowed by the schema",
+    'required': "[label] ist ein Pflichtfeld",
     'wrong-password': "Falsches Passwort",
     "invalid-username": "Ungültiger Nutzername",
     "duplicate-email": "E-Mail bereits vorhanden",

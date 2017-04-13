@@ -1,4 +1,4 @@
-import {AutoForm} from 'meteor/ultisite:autoform';
+import { AutoForm } from 'meteor/ultisite:autoform';
 
 Meteor.startup(function () {
     Meteor.subscribe('UserDetails');
@@ -160,13 +160,13 @@ Template.user.events({
                         tags: 'Mitglieder'
                     }
                 });
-            Meteor.users.update(userId,{$set:{'profile.avatar':file && file._id}});
+            Meteor.users.update(userId, { $set: { 'profile.avatar': file && file._id } });
             UltiSite.fileBrowserHideDialog();
         });
     },
     'click .user-contacts .btn-remove': function (e, t) {
         e.preventDefault();
-        UltiSite.confirmDialog("Wollen sie den Eintrag wirklich löschen?", ()=> {
+        UltiSite.confirmDialog("Wollen sie den Eintrag wirklich löschen?", () => {
             var modifier = {};
 
             modifier["profile.contactDetails." + $(e.currentTarget).attr('data-index')] = null;
@@ -321,10 +321,7 @@ Template.userCreateDialog.onCreated(function () {
     });
 });
 Template.userCreateDialog.events({
-    'click button[type="submit"]': function(evt) {
-        AutoForm.removeStickyValidationError('userAddForm',"email");
-        AutoForm.removeStickyValidationError('userAddForm',"sitePassword");
-        AutoForm.removeStickyValidationError('userAddForm',"alias");
+    'click button[type="submit"]': function (evt) {
     }
 });
 
@@ -341,7 +338,7 @@ Template.userCreateDialog.helpers({
 });
 
 AutoForm.hooks({
-    userAddForm: {        
+    userAddForm: {
         onSuccess: function () {
             $('.modal').modal('hide');
             AutoForm.resetForm("userAddForm");
@@ -350,11 +347,11 @@ AutoForm.hooks({
         onError: function (formType, err) {
             console.log(formType, err);
             if (err.error === 'duplicate-email')
-                this.addStickyValidationError("email", err.error);
+                AutoForm.addStickyValidationError('userAddForm', "email", err.reason);
             if (err.error === 'wrong-password')
-                this.addStickyValidationError("sitePassword", err.error);
+                AutoForm.addStickyValidationError('userAddForm', "sitePassword", err.reason);
             if (err.error === 'duplicate-username')
-                this.addStickyValidationError("alias", err.error);
+                AutoForm.addStickyValidationError('userAddForm', "alias", err.reason);
 
         }
     }

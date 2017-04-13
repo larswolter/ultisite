@@ -37,7 +37,6 @@ Template.imageViewer.events({
 Template.imageViewer.helpers({
     nextImage() {
         const assoc = FlowRouter.getParam("associated");
-        $('.start-content > img').attr('src','');
         if(assoc) {
             const others = UltiSite.Images.find({associated:assoc},{sort:{created:1}}).map(img=>img._id);
             let idx;
@@ -52,7 +51,6 @@ Template.imageViewer.helpers({
     },
     prevImage() {
         const assoc = FlowRouter.getParam("associated");
-        $('.start-content > img').attr('src','');
         if(assoc) {
             const others = UltiSite.Images.find({associated:assoc},{sort:{created:1}}).map(img=>img._id);
             let idx;

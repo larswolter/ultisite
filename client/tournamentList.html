@@ -1,5 +1,4 @@
 <template name="tournamentList">
-    {{>tournamentCreate}}
     <div>
         <div class="row">
             <div class="col-xs-12 visible-xs tournament-tabs navbar-default">
@@ -71,7 +70,7 @@
                 {{/if}} 
             </div>
             {{#if currentUser}}
-            <button class="btn btn-default btn-floating" title="Turnier anlegen" type="button" data-toggle="modal" data-target="#tournamentCreateDialog">
+            <button class="btn btn-default btn-floating action-add-tournament" title="Turnier anlegen" type="button">
                 <span class="fa fa-plus fa-lg"></span>
             </button>
             {{/if}}

@@ -83,13 +83,13 @@ Meteor.methods({
             if (user)
                 throw new Meteor.Error("duplicate-email", "Ein Nutzer mit dieser E-Mail Adresse existiert bereits");
             var alias = {};
-            user = Meteor.users.findOne({username:userData.alias}, {
+            user = Meteor.users.findOne({username:{$regex:userData.alias,$options:'i'}}, {
                 fields: {
                     _id: 1
                 }
             });
             if (user)
-                throw new Meteor.Error("duplicate-username", "Ein Nutzer mit diesem Alias existiert bereits im Verein");
+                throw new Meteor.Error("duplicate-username", "Ein Nutzer mit diesem Nuiternamen existiert bereits");
             if (UltiSite.isAdmin(this.userId))
                 profile.verifiedBy = this.userId;
             else

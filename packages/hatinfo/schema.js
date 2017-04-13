@@ -1,3 +1,5 @@
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';;
+
 const HatParticipants = new Meteor.Collection('HatParticipants');
 
 Meteor.startup(function () {

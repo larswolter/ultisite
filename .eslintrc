@@ -21,7 +21,7 @@
     "rules": {
         "indent": [
             1,
-            4
+            2
         ],
         "quotes": [
             0,
@@ -42,16 +42,20 @@
         ],
         "no-console": [
           0
+        ],
+        "meteor/eventmap-params":[
+          0
         ]
     },
     "parserOptions": {
         "ecmaVersion": 6,
         "sourceType": "module"
     },
+    "plugins": ["meteor"],
     "env": {
         "es6": true,
         "node": true,
         "browser": true
     },
-    "extends": "eslint:recommended"
+    "extends": ["plugin:meteor/recommended"]
 }

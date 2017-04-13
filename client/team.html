@@ -9,12 +9,12 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right" role="menu">
                         <li>
-                            <a data-target="#teamUpdateDialog" data-team-id="{{_id}}" data-toggle="modal" href="#">
+                            <a class="action-edit-team" href="#">
                                 <span class="fa fa-edit"></span> editieren
                             </a>
                         </li>
                         <li>
-                            <a data-target="#teamHistoricView" data-team-id="{{_id}}" data-toggle="modal" href="#">
+                            <a class="action-historic-view" href="#">
                                 <span class="fa fa-line-chart"></span> Historie
                             </a>
                         </li>
@@ -40,22 +40,9 @@
                 <div>
                     {{#if currentUser}}
                     <div class="btn-group">
-                        <button class="btn {{#if iamParticipating}}btn-default{{else}}btn-primary{{/if}} dropdown-toggle" data-toggle="modal" data-team="{{_id}}" data-target="#participateDialog">
+                        <button class="btn {{#if iamParticipating}}btn-default{{else}}btn-primary{{/if}} action-participate" >
                             <span class="fa fa-plus"></span> Mitspielen
                         </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                            <form class="">
-                                Mein Status:
-                                {{!-- >searchField searchType="Users" inline=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound value=currentUser.username--}} 
-                                <input class="user-id" type="hidden" value="{{currentUser._id}}"> 
-                                <button class="btn btn-default btn-block action-insert" data-value="0" type="button">Kann nicht</button>
-                                <button class="btn btn-default btn-block action-insert" data-value="30" type="button">Interesse</button>
-                                <button class="btn btn-warning btn-block action-insert" data-value="70" type="button">Vielleicht</button>
-                                <button class="btn btn-success btn-block action-insert" data-value="100" type="button">Sicher</button>
-                            </form>
-                            </li>
-                        </ul>
                     </div>
                     {{/if}} 
                     {{#if participantMails}}
@@ -65,12 +52,12 @@
                         </a>
                     {{/if}}
                     {{#if isResponsible}}
-                    <button class="btn btn-default" data-target="#teamUpdateDialog" data-team-id="{{_id}}" data-toggle="modal">
+                    <button class="btn btn-default action-edit-team">
                         <span class="fa fa-edit"></span> Editieren
                     </button>
                     {{/if}}
                     {{#if isMyTeam}}
-                    <button class="btn btn-default" data-target="#teamHistoricView" data-team-id="{{_id}}" data-toggle="modal">
+                    <button class="btn btn-default action-historic-view">
                         <span class="fa fa-line-chart"></span> Historie
                     </button>
                     {{/if}}
@@ -231,32 +218,42 @@
                                 </select>
                             {{/if}}
                         </div>
-                        <div class="form-group">
-                            <label>Spieler</label><br/>
-                            {{>searchField searchType="Users" inline=true leftMenu=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound value=selectedUser.username}}
-                        </div>
-                        {{#if selectedUser}} 
-                            {{#unless selectedUser._id}}
+                        {{#if selectedTeam}}
+                            {{#if dabei}}
                             <div class="form-group">
-                                Willst du diesen Namen in die Liste eintragen, 
-                                es ist kein eigener Nutzer und nur du kannst seinen Status ändern
+                                <label>Ich bin bereits dabei!</label><br />
+                                Aber es kann auch ein anderer Spieler hinzugefügt werden, indem dessen Name in das Feld bei Spieler eingegeben wird
                             </div>
-                            <div class="form-group">
-                                <input type="checkbox" name="female" value="1" checked={{femaleRequired}}>
-                                <label>Weiblicher Spieler</label>                                
-                            </div>
-                            {{/unless}}
-                            {{#if femaleRequired}}
-                                <div class="alert alert-warning">
-                                    Dies ist ein Team nur für Frauen und {{selectedUser.username}} ist laut seinem <a href="/user/{{selectedUser._id}}">Profil</a> keine!
-                                </div>
                             {{/if}}
-                            <button class="btn btn-default btn-block action-insert" data-value="0" type="button">Kann nicht</button>
-                            <button class="btn btn-default btn-block action-insert" data-value="30" type="button">Interesse</button>
-                            <button class="btn btn-warning btn-block action-insert" data-value="70" type="button">Vielleicht</button>
-                            <button class="btn btn-success btn-block action-insert" data-value="100" type="button">Sicher</button>
+                            <div class="form-group">
+                                <label>Spieler</label><br />
+                                {{>searchField searchType="Users" inline=true leftMenu=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound value=selectedUser.username}}
+                            </div>
+                            {{#if selectedUser}} 
+                                {{#unless selectedUser._id}}
+                                <div class="form-group">
+                                    Willst du diesen Namen in die Liste eintragen, 
+                                    es ist kein eigener Nutzer und nur du kannst seinen Status ändern
+                                </div>
+                                <div class="form-group">
+                                    <input type="checkbox" name="female" value="1" checked={{femaleRequired}}>
+                                    <label>Weiblicher Spieler</label>                                
+                                </div>
+                                {{/unless}}
+                                {{#if femaleRequired}}
+                                    <div class="alert alert-warning">
+                                        Dies ist ein Team nur für Frauen und {{selectedUser.username}} ist laut seinem <a href="/user/{{selectedUser._id}}">Profil</a> keine!
+                                    </div>
+                                {{/if}}
+                                <button class="btn btn-default btn-block action-insert" data-value="0" type="button">Kann nicht</button>
+                                <button class="btn btn-default btn-block action-insert" data-value="30" type="button">Interesse</button>
+                                <button class="btn btn-warning btn-block action-insert" data-value="70" type="button">Vielleicht</button>
+                                <button class="btn btn-success btn-block action-insert" data-value="100" type="button">Sicher</button>
+                            {{else}}
+                                Bitte einen Spieler wählen
+                            {{/if}}
                         {{else}}
-                            Zuerst einen Spieler wählen
+                            Bitte ein Team auswählen
                         {{/if}}
                     </form>
                 </div>
@@ -332,16 +329,14 @@
                                 Team
                                 {{team.name}}
                                 editieren
-                                {{else}}
+                            {{else}}
                                 Neues Team anlegen
                             {{/if}}
                         </h4>
                 </div>
-                {{#if teamSchema}} 
                 {{#autoForm schema=teamSchema tournamentId=this.tournamentId doc=team id="teamUpdateForm" type="normal"}}
                 <div class="modal-body row">
                     <fieldset>
-                        {{> afQuickField name='responsible' type='hidden' value=""}}
                         <div class="col-xs-6">
                             {{> afQuickField name='name'}}
                         </div>
@@ -349,12 +344,7 @@
                             {{#unless team._id}}
                                 {{> afQuickField name='teamType'}}
                             {{else}}
-                                {{#if team.clubTeam}}
-                                    Vereinsintern
-                                {{/if}}
-                                {{#if team.drawingDate}}
-                                    mit Auslosung
-                                {{/if}}
+                                {{> afQuickField name='teamType' readOnly=true}}
                             {{/unless}}
                         </div>
                         <div class="col-xs-6">
@@ -369,9 +359,6 @@
                         <div class="col-xs-6">
                             {{> afQuickField name='division' options=tournamentDivisions}}
                         </div>
-                        <div class="col-xs-12">
-                            {{> afQuickField name='remarks'}}
-                        </div>
                     </fieldset>
                 </div>
                 <div class="modal-footer">
@@ -379,7 +366,7 @@
                         {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
                     </button>
                 </div>
-                {{/autoForm}} {{/if}}
+                {{/autoForm}} 
             </div>
         </div>
     </div>
@@ -447,7 +434,7 @@
                                 {{/if}}
                                 </li>
                                 <li>
-                                    <a data-target="#teamHistoricView" data-team-id="{{_id}}" data-toggle="modal" href="#">
+                                    <a href="#" class="action-historic-view">
                                         <span class="fa fa-line-chart"></span> Historie
                                     </a>
                                 </li>                                
@@ -455,7 +442,7 @@
                         </div>
                     </span>
                     <span class="hidden-xs">
-                    <button data-target="#teamHistoricView" data-team-id="{{_id}}" data-toggle="modal" class="btn btn-default pull-right">
+                    <button class="btn btn-default action-historic-view pull-right">
                         <span class="fa fa-line-chart"></span> Historie
                     </button>
                     {{#if teamRemovable}}
@@ -585,6 +572,11 @@
                         </div>
                     </div>
                     {{/each}}
+                </div>
+                <div class="modal-footer">
+                    <button aria-label="Close" class="btn btn-primary" data-dismiss="modal" type="button">
+                        Ok
+                    </button>
                 </div>
             </div>
         </div>

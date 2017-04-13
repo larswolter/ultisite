@@ -1,0 +1,48 @@
+.ultisite-autoform {
+    .autoform-checkbox {
+        cursor: pointer;
+        padding-left:5px;
+    }
+    .autoform-calendar {
+        width:320px;
+        max-width:90vw;
+        position: relative;
+        .form-control-static {
+            text-align: center;
+            padding: 6 12px;
+        }
+        .day,.day-header {
+            float:left;
+            width: 14.28571428571429%;
+            text-align: center;
+            position: relative;
+            min-height: 1px;
+            padding: 10px 15px;
+            cursor:pointer;
+        }
+        .day-header {
+            cursor:auto;
+            font-weight: bold;
+            border-bottom: 1px solid gray;
+        }
+        .day.muted {
+            color: lightgray;
+        }
+        .day.active {
+            padding: 8px 13px;
+            border: 2px solid blue;
+        }
+        .day:hover {
+            background-color:lightgray;
+
+        }
+    }
+    .help-block {
+        transition: all 200ms;
+        max-height:0px;
+        overflow:hidden;
+    }
+    .has-error .help-block {
+        max-height: 4em;
+    }
+}

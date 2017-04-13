@@ -1,22 +1,22 @@
-import {AutoForm} from 'meteor/ultisite:autoform';
+import { AutoForm } from 'meteor/ultisite:autoform';
 
 var months = new Meteor.Collection(null);
 var integratedTournamentList = new Meteor.Collection(null);
 var prefillData = new ReactiveVar(undefined);
 var tournamentQuery = new ReactiveVar({});
 const tournamentFilter = new ReactiveVar({
-        surface: "Alle",
-        category: "Alle",
-        division: "Alle",
-        type: "Alle",
-        withTeams: true,
-        year: 'Kommende'
-    });
+    surface: "Alle",
+    category: "Alle",
+    division: "Alle",
+    type: "Alle",
+    withTeams: true,
+    year: 'Kommende'
+});
 var currentMonth = new ReactiveVar(moment().startOf('month'));
 var tabSelection = new ReactiveVar([]);
-const filterMap ={
-    division: 'divisions.division',
-    surface: 'divisions.surface',
+const filterMap = {
+    division: 'divisions',
+    surface: 'surfaces',
     category: 'category'
 };
 
@@ -47,58 +47,34 @@ Meteor.startup(function () {
     });
 });
 
-Template.tournamentCreate.helpers({
-    tournamentSchema: function () {
-        return UltiSite.schemas.tournament.get();
-    },
-    prefill: function () {
-        return prefillData.get();
-    }
-});
-Template.tournamentCreate.events({
-    'shown.bs.modal .modal': function (e, t) {
-        t.subscribe("Places", prefillData.get() ? prefillData.get().address.country : "DE");
-    }
-});
-Template.tournamentUpdate.events({
-    'shown.bs.modal .modal': function (e, t) {
-        t.subscribe("Places", prefillData.get() ? prefillData.get().address.country : "DE");
-    }
-});
-
 AutoForm.hooks({
     tournamentUpdateForm: {
         // Called when any submit operation succeeds
         onSuccess: function (formType, result) {
-            $('#tournamentUpdateDialog').modal('hide');
+            UltiSite.hideModal();
+            if( formType==='insert')
+                FlowRouter.go("tournament", {
+                    _id: result
+                });
         },
         // Called when any submit operation fails
         onError: function (formType, error) {
             console.log('tournamentUpdateForm:', error);
-            UltiSite.notify('Fehler beim Turnier ändern:' + error.message, "error");
+            if( formType==='insert')
+                UltiSite.notify('Fehler beim Turnier anlegen:' + error.message, "error");
+            else
+                UltiSite.notify('Fehler beim Turnier ändern:' + error.message, "error");
         }
     },
-    tournamentCreateForm: {
-        // Called when any submit operation succeeds
-        onSuccess: function (formType, result) {
-            console.log("inserting tournament successfull", result);
-            $('#tournamentCreateDialog').modal('hide');
-            UltiSite.notify('Turnier angelegt', "success");
-            FlowRouter.go("tournament", {
-                _id: result
-            });
-        },
-
-        // Called when any submit operation fails
-        onError: function (formType, error) {
-            UltiSite.notify('Fehler beim Turnier anlegen:' + error.message, "error");
-        }
-    }
 });
 
 
 Template.tournamentList.events({
-    'click .action-toggle-filter': function(e, tmpl) {
+    'click .action-add-tournament': function(e, tmpl) {
+        e.preventDefault();
+        UltiSite.showModal('tournamentUpdate', {type:'insert', tournament: prefillData.get()});
+    },
+    'click .action-toggle-filter': function (e, tmpl) {
         e.preventDefault();
         tmpl.showFilter.set(!tmpl.showFilter.get());
     },
@@ -163,11 +139,8 @@ Template.tournamentList.events({
             address: {
                 country: "DE"
             },
-            divisions: [{
-                surface: "Rasen",
-                numPlayers: 7,
-                name: ""
-            }],
+            divisions: [],
+            surfaces:[],
             category: "Turnier",
             numDays: 2
         });
@@ -185,42 +158,45 @@ Template.tournamentList.onCreated(function () {
     this.autorun(() => {
         UltiSite.offlineTournamentDependency.depend();
         UltiSite.offlineTournaments.forEach((t) => {
-            integratedTournamentList.upsert({_id:t._id,lastChange:{$lte:t.lastChange}},t);
+            if (!integratedTournamentList.findOne(t._id))
+                integratedTournamentList.insert(t);
+            else
+                integratedTournamentList.update({ _id: t._id, lastChange: { $lte: t.lastChange } }, t);
         });
     });
     this.autorun(() => {
-        if(this.subscriptionsReady())
-            UltiSite.Tournaments.find().forEach((t) => integratedTournamentList.upsert(t._id,t));
+        if (this.subscriptionsReady())
+            UltiSite.Tournaments.find().forEach((t) => integratedTournamentList.upsert(t._id, t));
     });
 
     this.autorun(() => {
         var query = {};
         const filter = tournamentFilter.get();
         Object.keys(filter).forEach((key) => {
-            if(key === 'withTeams') {
-                if(filter[key])
-                    query.teams = {$exists:true,$ne:[]};
-            } else if(key === 'year' && filter[key] === 'Kommende')
+            if (key === 'withTeams') {
+                if (filter[key])
+                    query.teams = { $exists: true, $ne: [] };
+            } else if (key === 'year' && filter[key] === 'Kommende')
                 query['date'] = {
                     $gte: moment().subtract(1, 'day').toDate()
                 };
-            else if(key === 'year' && filter[key]) {
+            else if (key === 'year' && filter[key]) {
                 query['date'] = {
                     $gte: moment().year(filter[key]).startOf('year').toDate(),
                     $lte: moment().year(filter[key]).endOf('year').toDate()
                 };
             }
-            else if(filter[key] != 'Alle')
+            else if (filter[key] != 'Alle')
                 query[filterMap[key]] = { $regex: filter[key], $options: 'i' };
         });
-        if(filter.year && (filter.year !== moment().format('YYYY')) && (filter.year !== 'Kommende')) {
+        if (filter.year && (filter.year !== moment().format('YYYY')) && (filter.year !== 'Kommende')) {
             console.log('Rebuilding query:', filter);
             this.subscribe('Tournaments', false, query);
-            UltiSite.notify('Alte Turniere werden geladen...','info');
+            UltiSite.notify('Alte Turniere werden geladen...', 'info');
         }
         tournamentQuery.set(query);
     });
-    
+
     UltiSite.offlineCheck();
 });
 
@@ -228,18 +204,18 @@ Template.tournamentList.helpers({
     filterAsText() {
         const filter = tournamentFilter.get();
         let text = 'Kommende ';
-        if(filter.year !== 'Kommende')
-            text = 'In ' + filter.year +' stattfindende ';
-        if(filter.division !== 'Alle')
-            text += filter.division+' ';
+        if (filter.year !== 'Kommende')
+            text = 'In ' + filter.year + ' stattfindende ';
+        if (filter.division !== 'Alle')
+            text += filter.division + ' ';
 
-        if(filter.category !== 'Alle')
-            text += filter.category + (filter.category.indexOf('urnier') > 0?'e':'');
+        if (filter.category !== 'Alle')
+            text += filter.category + (filter.category.indexOf('urnier') > 0 ? 'e' : '');
         else
             text += 'Turniere';
-        if(filter.surface !== 'Alle')
-            text += ' auf '+filter.surface;
-        if(filter.withTeams)
+        if (filter.surface !== 'Alle')
+            text += ' auf ' + filter.surface;
+        if (filter.withTeams)
             text += ' mit Teams';
         return text;
     },
@@ -263,8 +239,8 @@ Template.tournamentList.helpers({
     plannedTournaments: function () {
         const cursor = integratedTournamentList.find(tournamentQuery.get());
         Template.instance().topListEntries.set(cursor.count());
-        const grouped = _.groupBy(_.sortBy(cursor.fetch(), 'date'),(t)=> moment(t.date).format('MMMM YYYY'));
-        return Object.keys(grouped).map((key)=>{
+        const grouped = _.groupBy(_.sortBy(cursor.fetch(), 'date'), (t) => moment(t.date).format('MMMM YYYY'));
+        return Object.keys(grouped).map((key) => {
             return {
                 _id: key,
                 header: key,
@@ -273,8 +249,8 @@ Template.tournamentList.helpers({
         });
     },
     playedTournaments: function () {
-        if(Template.instance().topListEntries.get())
-            return integratedTournamentList.find({date:{$lte:new Date()},teams:{$exists:true}},{$sort:{date:-1,name:1}, limit:Template.instance().topListEntries.get()});
+        if (Template.instance().topListEntries.get())
+            return integratedTournamentList.find({ date: { $lte: new Date() }, teams: { $exists: true } }, { $sort: { date: -1, name: 1 }, limit: Template.instance().topListEntries.get() });
     },
     showTournamentsFilter: function () {
         return _.contains(tabSelection.get(), "filter");
@@ -357,40 +333,42 @@ var helpers = {
     tags: function () {
         var tags = [];
         this.divisions.forEach(function (elem) {
-            if (elem.division.indexOf("Damen") > -1)
+            if (elem.indexOf("Damen") > -1)
                 tags.push({
                     icon: "venus",
-                    text: elem.division
+                    text: elem
                 });
-            if (elem.division.indexOf("Open") > -1)
+            if (elem.indexOf("Open") > -1)
                 tags.push({
                     icon: "mars",
-                    text: elem.division
+                    text: elem
                 });
-            if (elem.division.indexOf("Mixed") > -1)
+            if (elem.indexOf("Mixed") > -1)
                 tags.push({
                     icon: "venus-mars",
-                    text: elem.division
+                    text: elem
                 });
-            if (elem.division.indexOf("Masters") > -1)
+            if (elem.indexOf("Masters") > -1)
                 tags.push({
                     icon: "user-secret",
-                    text: elem.division
+                    text: elem
                 });
-            if (elem.division.indexOf("Junioren") > -1)
+            if (elem.indexOf("Junioren") > -1)
                 tags.push({
                     icon: "child",
-                    text: elem.division
+                    text: elem
                 });
-            if (elem.surface === "Sand")
+        });
+        this.surfaces.forEach(function (elem) {
+            if (elem === "Sand")
                 tags.push({
                     icon: "sun-o",
-                    text: elem.surface
+                    text: elem
                 });
-            if (elem.surface === "Halle")
+            if (elem === "Halle")
                 tags.push({
                     icon: "home",
-                    text: elem.surface
+                    text: elem
                 });
         });
         if (this.category === "HAT-Turnier")
@@ -413,14 +391,14 @@ var helpers = {
         });
     },
     divisionIcon: function () {
-        if (this.division) {
-            if (this.division.indexOf("Damen") >= 0)
-                return "venus";
-            if (this.division.indexOf("Mixed") >= 0)
-                return "venus-mars";
-            if (this.division.indexOf("Open") >= 0)
-                return "mars";
-        }
+        if(!this.division)
+            return 'question';
+        if (this.division.indexOf("Damen") >= 0)
+            return "venus";
+        if (this.division.indexOf("Mixed") >= 0)
+            return "venus-mars";
+        if (this.division.indexOf("Open") >= 0)
+            return "mars";
         return "question";
     },
     myTeamState: function () {
@@ -430,7 +408,7 @@ var helpers = {
         const teams = this.teams || [];
 
         return teams.map(function (id) {
-            const teamObj = UltiSite.getTeam(id) || {name: '-unbekannt-'};
+            const teamObj = UltiSite.getTeam(id) || { name: '-unbekannt-' };
             return _.extend({
                 stateColor: UltiSite.stateColor(teamObj.state)
             }, teamObj);
@@ -448,16 +426,16 @@ Template.pastTournamentListItem.helpers({
     },
     teamNames() {
         let iamIn = false;
-        let names = (this.teams || []).map( (team) => {
+        let names = (this.teams || []).map((team) => {
             const teamObj = UltiSite.getTeam(team);
-            if(!teamObj)
+            if (!teamObj)
                 return '-';
             iamIn = iamIn || !!_.find(teamObj.participants, p => p.user === Meteor.userId());
-            return teamObj.name + (teamObj.results && teamObj.results.placement?' machten Platz '+teamObj.results.placement:' waren dabei ');
+            return teamObj.name + (teamObj.results && teamObj.results.placement ? ' machten Platz ' + teamObj.results.placement : ' waren dabei ');
         });
-        if(iamIn)
+        if (iamIn)
             names = ['Ich'].concat(names);
-        if(names.length === 1)
+        if (names.length === 1)
             return names[0];
         else {
             const last = names.pop();

@@ -75,6 +75,12 @@ Meteor.startup(function () {
                 return "Blogs";
         }
     });
+    Template.registerHelper("joinNice", function (array) {
+        if(array.length===1)
+            return array[0];
+        let text = ' und ' + _.clone(array).pop();
+        return array.join(', ') + text;
+    });
     Template.registerHelper("routeName", function () {
         return FlowRouter.getRouteName();
     });

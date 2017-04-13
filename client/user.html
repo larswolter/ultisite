@@ -388,7 +388,9 @@
                         {{#unless setupNeeded}}
 
                             {{#if equals settings.siteRegistration "password"}} 
-                                {{> afQuickField name='sitePassword' label="Registrierungspasswort"}} 
+                                {{#unless currentUser}}
+                                    {{> afQuickField name='sitePassword' label="Registrierungspasswort"}} 
+                                {{/unless}}
                             {{else}}
                             <p>
                                 Der Zugang zur Webseite muss noch durch einen Administrator bestätigt werden.

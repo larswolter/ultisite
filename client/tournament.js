@@ -28,6 +28,19 @@ Template.tournament.onCreated(function () {
 
 
 Template.tournament.events({
+    'click .action-add-team': function(e) {
+        e.preventDefault();
+        UltiSite.showModal('teamUpdate', {tournamentId:this._id});
+    },
+    'click .action-edit-tournament': function(e) {
+        e.preventDefault();
+        UltiSite.showModal('tournamentUpdate', { tournament:this, type:'update' });
+    },
+    
+    'click .action-participate': function(e) {
+        e.preventDefault();
+        UltiSite.showModal('participateDialog', this);
+    },
     'click .preview-content': function (e) {
         $(e.currentTarget).toggleClass("active");
     },
@@ -275,14 +288,6 @@ Template.tournament.helpers({
     }
 });
 
-Template.tournamentCreate.events({
-    'shown.bs.modal #tournamentCreateDialog': function (e, t) {
-        t.visible.set(true);
-    },
-    'hide.bs.modal #tournamentCreateDialog': function (e, t) {
-        //t.visible.set(false);
-    }
-});
 Template.tournamentUpdate.events({
     'shown.bs.modal #tournamentUpdateDialog': function (e, t) {
         t.visible.set(true);
@@ -291,18 +296,10 @@ Template.tournamentUpdate.events({
         //t.visible.set(false);
     }
 });
-Template.tournamentCreate.helpers({
-    isVisible: function () {
-        return Template.instance().visible.get();
-    }
-});
 Template.tournamentUpdate.helpers({
     isVisible: function () {
-        return Template.instance().visible.get();
+        return false;//Template.instance().visible.get();
     }
-});
-Template.tournamentCreate.onCreated(function () {
-    this.visible = new ReactiveVar(false);
 });
 Template.tournamentUpdate.onCreated(function () {
     this.visible = new ReactiveVar(false);

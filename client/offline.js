@@ -131,6 +131,8 @@ UltiSite.offlineFetch = _.throttle((update) => {
             localForage.getItem('offlineSyncHistory', (err, data) => {
                 (data||[]).push({
                     date: new Date(),
+                    lastSync: lastSync.toISOString(),
+                    tyoe: update?'update':'full',
                     tournaments: res.data.tournaments.length,
                     teams: res.data.teams.length,
                 });

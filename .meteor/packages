@@ -4,40 +4,40 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-ecmascript
+ecmascript@0.7.2
 huttonr:bootstrap3
-less
+less@2.7.9
 kadira:flow-router
 kadira:blaze-layout
-accounts-password
+accounts-password@1.3.5
 momentjs:moment
 mizzao:user-status
 reywood:publish-composite
-aldeed:simple-schema
-reactive-var
+reactive-var@1.0.11
 fortawesome:fontawesome
-deps
+deps@1.0.12
 ground:db
-http
-markdown
+http@1.2.12
+markdown@1.0.12
 percolate:synced-cron
-meteor-base
-mobile-experience
-mongo
+meteor-base@1.0.4
+mobile-experience@1.0.4
+mongo@1.1.16
 blaze-html-templates
-session
-tracker
-logging
-reload
-random
-ejson
+session@1.1.7
+tracker@1.1.2
+logging@1.1.17
+reload@1.1.11
+random@1.0.10
+ejson@1.0.13
 spacebars
-check
+check@1.2.5
 alanning:roles
-standard-minifier-css
-standard-minifier-js
+standard-minifier-css@1.3.4
+standard-minifier-js@2.0.0
 meteorhacks:inject-initial
-shell-server
+shell-server@0.2.3
+aldeed:simple-schema
 
 ultisite:uoodle
 ultisite:autoform
@@ -46,5 +46,5 @@ ultisite:autoform
 #ultisite:telegram-bot
 
 #kadira:debug
-appcache
+appcache@1.0.12
 matb33:collection-hooks
