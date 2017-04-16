@@ -2,11 +2,10 @@
 UltiSite.Tournaments.before.update(function (userId, doc, fieldNames, modifier, options) {
   modifier.$set = modifier.$set || {};
   modifier.$set.lastChange = new Date();
-  UltiSite.Teams.update({tournamentId: doc._id},{$set:{lastChange:new Date()}});
 });
 
 UltiSite.Tournaments.after.update(function (userId, doc, fieldNames, modifier, options) {
-  UltiSite.Teams.update({tournamentId: doc._id},{$set:{lastChange:new Date()}});
+  UltiSite.Teams.update({tournamentId: doc._id},{$set:{lastChange:new Date(), tournamentDate: doc.date}});
 });
 
 UltiSite.Teams.before.update(function (userId, doc, fieldNames, modifier, options) {

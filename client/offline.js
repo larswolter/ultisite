@@ -20,17 +20,17 @@ UltiSite.getTeam = function (id) {
 UltiSite.offlineCheck = function () {
     const lastSync = moment(localStorage.getItem('offlineLastSync')).subtract(1, 'minute');
     Meteor.call('offlineCheckForNew', lastSync.toDate(), (err, needsSync) => {
-        if(needsSync)
-            UltiSite.offlineFetch(true);
+        if (needsSync)
+            UltiSite.offlineFetch();
     });
 };
 
 UltiSite.offlineClear = function () {
-    localForage.removeItem('Tournaments', ()=>{
+    localForage.removeItem('Tournaments', () => {
         this.offlineTournaments = [];
         this.offlineFetchDependency.changed();
     });
-    localForage.removeItem('Teams', ()=>{
+    localForage.removeItem('Teams', () => {
         this.offlineTeams = [];
         this.offlineFetchDependency.changed();
     });
@@ -93,13 +93,13 @@ UltiSite.offlineRemoveTeam = function (id, wait) {
 };
 
 UltiSite.offlineFetch = _.throttle((update) => {
-    if(!Meteor.user())
+    if (!Meteor.user())
         return;
     console.log('loading data from server');
     const lastSync = moment(localStorage.getItem('offlineLastSync')).subtract(1, 'minute');
-    if(!lastSync.isValid())
+    if (!lastSync.isValid())
         update = false;
-    HTTP.get('/_rest/offlineTournaments.json?accessToken='+Meteor.user().downloadToken + (update ? '&since=' + lastSync.toISOString() : ''), {
+    HTTP.get('/_rest/offlineTournaments.json?accessToken=' + Meteor.user().downloadToken + (update ? '&since=' + lastSync.toISOString() : ''), {
         beforeSend: function (xhr) {
             xhr.onloadend = (evt) => {
                 console.log('finished fetching offline data');
@@ -129,19 +129,30 @@ UltiSite.offlineFetch = _.throttle((update) => {
             }
             localStorage.setItem('offlineLastSync', moment().toISOString());
             localForage.getItem('offlineSyncHistory', (err, data) => {
-                (data||[]).push({
+                const history = (data || []);
+                history.push({
                     date: new Date(),
                     lastSync: lastSync.toISOString(),
-                    tyoe: update?'update':'full',
+                    type: update ? 'update' : 'full',
                     tournaments: res.data.tournaments.length,
                     teams: res.data.teams.length,
                 });
-                localForage.setItem('offlineSyncHistory', data);
+                localForage.setItem('offlineSyncHistory', history);
             });
             UltiSite.offlineFetchDependency.changed();
-        } else if (err)
+        } else if (err) {
             UltiSite.notify(err, 'error');
-        else
+            localForage.getItem('offlineSyncHistory', (err, data) => {
+                const history = (data || []);
+                history.push({
+                    date: new Date(),
+                    lastSync: lastSync.toISOString(),
+                    type: update ? 'update' : 'full',
+                    error: err,
+                });
+                localForage.setItem('offlineSyncHistory', history);
+            });
+        } else
             UltiSite.notify('Es konnten keine Daten abgerufen werden', 'warning');
     });
 }, 1000);
@@ -149,43 +160,43 @@ UltiSite.offlineFetch = _.throttle((update) => {
 Meteor.startup(function () {
     UltiSite.Tournaments.find().observe({
         added(t) {
-            if(!t.teams)
+            if (!t.teams)
                 UltiSite.offlineUpdateTournament(t);
         },
         changed(t) {
-            if(!t.teams)
+            if (!t.teams)
                 UltiSite.offlineUpdateTournament(t);
         }
     });
-    
+
     Tracker.autorun((comp) => {
         UltiSite.offlineFetchDependency.depend();
         localForage.getItem('Tournaments', (err, tournaments) => {
-            if(tournaments) {
-                UltiSite.offlineTournaments = tournaments.map( (t) => {
-                    t.date=moment(t.date).toDate();
-                    t.lastChange=moment(t.lastChange).toDate();
+            if (tournaments) {
+                UltiSite.offlineTournaments = tournaments.map((t) => {
+                    t.date = moment(t.date).toDate();
+                    t.lastChange = moment(t.lastChange).toDate();
                     return t;
                 });
                 UltiSite.offlineTournamentDependency.changed();
                 console.log('retrieved tournaments from local storage');
             } else
                 UltiSite.offlineTeams = [];
-            if(err || !tournaments)
+            if (err || !tournaments)
                 UltiSite.offlineFetch();
         });
         localForage.getItem('Teams', (err, teams) => {
-            if(teams) {
-                UltiSite.offlineTeams = teams.map( (t) => {
-                    t.tournamentDate=moment(t.tournamentDate).toDate();
-                    t.lastChange=moment(t.lastChange).toDate();
+            if (teams) {
+                UltiSite.offlineTeams = teams.map((t) => {
+                    t.tournamentDate = moment(t.tournamentDate).toDate();
+                    t.lastChange = moment(t.lastChange).toDate();
                     return t;
                 });
                 UltiSite.offlineTeamDependency.changed();
                 console.log('retrieved teams from local storage');
             } else
                 UltiSite.offlineTeams = [];
-            if(err || !teams)
+            if (err || !teams)
                 UltiSite.offlineFetch();
         });
     });

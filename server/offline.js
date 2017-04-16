@@ -15,9 +15,9 @@ Meteor.startup(function() {
 
 Meteor.methods({
     offlineCheckForNew(since) {
-        if(UltiSite.Tournaments.find({lastChange:{$gte:since}}).count() > 5)
+        if(UltiSite.Tournaments.find({lastChange:{$gte:since}}).count() > 3)
             return true;
-        if(UltiSite.Teams.find({lastChange:{$gte:since}}).count() > 5)
+        if(UltiSite.Teams.find({lastChange:{$gte:since}}).count() > 3)
             return true;
         return false;
     }
