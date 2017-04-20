@@ -3,7 +3,7 @@ var collectionLookup = new Meteor.Collection(null);
 UltiSite = {};
 
 moment.locale("de", {
-    months : [
+    months: [
         "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
         "August", "September", "Oktober", "November", "Dezember"
     ],
@@ -26,11 +26,11 @@ moment.locale("de", {
 
 Ground.Collection(Meteor.users);
 
-if(Meteor.isServer) {
+if (Meteor.isServer) {
     const appCacheConfig = {
         onlineOnly: ['/icons/countries/']
     };
-    if(Meteor.absoluteUrl('').indexOf('localhost') > -1) {
+    if (Meteor.absoluteUrl('').indexOf('localhost') > -1) {
         appCacheConfig.chrome = false;
         appCacheConfig.firefox = false;
         appCacheConfig.ie = false;
@@ -150,7 +150,6 @@ _.extend(UltiSite, {
     Teams: new Meteor.Collection("Teams"),
     Participants: new Meteor.Collection("Participants"),
     Events: new Meteor.Collection("Events"),
-    Ffindr: new Meteor.Collection("Ffindr"),
     Countries: new Meteor.Collection("Countries"),
     Cities: new Meteor.Collection("Cities"),
     ContentVersions: new Meteor.Collection("ContentVersions"),
@@ -161,9 +160,9 @@ _.extend(UltiSite, {
                     return true;
                 },
                 url(size) {
-                    if(size)
-                        return '/_image?imageId='+doc._id+'&size='+size;
-                    return '/_image?imageId='+doc._id;
+                    if (size)
+                        return '/_image?imageId=' + doc._id + '&size=' + size;
+                    return '/_image?imageId=' + doc._id;
                 }
             });
         }
@@ -175,9 +174,9 @@ _.extend(UltiSite, {
                     return false;
                 },
                 url(size) {
-                    if(size)
+                    if (size)
                         return false;
-                    return '/_document?docId='+doc._id;
+                    return '/_document?docId=' + doc._id;
                 }
             });
         }
@@ -209,7 +208,7 @@ _.extend(UltiSite, {
         let res;
         if (typeof (ids) === "string") {
             res = UltiSite.LookupId.findOne(ids);
-            if(res)
+            if (res)
                 return res;
         }
         else {
@@ -218,7 +217,7 @@ _.extend(UltiSite, {
                     $in: ids
                 }
             });
-            if(res.count() === idArray.length)
+            if (res.count() === idArray.length)
                 return res;
         }
         Meteor.call("getAnyObjectByIds", idArray, function (err, res) {
@@ -246,10 +245,10 @@ _.extend(UltiSite, {
                             })
                         }, elem);
                     let existing = UltiSite.LookupId.findOne(elem._id);
-                    if(!existing)
+                    if (!existing)
                         UltiSite.LookupId.insert(elem);
-                    else if(!existing.link && elem.link)
-                        UltiSite.LookupId.update(elem._id,{$set:{link:elem.link}});
+                    else if (!existing.link && elem.link)
+                        UltiSite.LookupId.update(elem._id, { $set: { link: elem.link } });
                 });
         });
         return res;
@@ -262,9 +261,9 @@ _.extend(UltiSite, {
     },
     settingsDep: new Tracker.Dependency(),
     settings: function (upd) {
-        if(Meteor.isClient) {
+        if (Meteor.isClient) {
             this.settingsDep.depend();
-            if(upd){
+            if (upd) {
                 Meteor.settings.public = upd;
                 this.settingsDep.changed();
             }
@@ -386,9 +385,9 @@ Meteor.methods({
                     type: "blog"
                 };
             }));
-        if(this.isSimulation)
-            res.forEach(function(obj){
-               UltiSite.LookupId.upsert(obj._id, obj); 
+        if (this.isSimulation)
+            res.forEach(function (obj) {
+                UltiSite.LookupId.upsert(obj._id, obj);
             });
         return res;
     }

@@ -103,6 +103,7 @@ Meteor.startup(function () {
                 username:1,
                 roles:1,
                 emails:1,
+                connection:1,
                 downloadToken:1
             }});
     });

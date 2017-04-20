@@ -168,7 +168,10 @@ Meteor.startup(function () {
                 UltiSite.offlineUpdateTournament(t);
         }
     });
-
+    Meteor.call('ping');
+    Meteor.setInterval(() => {
+        Meteor.call('ping');
+    }, 30000);
     Tracker.autorun((comp) => {
         UltiSite.offlineFetchDependency.depend();
         localForage.getItem('Tournaments', (err, tournaments) => {
