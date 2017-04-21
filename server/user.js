@@ -37,6 +37,11 @@ Meteor.methods({
     totalUsers: function () {
         return Meteor.users.find().count();
     },
+    userUpdateEmail(userid, oldAddress, newAddress) {
+        if(!UltiSite.isAdmin(this.userId))
+            throw new Meteor.Error('access-denied');
+        Meteor.users.update({_id:userid,'emails.address':oldAddress},{$set:{'emails.$.address':newAddress,'emails.$.verified':false}})
+},
     impersonateUser: function (username) {
         if (UltiSite.isAdmin(this.userId)) {
             var u = Meteor.users.findOne({ username: username });

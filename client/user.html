@@ -67,7 +67,12 @@
                                 <small>E-Mail Adresse</small> {{#if this.verified}}
                                 <span class="fa fa-check text-success" title="Verifiziert"></span> {{else}}
                                 <span class="fa fa-exclamation-triangle text-danger" title="Nicht verifiziert"></span> {{/if}}
-                                <input readonly={{not isEditable}} class="opt-editable-field" name="email" type="text" value="{{this.address}}">
+                                {{#if isAdmin}}
+                                    <button class="btn btn-default pull-right action-edit-email">
+                                        <span class="fa fa-edit"></span>
+                                    </button>                                
+                                {{/if}}
+                                <input readonly="readonly" class="opt-editable-field" name="email" type="text" value="{{this.address}}">
                             </li>
                             {{/each}}
                             <li class="list-group-item">

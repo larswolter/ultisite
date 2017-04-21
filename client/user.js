@@ -149,6 +149,15 @@ Template.user.onCreated(function () {
 });
 
 Template.user.events({
+    'click .action-edit-email': function(e, t) {
+        UltiSite.getTextDialog({ text: this.address, header: 'Neue E-Mail eingeben' }, (newAddress) => {
+            const userId = FlowRouter.getParam('_id');
+            Meteor.call('userUpdateEmail', userId, this.address, newAddress, (err) => {
+                if (err)
+                    UltiSite.notify('Konnte E-Mail nicht ändern nicht speicher', 'error');
+            });
+        });
+    },
     'click .btn-edit-image': function (e, t) {
         e.preventDefault();
         const userId = FlowRouter.getParam('_id');
