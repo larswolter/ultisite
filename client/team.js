@@ -412,8 +412,8 @@ Template.teamUpdate.helpers({
         let division;
         let maxPlayers = 12;
         let minFemale = 0;
-        if (Template.instance().data().tournamentId) {
-            var t = UltiSite.getTournament(Template.instance().data().tournamentId);
+        if (Template.instance().data.tournamentId) {
+            var t = UltiSite.getTournament(Template.instance().data.tournamentId);
             if (t && t.divisions) {
                 division = t.divisions[0];
                 if (_.contains(t.divisions, 'Mixed'))

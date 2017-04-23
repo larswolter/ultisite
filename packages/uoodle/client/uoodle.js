@@ -5,7 +5,7 @@ var Uoodles = new Meteor.Collection('UltisiteUoodles');
 FlowRouter.route('/uoodle/:_id?', {
     name: "uoodle",
     action: function () {
-        BlazeLayout.render("baseLayout", {
+        UltiSite.baseLayoutData.set( {
             content: "uoodles"
         });
     }

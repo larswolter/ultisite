@@ -120,6 +120,7 @@ _.extend(UltiSite, {
     subscribedTournaments: new ReactiveVar([]),
     subscribedFiles: new ReactiveVar([]),
     subscribedBlogs: new ReactiveVar([]),
+    baseLayoutData: new ReactiveVar(),
     tournamentsReady: new ReactiveVar(false),
     wikiPagesReady: new ReactiveVar(false),
     blogsReady: new ReactiveVar(false),

@@ -15,7 +15,6 @@ Package.onUse(function (api) {
     api.use(['less',
         'ecmascript',
         'kadira:flow-router',
-        'kadira:blaze-layout',
         'standard-minifiers',
         'meteor-base',
         'mobile-experience',

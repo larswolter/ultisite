@@ -16,7 +16,6 @@ Package.onUse(function (api) {
     api.versionsFrom('1.2.0.1');
     api.use(['less',
     'kadira:flow-router',
-    'kadira:blaze-layout',
     'momentjs:moment',
     'standard-minifiers',
     'meteor-base',

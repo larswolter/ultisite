@@ -1,14 +1,14 @@
 Meteor.startup(function () {
 
-    UserStatus.events.on("connectionLogout", function (fields) {
-        UltiSite.WikiPages.update({
-            locked: fields.userId
-        }, {
-            $set: {
-                locked: null
-            }
-        });
-    });
+    // UserStatus.events.on("connectionLogout", function (fields) {
+    //     UltiSite.WikiPages.update({
+    //         locked: fields.userId
+    //     }, {
+    //         $set: {
+    //             locked: null
+    //         }
+    //     });
+    // });
 });
 
 Meteor.methods({

@@ -8,6 +8,11 @@ Meteor.startup(function () {
     };
 });
 Template.baseLayout.helpers({
+    content() {
+        const data = UltiSite.baseLayoutData.get();
+        if(data)
+            return data.content;
+    },
     dialogTemplates() {
         return UltiSite.dialogTemplates.find();
     }

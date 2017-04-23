@@ -129,7 +129,13 @@ Meteor.startup(function(){
         });
         UltiSite.Tournaments.update(t._id,{$set:{divisions:_.uniq(divisions),surfaces:_.uniq(surfaces)}});
     });
-
+    Meteor.users.find({'profile.birthday':{$type:'string'}}).forEach((user) => {
+        let date = moment(user.profile.birthday,'DD.MM.YYYY');
+        if(!date.isValid())
+            date = moment(user.profile.birthday,'YYYY-MM-DD');
+        if(date.isValid())
+            Meteor.users.update(user._id,{$set:{'profile.birthday':date.toDate()}});
+    });
     console.log('migrations finished');
 });
 Meteor.methods({

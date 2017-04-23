@@ -3,7 +3,7 @@ import {AutoForm} from 'meteor/ultisite:autoform';
 FlowRouter.route('/hat/:_id?/:confirmed?', {
     name: "hatinfo",
     action: function () {
-        BlazeLayout.render("baseLayout", {
+        UltiSite.baseLayoutData.set( {
             content: "hatInfos"
         });
     }

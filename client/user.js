@@ -289,6 +289,8 @@ Template.user.events({
             toSet[name] = !!value;
         else if (type && (type === "number"))
             toSet[name] = Number(value);
+        else if (type && (type === "date"))
+            toSet[name] = moment(value,'DD.MM.YYYY');
         else
             toSet[name] = value;
         var userId = FlowRouter.getParam('_id');

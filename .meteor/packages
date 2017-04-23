@@ -8,10 +8,8 @@ ecmascript@0.7.2
 huttonr:bootstrap3
 less@2.7.9
 kadira:flow-router
-kadira:blaze-layout
 accounts-password@1.3.5
 momentjs:moment
-mizzao:user-status
 reywood:publish-composite
 reactive-var@1.0.11
 fortawesome:fontawesome
@@ -48,3 +46,4 @@ ultisite:autoform
 #kadira:debug
 appcache@1.0.12
 matb33:collection-hooks
+blaze@2.3.2

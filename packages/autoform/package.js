@@ -19,7 +19,6 @@ Package.onUse(function (api) {
         'check',
     ]);
     api.use(['less',
-        'kadira:blaze-layout',
         'standard-minifiers',
         'mobile-experience',
         'blaze-html-templates',

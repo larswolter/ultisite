@@ -10,7 +10,7 @@ Meteor.startup(function () {
     FlowRouter.route('/tweets', {
         name: "tweets",
         action: function () {
-            BlazeLayout.render("baseLayout", {
+            UltiSite.baseLayoutData.set( {
                 content: "tweets"
             });
         }

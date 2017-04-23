@@ -83,3 +83,37 @@ Meteor.methods({
     }
 });
 
+// status tracking
+const activeConnections = new Meteor.Collection(null);
+
+Meteor.onConnection(function(connection) {
+    activeConnections.upsert({_id: connection.id},{$set:{      
+        ipAddr: connection.clientAddress,
+        userAgent: connection.httpHeaders['user-agent']
+    }});
+    connection.onClose(()=>{
+        activeConnections.remove(connection.id);
+    })
+});
+
+Accounts.onLogin(function(attempt) {
+    activeConnections.upsert({_id: attempt.connection.id},{$set:{      
+        userId:attempt.user._id,
+        loginTime: new Date(),
+    }});
+});
+
+activeConnections.find().observe({
+    added(doc) {
+        if(doc.userId)
+            Meteor.users.update(doc.userId,{$set:{status:{connected:true, status:'online'}}});
+    },
+    changed(doc) {
+        if(doc.userId)
+            Meteor.users.update(doc.userId,{$set:{status:{connected:true, status:'online'}}});
+    },
+    removed(doc) {
+        if(doc.userId)
+            Meteor.users.update(doc.userId,{$set:{status:{connected:false, status:'offline'}}});
+    }
+});
