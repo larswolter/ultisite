@@ -116,7 +116,7 @@ const helpers = {
     const form = this.form || AutoForm.formData();
     if (!form)
       return '';
-    const errors = AutoForm.content.findOne(form.formId).errors;
+    const errors = (AutoForm.content.findOne(form.formId)||{}).errors;
     if (errors && errors[Template.instance().data.name])
       return errors[Template.instance().data.name];
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
@@ -131,7 +131,7 @@ const helpers = {
     const form = this.form || AutoForm.formData();
     if (!form)
       return '';
-    const errors = AutoForm.content.findOne(form.formId).errors;
+    const errors = (AutoForm.content.findOne(form.formId)||{}).errors;
     if (errors && errors[Template.instance().data.name])
       return 'has-error';
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
@@ -265,6 +265,12 @@ Template.afQuickFields.helpers({
   }
 });
 
+const debUpdateValue = _.debounce(function(formId, value) {
+  console.log('Setting value:',value);
+  AutoForm.content.update(formId, { $set: value });
+}, 500);
+
+
 Template.afFieldInput.events({
   'click .autoform-checkbox.multi': function (evt, tmpl) {
     evt.preventDefault();
@@ -281,7 +287,7 @@ Template.afFieldInput.events({
     else
       return AutoForm.content.update(form.formId, { $pull: value });
   },
-  'keyup input, change input, change textarea, change select': _.throttle(function (evt, tmpl) {
+  'keyup input, change input, change textarea, change select': function (evt, tmpl) {
     evt.preventDefault();
     if (!this.name)
       return;
@@ -297,7 +303,6 @@ Template.afFieldInput.events({
     else {
       value['doc.' + AutoForm.arrayCheck(this.name)] = evt.currentTarget.value;
     }
-    console.log('Updating Field:', form.formId, value);
-    AutoForm.content.update(form.formId, { $set: value });
-  }, 500)
+    debUpdateValue(form.formId, value);
+  }
 });

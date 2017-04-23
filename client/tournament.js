@@ -14,7 +14,7 @@ Template.tournament.onCreated(function () {
 
         let from = moment(t.date).clone().subtract(1, "days").toDate();
         let to = moment(t.date).clone().add(t.numDays + 1, "days").toDate();
-        this.subscribe("Tournaments", {
+        this.subscribe("Tournaments", null, {
             date: {
                 $gte: from,
                 $lte: to

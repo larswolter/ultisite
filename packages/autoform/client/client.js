@@ -18,10 +18,12 @@ export const AutoForm = {
     if (local && local.schema)
       return local;
     for (let i = 0; i < 6; i++) {
-      if (Template.parentData(i) && Template.parentData(i).form && Template.parentData(i).form.schema)
-        return Template.parentData(i).form;
-      if (Template.parentData(i) && Template.parentData(i).schema)
-        return Template.parentData(i);
+      try {
+        if (Template.parentData(i) && Template.parentData(i).form && Template.parentData(i).form.schema)
+          return Template.parentData(i).form;
+        if (Template.parentData(i) && Template.parentData(i).schema)
+          return Template.parentData(i);
+      } catch(err) {}
     }
   },
   arrayCheck(fieldName) {

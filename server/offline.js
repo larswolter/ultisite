@@ -1,3 +1,9 @@
+
+
+const getOfflineSyncDate = function() {
+  return { $gte: moment().subtract(1, 'month').startOf('year').toDate() };
+};
+
 const refreshDownloadToken = _.throttle(Meteor.bindEnvironment((userId) => {
     Meteor.users.update(userId, {
         $set: {
@@ -32,11 +38,18 @@ Meteor.methods({
     },
     offlineCheckForNew(since) {
         check(since, Date);
-        if (UltiSite.Tournaments.find({ lastChange: { $gte: since } }).count() > 3)
-            return true;
-        if (UltiSite.Teams.find({ lastChange: { $gte: since } }).count() > 3)
-            return true;
-        return false;
+        const info = {
+            tournamentCount: UltiSite.Tournaments.find({ date: getOfflineSyncDate() }, { sort: { date: -1 } }).count(),
+            teamCount: UltiSite.Teams.find({ tournamentDate: getOfflineSyncDate() }).count(),
+        };
+        const tChange = UltiSite.Tournaments.find({ lastChange: { $gte: since } }).count();
+        const teChange = UltiSite.Teams.find({ lastChange: { $gte: since } }).count();
+        if (tChange > 3)
+            info.mustSync = true;
+        if (teChange > 3)
+            info.mustSync = true;
+        console.log('checked offline:', info, since, tChange, teChange);
+        return info;
     }
 });
 
@@ -54,8 +67,8 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
     }
     response.setHeader('Content-Type', 'application/json');
     response.writeHead(200);
-    const tournamentSearch = { date: { $gte: moment().subtract(1, 'month').startOf('year').toDate() } };
-    const teamSearch = { tournamentDate: { $gte: moment().subtract(1, 'month').startOf('year').toDate() } };
+    const tournamentSearch = { date: getOfflineSyncDate() };
+    const teamSearch = { tournamentDate: getOfflineSyncDate() };
     if (req.query.since) {
         tournamentSearch._lastChange = { $gte: moment(req.query.since).toDate() };
         teamSearch._lastChange = { $gte: moment(req.query.since).toDate() };

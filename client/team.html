@@ -376,11 +376,13 @@
 <template name="teamCountBar">
     <div class="progress team-player-state text-center">
         {{#if teamCount}}
-        <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{teamCount.percentFull}}%">{{teamCount.full}}</div>
-        <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{teamCount.percentHalf}}%">{{teamCount.half}}</div>
-        <div class="progress-bar progress-bar-disabled" role="progressbar" style="width:{{teamCount.percentRest}}%">{{teamCount.rest}}</div>
-        <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{teamCount.percentOver}}%" title="zu Viele">{{teamCount.over}}</div>
-        {{teamCount.spots}} 
+            <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{teamCount.percentFull}}%">{{teamCount.full}}</div>
+            <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{teamCount.percentHalf}}%">{{teamCount.half}}</div>
+            <div class="progress-bar progress-bar-disabled" role="progressbar" style="width:{{teamCount.percentRest}}%">{{teamCount.rest}}</div>
+            <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{teamCount.percentOver}}%" title="zu Viele">{{teamCount.over}}</div>
+            {{teamCount.spots}} 
+        {{else}}
+            {{maxPlayers}}
         {{/if}}
     </div>
     {{!-- 

@@ -37,7 +37,8 @@ UltiSite.showModal = function (templateName, data, options) {
 };
 
 UltiSite.hideModal = function () {
-    UltiSite.modalDialogTemplate.modal('hide')
+    if(UltiSite.modalDialogTemplate && UltiSite.modalDialogTemplate.modal)
+        UltiSite.modalDialogTemplate.modal('hide');
 };
 
 Template.confirmDialog.helpers({

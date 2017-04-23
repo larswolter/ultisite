@@ -131,8 +131,8 @@ Meteor.startup(function () {
             return [tcursor, UltiSite.Teams.find({_id: {$in:teamIds}})];
         }
         return [
-            UltiSite.Tournaments.find({lastChange:{$gte:since}}, {limit:5}),
-            UltiSite.Teams.find({lastChange:{$gte:since}}, {limit:5})
+            UltiSite.Tournaments.find({lastChange:{$gte:since}}, {limit:10}),
+            UltiSite.Teams.find({lastChange:{$gte:since}}, {limit:10})
         ];
     });
 

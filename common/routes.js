@@ -9,10 +9,11 @@ if (Meteor.isClient) {
     FlowRouter.triggers.enter([
         function (param) {
             if ((param.oldRoute && param.oldRoute.name) !== FlowRouter.getRouteName()) {
+                /*
                 $('.page-content').addClass("faded-out");
                 Meteor.setTimeout(function(){
                     $('.page-content').removeClass("faded-out");
-                },500);
+                },500);*/
             }
         }
     ]);

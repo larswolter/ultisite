@@ -151,18 +151,24 @@ Template.tournamentList.onCreated(function () {
     this.showFilter = new ReactiveVar(false);
     this.topListEntries = new ReactiveVar();
     this.autorun(() => {
-        const lastSync = moment(localStorage.getItem('offlineLastSync')).subtract(1, 'minute');
+        const lastSync = moment(localStorage.getItem('offlineLastSync'));
         this.subscribe("Tournaments", lastSync.toDate());
     });
 
     this.autorun(() => {
         UltiSite.offlineTournamentDependency.depend();
+        integratedTournamentList.update({fromOfflineStore: true},{$set:{removeMe:true}},{multi:true});
         UltiSite.offlineTournaments.forEach((t) => {
-            if (!integratedTournamentList.findOne(t._id))
-                integratedTournamentList.insert(t);
+            let exists;
+            Tracker.nonreactive(()=>{
+                exists = integratedTournamentList.findOne(t._id);
+            });
+            if (!exists)
+                integratedTournamentList.insert(_.extend({fromOfflineStore: true, removeMe:false},t));
             else
-                integratedTournamentList.update({ _id: t._id, lastChange: { $lte: t.lastChange } }, t);
+                integratedTournamentList.update({ _id: t._id, lastChange: { $lte: t.lastChange } }, _.extend({fromOfflineStore: true, removeMe:false},t));
         });
+        integratedTournamentList.remove({fromOfflineStore: true, removeMe:true});
     });
     this.autorun(() => {
         if (this.subscriptionsReady())
@@ -449,8 +455,7 @@ Template.tournament.helpers({
     parallelTournaments: function () {
         var from = moment(this.date).clone().subtract(2, "days").toDate();
         var to = moment(this.date).clone().add(this.numDays + 1, "days").toDate();
-        //Template.instance().subscribe("TournamentRange", from, to);
-        return UltiSite.TournamentList.find({
+        return UltiSite.Tournaments.find({
             _id: {
                 $not: this._id
             },
@@ -459,10 +464,10 @@ Template.tournament.helpers({
                 $lte: to
             }
         }, {
-                fields: {
-                    _id: 1,
-                    name: 1
-                }
-            });
+            fields: {
+                _id: 1,
+                name: 1
+            }
+        });
     }
 });
