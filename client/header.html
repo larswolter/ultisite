@@ -168,6 +168,9 @@
 				<a href="#" class="list-group-item bg-{{this.style}} action-logout">
 					<span class="fa fa-sign-out fa-fw"></span> Abmelden
 				</a>
+				<a href="#" class="list-group-item bg-{{this.style}} action-offline-fetch">
+					<span class="fa fa-download fa-fw"></span> Aktualisieren
+				</a>
 			{{/if}}
 			{{#if isAdmin}}
 				<a href="{{pathFor route='admin'}}" class="list-group-item bg-{{this.style}}">
@@ -193,16 +196,21 @@
 			</li>
 			<li role="presentation">
 				<a class="goto-user-profile" role="menuitem" tabindex="-1" href="{{pathFor route='user' _id=currentUser._id }}">
-					<span class="fa fa-user"></span> Einstellungen
+					<span class="fa fa-user fa-fw"></span> Einstellungen
 				</a>
 			</li>
 			<li role="presentation">
 				<a class="action-logout" role="menuitem" tabindex="-1" href="#">
-					<span class="fa fa-sign-out"></span> Abmelden
+					<span class="fa fa-sign-out fa-fw"></span> Abmelden
+				</a>
+			</li>
+			<li role="separator" class="divider"></li>
+			<li role="presentation">
+				<a class="action-offline-fetch" role="menuitem" tabindex="-1" href="#">
+					<span class="fa fa-download fa-fw"></span> Aktualisieren
 				</a>
 			</li>
 			{{#if isAdmin}}
-				<li role="separator" class="divider"></li>
 				<li role="presentation">
 					<a href="{{pathFor route='admin'}}">
 					{{#with AdminNotifications}}

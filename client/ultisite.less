@@ -160,14 +160,16 @@ blockquote {
 }
 .page-content {
     padding-top: 200px;
-    transition: opacity 150ms;
-    opacity : 1.0;
+    > div {
+        transition: opacity 150ms;
+        opacity : 1.0;
+    }
     @media (max-width: @screen-xs-max) {
         padding-top: 60px;
     }
 }
 
-.page-content.faded-out {
+.page-content > .faded-out {
     opacity : 0.0;
 }
 

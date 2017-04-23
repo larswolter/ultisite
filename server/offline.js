@@ -48,7 +48,6 @@ Meteor.methods({
             info.mustSync = true;
         if (teChange > 3)
             info.mustSync = true;
-        console.log('checked offline:', info, since, tChange, teChange);
         return info;
     }
 });

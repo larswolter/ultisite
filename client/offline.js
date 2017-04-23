@@ -23,7 +23,6 @@ UltiSite.offlineCheck = function () {
         return;
     const lastSync = moment(localStorage.getItem('offlineLastSync'));
     Meteor.call('offlineCheckForNew', lastSync.toDate(), (err, info) => {
-        console.log('did offline check', info, this.offlineTournaments.length,this.offlineTeams.length);
         if (info.mustSync)
             UltiSite.offlineFetch();
         if(info.tournamentCount !== this.offlineTournaments.length)

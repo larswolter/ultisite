@@ -53,6 +53,10 @@ Template.header.events({
             FlowRouter.go('/');
         });
     },
+    'click .action-offline-fetch': function (e) {
+        e.preventDefault();
+        UltiSite.offlineFetch();
+    },
     'click .action-search': function (e) {
         e.preventDefault();
         UltiSite.showModal('searchDialog');
@@ -106,11 +110,11 @@ Template.sidebar.events({
             else
                 UltiSite.notify('Erfolgreich abgemeldet', 'success');
             FlowRouter.go('/');
-            t.$('.list-group.link-list').addClass('visible-actions');
         });
     },
-    'click .toggle-user-menu': function (e, t) {
-        t.$('.list-group.link-list').toggleClass('visible-actions');
+    'click .action-offline-fetch': function (e) {
+        e.preventDefault();
+        UltiSite.offlineFetch();
     },
 
     'click .action-reconnect': function (e) {
