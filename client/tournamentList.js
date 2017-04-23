@@ -154,21 +154,22 @@ Template.tournamentList.onCreated(function () {
         const lastSync = moment(localStorage.getItem('offlineLastSync'));
         this.subscribe("Tournaments", lastSync.toDate());
     });
-
-    this.autorun(() => {
-        UltiSite.offlineTournamentDependency.depend();
-        integratedTournamentList.update({fromOfflineStore: true},{$set:{removeMe:true}},{multi:true});
-        UltiSite.offlineTournaments.forEach((t) => {
-            let exists;
-            Tracker.nonreactive(()=>{
-                exists = integratedTournamentList.findOne(t._id);
+    Meteor.defer(()=>{
+        this.autorun(() => {
+            UltiSite.offlineTournamentDependency.depend();
+            integratedTournamentList.update({fromOfflineStore: true},{$set:{removeMe:true}},{multi:true});
+            UltiSite.offlineTournaments.forEach((t) => {
+                let exists;
+                Tracker.nonreactive(()=>{
+                    exists = integratedTournamentList.findOne(t._id);
+                });
+                if (!exists)
+                    integratedTournamentList.insert(_.extend({fromOfflineStore: true, removeMe:false},t));
+                else
+                    integratedTournamentList.update({ _id: t._id, lastChange: { $lte: t.lastChange } }, _.extend({fromOfflineStore: true, removeMe:false},t));
             });
-            if (!exists)
-                integratedTournamentList.insert(_.extend({fromOfflineStore: true, removeMe:false},t));
-            else
-                integratedTournamentList.update({ _id: t._id, lastChange: { $lte: t.lastChange } }, _.extend({fromOfflineStore: true, removeMe:false},t));
+            integratedTournamentList.remove({fromOfflineStore: true, removeMe:true});
         });
-        integratedTournamentList.remove({fromOfflineStore: true, removeMe:true});
     });
     this.autorun(() => {
         if (this.subscriptionsReady())
