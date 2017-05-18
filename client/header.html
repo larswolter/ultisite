@@ -2,7 +2,7 @@
 	{{#if preHeader}} {{>Template.dynamic template=preHeader }} {{/if}}
 	<nav class="navbar navbar-default navbar-fixed-top">
 		{{#unless screenSizeMobile}}
-			<div class="title-image hidden-xs" style="{{settings.titleImageHeight}}px">
+			<div class="title-image hidden-xs" style="height:{{settings.titleImageHeight}}px">
 				<div style="background-image:url('{{imageUrl settings.imageTitleImage}}')"> </div>
 				<img src="{{imageUrl settings.imageLogo}}" />
 			</div>

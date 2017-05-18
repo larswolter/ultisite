@@ -37,89 +37,7 @@ if (Meteor.isServer) {
     }
     Meteor.AppCache.config(appCacheConfig);
 }
-
-var subCallbacks = {
-    onReady: function () {
-        console.log("Subscription ready", this.name);
-    },
-    onStop: function (err) {
-        if (err)
-            console.log("Subscription stopped on error", this.name, ":", err);
-        else
-            console.log("Subscription stopped", this.name);
-        //UltiSite.permSubscriptions.pop(this);
-    }
-};
-
 _.extend(UltiSite, {
-    subscribeTournament: function (id) {
-        if (!id)
-            return;
-        var arr = this.subscribedTournaments.get();
-        if (typeof (id) !== 'string') {
-            var neu = _.union(arr, id);
-            if (neu.length === arr.length)
-                return;
-            arr = neu;
-        } else {
-            if (_.contains(arr, id))
-                return;
-            arr.push(id);
-        }
-        this.subscribedTournaments.set(_.compact(arr));
-    },
-    subscribeFiles: function (id) {
-        if (!id)
-            return;
-        var arr = this.subscribedFiles.get();
-        if (typeof (id) !== 'string') {
-            var neu = _.union(arr, id);
-            if (neu.length === arr.length)
-                return;
-            arr = neu;
-        } else {
-            if (_.contains(arr, id))
-                return;
-            arr.push(id);
-        }
-        this.subscribedFiles.set(_.compact(arr));
-    },
-    subscribeBlogs: function (id) {
-        if (!id)
-            return;
-        var arr = this.subscribedBlogs.get();
-        if (typeof (id) !== 'string') {
-            var neu = _.union(arr, id);
-            if (neu.length === arr.length)
-                return;
-            arr = neu;
-        } else {
-            if (_.contains(arr, id))
-                return;
-            arr.push(id);
-        }
-        this.subscribedBlogs.set(_.compact(arr));
-    },
-    subscribeUser: function (id) {
-        if (!id)
-            return;
-        var arr = this.subscribedUsers.get();
-        if (typeof (id) !== 'string') {
-            var neu = _.union(arr, id);
-            if (neu.length === arr.length)
-                return;
-            arr = neu;
-        } else {
-            if (_.contains(arr, id))
-                return;
-            arr.push(id);
-        }
-        this.subscribedUsers.set(_.compact(arr));
-    },
-    subscribedUsers: new ReactiveVar([]),
-    subscribedTournaments: new ReactiveVar([]),
-    subscribedFiles: new ReactiveVar([]),
-    subscribedBlogs: new ReactiveVar([]),
     baseLayoutData: new ReactiveVar(),
     tournamentsReady: new ReactiveVar(false),
     wikiPagesReady: new ReactiveVar(false),
@@ -298,6 +216,10 @@ _.extend(UltiSite, {
     },
 
 });
+
+if (Meteor.isClient) {
+    Meteor.subscribe('WikiPage', UltiSite.settings().wikiStart);
+}
 
 
 Meteor.methods({

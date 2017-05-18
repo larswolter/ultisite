@@ -256,8 +256,20 @@ Template.tournamentList.helpers({
         });
     },
     playedTournaments: function () {
-        if (Template.instance().topListEntries.get())
-            return integratedTournamentList.find({ date: { $lte: new Date() }, teams: { $exists: true } }, { $sort: { date: -1, name: 1 }, limit: Template.instance().topListEntries.get() });
+        if (Template.instance().topListEntries.get()) {
+            let count = 0;
+
+            return integratedTournamentList.find({ date: { $lte: new Date() }, teams: { $exists: true } }, { $sort: { date: -1, name: 1 } }).map((tourney)=>{
+                if(count===Template.instance().topListEntries.get())
+                    return;
+                if(_.find(tourney.teams||[],(t)=>{
+                    const team = UltiSite.getTeam(t);
+                    return team && team.state === 'dabei';
+                }))
+                    return tourney;
+                return;
+            }).filter(x=>!!x);
+        }
     },
     showTournamentsFilter: function () {
         return _.contains(tabSelection.get(), "filter");
@@ -437,12 +449,16 @@ Template.pastTournamentListItem.helpers({
             const teamObj = UltiSite.getTeam(team);
             if (!teamObj)
                 return '-';
-            iamIn = iamIn || !!_.find(teamObj.participants, p => p.user === Meteor.userId());
+            if (teamObj.state !== 'dabei')
+                return '-';
+            iamIn = iamIn || !!_.find(teamObj.participants, p => (p.user === Meteor.userId()) && (p.state === 100));
             return teamObj.name + (teamObj.results && teamObj.results.placement ? ' machten Platz ' + teamObj.results.placement : ' waren dabei ');
-        });
+        }).filter(x=>x!=='-');
         if (iamIn)
             names = ['Ich'].concat(names);
-        if (names.length === 1)
+        if (names.length === 0)
+            return;
+        else if (names.length === 1)
             return names[0];
         else {
             const last = names.pop();

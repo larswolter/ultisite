@@ -1,3 +1,4 @@
+
 Meteor.startup(function () {
 
     // UserStatus.events.on("connectionLogout", function (fields) {
@@ -37,4 +38,6 @@ Meteor.methods({
             text: 'Neuer Diskussionsbeitrag'
         });
     }
-})
+});
+
+

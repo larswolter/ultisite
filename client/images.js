@@ -99,7 +99,6 @@ Template.imageViewer.helpers({
     associated: function () {
         var file = UltiSite.Images.findOne(FlowRouter.getParam("_id"));
         if(file) {
-            console.log('Looking up associated',file.associated);
             return UltiSite.getAnyById(file.associated);
         }
     }

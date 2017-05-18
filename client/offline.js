@@ -2,6 +2,7 @@ import localForage from 'localforage';
 
 UltiSite.offlineTournaments = [];
 UltiSite.offlineTeams = [];
+UltiSite.offlineLastChange = moment().subtract(1, 'year');
 UltiSite.checkedLocalStorage = false;
 UltiSite.offlineTeamDependency = new Tracker.Dependency();
 UltiSite.offlineTournamentDependency = new Tracker.Dependency();
@@ -19,15 +20,15 @@ UltiSite.getTeam = function (id) {
 };
 
 UltiSite.offlineCheck = function () {
-    if(!UltiSite.checkedLocalStorage)
+    if (!UltiSite.checkedLocalStorage)
         return;
     const lastSync = moment(localStorage.getItem('offlineLastSync'));
     Meteor.call('offlineCheckForNew', lastSync.toDate(), (err, info) => {
         if (info.mustSync)
             UltiSite.offlineFetch();
-        if(info.tournamentCount !== this.offlineTournaments.length)
+        if (info.tournamentCount !== this.offlineTournaments.length)
             UltiSite.offlineFetch();
-        if(info.teamCount !== this.offlineTeams.length)
+        if (info.teamCount !== this.offlineTeams.length)
             UltiSite.offlineFetch();
     });
 };
@@ -193,22 +194,29 @@ Meteor.startup(function () {
                 console.log('retrieved tournaments from local storage');
             } else
                 UltiSite.offlineTeams = [];
-            if(UltiSite.checkedLocalStorage)
+            if (UltiSite.checkedLocalStorage)
                 UltiSite.offlineCheck();
             UltiSite.checkedLocalStorage = true;
         });
         localForage.getItem('Teams', (err, teams) => {
+            UltiSite.offlineLastChange = moment().subtract(1, 'year');
             if (teams) {
                 UltiSite.offlineTeams = teams.map((t) => {
                     t.tournamentDate = moment(t.tournamentDate).toDate();
-                    t.lastChange = moment(t.lastChange).toDate();
+                    if (t.lastChange) {
+                        const lastChange = moment(t.lastChange);
+                        if (lastChange.isAfter(UltiSite.offlineLastChange))
+                            UltiSite.offlineLastChange = lastChange.clone();
+                        t.lastChange = lastChange.toDate();
+                    }
+                    t.lastChange = moment().subtract(1, 'year').toDate();
                     return t;
                 });
                 UltiSite.offlineTeamDependency.changed();
-                console.log('retrieved teams from local storage');
+                console.log('retrieved teams from local storage, lastChange:', UltiSite.offlineLastChange.format('DD.MM.YYYY HH:mm'));
             } else
                 UltiSite.offlineTeams = [];
-            if(UltiSite.checkedLocalStorage)
+            if (UltiSite.checkedLocalStorage)
                 UltiSite.offlineCheck();
             UltiSite.checkedLocalStorage = true;
         });

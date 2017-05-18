@@ -202,6 +202,7 @@
 </template>
 
 <template name="pastTournamentListItem">
+    {{#if teamNames}}
     <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item tournament-list-item" title="{{name}}">
         <div class="row">
             <div class="col-xs-12">
@@ -219,6 +220,7 @@
             </div>
         </div>
     </a>
+    {{/if}}
 </template>
 
 

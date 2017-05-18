@@ -1,4 +1,4 @@
-var APIKEY='XXX';
+var APIKEY=Meteor.settings.telegramAPIKey;
 
 Meteor.methods({
     getUpdates: function() {

@@ -9,7 +9,16 @@
                     <h4 class="modal-title">Suche</h4>
                 </div>
                 <div class="modal-body">
-                    {{>searchField inlineResults=true searchType="Users,Images,Tournaments,Documents,WikiPages,Blogs"}}
+                    <div class="pull-right">
+                        <input type="checkbox" class="search-type" data-type="Users" checked="checked" />Nutzer
+                        <input type="checkbox" class="search-type" data-type="Tournaments" checked="checked" />Turniere
+                        <input type="checkbox" class="search-type" data-type="WikiPages" checked="checked" />Wikiseiten
+                        <br />
+                        <input type="checkbox" class="search-type" data-type="Blogs" checked="checked" />Artikel
+                        <input type="checkbox" class="search-type" data-type="Images" />Bilder
+                        <input type="checkbox" class="search-type" data-type="Documents" />Dokumente
+                    </div>
+                    {{>searchField inlineResults=true searchType=activeSearch}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">

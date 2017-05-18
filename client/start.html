@@ -59,19 +59,33 @@
         <div class="panel-heading">
             <strong>Ereignisse</strong>
         </div>
-        {{#if Template.subscriptionsReady}}
         <div class="list-group">
-            {{#each events}}
-                <span class="list-group-item">
-                      {{>eventItem}}
-                </span>
+            {{#if Template.subscriptionsReady}}
+                {{#each events}}
+                    <span class="list-group-item">
+                            {{>eventItem}}
+                    </span>
+                {{else}}
+                        {{>EmptySmall}}
+                {{/each}}
             {{else}}
-                    {{>EmptySmall}}
-            {{/each}}
+                {{#if meteorStatus.connected}}
+                    <span class="list-group-item">
+                        {{>Loading}}
+                    </span>
+                {{else}}
+                    <span class="list-group-item list-group-item-warning">
+                        <span class="fa fa-exclamation-triangle"></span>
+                        Ohne Netzwerkverbindung sind keine Ereignisse verfügbar
+                    </span>
+                    {{#if lastSync}}
+                        <a href="/tournaments" class="list-group-item">
+                            Turniere sind ohne Internet verfügbar <br />Stand {{lastSync}} Uhr
+                        </a>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
         </div>
-        {{else}}
-            {{>Loading}}
-        {{/if}}
     </div>
 </template>
 

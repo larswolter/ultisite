@@ -17,12 +17,13 @@ UltiSite.getHTMLTextDialog = function (options, callback) {
     getTextCallback = callback;
     $('#getHTMLTextDialog').modal('show');
 };
+
 UltiSite.modalDialogTemplate = null;
 UltiSite.showModal = function (templateName, data, options) {
     if (UltiSite.modalDialogTemplate === null) {
         const parentNode = $('div.base-layout')[0];
         const view = Blaze.renderWithData(Template[templateName], data, parentNode);
-        const domRange = view._domrange; 
+        const domRange = view._domrange;
         const modal = domRange.$('.modal');
         modal.on('shown.bs.modal', function (event) {
             modal.find('[autofocus]').focus();
@@ -37,7 +38,7 @@ UltiSite.showModal = function (templateName, data, options) {
 };
 
 UltiSite.hideModal = function () {
-    if(UltiSite.modalDialogTemplate && UltiSite.modalDialogTemplate.modal)
+    if (UltiSite.modalDialogTemplate && UltiSite.modalDialogTemplate.modal)
         UltiSite.modalDialogTemplate.modal('hide');
 };
 
@@ -83,5 +84,21 @@ Template.getHTMLTextDialog.events({
     },
     'hidden.bs.modal #getHTMLTextDialog': function () {
         getTextOptions.set(undefined);
+    }
+});
+const searchDependency = new ReactiveVar("Users,Images,Tournaments,Documents,WikiPages,Blogs");
+
+Template.searchDialog.onRendered(function () {
+    searchDependency.set(_.filter(this.$('.search-type'), st => st.checked).map(st => this.$(st).attr('data-type')).join(','));
+});
+Template.searchDialog.events({
+    'change .search-type': function (e, t) {
+        searchDependency.set(_.filter(t.$('.search-type'), st => st.checked).map(st => t.$(st).attr('data-type')).join(','));
+    }
+});
+Template.searchDialog.helpers({
+    activeSearch() {
+        console.log(searchDependency.get());
+        return searchDependency.get();
     }
 });

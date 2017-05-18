@@ -9,9 +9,6 @@ Template.startImageCarousel.helpers({
     }
 });
 
-Template.start.onCreated(function () {
-});
-
 Template.start.helpers({
     startPageTemplates() {
         return UltiSite.startPageTemplates.find();
@@ -36,6 +33,9 @@ Template.eventItem.events({
 
 
 Template.eventList.helpers({
+    lastSync() {
+        return UltiSite.offlineLastChange.format('DD.MM.YYYY HH:mm');
+    },
     events: function () {
         var events = {};
         var entries = 0;

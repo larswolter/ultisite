@@ -24,6 +24,7 @@ Meteor.startup(function () {
 });
 
 Template.header.onRendered(function(){
+    $('iframe').fadeOut(500, ()=>$('iframe').remove());
     this.autorun(()=>{
         const imgHeight = Number(UltiSite.settings().titleImageHeight || 150);
         if (UltiSite.screenSize.get() >= 768) {
