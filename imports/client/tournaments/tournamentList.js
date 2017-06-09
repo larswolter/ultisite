@@ -1,4 +1,6 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
+import './team.js';
+import './tournamentList.html';
 
 var months = new Meteor.Collection(null);
 var integratedTournamentList = new Meteor.Collection(null);
@@ -52,7 +54,7 @@ AutoForm.hooks({
         // Called when any submit operation succeeds
         onSuccess: function (formType, result) {
             UltiSite.hideModal();
-            if( formType==='insert')
+            if (formType === 'insert')
                 FlowRouter.go("tournament", {
                     _id: result
                 });
@@ -60,7 +62,7 @@ AutoForm.hooks({
         // Called when any submit operation fails
         onError: function (formType, error) {
             console.log('tournamentUpdateForm:', error);
-            if( formType==='insert')
+            if (formType === 'insert')
                 UltiSite.notify('Fehler beim Turnier anlegen:' + error.message, "error");
             else
                 UltiSite.notify('Fehler beim Turnier ändern:' + error.message, "error");
@@ -70,9 +72,9 @@ AutoForm.hooks({
 
 
 Template.tournamentList.events({
-    'click .action-add-tournament': function(e, tmpl) {
+    'click .action-add-tournament': function (e, tmpl) {
         e.preventDefault();
-        UltiSite.showModal('tournamentUpdate', {type:'insert', tournament: prefillData.get()});
+        UltiSite.showModal('tournamentUpdate', { type: 'insert', tournament: prefillData.get() }, { dynamicImport: '/imports/client/tournaments/tournament.js' });
     },
     'click .action-toggle-filter': function (e, tmpl) {
         e.preventDefault();
@@ -140,7 +142,7 @@ Template.tournamentList.events({
                 country: "DE"
             },
             divisions: [],
-            surfaces:[],
+            surfaces: [],
             category: "Turnier",
             numDays: 2
         });
@@ -154,21 +156,21 @@ Template.tournamentList.onCreated(function () {
         const lastSync = moment(localStorage.getItem('offlineLastSync'));
         this.subscribe("Tournaments", lastSync.toDate());
     });
-    Meteor.defer(()=>{
+    Meteor.defer(() => {
         this.autorun(() => {
             UltiSite.offlineTournamentDependency.depend();
-            integratedTournamentList.update({fromOfflineStore: true},{$set:{removeMe:true}},{multi:true});
+            integratedTournamentList.update({ fromOfflineStore: true }, { $set: { removeMe: true } }, { multi: true });
             UltiSite.offlineTournaments.forEach((t) => {
                 let exists;
-                Tracker.nonreactive(()=>{
+                Tracker.nonreactive(() => {
                     exists = integratedTournamentList.findOne(t._id);
                 });
                 if (!exists)
-                    integratedTournamentList.insert(_.extend({fromOfflineStore: true, removeMe:false},t));
+                    integratedTournamentList.insert(_.extend({ fromOfflineStore: true, removeMe: false }, t));
                 else
-                    integratedTournamentList.update({ _id: t._id, lastChange: { $lte: t.lastChange } }, _.extend({fromOfflineStore: true, removeMe:false},t));
+                    integratedTournamentList.update({ _id: t._id, lastChange: { $lte: t.lastChange } }, _.extend({ fromOfflineStore: true, removeMe: false }, t));
             });
-            integratedTournamentList.remove({fromOfflineStore: true, removeMe:true});
+            integratedTournamentList.remove({ fromOfflineStore: true, removeMe: true });
         });
     });
     this.autorun(() => {
@@ -259,16 +261,16 @@ Template.tournamentList.helpers({
         if (Template.instance().topListEntries.get()) {
             let count = 0;
 
-            return integratedTournamentList.find({ date: { $lte: new Date() }, teams: { $exists: true } }, { $sort: { date: -1, name: 1 } }).map((tourney)=>{
-                if(count===Template.instance().topListEntries.get())
+            return integratedTournamentList.find({ date: { $lte: new Date() }, teams: { $exists: true } }, { $sort: { date: -1, name: 1 } }).map((tourney) => {
+                if (count === Template.instance().topListEntries.get())
                     return;
-                if(_.find(tourney.teams||[],(t)=>{
+                if (_.find(tourney.teams || [], (t) => {
                     const team = UltiSite.getTeam(t);
                     return team && team.state === 'dabei';
                 }))
                     return tourney;
                 return;
-            }).filter(x=>!!x);
+            }).filter(x => !!x);
         }
     },
     showTournamentsFilter: function () {
@@ -410,7 +412,7 @@ var helpers = {
         });
     },
     divisionIcon: function () {
-        if(!this.division)
+        if (!this.division)
             return 'question';
         if (this.division.indexOf("Damen") >= 0)
             return "venus";
@@ -453,7 +455,7 @@ Template.pastTournamentListItem.helpers({
                 return '-';
             iamIn = iamIn || !!_.find(teamObj.participants, p => (p.user === Meteor.userId()) && (p.state === 100));
             return teamObj.name + (teamObj.results && teamObj.results.placement ? ' machten Platz ' + teamObj.results.placement : ' waren dabei ');
-        }).filter(x=>x!=='-');
+        }).filter(x => x !== '-');
         if (iamIn)
             names = ['Ich'].concat(names);
         if (names.length === 0)
@@ -464,27 +466,5 @@ Template.pastTournamentListItem.helpers({
             const last = names.pop();
             return names.join(',') + ' und ' + last;
         }
-    }
-});
-
-
-Template.tournament.helpers({
-    parallelTournaments: function () {
-        var from = moment(this.date).clone().subtract(2, "days").toDate();
-        var to = moment(this.date).clone().add(this.numDays + 1, "days").toDate();
-        return UltiSite.Tournaments.find({
-            _id: {
-                $not: this._id
-            },
-            date: {
-                $gte: from,
-                $lte: to
-            }
-        }, {
-            fields: {
-                _id: 1,
-                name: 1
-            }
-        });
     }
 });

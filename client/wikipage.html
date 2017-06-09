@@ -70,26 +70,27 @@
 							{{/each}}
 							<hr/>
 						{{/if}}
-					{{/if}}
-					</div>
-					{{#unless showDiscussions}}
 						{{#if editMode}}
 							{{#unless canEdit}}
 								<h4>
 									<span class="fa fa-exclamation-triangle text-danger"></span> Diese Seite wird gerade von {{wikiEntry.lockedName}}
 									bearbeitet
 								</h4>
-						{{else}}
-							{{#wysiwygEditor startEnabled=true onInit=froalaInit source=wikiEntry}}{{{wikiEntry.content}}}{{/wysiwygEditor}}
-							<button class="btn btn-primary action-save">Übernehmen</button>
+							{{else}}
+								{{>ultisiteWysiwyg value=wikiEntry.content source=wikiEntry}}
+								<button class="btn btn-primary action-save">Übernehmen</button>
 							{{/unless}}
-						{{else}}
+						{{/if}}
+					{{/if}}
+					</div>
+					{{#unless showDiscussions}}
+						{{#unless editMode}}
 							{{#if Template.subscriptionsReady}}
 								{{{wikiEntry.content}}}
 							{{else}}
 								{{>Loading}}
 							{{/if}}
-						{{/if}}
+						{{/unless}}
 					{{/unless}}
 				</div>
 			</div>

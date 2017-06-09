@@ -20,6 +20,14 @@ UltiSite.getHTMLTextDialog = function (options, callback) {
 
 UltiSite.modalDialogTemplate = null;
 UltiSite.showModal = function (templateName, data, options) {
+    if (options && options.dynamicImport) {
+        import(options.dynamicImport).then(() => {
+            UltiSite.showModal(templateName, data, _.omit(options, 'dynamicImport'));
+        });
+        return;
+    }
+    if (!Template[templateName])
+        throw new Meteor.Error('template notfound:' + templateName);
     if (UltiSite.modalDialogTemplate === null) {
         const parentNode = $('div.base-layout')[0];
         const view = Blaze.renderWithData(Template[templateName], data, parentNode);
@@ -79,7 +87,7 @@ Template.getHTMLTextDialog.helpers({
 Template.getHTMLTextDialog.events({
     "click .action-save": function (event, template) {
         event.preventDefault();
-        getTextCallback(template.$('.ulti-editor').val());
+        getTextCallback(template.$('textarea.wysiwyg-textarea').val());
         $('#getHTMLTextDialog').modal('hide');
     },
     'hidden.bs.modal #getHTMLTextDialog': function () {

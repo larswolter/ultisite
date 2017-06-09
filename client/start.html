@@ -37,7 +37,9 @@
                     {{>blogsStart}}
                 </div>
                 <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
-                    {{>practices}}
+                    {{#if practicesAvailable}}
+                        {{>practices}}
+                    {{/if}}
                 </div>
             </div>
         {{/if}}

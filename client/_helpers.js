@@ -56,7 +56,7 @@ Template.registerHelper("imageLookup", function (id) {
     return UltiSite.Images.findOne(id);
 });
 Template.registerHelper("imageUrl", function (id, size) {
-    return '/_image?imageId='+id+((size===undefined) || (typeof size === 'object')?'':'&size='+size);
+    return '/_image?imageId=' + id + ((size === undefined) || (typeof size === 'object') ? '' : '&size=' + size);
 });
 Template.registerHelper("getPageSearch", function (id) {
     if (!Meteor.userId())
@@ -75,9 +75,9 @@ Template.registerHelper("getPageSearch", function (id) {
     }
 });
 Template.registerHelper("joinNice", function (array) {
-    if(!array)
+    if (!array)
         return '';
-    if(array.length===1)
+    if (array.length === 1)
         return array[0];
     let text = ' und ' + _.clone(array).pop();
     return array.join(', ') + text;
@@ -96,7 +96,7 @@ Template.registerHelper("sitePageHeader", function () {
         case "wikipage":
             var wiki = UltiSite.WikiPages.findOne({
                 $or: [
-                    { _id: FlowRouter.getParam('_id') }, 
+                    { _id: FlowRouter.getParam('_id') },
                     { name: FlowRouter.getParam('_id') }]
             });
             if (wiki)
@@ -168,239 +168,6 @@ Template.registerHelper("getAlias", function (aliase) {
     return UltiSite.getAlias(aliase);
 });
 
-Template.wysiwygEditor.rendered = function () {
-    var self = this;
-    Tracker.autorun(function () {
-        if (self.enabled.get())
-            initEditor(self);
-    });
-};
-
-Template.wysiwygEditor.created = function () {
-    //if (this.data.light)
-    this.enabled = new ReactiveVar(false);
-    var self = this;
-    if (self.data.startEnabled)
-        self.enabled.set(true);
-};
-
-Template.wysiwygEditor.helpers({
-    editingEnabled: function () {
-        return Template.instance().enabled.get();
-    }
-});
-
-Template.wysiwygEditor.events({
-    'click .btn-edit': function (e, t) {
-        t.enabled.set(true);
-    },
-    'dblclick .editing-container': function (e, t) {
-        t.enabled.set(true);
-    },
-    'click .wysiwyg-editor a > img': function (e, t) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-});
-
-$.fn.serializeObject = function () {
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function () {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
-};
-
-var initEditor = function (template) {
-    var self = template;
-    if (self.$('.wysiwyg-container')[0]) {
-        self.$('.wysiwyg-container').show();
-        console.log("Bringing Editor to the foreground");
-        return;
-    }
-    var buttons = {
-        bold: {
-            title: 'Fett (Ctrl+F)',
-            image: '\uf032', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            hotkey: 'f',
-            showselection: true
-        },
-        italic: {
-            title: 'Kursiv (Ctrl+K)',
-            image: '\uf033', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            hotkey: 'k',
-            showselection: true
-        },
-        underline: {
-            title: 'Unterstrichen (Ctrl+U)',
-            image: '\uf0cd', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            hotkey: 'u',
-            showselection: true
-
-        },
-        strikethrough: {
-            title: 'Durchgestrichen (Ctrl+S)',
-            image: '\uf0cc', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            hotkey: 's',
-            showselection: true
-        },
-        header: {
-            title: 'Überschriften',
-            image: '\uf1dc', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            popup: function ($popup) {
-                var list_headers = {
-                    // Name : Font
-                    'Header 1': '<h1>',
-                    'Header 2': '<h2>',
-                    'Header 3': '<h3>',
-                    'Header 4': '<h4>',
-                    'Header 5': '<h5>',
-                    'Header 6': '<h6>',
-                    'Code': '<pre>'
-                };
-                var $list = $('<div/>').addClass('wysiwyg-plugin-list')
-                    .attr('unselectable', 'on');
-                $.each(list_headers, function (name, format) {
-                    var $link = $(format)
-                        .css('cursor', 'pointer')
-                        .html(name)
-                        .click(function (event) {
-                            self.$('.ulti-editor').wysiwyg('shell').format(format).closePopup();
-                            // prevent link-href-#
-                            event.stopPropagation();
-                            event.preventDefault();
-                            return false;
-                        });
-                    $list.append($link);
-                });
-                $popup.append($list);
-            }
-            //showstatic: true,    // wanted on the toolbar
-            //showselection: false    // wanted on selection
-        },
-        forecolor: {
-            title: 'Text Farbe',
-            image: '\uf1fc',
-            showselection: true
-        },
-        highlight: {
-            title: 'Hintergrundfarbe',
-            image: '\uf043' // <img src="path/to/image.png" width="16" height="16" alt="" />
-        },
-        insertlink: {
-            title: 'Link einfügen',
-            image: '\uf0c1'
-        },
-        orderedList: {
-            title: 'Nummerierte Liste',
-            image: '\uf0cb', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            //showstatic: true,    // wanted on the toolbar
-            showselection: false // wanted on selection
-        },
-        unorderedList: {
-            title: 'Liste',
-            image: '\uf0ca', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            //showstatic: true,    // wanted on the toolbar
-            showselection: false // wanted on selection
-        }
-    };
-    if (self.data.onSave)
-        buttons = _.extend({
-            close: {
-                title: 'Close (Esc)',
-                image: '\uf00d',
-                hotkey: 'esc',
-                click: function () {
-                    self.$('.wysiwyg-container').hide();
-                    self.enabled.set(false);
-                }
-            },
-            save: {
-                title: 'Save (Ctrl+S)',
-                image: '\uf0c7', // <img src="path/to/image.png" width="16" height="16" alt="" />
-                hotkey: 's',
-                click: function () {
-                    var newHTML = self.$('.ulti-editor').wysiwyg('shell').getHTML();
-                    self.data.onSave(newHTML, function (err) {
-                        if (err)
-                            self.$("button[data-name='state'] .fa").removeClass().addClass("fa fa-close text-danger");
-                        else {
-                            self.$("button[data-name='state'] .fa").removeClass().addClass("fa fa-check text-success");
-                            self.$('.wysiwyg-container').hide();
-                            self.enabled.set(false);
-                        }
-                    });
-                }
-            },
-        }, buttons);
-    if (!self.data.light) {
-        buttons.image = {
-            title: 'Bild einfügen',
-            image: '\uf03e', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            click: function () {
-                UltiSite.fileBrowserShowDialog(self.data.source._id, function (fileObj) {
-                    if (fileObj)
-                        self.$('.ulti-editor').wysiwyg('shell').insertHTML('<div class="editable-image"><a href="' +
-                            FlowRouter.path("image", {
-                                _id: fileObj._id
-                            }) +
-                            '"><img src="' + (fileObj.url(120)) + '"></a></div>');
-                    UltiSite.fileBrowserHideDialog();
-                });
-            }
-        };
-        buttons.insertvideo = {
-            title: 'Video einfügen',
-            image: '\uf03d'
-        },
-            buttons.alignleft = {
-                title: 'Links ausgerichtet',
-                image: '\uf036' // <img src="path/to/image.png" width="16" height="16" alt="" />
-            };
-        buttons.aligncenter = {
-            title: 'Mittig ausgerichtet',
-            image: '\uf037', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            //showstatic: true,    // wanted on the toolbar
-            showselection: false // wanted on selection
-        };
-        buttons.alignright = {
-            title: 'Rechts ausgerichtet',
-            image: '\uf038', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            //showstatic: true,    // wanted on the toolbar
-            showselection: false // wanted on selection
-        };
-        buttons.alignjustify = {
-            title: 'Blocksatz',
-            image: '\uf039', // <img src="path/to/image.png" width="16" height="16" alt="" />
-            //showstatic: true,    // wanted on the toolbar
-            showselection: false // wanted on selection
-        };
-        buttons.removeformat = {
-            title: 'Formatierung entfernen',
-            image: '\uf12d' // <img src="path/to/image.png" width="16" height="16" alt="" />
-        };
-    }
-    self.$('.ulti-editor').wysiwyg({
-        toolbar: 'top',
-        buttons: buttons,
-        submit: {
-            title: 'Übernehmen',
-            image: '\uf14a'
-        }
-    });
-    if (self.data.onInit)
-        self.data.onInit();
-    console.log("Finished initializing editor");
-};
-
 Template.Loading.events({
     'click .action-reconnect': function (e) {
         e.preventDefault();
@@ -411,28 +178,3 @@ Template.Loading.events({
 Template.popoverIcon.onRendered(function () {
     this.$('[data-toggle="tooltip"]').tooltip();
 });
-
-notifyUser = function (text) {
-    console.log("notifying:" + text);
-    // Let's check if the browser supports notifications
-    if (!("Notification" in window)) {
-        return;
-    }
-
-    // Let's check if the user is okay to get some notification
-    else if (Notification.permission === "granted") {
-        // If it's okay let's create a notification
-        var notification = new Notification(text);
-    }
-
-    // Otherwise, we need to ask the user for permission
-    else if (Notification.permission !== 'denied') {
-        Notification.requestPermission(function (permission) {
-            // If the user is okay, let's create a notification
-            if (permission === "granted") {
-                var notification = new Notification(text);
-            }
-        });
-    }
-
-}

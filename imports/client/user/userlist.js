@@ -1,3 +1,6 @@
+import './user.less';
+import './userlist.html';
+
 var usersOverview = new Meteor.Collection("usersOverview");
 const paginationEntries = 20;
 
@@ -86,7 +89,7 @@ Template.userItem.events({
     },
     'click .action-debit': function (e, t) {
         e.preventDefault();
-        UltiSite.getTextDialog({text:this.profile.debit,header:"Schulden eingeben (0 = keine)"}, function (text) {
+        UltiSite.getTextDialog({ text: this.profile.debit, header: "Schulden eingeben (0 = keine)" }, function (text) {
             const debit = Number(text);
             if (debit > 0)
                 Meteor.users.update(t.data._id, {

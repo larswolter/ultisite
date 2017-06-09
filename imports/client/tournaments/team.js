@@ -1,4 +1,6 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
+import './team.html';
+import './team.less';
 
 Template.participant.events({
     'click .action-participate': function (e, t) {

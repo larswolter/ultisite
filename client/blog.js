@@ -123,11 +123,11 @@ Template.blogUpdate.events({
             edit: undefined
         });
     },
-    'submit .blogUpdateForm': function (e) {
+    'submit .blogUpdateForm': function (e, t) {
         e.preventDefault();
-        var content = $('.blogUpdateForm .ulti-editor').val();
-        var title = $('.blogUpdateForm input.title').val();
-        var id = $('.blogUpdateForm input.id').val();
+        var content = t.$('textarea.wysiwyg-textarea').val();
+        var title = t.$('input.title').val();
+        var id = t.$('input.id').val();
         var image = activeImage.get();
         var isPublic = activePublication.get();
         var div = document.createElement("div");

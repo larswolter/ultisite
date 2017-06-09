@@ -1,3 +1,6 @@
+import './images.html';
+import './images.less';
+
 Template.imageViewer.onCreated(function () {
     this.imageStatus = new ReactiveVar();
     this.autorun(() => {

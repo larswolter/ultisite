@@ -1,4 +1,6 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
+import './address.html';
+import './address.less';
 
 Template.ultisiteAddress.onCreated(function () {
     console.log("Address:", this);

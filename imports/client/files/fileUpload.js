@@ -1,4 +1,6 @@
 import blueimp from 'blueimp-load-image';
+import './files.less';
+import './fileUpload.html';
 
 
 Template.fileUploader.onCreated(function(){

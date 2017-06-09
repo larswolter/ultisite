@@ -1,4 +1,4 @@
-
+import '/imports/client/practices/practiceView.js';
 
 Template.startImageCarousel.onCreated(function () {
 });
@@ -8,8 +8,21 @@ Template.startImageCarousel.helpers({
         return [];
     }
 });
+Template.start.onCreated(function () {
+    this.practicesAvailable = new ReactiveVar(false);
+    this.autorun(() => {
+        if (!Meteor.user()) {
+            import('/imports/client/practices/practiceView.js').then(() => {
+                this.practicesAvailable.set(true);
+            });
+        }
+    });
+});
 
 Template.start.helpers({
+    practicesAvailable() {
+        return Template.instance().practicesAvailable.get();
+    },
     startPageTemplates() {
         return UltiSite.startPageTemplates.find();
     },
@@ -20,6 +33,7 @@ Template.eventList.onCreated(function () {
 });
 
 Template.eventItem.onCreated(function () {
+
 });
 
 Template.eventItem.helpers({

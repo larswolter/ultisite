@@ -274,7 +274,13 @@
         {{#unless noChangeRights}}
         <button class="btn btn-link action-comment pull-right">
             <span class="fa fa-comment"></span>
+        </button>{{!--
+        <button class="btn btn-link action-transport pull-right">
+            <span class="fa fa-car"></span>3
         </button>
+        <button class="btn btn-link action-sleep pull-right">
+            <span class="fa fa-home"></span>1
+        </button>--}}
         <div class="btn-group participant-state" role="group">
             <button aria-expanded="false" class="btn btn-{{colorState this.state}} btn-block dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
                 <span class="fa {{iconState}} fa-fw"></span>

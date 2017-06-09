@@ -1,4 +1,6 @@
-import {AutoForm} from 'meteor/ultisite:autoform';
+import { AutoForm } from 'meteor/ultisite:autoform';
+import './admin.html';
+import './admin.less';
 
 Template.adminPanel.onCreated(function () {
     Meteor.call("getWikiPageNames", function (err, res) {
@@ -11,7 +13,7 @@ Template.adminPanel.onCreated(function () {
 });
 
 function handleUpdate(err, res) {
-    if(res) {
+    if (res) {
         UltiSite.settings(res);
     }
 }
@@ -29,7 +31,7 @@ Template.linksEditDialog.events({
         e.preventDefault();
         try {
             const links = JSON.parse(t.$('textarea').val());
-            Meteor.call('updateSettings', { $set: { objectHeaderLinks: links } },handleUpdate);
+            Meteor.call('updateSettings', { $set: { objectHeaderLinks: links } }, handleUpdate);
             t.$('.modal').modal('hide');
         } catch (err) {
             UltiSite.notify('Fehlerhafte Syntax:' + err, 'error');
@@ -114,13 +116,13 @@ Template.adminPanel.events({
         val[t.$(e.currentTarget).attr('data-name')] = t.$(e.currentTarget).attr('data-id');
         Meteor.call('updateSettings', {
             $set: val
-        },handleUpdate);
+        }, handleUpdate);
     },
     'click .action-select-design': function (e, t) {
         e.preventDefault();
         Meteor.call('updateSettings', {
             $set: { design: this + '' }
-        },handleUpdate);
+        }, handleUpdate);
     },
     'click .image-setting': function (e, t) {
         var name = "image" + t.$(e.currentTarget).attr('data-name');
@@ -129,7 +131,7 @@ Template.adminPanel.events({
             val[name] = fileObj ? fileObj._id : null;
             Meteor.call('updateSettings', {
                 $set: val
-            },handleUpdate);
+            }, handleUpdate);
             if (name === 'imageIcon') {
 
             }
@@ -148,7 +150,7 @@ Template.adminPanel.events({
         console.log("Updating:", val);
         Meteor.call('updateSettings', {
             $set: val
-        },handleUpdate);
+        }, handleUpdate);
     },
     'click .btn-update-mailserver': function () {
         Meteor.call("updateMailserver", UltiSite.userFeedbackFunction("Update Mail Konfiguration"));
@@ -163,7 +165,7 @@ Template.adminPanel.events({
             upd[name] = "";
             Meteor.call('updateSettings', {
                 $set: upd
-            },handleUpdate);
+            }, handleUpdate);
         }
     },
     'click .all-settings-header': function () {
@@ -171,11 +173,11 @@ Template.adminPanel.events({
     },
     'click .action-add-mailinglist': function (e, t) {
         e.preventDefault();
-        Meteor.call('updateSettings', { $push: { mailingListConfigs: { id: Random.id() } } },handleUpdate);
+        Meteor.call('updateSettings', { $push: { mailingListConfigs: { id: Random.id() } } }, handleUpdate);
     },
     'click .action-remove-mailinglist': function (e, t) {
 
-        Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: this.id } } },handleUpdate);
+        Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: this.id } } }, handleUpdate);
     }
 });
 
@@ -184,9 +186,9 @@ AutoForm.hooks({
         // Called when any submit operation succeeds
         onSubmit: function (insertDoc, updateDoc, currentDoc) {
             console.log(insertDoc, currentDoc);
-            Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: currentDoc.id } } },handleUpdate);
+            Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: currentDoc.id } } }, handleUpdate);
             Meteor.call('updateSettings', { $push: { mailingListConfigs: insertDoc } }, (err, res) => {
-                handleUpdate(err,res);
+                handleUpdate(err, res);
                 this.done(err);
             });
             return false;

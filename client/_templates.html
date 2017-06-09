@@ -1,15 +1,3 @@
-<template name="wysiwygEditor">
-	<div class="editing-container{{#if editingEnabled}} active{{/if}}">
-		<div class="editing-mark btn-edit">
-			<span class="fa fa-edit"></span>
-			<div>Editieren</div>
-		</div>
-		<textarea class="ulti-editor hidden">{{>Template.contentBlock}}</textarea>
-		{{#unless editingEnabled}}
-			{{>Template.contentBlock}}
-		{{/unless}}
-	</div>
-</template>
 
 <template name="popoverIcon">
 	<span data-toggle="tooltip" title="{{text}}" placement="auto">

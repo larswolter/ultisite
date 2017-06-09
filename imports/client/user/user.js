@@ -1,4 +1,6 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
+import './user.less';
+import './user.html';
 
 Meteor.startup(function () {
     Meteor.subscribe('UserDetails');
