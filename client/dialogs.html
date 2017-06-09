@@ -99,7 +99,11 @@
                     <h4 class="modal-title">{{#with this.header}}{{this}}{{else}}Text eingeben{{/with}}</h4>
                 </div>
                 <div class="">
-                    {{>ultisiteWysiwyg light=true value=content}}
+                    {{#if wysiwygLoaded}}
+                        {{>ultisiteWysiwyg light=true value=content source=this}}
+                    {{else}}
+                        {{>Loading}}
+                    {{/if}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">

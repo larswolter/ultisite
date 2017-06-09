@@ -26,7 +26,7 @@
                         {{/if}}
                     </h4>
                     {{#if isInRole "admin,hatAdmin"}}
-                        <a href="/_hatInfoExport" target="_blank" class="btn btn-default pull-right" title="Export" type="button" >
+                        <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-default pull-right" title="Export" type="button" >
                             <span class="fa fa-download"></span> Exportieren
                         </a>
                         <a href="mailto:no-reply@hallunken.de?bcc={{emails}}" class="btn btn-default pull-right" title="Export" type="button" >

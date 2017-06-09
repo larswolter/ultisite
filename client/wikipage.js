@@ -1,13 +1,15 @@
 Template.wikipage.onCreated(function () {
-    this.wysiwygLoaded = new ReactiveVar(false);
     this.insertingDiscussion = new ReactiveVar(false);
     this.withoutControls = false;
     this.activeTab = new ReactiveVar('article');
     this.contentVersion = new ReactiveVar();
     this.activePage = new ReactiveVar();
+    this.wysiwygLoaded = new ReactiveVar(false);
     this.autorun((comp) => {
-        if (!Meteor.user())
-            return;
+        const tab = this.activeTab.get()==='edit';
+        const user = Meteor.user() 
+        if (!tab || !user)
+            return;        
         import('/imports/client/forms/wysiwyg.js').then(() => this.wysiwygLoaded.set(true));
     });
     if (this.data.pageName) {

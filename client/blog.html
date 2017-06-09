@@ -32,7 +32,11 @@
                     </div>
                     <div class="form-group">
                         <label>Inhalt</label>
-                        {{>ultisiteWysiwyg light=true value=blog.content source=blog}}
+                        {{#if wysiwygLoaded}}
+                            {{>ultisiteWysiwyg light=true value=blog.content source=blog}}
+                        {{else}}
+                            {{>Loading}}
+                        {{/if}}
                     </div>
                     <div class="form-group">
                         <label>Bild</label>

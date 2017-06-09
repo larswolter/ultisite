@@ -53,13 +53,11 @@ FlowRouter.route('/froalaImages/:_id', function () {
 
 FlowRouter.route('/image/:_id/:associated?', {
     name: "image",
-    waitOn() {
-        return import ('/imports/client/files/images.js');
-    },
 action: function () {
-    require('/imports/client/files/images.js');
+    import ('/imports/client/files/images.js').then(() => {
     UltiSite.baseLayoutData.set({
         content: "imageViewer"
+    });
     });
 }
 });
@@ -67,24 +65,19 @@ action: function () {
 
 FlowRouter.route('/files/:_id?', {
     name: "files",
-    waitOn() {
-        return import ('/imports/client/files/files.js');
-    },
 action: function () {
-    require('/imports/client/files/files.js');
+    import ('/imports/client/files/files.js').then(() => {
     UltiSite.baseLayoutData.set({
         content: "fileBrowser"
+    });
     });
 }
 });
 
 FlowRouter.route('/practices/:edit?', {
     name: "practices",
-    waitOn() {
-        return import ('/imports/client/practices/practice.js');
-    },
 action: function () {
-    require('/imports/client/practices/practice.js');
+    import ('/imports/client/practices/practice.js').then(() => {
         if (FlowRouter.getParam('edit'))
             UltiSite.baseLayoutData.set({
                 content: "practicesEditing"
@@ -93,44 +86,39 @@ action: function () {
             UltiSite.baseLayoutData.set({
                 content: "practicesDetailed"
             });
+    });
     }
 });
 
 FlowRouter.route('/admin', {
     name: "admin",
-    waitOn() {
-        return import ('/imports/client/admin/admin.js');
-    },
 action: function () {
-    require('/imports/client/admin/admin.js');
+    import ('/imports/client/admin/admin.js').then(() => {
         UltiSite.baseLayoutData.set({
             content: "adminPanel"
         });
+    });
     }
 });
 
 FlowRouter.route('/tournaments', {
     name: "tournaments",
-    waitOn() {
-        return import ('/imports/client/tournaments/tournamentList.js');
-    },
-action() {
-    require('/imports/client/tournaments/tournamentList.js');
-    UltiSite.baseLayoutData.set({
-        content: "tournamentList"
+    action() {
+    import ('/imports/client/tournaments/tournamentList.js').then(() => {
+        UltiSite.baseLayoutData.set({
+            content: "tournamentList"
+        });
     });
 }
 });
 
 FlowRouter.route('/tournament/:_id', {
     name: "tournament",
-    waitOn() {
-        return import ('/imports/client/tournaments/tournament.js');
-    },
 action: function () {
-    require('/imports/client/tournaments/tournament.js');
+    import ('/imports/client/tournaments/tournament.js').then(() => {
     UltiSite.baseLayoutData.set({
         content: "tournament"
+    });
     });
 }
 });
@@ -187,26 +175,22 @@ FlowRouter.route('/passwordReset/:token', {
 
 FlowRouter.route('/users', {
     name: "users",
-    waitOn() {
-        return import ('/imports/client/user/userlist.js');
-    },
 action: function () {
-    require('/imports/client/user/userlist.js');
+    import ('/imports/client/user/userlist.js').then(() => {
     UltiSite.baseLayoutData.set({
         content: "userList"
+    });
     });
 }
 });
 
 FlowRouter.route('/user/:_id', {
     name: "user",
-    waitOn() {
-        return import ('/imports/client/user/user.js');
-    },
 action: function () {
-    require('/imports/client/user/user.js');
+    import ('/imports/client/user/user.js').then(() => {
     UltiSite.baseLayoutData.set({
         content: "user"
+    });
     });
 }
 });

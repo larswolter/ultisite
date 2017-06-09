@@ -78,7 +78,14 @@ Template.getTextDialog.events({
     }
 });
 
+Template.getHTMLTextDialog.onCreated(function() {
+    this.wysiwygLoaded = new ReactiveVar(false);
+});
+
 Template.getHTMLTextDialog.helpers({
+    wysiwygLoaded: function () {
+        return Template.instance().wysiwygLoaded.get();
+    },
     options: function () {
         return getTextOptions.get();
     }
@@ -89,6 +96,9 @@ Template.getHTMLTextDialog.events({
         event.preventDefault();
         getTextCallback(template.$('textarea.wysiwyg-textarea').val());
         $('#getHTMLTextDialog').modal('hide');
+    },
+    'shown.bs.modal #getHTMLTextDialog': function (evt, tmpl) {
+        import('/imports/client/forms/wysiwyg.js').then(() => tmpl.wysiwygLoaded.set(true));
     },
     'hidden.bs.modal #getHTMLTextDialog': function () {
         getTextOptions.set(undefined);
