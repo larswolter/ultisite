@@ -1,13 +1,13 @@
 import './wysiwyg.less';
 import './wysiwyg.html';
 
-const html_encode = function (string) {
+const htmlEncode = function (string) {
   return string.replace(/[&<>"]/g, function (tag) {
     const charsToReplace = {
       '&': '&amp;',
       '<': '&lt;',
       '>': '&gt;',
-      '"': '&quot;'
+      '"': '&quot;',
     };
     return charsToReplace[tag] || tag;
   });
@@ -41,66 +41,67 @@ Template.ultisiteWysiwyg.onDestroyed(function () {
 });
 
 Template.ultisiteWysiwyg.events({
-  'click .bold': function (evt, tmpl) {
+  'click .bold' (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.bold();
     tmpl.syncField();
   },
-  'click .italic': function (evt, tmpl) {
+  'click .italic' (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.italic();
     tmpl.syncField();
   },
-  'click .underline': function (evt, tmpl) {
+  'click .underline' (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.underline();
     tmpl.syncField();
   },
-  'click .strikethrough': function (evt, tmpl) {
+  'click .strikethrough' (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.strikethrough();
     tmpl.syncField();
   },
-  'click .list-ul': function (evt, tmpl) {
+  'click .list-ul' (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.insertList(false);
     tmpl.syncField();
   },
-  'click .list-ol': function (evt, tmpl) {
+  'click .list-ol' (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.insertList(true);
     tmpl.syncField();
   },
-  'click .remove-format': function (evt, tmpl) {
+  'click .remove-format' (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.removeFormat();
     tmpl.syncField();
   },
-  'click .add-image': function (evt, tmpl) {
+  'click .add-image' (evt, tmpl) {
     evt.preventDefault();
     import('/imports/client/files/files.js').then(() => {
-    UltiSite.fileBrowserShowDialog(tmpl.data.source._id, function (fileObj) {
-      if (fileObj)
-        tmpl.textEditor.insertHTML('<div class="editable-image"><a href="' +
-          FlowRouter.path("image", {
-            _id: fileObj._id
-          }) +
-          '"><img src="' + (fileObj.url(120)) + '"></a></div>');
-      UltiSite.fileBrowserHideDialog();
+      UltiSite.fileBrowserShowDialog(tmpl.data.source._id, function (fileObj) {
+        if (fileObj) {
+          const path = FlowRouter.path("image", {
+            _id: fileObj._id,
+          });
+          tmpl.textEditor.insertHTML(`<div class="editable-image"><a href="${path}"><img src="${fileObj.url(120)}"></a></div>`);
+        }
+        UltiSite.fileBrowserHideDialog();
+      });
     });
-  });
   },
-'click .add-video': function (evt, tmpl) {
-  evt.preventDefault();
-  UltiSite.getTextDialog({ text: 'Gib eine Video URL ein', header: 'Video einfügen' }, function (text) {
-    if (text)
-      tmpl.textEditor.insertHTML('<video src="' + html_encode(text) + '" />');
-  });
-},
-'click .forecolor': function (evt, tmpl) {
-  evt.preventDefault();
-  const color = tmpl.$(evt.currentTarget).attr('data-color');
-  tmpl.textEditor.forecolor(color);
-  tmpl.syncField();
-},
+  'click .add-video' (evt, tmpl) {
+    evt.preventDefault();
+    UltiSite.getTextDialog({ text: 'Gib eine Video URL ein', header: 'Video einfügen' }, function (text) {
+      if (text) {
+        tmpl.textEditor.insertHTML(`<video src="${htmlEncode(text)}" />`);
+      }
+    });
+  },
+  'click .forecolor' (evt, tmpl) {
+    evt.preventDefault();
+    const color = tmpl.$(evt.currentTarget).attr('data-color');
+    tmpl.textEditor.forecolor(color);
+    tmpl.syncField();
+  },
 });

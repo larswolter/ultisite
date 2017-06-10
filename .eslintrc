@@ -57,5 +57,6 @@
         "node": true,
         "browser": true
     },
-    "extends": ["plugin:meteor/recommended"]
+    "extends": "@meteorjs/eslint-config-meteor"
+    //"extends": ["plugin:meteor/recommended"]
 }
