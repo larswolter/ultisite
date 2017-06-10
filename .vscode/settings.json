@@ -16,19 +16,18 @@
         "**/.hg": true,
         "**/.DS_Store": true
     },
-     "editor.formatOnSave": false,
-   "search.exclude": {
+    "editor.formatOnSave": false,
+    "search.exclude": {
         ".meteor/local": true,
         "**/node_modules": true
-        },
-            // Gibt an, ob die automatische Aktualisierung aktiviert ist.
+    },
+    // Gibt an, ob die automatische Aktualisierung aktiviert ist.
+	"git.autofetch": false,
     "git.autorefresh": false,
-        "html.format.wrapLineLength": 0,
+    "html.format.wrapLineLength": 0,
     // Format and indent {{#foo}} and {{/foo}}.
     "html.format.indentHandlebars": true,
-
-
-    // Gibt an, ob automatischer Abruf aktiviert ist.
-    "git.autofetch": false,
-
+    "eslint.autoFixOnSave": true,
+    "javascript.validate.enable": false,
+    "javascript.format.enable": false
 }
