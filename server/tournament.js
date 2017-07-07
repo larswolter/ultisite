@@ -97,6 +97,17 @@ Meteor.methods({
         UltiSite.Tournaments.update(team.tournamentId, { $pull: { teams: team._id} } );
         UltiSite.Teams.remove(team._id);
     },
+    teamMoveToTournament: function(teamId, tournamentId) {
+        check(teamId, String);
+        check(tournamentId, String);
+        const team = UltiSite.Teams.findOne(teamId);
+        const tournament = UltiSite.Tournaments.findOne(tournamentId);
+        if(!team)
+            return;
+        UltiSite.Tournaments.update(tournamentId,{$push:{teams:teamId}});
+        UltiSite.Tournaments.update(team.tournamentId,{$pull:{teams:teamId}});
+        UltiSite.Teams.update(teamId,{$set:{tournamentId}});
+    },
     teamUpdateState: function (id, state) {
         let team = UltiSite.Teams.findOne(id);
         let update = { state: state, lastChange: new Date() };
