@@ -101,6 +101,9 @@
                 <h4 class="blog-title">
                     {{#if currentUser}}
                         <a class="btn btn-default btn-sm pull-right" href="{{pathFor route='blog' _id=blog._id edit='edit'}}">Artikel bearbeiten</a>
+                        {{#if canRemove}}
+                            <button class="btn btn-danger btn-sm action-remove-blog pull-right" >Artikel löschen</button>
+                        {{/if}}
                     {{/if}}
                     {{blog.title}}
                     <br />
@@ -127,13 +130,27 @@
         </div>
         <div class="row blog-files">
             <hr/>
-            {{>fileList blog}}
+            {{>blogFileList blog}}
         </div>
     </div>
     {{else}}
         {{>Loading}}
     {{/if}}
 </template>
+
+<template name="blogFileList">
+    {{#each images}}
+    <li><a href="#">
+        {{>fileItem}}
+    </a></li>
+    {{/each}}
+    {{#each documents}}
+    <li><a href="#">
+        {{>fileItem}}
+    </a></li>
+    {{/each}}
+</template>
+
 
 <template name="blogPreview">
     {{#if blog}}

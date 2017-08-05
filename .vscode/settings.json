@@ -29,5 +29,10 @@
     "html.format.indentHandlebars": true,
     "eslint.autoFixOnSave": true,
     "javascript.validate.enable": false,
-    "javascript.format.enable": false
+    "javascript.format.enable": false,
+    "editor.tabSize": 2,
+    "files.associations": {
+        "*.html": "handlebars"
+    }
+
 }

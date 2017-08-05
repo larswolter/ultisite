@@ -233,19 +233,6 @@
     </div>
 </template>
 
-<template name="fileList">
-    {{#each images}}
-    <li><a href="#">
-        {{>fileItem}}
-    </a></li>
-    {{/each}}
-    {{#each documents}}
-    <li><a href="#">
-        {{>fileItem}}
-    </a></li>
-    {{/each}}
-</template>
-
 <template name="fileItem">
     <strong class="list-group-item-heading"><a href="{{this.url}}" target="_top">{{name}}</a></strong>
         <div class="list-group-item-text small">{{type}} {{formatFileSize size}} {{formatDateTime created}} {{fileVersions}}</div>
