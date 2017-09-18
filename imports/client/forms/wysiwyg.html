@@ -24,12 +24,13 @@
         <button type="button" class="btn btn-default list-ul" title="Auflistung"><span class="fa fa-list-ul"></span></button>
         <button type="button" class="btn btn-default list-ol" title="Numerrierte Liste"><span class="fa fa-list-ol"></span></button>
       </div>
-      {{#unless this.light}}
         <div class="btn-group" role="group" aria-label="...">
-          <button type="button" class="btn btn-default add-image" title="Bild einfügen"><span class="fa fa-image"></span></button>
-          <button type="button" class="btn btn-default add-video" title="Video einfügen"><span class="fa fa-video-camera"></span></button>
+          {{#unless this.light}}
+            <button type="button" class="btn btn-default add-link" title="Link einfügen"><span class="fa fa-link"></span></button>
+            <button type="button" class="btn btn-default add-image" title="Bild einfügen"><span class="fa fa-image"></span></button>
+            <button type="button" class="btn btn-default add-video" title="Video einfügen"><span class="fa fa-video-camera"></span></button>
+          {{/unless}}
         </div>
-      {{/unless}}
       <div class="btn-group" role="group" aria-label="...">
         <button type="button" class="btn btn-default remove-format" title="Formatierung löschen"><span class="fa fa-eraser"></span></button>
       </div>

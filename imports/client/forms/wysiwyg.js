@@ -98,6 +98,16 @@ Template.ultisiteWysiwyg.events({
       }
     });
   },
+  'click .add-link' (evt, tmpl) {
+    evt.preventDefault();
+    tmpl.textEditor.openPopup();
+    UltiSite.getTextDialog({ text: 'https://', header: 'Link einfügen' }, function (text) {
+      if (text) {
+        tmpl.textEditor.closePopup();
+        tmpl.textEditor.insertLink(text);
+      }
+    });
+  },
   'click .forecolor' (evt, tmpl) {
     evt.preventDefault();
     const color = tmpl.$(evt.currentTarget).attr('data-color');
