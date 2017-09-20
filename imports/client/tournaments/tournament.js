@@ -13,46 +13,44 @@ Template.tournament.onCreated(function () {
   });
 
   this.autorun(() => {
-    let t = UltiSite.getTournament(FlowRouter.getParam('_id'));
-    if (!t)
-      return;
+    const t = UltiSite.getTournament(FlowRouter.getParam('_id'));
+    if (!t) { return; }
 
-    let from = moment(t.date).clone().subtract(1, "days").toDate();
-    let to = moment(t.date).clone().add(t.numDays + 1, "days").toDate();
+    const from = moment(t.date).clone().subtract(1, "days").toDate();
+    const to = moment(t.date).clone().add(t.numDays + 1, "days").toDate();
     this.subscribe("Tournaments", null, {
       date: {
         $gte: from,
-        $lte: to
-      }
+        $lte: to,
+      },
     });
 
-    if (((!t.teams) || (t.teams.length === 0)) && this.bodyVisible.get() === null)
-      this.bodyVisible.set(true);
+    if (((!t.teams) || (t.teams.length === 0)) && this.bodyVisible.get() === null) { this.bodyVisible.set(true); }
   });
 });
 
 
 Template.tournament.events({
-  'click .action-add-team': function (e) {
+  'click .action-add-team' (e) {
     e.preventDefault();
     UltiSite.showModal('teamUpdate', { tournamentId: this._id });
   },
-  'click .action-edit-tournament': function (e) {
+  'click .action-edit-tournament' (e) {
     e.preventDefault();
     UltiSite.showModal('tournamentUpdate', { tournament: this, type: 'update' });
   },
 
-  'click .action-participate': function (e) {
+  'click .action-participate' (e) {
     e.preventDefault();
     UltiSite.showModal('participateDialog', this);
   },
-  'click .preview-content': function (e) {
+  'click .preview-content' (e) {
     $(e.currentTarget).toggleClass("active");
   },
-  'click .toggle-tournament-body': function (e, t) {
+  'click .toggle-tournament-body' (e, t) {
     t.bodyVisible.set(!t.bodyVisible.get());
   },
-  'click .tournament-remove': function (e) {
+  'click .tournament-remove' (e) {
     e.preventDefault();
     UltiSite.confirmDialog("Willst du das Turnier wirklich löschen?", () => {
       UltiSite.Tournaments.remove(FlowRouter.getParam('_id'), UltiSite.userFeedbackFunction("Turnier löschen"));
@@ -60,269 +58,266 @@ Template.tournament.events({
       FlowRouter.go("tournaments");
     });
   },
-  'click .action-show-files': function (e) {
+  'click .action-show-files' (e) {
     e.preventDefault();
     UltiSite.fileBrowserShowDialog(FlowRouter.getParam('_id'));
   },
-  'click .action-add-infos': function (e) {
+  'click .action-add-infos' (e) {
     e.preventDefault();
     UltiSite.getHTMLTextDialog({ content: '' }, function (text) {
       UltiSite.Tournaments.update({
-        _id: FlowRouter.getParam('_id')
+        _id: FlowRouter.getParam('_id'),
       }, {
         $set: {
-          lastChange: new Date()
+          lastChange: new Date(),
         },
         $push: {
           description: {
-              $each: [{
-                  _id: Random.id(),
-                  content: text,
-                  date: new Date(),
-                  editor: Meteor.userId()
-                }],
-              $position: 0
-            }
-        }
+            $each: [{
+              _id: Random.id(),
+              content: text,
+              date: new Date(),
+              editor: Meteor.userId(),
+            }],
+            $position: 0,
+          },
+        },
       });
     });
   },
-  'click .action-edit-infos': function (e) {
+  'click .action-edit-infos' (e) {
     e.preventDefault();
-    var self = this;
+    const self = this;
     UltiSite.getHTMLTextDialog({ content: self.content }, function (text) {
       Meteor.call('tournamentUpdateInfos', FlowRouter.getParam('_id'), self._id, text);
     });
   },
-  'click .action-remove-infos': function (e, t) {
+  'click .action-remove-infos' (e, t) {
     UltiSite.confirmDialog("Sollen diese Informationen endgültig gelöscht werden?", () => {
       UltiSite.Tournaments.update({
-        _id: FlowRouter.getParam('_id')
+        _id: FlowRouter.getParam('_id'),
       }, {
         $set: {
-          lastChange: new Date()
+          lastChange: new Date(),
         },
         $pull: {
           description: {
-              _id: this._id
-            }
-        }
+            _id: this._id,
+          },
+        },
       });
     });
   },
-  'click .action-edit-report': function (e) {
+  'click .action-edit-report' (e) {
     e.preventDefault();
-    var self = this;
+    const self = this;
     UltiSite.getHTMLTextDialog({ content: self.content }, function (text) {
       Meteor.call('tournamentUpdateReport', FlowRouter.getParam('_id'), self._id, text);
     });
   },
-  'click .action-remove-report': function (e, t) {
-    var id = t.$(e.currentTarget).attr('data-id');
+  'click .action-remove-report' (e, t) {
+    const id = t.$(e.currentTarget).attr('data-id');
     UltiSite.confirmDialog("Soll dieser Bericht endgültig gelöscht werden?", () => {
       UltiSite.Tournaments.update({
-        _id: FlowRouter.getParam('_id')
+        _id: FlowRouter.getParam('_id'),
       }, {
         $set: {
-          lastChange: new Date()
+          lastChange: new Date(),
         },
         $pull: {
           reports: {
-              _id: id
-            }
-        }
+            _id: id,
+          },
+        },
       });
     });
   },
-  'click .action-add-report': function (e) {
+  'click .action-add-report' (e) {
     e.preventDefault();
     UltiSite.getHTMLTextDialog({ content: '' }, function (text) {
       Meteor.call('tournamentAddReport', FlowRouter.getParam('_id'), {
         _id: Random.id(),
         content: text,
         date: new Date(),
-        editor: Meteor.userId()
+        editor: Meteor.userId(),
       });
     });
-  }
+  },
 
 });
 
 Template.tournamentUpdate.helpers({
-  tournamentSchema: function () {
+  tournamentSchema () {
     return UltiSite.schemas.tournament.get();
-  }
+  },
 });
 
 
 Template.tournament.helpers({
-  parallelTournaments: function () {
-    var from = moment(this.date).clone().subtract(2, "days").toDate();
-    var to = moment(this.date).clone().add(this.numDays + 1, "days").toDate();
+  parallelTournaments () {
+    const from = moment(this.date).clone().subtract(2, "days").toDate();
+    const to = moment(this.date).clone().add(this.numDays + 1, "days").toDate();
     return UltiSite.Tournaments.find({
       _id: {
-        $not: this._id
+        $not: this._id,
       },
       date: {
         $gte: from,
-        $lte: to
-      }
+        $lte: to,
+      },
     }, {
       fields: {
         _id: 1,
-        name: 1
-      }
+        name: 1,
+      },
     });
   },
-  over: function () {
-    var t = UltiSite.getTournament(FlowRouter.getParam('_id'));
+  over () {
+    const t = UltiSite.getTournament(FlowRouter.getParam('_id'));
 
-    if (t && moment(t.date).isBefore(moment(), "day"))
-      return true;
+    if (t && moment(t.date).isBefore(moment(), "day")) { return true; }
     return false;
   },
-  mapsLink: function () {
-    return 'https://www.google.de/maps/@' + this.address.geocoords.split(',').reverse().join(',') + ',11z';
+  mapsLink () {
+    return `https://www.google.de/maps/@${this.address.geocoords.split(',').reverse().join(',')},11z`;
   },
-  tournament: function () {
-    if (!FlowRouter.getParam('_id'))
-      return;
+  tournament () {
+    if (!FlowRouter.getParam('_id')) { return; }
     return UltiSite.getTournament(FlowRouter.getParam('_id'));
   },
-  tournamentBodyVisible: function () {
+  tournamentBodyVisible () {
     return Template.instance().bodyVisible.get();
   },
-  noDescription: function () {
+  noDescription () {
     return (this.description == undefined) || this.description.isEmpty;
   },
-  saveDescription: function () {
-    var self = this;
-    var tournamentId = FlowRouter.getParam('_id');
+  saveDescription () {
+    const self = this;
+    const tournamentId = FlowRouter.getParam('_id');
     return function (newContent, finished) {
       UltiSite.Tournaments.update({
-        _id: tournamentId
+        _id: tournamentId,
       }, {
         $set: {
-          lastChange: new Date()
+          lastChange: new Date(),
         },
         $pull: {
           description: {
-              _id: self._id
-            }
-        }
+            _id: self._id,
+          },
+        },
       });
       UltiSite.Tournaments.update({
-        _id: tournamentId
+        _id: tournamentId,
       }, {
         $set: {
-          lastChange: new Date()
+          lastChange: new Date(),
         },
         $push: {
           description: {
-              $each: [{
-                  _id: self._id,
-                  content: newContent.trim(),
-                  date: self.date,
-                  editDate: new Date(),
-                  editor: Meteor.userId()
-                }],
-              $position: 0
-            }
-        }
+            $each: [{
+              _id: self._id,
+              content: newContent.trim(),
+              date: self.date,
+              editDate: new Date(),
+              editor: Meteor.userId(),
+            }],
+            $position: 0,
+          },
+        },
 
       },
                 finished);
     };
   },
-  saveReport: function () {
-    var self = this;
-    var tournamentId = FlowRouter.getParam('_id');
+  saveReport () {
+    const self = this;
+    const tournamentId = FlowRouter.getParam('_id');
     return function (newContent, finished) {
       UltiSite.Tournaments.update({
-        _id: tournamentId
+        _id: tournamentId,
       }, {
         $pull: {
           reports: {
-              _id: self._id
-            }
-        }
+            _id: self._id,
+          },
+        },
       });
       UltiSite.Tournaments.update({
-        _id: tournamentId
+        _id: tournamentId,
       }, {
         $set: {
-          lastChange: new Date()
+          lastChange: new Date(),
         },
         $push: {
           reports: {
-              $each: [{
-                  _id: self._id,
-                  content: newContent.trim(),
-                  date: self.date,
-                  editDate: new Date(),
-                  editor: Meteor.userId()
-                }],
-              $position: 0
-            }
-        }
+            $each: [{
+              _id: self._id,
+              content: newContent.trim(),
+              date: self.date,
+              editDate: new Date(),
+              editor: Meteor.userId(),
+            }],
+            $position: 0,
+          },
+        },
 
       },
                 finished);
     };
   },
-  isEmpty: function () {
-    if (this.content.length === 0)
-      return true;
+  isEmpty () {
+    if (this.content.length === 0) { return true; }
     return false;
   },
-  fileCount: function () {
+  fileCount () {
     return UltiSite.Images.find({
-      associated: FlowRouter.getParam('_id')
+      associated: FlowRouter.getParam('_id'),
     }).count() + UltiSite.Documents.find({
-      associated: FlowRouter.getParam('_id')
+      associated: FlowRouter.getParam('_id'),
     }).count();
   },
-  myContent: function () {
+  myContent () {
     return !!Meteor.userId();
   },
-  address: function () {
-    var t = UltiSite.getTournament(FlowRouter.getParam('_id')) || {};
+  address () {
+    const t = UltiSite.getTournament(FlowRouter.getParam('_id')) || {};
     return t.address;
   },
-  contact: function () {
-    var t = UltiSite.getTournament(FlowRouter.getParam('_id')) || {};
-    var address = {};
-    if (t.contactDetails)
+  contact () {
+    const t = UltiSite.getTournament(FlowRouter.getParam('_id')) || {};
+    let address = {};
+    if (t.contactDetails) {
       t.contactDetails.forEach(function (elem) {
-        if (elem.type == "email")
-          address = elem;
+        if (elem.type == "email") { address = elem; }
       });
+    }
     return address;
   },
-  teamObjects: function () {
+  teamObjects () {
     const teams = this.teams || [];
 
     return teams.map(function (id) {
       const teamObj = UltiSite.getTeam(id) || { name: '-unbekannt-' };
       return _.extend({
-        stateColor: UltiSite.stateColor(teamObj.state)
+        stateColor: UltiSite.stateColor(teamObj.state),
       }, teamObj);
     });
-  }
+  },
 });
 
 Template.tournamentUpdate.events({
-  'shown.bs.modal #tournamentUpdateDialog': function (e, t) {
+  'shown.bs.modal #tournamentUpdateDialog' (e, t) {
     t.visible.set(true);
   },
-  'hide.bs.modal #tournamentUpdateDialog': function (e, t) {
-        //t.visible.set(false);
-  }
+  'hide.bs.modal #tournamentUpdateDialog' (e, t) {
+        // t.visible.set(false);
+  },
 });
 Template.tournamentUpdate.helpers({
-  isVisible: function () {
-    return false;//Template.instance().visible.get();
-  }
+  isVisible () {
+    return false;// Template.instance().visible.get();
+  },
 });
 Template.tournamentUpdate.onCreated(function () {
   this.visible = new ReactiveVar(false);

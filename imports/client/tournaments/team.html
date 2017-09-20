@@ -487,7 +487,14 @@
                     <li class="list-group-item form-inline">
                         {{#each participants}}
                             {{#if equals this.state 100}}
-                                <a href="/user/{{this.user}}" class="btn btn-link">{{this.username}}</a>                                
+                                {{#if this.comment}}
+                                    {{#popoverIcon text=comment}}
+                                        <a href="/user/{{this.user}}" class="btn btn-link">{{this.username}}</a>                                
+                                        <span class="fa fa-comment"></span>
+                                    {{/popoverIcon}}
+                                {{else}}
+                                    <a href="/user/{{this.user}}" class="btn btn-link">{{this.username}}</a>                                
+                                {{/if}}
                             {{/if}}
                         {{/each}}
                         {{>searchField type="button" leftMenu=true inline=true icon="fa fa-plus"  searchType="Users" value="" class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound}}

@@ -5,8 +5,10 @@
         <ul>
             {{#each events}}
             <li>
-                <h4><a href="{{url}}">{{name}}</a></h4>
-                <div>{{additional}}</div>
+                <p>
+                    <a href="{{url}}">{{name}}</a>
+                    <small>{{additional}}</small>
+                </p>
                 {{#each detail}}
                     <div>{{timeFormatted}} - {{alias}}: {{text}}</div>
                 {{/each}}
@@ -15,6 +17,6 @@
         </ul>
         <p>
             Falls du nicht zu allen Ereignissen E-Mails bekommen willst, oder über manche Dinge sofort per Mail 
-            informaiert werden willst, kannst du den Mail Versand in deinem <a href="{{profilUrl}}">Profil</a> anpassen 
+            informiert werden willst, kannst du den Mail Versand in deinem <a href="{{profilUrl}}">Profil</a> anpassen 
         </p>
             

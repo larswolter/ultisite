@@ -33,7 +33,7 @@
                     <div class="form-group">
                         <label>Inhalt</label>
                         {{#if wysiwygLoaded}}
-                            {{>ultisiteWysiwyg light=true value=blog.content source=blog}}
+                            {{>ultisiteWysiwyg value=blog.content source=blog}}
                         {{else}}
                             {{>Loading}}
                         {{/if}}
