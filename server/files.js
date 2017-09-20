@@ -120,7 +120,9 @@ Meteor.methods({
           });
           fs.unlink(`${os.tmpdir()}/${docId}.doc.temp`);
           console.log('finished file upload');
-          if (meteorCall) { Meteor.call(meteorCall, UltiSite.Documents.findOne(docId)); } else {
+          if (meteorCall) {
+            Meteor.call(meteorCall, UltiSite.Documents.findOne(docId));
+          } else {
             let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
             if (!ref || ref.length === 0) {
               ref = [{ type: 'files', name: 'Dokumente' }];
@@ -148,9 +150,18 @@ Meteor.methods({
     } else {
       file = UltiSite.Documents.findOne(fileId);
       if (!file) { throw new Meteor.Error('not-found'); }
-      if (this.userId !== file.creator) { throw new Meteor.Error('not-allowed'); }
-      if (file.gridId) { gridFS.remove({ _id: file.gridId }); }
-      UltiSite.Documents.remove(fileId);
+      if (this.userId !== file.creator) {
+        throw new Meteor.Error('not-allowed');
+      }
+      if (file.gridId) {
+        gridFS.remove({ _id: file.gridId }, Meteor.bindEnvironment((err, res) => {
+          if (err) {
+            console.log('Error removing gridfs file', err);
+          } else {
+            UltiSite.Documents.remove(fileId);
+          }
+        }));
+      }
     }
 
     Meteor.call("addEvent", {

@@ -149,6 +149,9 @@ Template.fileBrowserDialog.onCreated(function() {
   this.initialFolder = Session.get("fileBrowserFolder");
   this.activePane = new ReactiveVar(this.initialFolder);
 });
+Template.fileBrowserDialog.onDestroyed(function() {
+  fileBrowserCallback.set(null);
+});
 
 Template.fileBrowserDialog.events({
   'hidden.bs.modal .modal'(e, t) {
@@ -222,16 +225,16 @@ const helpers = {
         _tournamentId: element._id,
       }).map(function(elem) {
         return {
-              text: `Teamfoto:${elem.name}`,
-              action(file) {
-                  console.log("Updating teamfoto");
-                  UltiSite.Images.update(file._id, {
+          text: `Teamfoto:${elem.name}`,
+          action(file) {
+                console.log("Updating teamfoto");
+                UltiSite.Images.update(file._id, {
                     $addToSet: {
-                        associated: elem._id,
-                      },
+                      associated: elem._id,
+                    },
                   });
-                },
-            };
+              },
+        };
       });
       return elems;
     }
