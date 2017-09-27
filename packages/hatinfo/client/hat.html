@@ -10,7 +10,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {{#if isInRole "admin,hatAdmin"}}
-                    <button class="visible-md visible-lg btn btn-primary pull-right action-participate" title="Anmelden" type="button" data-toggle="modal" data-target="#hatParticipateDialog">
+                    <button class="visible-md visible-lg btn btn-primary pull-right action-participate" title="Anmelden" type="button" >
                         <span class="fa fa-plus"></span> Eintragen
                     </button>
                     {{/if}}
@@ -61,7 +61,7 @@
                         {{>hatParticipant}}
                     </ul>
                     {{else}}
-                    <button class="visible-md visible-lg btn btn-primary btn-block action-participate" title="Anmelden" type="button" data-toggle="modal" data-target="#hatParticipateDialog">
+                    <button class="visible-md visible-lg btn btn-primary btn-block action-participate" title="Anmelden" type="button" >
                         <span class="fa fa-plus"></span> Eintragen
                     </button>
                     {{/with}}
@@ -125,11 +125,10 @@
                 {{>Loading}}
             {{/if}}
         </div>
-        <button class="visible-xs visible-sm btn btn-primary btn-floating action-participate" title="Eintragen" type="button" data-toggle="modal" data-target="#hatParticipateDialog">
+        <button class="visible-xs visible-sm btn btn-primary btn-floating action-participate" title="Eintragen" type="button" >
             <span class="fa fa-plus fa-lg"></span>
         </button>
     </div>
-    {{>hatParticipateDialog}}
 </template>
 
 <template name="hatParticipant">
@@ -158,7 +157,7 @@
                 {{/if}}
             </div>
             <div class="col-xs-12 col-sm-6 text-right participant-buttons">
-                <button class="btn btn-default" title="Ändern" type="button" data-toggle="modal" data-target="#hatParticipateDialog">
+                <button class="btn btn-default action-participate" title="Ändern" type="button" >
                     <span class="fa fa-edit"></span> Editieren
                 </button>
                 <button class="btn btn-danger action-remove" title="Austragen">
@@ -180,7 +179,7 @@
 
 
 <template name="hatInfoSettings">
-    <div class="dropdown col-sm-3 wiki-association">
+    <div class="dropdown col-sm-2 wiki-association">
         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
             HatInfo: {{wikiPageName settings.hatWikipage}}
             <span class="fa fa-caret-down"></span>
@@ -193,8 +192,11 @@
             {{/each}}
         </ul>
     </div>    
-    <div class="col-sm-2">
+    <div class="col-sm-1">
         <input name="hatNumPlayers" type="number" class="form-control" value="{{settings.hatNumPlayers}}" placeholder="Anzahl Spieler" title="Anzahl Spieler">
+    </div>
+    <div class="col-sm-2">
+        <input name="hatId" class="form-control" value="{{settings.hatId}}" placeholder="ID" title="ID">
     </div>
     <div class="col-sm-2">
         <input name="hatName" class="form-control" value="{{settings.hatName}}" placeholder="Turniername" title="Turniername">
@@ -234,7 +236,7 @@
                         {{/if}}
                     </h4>
                 </div>
-                {{#autoForm schema="UltiSite.HatInfo.schema" doc=existing id="hatParticipantForm" meteormethod=method type="method"}}
+                {{#autoForm schema=schema doc=existing id="hatParticipantForm" meteormethod=method type="method"}}
                 <div class="modal-body">
                     {{#if existing._id}}
                         {{> afQuickFields fields="name,city,hometeam,strength"}}
@@ -253,7 +255,8 @@
             </div>
         </div>
     </div>
-
+</template>
+<template name="hatParticipateDialogError">
     <div class="modal fade" id="hatParticipateError">
         <div class="modal-dialog modal-error">
             <div class="modal-content">
@@ -274,6 +277,8 @@
             </div>
         </div>
     </div>
+</template>
+<template name="hatParticipateDialogSuccess">
     <div class="modal fade" id="hatParticipateSuccess">
         <div class="modal-dialog modal-success">
             <div class="modal-content">
