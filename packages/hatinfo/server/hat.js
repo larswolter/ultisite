@@ -15,7 +15,12 @@ Meteor.methods({
     participant.payed = moment().add(10, 'years').toDate();
     participant.accessKey = Random.id(34);
     participant.hatId = UltiSite.settings().hatId;
-    if (UltiSite.HatInfo.HatParticipants.findOne({ email: participant.email })) { throw new Meteor.Error('Teilnehmer mit dieser E-Mail exisitiert schon!'); }
+    if (UltiSite.HatInfo.HatParticipants.findOne({
+      email: participant.email,
+      hatId: participant.hatId,
+    })) {
+      throw new Meteor.Error('Teilnehmer mit dieser E-Mail exisitiert schon!');
+    }
     UltiSite.HatInfo.HatParticipants.insert(participant);
     UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
             `Hallo ${participant.name}, \n\n bitte öffne den folgenden Link, um deine Anmeldung beim HitHat zu bestätigen.\n\n${
