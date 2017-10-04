@@ -60,7 +60,7 @@ Template.hatInfos.helpers({
         $or: [
                     { name: new RegExp(Template.instance().filter.get(), 'i') },
                     { email: new RegExp(Template.instance().filter.get(), 'i') },
-   ],
+        ],
       }, { sort: hatSort() });
     }
     return UltiSite.HatInfo.HatParticipants.find({}, { sort: hatSort() });
@@ -143,8 +143,8 @@ Template.hatInfos.events({
 Template.hatParticipateDialog.helpers({
   existing() {
     if (FlowRouter.getParam('_id')) {
-      return UltiSite.HatInfo.HatParticipants.findOne({ accessKey: FlowRouter.getParam('_id') }); 
-}
+      return UltiSite.HatInfo.HatParticipants.findOne({ accessKey: FlowRouter.getParam('_id') });
+    }
   },
   schema() {
     return UltiSite.HatInfo.schema;
@@ -154,9 +154,15 @@ Template.hatParticipateDialog.helpers({
   },
   method() {
     if (FlowRouter.getParam('_id')) {
-      return 'hatUpdateParticipation'; 
-}
+      return 'hatUpdateParticipation';
+    }
     return 'hatParticipate';
+  },
+});
+
+Template.hatParticipateDialogError.helpers({
+  error() {
+    return Session.get('hatParticipateError');
   },
 });
 
@@ -164,16 +170,18 @@ AutoForm.hooks({
   hatParticipantForm: {
     onSuccess (formType, result) {
       console.log(result);
-      UltiSite.hideModal();
-      if (result !== 'updated') {
-        UltiSite.showModal('hatParticipateDialogSuccess');
-      }
+      UltiSite.hideModal(() => {
+        if (result !== 'updated') {
+          UltiSite.showModal('hatParticipateDialogSuccess');
+        }
+      });
     },
     onError (formType, error) {
       console.log('hatParticipantForm:', error);
-      UltiSite.hideModal();
-      Session.set('hatParticipateError', error.message);
-      UltiSite.showModal('hatParticipateDialogError');
+      UltiSite.hideModal(() => {
+        Session.set('hatParticipateError', error.message);
+        UltiSite.showModal('hatParticipateDialogError');
+      });
     },
   },
 });

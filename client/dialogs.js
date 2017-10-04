@@ -43,8 +43,13 @@ UltiSite.showModal = function (templateName, data, options) {
   }
 };
 
-UltiSite.hideModal = function () {
-  if (UltiSite.modalDialogTemplate && UltiSite.modalDialogTemplate.modal) { UltiSite.modalDialogTemplate.modal('hide'); }
+UltiSite.hideModal = function (afterHidden) {
+  if (UltiSite.modalDialogTemplate && UltiSite.modalDialogTemplate.modal) {
+    if (afterHidden) {
+      UltiSite.modalDialogTemplate.on('hidden.bs.modal', afterHidden);
+    }
+    UltiSite.modalDialogTemplate.modal('hide');
+  }
 };
 
 Template.confirmDialog.helpers({
