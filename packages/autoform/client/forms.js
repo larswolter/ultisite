@@ -45,14 +45,23 @@ Template.autoForm.events({
     const initial = AutoForm.content.findOne(form.formId).initial;
     const callbackHandler = function (err, res) {
       if (err) {
-        if (AutoForm._hooks[form.formId] && AutoForm._hooks[form.formId].onError) { AutoForm._hooks[form.formId].onError(form.type, err, form); }
+        if (AutoForm._hooks[form.formId] && AutoForm._hooks[form.formId].onError) {
+          AutoForm._hooks[form.formId].onError(form.type, err, form);
+        }
         return;
       }
-      if (AutoForm._hooks[form.formId] && AutoForm._hooks[form.formId].onSuccess) { AutoForm._hooks[form.formId].onSuccess(form.type, res); }
+      if (AutoForm._hooks[form.formId] && AutoForm._hooks[form.formId].onSuccess) {
+        AutoForm._hooks[form.formId].onSuccess(form.type, res);
+      }
     };
-    if (AutoForm._hooks[form.formId] && AutoForm._hooks[form.formId].formToDoc) { doc = AutoForm._hooks[form.formId].formToDoc(doc); }
+    if (AutoForm._hooks[form.formId] && AutoForm._hooks[form.formId].formToDoc) {
+      doc = AutoForm._hooks[form.formId].formToDoc(doc);
+    }
     try {
-      form.validationContext.validate(doc);
+      if (!form.validationContext.validate(doc)) {
+        console.log('Validation Error');
+        return false;
+      }
       if (form.collection && (form.type === 'insert')) {
         if (form.collection.insert) { form.collection.insert(doc, callbackHandler); } else {
           let collection = global;
@@ -143,7 +152,7 @@ const helpers = {
     const form = this.form || AutoForm.formData();
     if (!form) { return; }
     if (!this.name) { return console.log('fieldValue without name', this); }
-    return AutoForm.getFieldValue(this.name, this.form);
+    return Tracker.nonreactive(() => AutoForm.getFieldValue(this.name, this.form));
   },
   fieldData() {
     const form = Template.currentData().form || AutoForm.formData();
@@ -230,10 +239,10 @@ Template.afQuickFields.helpers({
   },
 });
 
-const debUpdateValue = _.throttle(function(formId, value) {
+const debUpdateValue = function(formId, value) {
   console.log('Setting value:', value);
   AutoForm.content.update(formId, { $set: value });
-}, 500);
+};
 
 
 Template.afFieldInput.events({
