@@ -42,6 +42,7 @@ Template.autoForm.events({
     evt.preventDefault();
     const form = AutoForm.formData();
     let doc = AutoForm.content.findOne(form.formId).doc;
+    doc = form.schema.clean(doc);
     const initial = AutoForm.content.findOne(form.formId).initial;
     const callbackHandler = function (err, res) {
       if (err) {
@@ -59,7 +60,7 @@ Template.autoForm.events({
     }
     try {
       if (!form.validationContext.validate(doc)) {
-        console.log('Validation Error');
+        console.log('Validation Error', form.validationContext.invalidKeys());
         return false;
       }
       if (form.collection && (form.type === 'insert')) {
