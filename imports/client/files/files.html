@@ -205,12 +205,18 @@
                          <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" role="menu">
+                        <li class="dropdown-header">Von {{getAlias creator}}</li>
+                        <li class="divide" role="separator"></li>
                         <li><a href="{{url}}" target="_top"><span class="fa fa-download"></span> runterladen</a></li>
                         {{#if isAdmin}}
                         <li><a href="{{url}}&base64=1" target="_top"><span class="fa fa-download"></span> runterladen old</a></li>
                         {{/if}}
+                        {{!--
                         <li><a href="#" class="edit-file"><span class="fa fa-edit"></span> bearbeiten</a></li>
-                        <li><a href="#" class="remove-file"><span class="fa fa-close"></span> löschen</a></li>
+                        --}}
+                        {{#if or isAdmin (equals userId creator)}}
+                            <li><a href="#" class="remove-file"><span class="fa fa-close"></span> löschen</a></li>
+                        {{/if}}   
                       </ul>
                     </div>
                     {{/if}}

@@ -143,15 +143,20 @@ Meteor.methods({
     return docId;
   },
   removeFile(fileId) {
+    check(fileId, String);
     if (!this.userId) { throw new Meteor.Error('not-allowed'); }
     let file = UltiSite.Images.findOne(fileId);
     if (file) {
-      if (this.userId !== file.creator) { throw new Meteor.Error('not-allowed'); }
+      if (this.userId !== file.creator && !UltiSite.isAdmin(this.userId)) {
+        throw new Meteor.Error('not-allowed'); 
+}
       UltiSite.Images.remove(fileId);
     } else {
       file = UltiSite.Documents.findOne(fileId);
-      if (!file) { throw new Meteor.Error('not-found'); }
-      if (this.userId !== file.creator) {
+      if (!file) {
+        throw new Meteor.Error('not-found'); 
+}
+      if (this.userId !== file.creator && !UltiSite.isAdmin(this.userId)) {
         throw new Meteor.Error('not-allowed');
       }
       if (file.gridId) {
