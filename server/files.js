@@ -2,6 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import sharp from 'sharp';
 import Grid from 'gridfs-locking-stream';
+import Base64Decode from 'base64-stream';
 
 const gridFS = Grid(UltiSite.Documents.rawDatabase(), Npm.require('mongodb'), 'documents-grid');
 
@@ -225,7 +226,11 @@ WebApp.connectHandlers.use('/_document', (req, resp) => {
       resp.setHeader('Content-Type', doc.type);
       resp.setHeader('Content-Disposition', `attachment; filename="${doc.name}"`);
       resp.writeHead(200);
-      readstream.pipe(resp);
+      if (req.query.base64) {
+        readstream.pipe(Base64Decode.decode()).pipe(resp);
+      } else {
+        readstream.pipe(resp);
+      }
     } else {
       console.log(error);
     }
