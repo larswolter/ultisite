@@ -1,4 +1,5 @@
-
+import { check } from 'meteor/check';
+import { Random } from 'meteor/random';
 
 Meteor.startup(function () {
   UltiSite.HatInfo.HatParticipants.find({ payed: { $exists: false } }).forEach((elem) => {
@@ -7,9 +8,11 @@ Meteor.startup(function () {
 });
 Meteor.methods({
   hatConfirmParticipant(accessKey) {
+    check(accessKey, String);
     UltiSite.HatInfo.HatParticipants.update({ accessKey }, { $set: { confirmed: true } });
   },
-  hatParticipate(participant) {
+  hatParticipate(p) {
+    const participant = _.clone(p);
     participant.createdAt = new Date();
     participant.modifiedAt = new Date();
     participant.payed = moment().add(10, 'years').toDate();
@@ -23,25 +26,49 @@ Meteor.methods({
     }
     UltiSite.HatInfo.HatParticipants.insert(participant);
     UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
-            `Hallo ${participant.name}, \n\n bitte öffne den folgenden Link, um deine Anmeldung beim HitHat zu bestätigen.\n\n${
-            Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`)
-            }\n\nViele Grüße\n${UltiSite.settings().teamname}`);
+      `Hallo ${participant.name}, \n\n bitte öffne den folgenden Link, um deine Anmeldung beim HitHat zu bestätigen.\n\n${
+      Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`)
+      }\n\nViele Grüße\n${UltiSite.settings().teamname}`);
     return 'inserted';
   },
+  hatResendMail(accessKey) {
+    check(accessKey, String);
+    if (!Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+      throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
+    }
+    const participant = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
+    UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
+      `Hallo ${participant.name}, \n\n bitte öffne den folgenden Link, um deine Anmeldung beim HitHat zu bestätigen.\n\n${
+      Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`)
+      }\n\nViele Grüße\n${UltiSite.settings().teamname}`);
+  },
   hatParticipationPayed(accessKey) {
+    check(accessKey, String);
     const part = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
-    if (!part) { throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt'); }
-    if (!Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) { throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt'); }
+    if (!part) {
+      throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
+    }
+    if (!Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+      throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
+    }
 
     UltiSite.HatInfo.HatParticipants.update(part._id, { $set: { payed: new Date() } });
     return 'payed';
   },
   hatUpdateParticipation(participant) {
     const part = UltiSite.HatInfo.HatParticipants.findOne({ accessKey: participant.accessKey });
-    if (!part) { throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt'); }
+    if (!part) {
+      throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
+    }
     participant.modifiedAt = new Date();
 
-    UltiSite.HatInfo.HatParticipants.update(part._id, { $set: _.pick(participant, 'name', 'city', 'hometeam', 'strength', 'modifiedAt') });
+    if (Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+      UltiSite.HatInfo.HatParticipants.update(part._id, { $set: participant });
+    } else {
+      UltiSite.HatInfo.HatParticipants.update(part._id, {
+        $set: _.pick(participant, 'name', 'city', 'hometeam', 'strength', 'modifiedAt'),
+      });
+    }
     return 'updated';
   },
   hatRemoveParticipation(accessKey) {
@@ -59,14 +86,16 @@ Meteor.publish('hatParticipants', function (limit, search) {
   const filter = {
     hatId: UltiSite.settings().hatId || undefined,
   };
-    /*
-    if(search && search.trim())
-        filter.$or= [
-            { name: new RegExp(search, 'i') },
-            { email: new RegExp(search, 'i') }
-        ];
-    */
-  if (Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) { return UltiSite.HatInfo.HatParticipants.find(filter, { sort }); }
+  /*
+  if(search && search.trim())
+      filter.$or= [
+          { name: new RegExp(search, 'i') },
+          { email: new RegExp(search, 'i') }
+      ];
+  */
+  if (Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+    return UltiSite.HatInfo.HatParticipants.find(filter, { sort });
+  }
 
   return UltiSite.HatInfo.HatParticipants.find(filter, {
     sort,

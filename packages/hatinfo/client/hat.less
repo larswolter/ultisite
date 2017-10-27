@@ -6,6 +6,12 @@
         opacity:0.5;
     }
     .list-group-item {
+        height: 42px;
+        @media (max-width:765px) {
+            height: 60px;
+        }
+        overflow:hidden;
+        transition: all 400ms;
         .progress.text-center {
             margin-bottom:0px;
         }
@@ -13,5 +19,11 @@
             padding-top: 10px;
         }
     }
-
+    .list-group-item.selected {
+        height: 150px;
+        @media (max-width:765px) {
+            height: 210px;
+        }
+    }
+        
 }

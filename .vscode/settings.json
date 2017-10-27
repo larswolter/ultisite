@@ -16,7 +16,6 @@
         "**/.hg": true,
         "**/.DS_Store": true
     },
-    "editor.formatOnSave": false,
     "search.exclude": {
         ".meteor/local": true,
         "**/node_modules": true
@@ -29,8 +28,9 @@
     "html.format.indentHandlebars": true,
     "eslint.autoFixOnSave": true,
     "javascript.validate.enable": false,
-    "javascript.format.enable": false,
-    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "javascript.format.enable": true,
+      "editor.tabSize": 2,
     "files.associations": {
         "*.html": "handlebars"
     }

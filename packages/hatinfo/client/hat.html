@@ -6,7 +6,6 @@
             {{/with}}
         </div>
         <div class="col-xs-12 col-md-6 col-lg-8">
-            {{#if Template.subscriptionsReady}}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {{#if isInRole "admin,hatAdmin"}}
@@ -121,9 +120,6 @@
                 </ul>
             </div>
             {{/unless}}
-            {{else}}
-                {{>Loading}}
-            {{/if}}
         </div>
         <button class="visible-xs visible-sm btn btn-primary btn-floating action-participate" title="Eintragen" type="button" >
             <span class="fa fa-plus fa-lg"></span>
@@ -132,7 +128,7 @@
 </template>
 
 <template name="hatParticipant">
-    <a class="list-group-item">
+    <a class="list-group-item {{#if activeEntry}}selected{{/if}}">
         <div class="row">
             <strong class="col-xs-6 col-sm-8 col-md-9 {{#if isInRole "admin,hatAdmin"}}participant-entry{{/if}}">
                 <span class="fa fa-envelope-o {{#if confirmed}}text-success{{else}}text-muted{{/if}}"></span>
@@ -149,9 +145,20 @@
             {{#if activeEntry}}
             <div class="col-xs-12 col-sm-6">
                 <a href="mailto:{{this.email}}">{{this.email}}</a><br/>
-                Eingetragen: {{formatDateTime this.createdAt}},
+                Eingetragen: {{formatDateTime this.createdAt}}<br/>
                 Geändert: {{formatDateTime this.modifiedAt}}<br/>
-                E-Mail bestätigt: {{#if this.confirmed}}Ja{{else}}Nein{{/if}}<br/>
+                E-Mail bestätigt: 
+                {{#if this.confirmed}}
+                    Ja
+                {{else}}
+                    Nein
+                    {{#if isInRole "admin,hatAdmin"}}
+                        <button class="btn btn-link action-resend-mail" title="Mail zum bestätigen nochmal senden">
+                            <span class="fa fa-envelope"></span> Nochmal verschicken
+                        </button>
+                    {{/if}}
+                {{/if}}
+                <br/>
                 {{#if isInRole "admin,hatAdmin"}}
                     Bezahlt: {{#if hasPayed}}{{formatDateTime payed}}{{else}}Nein{{/if}}<br/>
                 {{/if}}
@@ -238,13 +245,17 @@
                 </div>
                 {{#autoForm schema=schema doc=existing id="hatParticipantForm" meteormethod=method type="method"}}
                 <div class="modal-body">
-                    {{#if existing._id}}
-                        {{> afQuickFields fields="name,city,hometeam,strength"}}
-                        <fieldset disabled>
-                            {{> afQuickFields omitFields="name,city,hometeam,strength"}}
-                        </fieldset>
+                    {{#if isInRole "admin,hatAdmin"}}
+                        {{> afQuickFields}}
                     {{else}}
-                        {{> afQuickFields fields="name,email,city,hometeam,strength" }}
+                        {{#if existing._id}}
+                            {{> afQuickFields fields="name,city,hometeam,strength"}}
+                            <fieldset disabled>
+                                {{> afQuickFields omitFields="name,city,hometeam,strength"}}
+                            </fieldset>
+                        {{else}}
+                            {{> afQuickFields fields="name,email,city,hometeam,strength" }}
+                        {{/if}}
                     {{/if}}
                 </div>
                 <div class="modal-footer">
