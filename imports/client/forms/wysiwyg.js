@@ -20,6 +20,7 @@ Template.ultisiteWysiwyg.onRendered(function () {
     template.textEditor = wysiwyg.default({
       element: template.$('textarea')[0],
     });
+    UltiSite.wysi = template.textEditor;
     template.textEditor.getElement().classList.add('rich-text-input');
     template.syncField = () => {
       template.textEditor.sync();
@@ -27,7 +28,12 @@ Template.ultisiteWysiwyg.onRendered(function () {
     };
     template.textEditor.getElement().addEventListener('keyup', template.syncField);
   });
-  this.scrollHandler = function() {
+  this.selectHandler = function () {
+    console.log('cursor in ', document.getSelection().anchorNode.parentNode);
+  };
+  document.addEventListener("selectionchange", this.selectHandler);
+
+  this.scrollHandler = function () {
     if (this.$('.ultisite-wysiwyg').offset().top - $(window).scrollTop() < 50) {
       this.$('.wysiwyg-toolbar').addClass('fixed');
     } else {
@@ -38,45 +44,61 @@ Template.ultisiteWysiwyg.onRendered(function () {
 });
 Template.ultisiteWysiwyg.onDestroyed(function () {
   $(window).off('scroll', this.scrollHandler);
+  $(window).off('selectionchange', this.selectHandler);
 });
 
 Template.ultisiteWysiwyg.events({
-  'click .bold' (evt, tmpl) {
+  'click .bold'(evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.bold();
     tmpl.syncField();
   },
-  'click .italic' (evt, tmpl) {
+  'click .italic'(evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.italic();
     tmpl.syncField();
   },
-  'click .underline' (evt, tmpl) {
+  'click .underline'(evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.underline();
     tmpl.syncField();
   },
-  'click .strikethrough' (evt, tmpl) {
+  'click .strikethrough'(evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.strikethrough();
     tmpl.syncField();
   },
-  'click .list-ul' (evt, tmpl) {
+  'click .list-ul'(evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.insertList(false);
     tmpl.syncField();
   },
-  'click .list-ol' (evt, tmpl) {
+  'click .list-ol'(evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.insertList(true);
     tmpl.syncField();
   },
-  'click .remove-format' (evt, tmpl) {
+  'click .remove-format'(evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.removeFormat();
     tmpl.syncField();
   },
-  'click .add-image' (evt, tmpl) {
+  'click .align-right'(evt, tmpl) {
+    evt.preventDefault();
+    tmpl.textEditor.align('right');
+    tmpl.syncField();
+  },
+  'click .align-center'(evt, tmpl) {
+    evt.preventDefault();
+    tmpl.textEditor.align('center');
+    tmpl.syncField();
+  },
+  'click .align-justify'(evt, tmpl) {
+    evt.preventDefault();
+    tmpl.textEditor.align('justify');
+    tmpl.syncField();
+  },
+  'click .add-image'(evt, tmpl) {
     evt.preventDefault();
     import('/imports/client/files/files.js').then(() => {
       UltiSite.fileBrowserShowDialog(tmpl.data.source._id, function (fileObj) {
@@ -90,7 +112,28 @@ Template.ultisiteWysiwyg.events({
       });
     });
   },
-  'click .add-video' (evt, tmpl) {
+  'click .rich-text-input a'(evt, tmpl) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    const linkElem = evt.currentTarget;
+    console.log('clicked', linkElem, linkElem.parentNode, linkElem.parentNode.className);
+    if (linkElem.parentNode.className.indexOf('editable-image') >= 0) {
+      UltiSite.showModal('editImageDialog', {
+        elem: linkElem.parentNode,
+        callback() {
+          tmpl.syncField();
+        },
+      });
+    } else {
+      UltiSite.getTextDialog({ text: linkElem.href, header: 'Link ändern' }, function (text) {
+        if (text) {
+          linkElem.href = text;
+          tmpl.syncField();
+        }
+      });
+    }
+  },
+  'click .add-video'(evt, tmpl) {
     evt.preventDefault();
     UltiSite.getTextDialog({ text: 'Gib eine Video URL ein', header: 'Video einfügen' }, function (text) {
       if (text) {
@@ -98,20 +141,92 @@ Template.ultisiteWysiwyg.events({
       }
     });
   },
-  'click .add-link' (evt, tmpl) {
+  'click .add-link'(evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.openPopup();
     UltiSite.getTextDialog({ text: 'https://', header: 'Link einfügen' }, function (text) {
       if (text) {
         tmpl.textEditor.closePopup();
         tmpl.textEditor.insertLink(text);
+        tmpl.syncField();
       }
     });
   },
-  'click .forecolor' (evt, tmpl) {
+  'click .forecolor'(evt, tmpl) {
     evt.preventDefault();
     const color = tmpl.$(evt.currentTarget).attr('data-color');
     tmpl.textEditor.forecolor(color);
     tmpl.syncField();
+  },
+  'click .headings a'(evt, tmpl) {
+    evt.preventDefault();
+    const heading = tmpl.$(evt.currentTarget).attr('class');
+    tmpl.textEditor.format(heading);
+    tmpl.syncField();
+  },
+});
+
+Template.editImageDialog.onCreated(function () {
+  this.imgInfo = new ReactiveVar({});
+  this.elem = new ReactiveVar();
+  this.autorun(() => {
+    const elem = Template.currentData().elem;
+    this.elem.set(elem);
+    const imgLink = elem.children[0].children[0].src.split(/[\?\&]/);
+    this.imgInfo.set({
+      size: imgLink[2].split('=')[1],
+      id: imgLink[1].split('=')[1],
+      pos: elem.className.replace('editable-image', '').trim(),
+    });
+  });
+});
+
+Template.editImageDialog.helpers({
+  imgInfo() {
+    return Template.instance().imgInfo.get();
+  },
+  sizes() {
+    return [80, 120, 160, 200, 240, 320, 480];
+  },
+});
+
+Template.editImageDialog.events({
+  'click .action-set-size'(evt, tmpl) {
+    evt.preventDefault();
+    const cur = tmpl.imgInfo.get();
+    cur.size = this;
+    tmpl.imgInfo.set(cur);
+  },
+  'click .action-set-left'(evt, tmpl) {
+    evt.preventDefault();
+    const cur = tmpl.imgInfo.get();
+    cur.pos = 'pull-left';
+    tmpl.imgInfo.set(cur);
+  },
+  'click .action-set-line'(evt, tmpl) {
+    evt.preventDefault();
+    const cur = tmpl.imgInfo.get();
+    cur.pos = '';
+    tmpl.imgInfo.set(cur);
+  },
+  'click .action-set-right'(evt, tmpl) {
+    evt.preventDefault();
+    const cur = tmpl.imgInfo.get();
+    cur.pos = 'pull-right';
+    tmpl.imgInfo.set(cur);
+  },
+  'click .action-apply'(evt, tmpl) {
+    evt.preventDefault();
+    const cur = tmpl.imgInfo.get();
+    tmpl.elem.get().className = `editable-image ${cur.pos}`;
+    tmpl.elem.get().children[0].children[0].src = `/_image?imageId=${cur.id}&size=${cur.size}`;
+    Template.currentData().callback();
+    UltiSite.hideModal();
+  },
+  'click .action-remove'(evt, tmpl) {
+    evt.preventDefault();
+    tmpl.elem.get().parentNode.removeChild(tmpl.elem.get());
+    Template.currentData().callback();
+    UltiSite.hideModal();
   },
 });

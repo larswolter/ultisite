@@ -20,21 +20,91 @@
           </ul>
         </div>
       </div>
+      {{#unless this.light}}
+        <div class="btn-group" role="group" aria-label="...">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Überschriften">
+            <span class="fa fa-header"></span>
+          </button>
+          <ul class="dropdown-menu headings">
+            <li><a href="#" class="p">Textblock</a></li>
+            <li><a href="#" class="h1">1. Überschrift</a></li>
+            <li><a href="#" class="h2">2. Überschrift</a></li>
+            <li><a href="#" class="h3">3. Überschrift</a></li>
+            <li><a href="#" class="h4">4. Überschrift</a></li>
+          </ul>
+        </div>
+        <div class="btn-group" role="group" aria-label="...">
+          <button type="button" class="btn btn-default align-justify" title="Blocksatz"><span class="fa fa-align-justify"></span></button>
+          <button type="button" class="btn btn-default align-right" title="Rechts"><span class="fa fa-align-right"></span></button>
+          <button type="button" class="btn btn-default align-center" title="Zentriert"><span class="fa fa-align-center"></span></button>
+        </div>
+      {{/unless}}
       <div class="btn-group" role="group" aria-label="...">
         <button type="button" class="btn btn-default list-ul" title="Auflistung"><span class="fa fa-list-ul"></span></button>
         <button type="button" class="btn btn-default list-ol" title="Numerrierte Liste"><span class="fa fa-list-ol"></span></button>
       </div>
+      {{#unless this.light}}
         <div class="btn-group" role="group" aria-label="...">
-          {{#unless this.light}}
-            <button type="button" class="btn btn-default add-link" title="Link einfügen"><span class="fa fa-link"></span></button>
-            <button type="button" class="btn btn-default add-image" title="Bild einfügen"><span class="fa fa-image"></span></button>
-            <button type="button" class="btn btn-default add-video" title="Video einfügen"><span class="fa fa-video-camera"></span></button>
-          {{/unless}}
+          <button type="button" class="btn btn-default add-link" title="Link einfügen"><span class="fa fa-link"></span></button>
+          <button type="button" class="btn btn-default add-image" title="Bild einfügen"><span class="fa fa-image"></span></button>
+          <button type="button" class="btn btn-default add-video" title="Video einfügen"><span class="fa fa-video-camera"></span></button>
         </div>
+      {{/unless}}
       <div class="btn-group" role="group" aria-label="...">
         <button type="button" class="btn btn-default remove-format" title="Formatierung löschen"><span class="fa fa-eraser"></span></button>
       </div>
     </div>
     <textarea {{this.atts}} class="form-control wysiwyg-textarea">{{this.value}}</textarea>
   </div>
+</template>
+
+<template name="editImageDialog">
+  <div class="modal fade" id="editImageDialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span class="fa fa-close"></span>
+          </button>
+          <h4 class="modal-title">
+              Bild bearbeiten
+          </h4>
+        </div>
+        <div class="modal-body">
+          <h4>Bildgröße</h4>
+          <div class="btn-group">
+            {{#each sizes}}
+              <button class="btn btn-default {{#if equals this imgInfo.size}}active{{/if}} action-set-size">
+                {{this}}
+              </button>
+            {{/each}}
+          </div>
+          <h4>Bildposition</h4>
+          <div class="btn-group">
+            <button class="btn btn-default {{#if equals "pull-left" imgInfo.pos}}active{{/if}} action-set-left">
+              Links
+            </button>
+            <button class="btn btn-default {{#if equals "" imgInfo.pos}}active{{/if}} action-set-line">
+              Zeile
+            </button>
+            <button class="btn btn-default {{#if equals "pull-right" imgInfo.pos}}active{{/if}} action-set-right">
+              Rechts
+            </button>
+          </div>
+          <br /><br />
+          <button type="button" class="btn btn-danger action-remove" >
+              Bild Entfernen
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">
+              Abbrechen
+          </button>
+          <button type="button" class="btn btn-primary action-apply" >
+              Übernehmen
+          </button>
+        </div>
+      </div>  
+    </div>  
+  </div>    
 </template>
