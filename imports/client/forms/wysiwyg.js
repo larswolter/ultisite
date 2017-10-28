@@ -1,3 +1,5 @@
+import { ReactiveVar } from 'meteor/reactive-var';
+
 import './wysiwyg.less';
 import './wysiwyg.html';
 
@@ -13,7 +15,9 @@ const htmlEncode = function (string) {
   });
 };
 
-
+Template.ultisiteWysiwyg.onCreated(function () {
+  this.state = new ReactiveVar({});
+});
 Template.ultisiteWysiwyg.onRendered(function () {
   const template = this;
   import('wysiwyg.js').then((wysiwyg) => {
@@ -25,11 +29,55 @@ Template.ultisiteWysiwyg.onRendered(function () {
     template.syncField = () => {
       template.textEditor.sync();
       template.$('textarea').trigger('change');
+      this.selectHandler();
     };
     template.textEditor.getElement().addEventListener('keyup', template.syncField);
   });
-  this.selectHandler = function () {
-    console.log('cursor in ', document.getSelection().anchorNode.parentNode);
+  this.selectHandler = () => {
+    const state = {};
+    const checkState = (elem) => {
+      if (elem.tagName === 'B') {
+        state.bold = true;
+      }
+      if (elem.tagName === 'I') {
+        state.italic = true;
+      }
+      if (elem.tagName === 'FONT') {
+        state.color = true;
+      }
+      if (elem.tagName === 'STRIKE') {
+        state.strikethrough = true;
+      }
+      if (elem.tagName === 'U') {
+        state.underline = true;
+      }
+      if (elem.tagName === 'UL') {
+        state.listUl = true;
+      }
+      if (elem.tagName === 'OL') {
+        state.listOl = true;
+      }
+      if (elem.tagName === 'H1') {
+        state.heading = 1;
+      }
+      if (elem.tagName === 'H2') {
+        state.heading = 2;
+      }
+      if (elem.tagName === 'H3') {
+        state.heading = 3;
+      }
+      if (elem.tagName === 'H4') {
+        state.heading = 4;
+      }
+      state.align = elem.style.textAlign;
+    };
+    let elem = document.getSelection().anchorNode.parentNode;
+    while (elem && elem.className !== 'rich-text-input') {
+      checkState(elem);
+      elem = elem.parentNode;
+    }
+    this.state.set(state);
+    console.log(state);
   };
   document.addEventListener("selectionchange", this.selectHandler);
 
@@ -45,6 +93,11 @@ Template.ultisiteWysiwyg.onRendered(function () {
 Template.ultisiteWysiwyg.onDestroyed(function () {
   $(window).off('scroll', this.scrollHandler);
   $(window).off('selectionchange', this.selectHandler);
+});
+Template.ultisiteWysiwyg.helpers({
+  state() {
+    return Template.instance().state.get();
+  },
 });
 
 Template.ultisiteWysiwyg.events({
@@ -85,17 +138,29 @@ Template.ultisiteWysiwyg.events({
   },
   'click .align-right'(evt, tmpl) {
     evt.preventDefault();
-    tmpl.textEditor.align('right');
+    if (evt.currentTarget.className.indexOf('active') >= 0) {
+      tmpl.textEditor.align('left');
+    } else {
+      tmpl.textEditor.align('right');
+    }
     tmpl.syncField();
   },
   'click .align-center'(evt, tmpl) {
     evt.preventDefault();
-    tmpl.textEditor.align('center');
+    if (evt.currentTarget.className.indexOf('active') >= 0) {
+      tmpl.textEditor.align('left');
+    } else {
+      tmpl.textEditor.align('center');
+    }
     tmpl.syncField();
   },
   'click .align-justify'(evt, tmpl) {
     evt.preventDefault();
-    tmpl.textEditor.align('justify');
+    if (evt.currentTarget.className.indexOf('active') >= 0) {
+      tmpl.textEditor.align('left');
+    } else {
+      tmpl.textEditor.align('justify');
+    }
     tmpl.syncField();
   },
   'click .add-image'(evt, tmpl) {
