@@ -29,13 +29,14 @@ Package.onUse(function (api) {
         'random',
         'ejson',
         'spacebars',
+        'underscore',
         'check',
         'alanning:roles',
         'reactive-var',
         'ultisite:autoform',
     ]);
 
-    api.addFiles(['schema.js'], ['client','server']);
+    api.addFiles(['schema.js'], ['client', 'server']);
     api.addFiles(['client/hat.html', 'client/hat.js', 'client/hat.less'], 'client');
     api.addFiles('server/hat.js', 'server');
 });

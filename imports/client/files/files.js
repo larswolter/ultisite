@@ -5,7 +5,7 @@ import './files.less';
 
 if (!HTMLCanvasElement.prototype.toBlob) {
   Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
-    value (callback, type, quality) {
+    value(callback, type, quality) {
       let binStr = atob(this.toDataURL(type, quality).split(',')[1]),
         len = binStr.length,
         arr = new Uint8Array(len);
@@ -21,7 +21,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 const currentlyEditedFile = new ReactiveVar(undefined);
 const fileBrowserCallback = new ReactiveVar(undefined);
 
-Meteor.startup(function() {
+Meteor.startup(function () {
   _.extend(UltiSite, {
     fileBrowserShowDialog(id, callback) {
       Session.set("fileBrowserFolder", id);
@@ -35,11 +35,11 @@ Meteor.startup(function() {
   });
 });
 
-Template.registerHelper("fileRootFolder", function() {
+Template.registerHelper("fileRootFolder", function () {
   return UltiSite.Folders.findOne(UltiSite.settings().rootFolderId);
 });
 
-const getIcon = function() {
+const getIcon = function () {
   let file = this;
   if (!file.type && this.file) { file = this.file; }
   if (!file.type) { return "fa-question"; }
@@ -58,13 +58,19 @@ Template.editFileDialog.helpers({
 });
 
 
-Template.fileBrowser.onCreated(function() {
+Template.fileBrowser.onCreated(function () {
   Session.set("fileBrowserFolder", UltiSite.settings().rootFolderId);
   Session.setDefault("fileBrowserGalleryView", false);
 
   this.autorun(() => {
     const id = FlowRouter.getParam("_id");
-    if (id) { Session.set("fileBrowserFolder", id); }
+    const dataId = Template.currentData().fileBrowserFolder;
+    if (dataId) {
+      Session.set("fileBrowserFolder", dataId);
+    } else
+      if (id) {
+        Session.set("fileBrowserFolder", id);
+      }
   });
   this.autorun(() => {
     this.subscribe('Files', Session.get("fileBrowserFolder"));
@@ -144,12 +150,12 @@ Template.fileBrowserItem.helpers({
   icon: getIcon,
 });
 
-Template.fileBrowserDialog.onCreated(function() {
+Template.fileBrowserDialog.onCreated(function () {
   const self = this;
   this.initialFolder = Session.get("fileBrowserFolder");
   this.activePane = new ReactiveVar(this.initialFolder);
 });
-Template.fileBrowserDialog.onDestroyed(function() {
+Template.fileBrowserDialog.onDestroyed(function () {
   fileBrowserCallback.set(null);
 });
 
@@ -197,9 +203,9 @@ const helpers = {
     return _.sortBy(UltiSite.Images.find({
       associated: Session.get("fileBrowserFolder"),
     }).fetch().concat(
-            UltiSite.Documents.find({
-              associated: Session.get("fileBrowserFolder"),
-            }).fetch()), function(doc) {
+      UltiSite.Documents.find({
+        associated: Session.get("fileBrowserFolder"),
+      }).fetch()), function (doc) {
       return doc.created;
     });
   },
@@ -223,17 +229,17 @@ const helpers = {
       if (!turnier) { return []; }
       const elems = UltiSite.Teams.find({
         _tournamentId: element._id,
-      }).map(function(elem) {
+      }).map(function (elem) {
         return {
           text: `Teamfoto:${elem.name}`,
           action(file) {
-                console.log("Updating teamfoto");
-                UltiSite.Images.update(file._id, {
-                    $addToSet: {
-                      associated: elem._id,
-                    },
-                  });
+            console.log("Updating teamfoto");
+            UltiSite.Images.update(file._id, {
+              $addToSet: {
+                associated: elem._id,
               },
+            });
+          },
         };
       });
       return elems;
@@ -242,11 +248,11 @@ const helpers = {
 };
 
 
-Template.fileBrowserList.onCreated(function() {
+Template.fileBrowserList.onCreated(function () {
   console.log("List: onCreated");
   const self = this;
 });
-Template.fileBrowserList.onRendered(function() {
+Template.fileBrowserList.onRendered(function () {
   console.log("List: onRendered");
 });
 
@@ -269,8 +275,8 @@ Template.fileBrowserList.events({
       _id: this._id,
     }, {
       $set: {
-        rename: true,
-      },
+          rename: true,
+        },
     });
   },
   'change .folder-name'(e, t) {
@@ -280,16 +286,16 @@ Template.fileBrowserList.events({
       _id: input.data('id'),
     }, {
       $set: {
-        name: input.val(),
-      },
+          name: input.val(),
+        },
       $unset: {
-        rename: 1,
-      },
+          rename: 1,
+        },
     });
   },
 });
 
-Template.fileBrowserGallery.onCreated(function() {
+Template.fileBrowserGallery.onCreated(function () {
   console.log("Gallery created for ID", this.data);
   const self = this;
 });
@@ -312,7 +318,7 @@ Template.fileBrowserGalleryItem.events({
           return;
         }
       }
-    } catch (err) {}
+    } catch (err) { }
 
     FlowRouter.go('image', {
       _id: this.file._id,
@@ -328,7 +334,7 @@ Template.fileBrowserGalleryItem.events({
           return;
         }
       }
-    } catch (err) {}
+    } catch (err) { }
     window.open(this.file.url(), '_blank');
   },
   'click .remove-file'(e, t) {
@@ -350,7 +356,7 @@ Template.fileBrowserGalleryItem.events({
   },
   'click .custom-action'(e, t) {
     e.preventDefault();
-        // e.stopPropagation();
+    // e.stopPropagation();
     console.log("Custom:", this);
     this.action(t.data.file);
   },

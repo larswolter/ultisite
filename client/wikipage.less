@@ -1,6 +1,19 @@
 @import "/client/lib/custom.bootstrap.import.less";
 
 .wikipage {
+    .page-details {
+      position: relative;
+      color:gray;
+      border-bottom: 1px solid gray;
+      .dropdown {
+        position: absolute;
+        right:0px;
+        top:0px;
+        .btn.btn-link {
+          padding:0px;
+        }
+      }
+    }
     .page-heading {
         background-color:white;
         box-shadow: 2px 2px 4px rgba(0,0,0,0.2);

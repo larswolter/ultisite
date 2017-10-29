@@ -36,6 +36,9 @@ Template.ultisiteWysiwyg.onRendered(function () {
   this.selectHandler = () => {
     const state = {};
     const checkState = (elem) => {
+      if (!elem) {
+        return;
+      }
       if (elem.tagName === 'B') {
         state.bold = true;
       }
@@ -69,15 +72,14 @@ Template.ultisiteWysiwyg.onRendered(function () {
       if (elem.tagName === 'H4') {
         state.heading = 4;
       }
-      state.align = elem.style.textAlign;
+      state.align = elem.style && elem.style.textAlign;
     };
-    let elem = document.getSelection().anchorNode.parentNode;
+    let elem = document.getSelection().anchorNode && document.getSelection().anchorNode.parentNode;
     while (elem && elem.className !== 'rich-text-input') {
       checkState(elem);
       elem = elem.parentNode;
     }
     this.state.set(state);
-    console.log(state);
   };
   document.addEventListener("selectionchange", this.selectHandler);
 

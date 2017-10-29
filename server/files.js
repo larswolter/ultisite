@@ -15,27 +15,27 @@ Meteor.methods({
         created: -1,
       },
     }).fetch().concat(
-            UltiSite.Documents.find({}, {
-              limit: 5,
-              sort: {
-                created: -1,
-              },
-            }).fetch()), function(doc) {
+      UltiSite.Documents.find({}, {
+        limit: 5,
+        sort: {
+          created: -1,
+        },
+      }).fetch()), function (doc) {
       return doc.created;
-    }).slice(0, 5).map(function(doc) {
-      return doc._id;
-    });
+    }).slice(0, 5).map(function (doc) {
+        return doc._id;
+      });
   },
   retrieveAbandonedFiles() {
     if (!this.userId) { return []; }
     return UltiSite.Images.find({
       associated: [],
     }).fetch().concat(
-            UltiSite.Documents.find({
-              associated: [],
-            }).fetch()).map(function(doc) {
-              return doc._id;
-            });
+      UltiSite.Documents.find({
+        associated: [],
+      }).fetch()).map(function (doc) {
+        return doc._id;
+      });
   },
   fileUploadChunk(base64, metadata, lastPackage) {
     let meteorCall;
@@ -48,11 +48,11 @@ Meteor.methods({
       let imgId;
       if (!metadata._id) {
         imgId = UltiSite.Images.insert(
-                    _.extend(metadata, {
-                      created: new Date(),
-                      creator: this.userId,
-                    }),
-                );
+          _.extend(metadata, {
+            created: new Date(),
+            creator: this.userId,
+          }),
+        );
         fs.writeFileSync(`${os.tmpdir()}/${imgId}.image.temp`, base64, { encoding: 'base64' });
       } else {
         const existing = UltiSite.Images.findOne(metadata._id);
@@ -63,7 +63,7 @@ Meteor.methods({
       if (lastPackage) {
         const fileStats = fs.statSync(`${os.tmpdir()}/${imgId}.image.temp`);
         console.log('writing image to database');
-        fs.readFile(`${os.tmpdir()}/${imgId}.image.temp`, { encoding: 'base64' }, Meteor.bindEnvironment(function(err, data) {
+        fs.readFile(`${os.tmpdir()}/${imgId}.image.temp`, { encoding: 'base64' }, Meteor.bindEnvironment(function (err, data) {
           if (err) {
             console.log(err);
             throw err;
@@ -71,9 +71,13 @@ Meteor.methods({
           UltiSite.Images.update(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
           fs.unlink(`${os.tmpdir()}/${imgId}.image.temp`);
           console.log('finished image upload');
-          if (meteorCall) { Meteor.call(meteorCall, UltiSite.Images.findOne(imgId)); } else {
+          if (meteorCall) {
+            Meteor.call(meteorCall, UltiSite.Images.findOne(imgId));
+          } else {
             let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
-            if (!ref || ref.length === 0) { ref = [{ type: 'files', name: 'Bilder' }]; }
+            if (!ref || ref.length === 0) {
+              ref = [{ type: 'files', name: 'Bilder' }];
+            }
             Meteor.call("addEvent", {
               type: ref[0].type,
               _id: metadata.associated[0],
@@ -90,11 +94,11 @@ Meteor.methods({
     let docId;
     if (!metadata._id) {
       docId = UltiSite.Documents.insert(
-                    _.extend(metadata, {
-                      created: new Date(),
-                      creator: this.userId,
-                    }),
-                );
+        _.extend(metadata, {
+          created: new Date(),
+          creator: this.userId,
+        }),
+      );
       fs.writeFileSync(`${os.tmpdir()}/${docId}.doc.temp`, base64, { encoding: 'base64' });
     } else {
       const existing = UltiSite.Documents.findOne(metadata._id);
@@ -107,16 +111,17 @@ Meteor.methods({
       gridFS.createWriteStream({
         filename: metadata.name,
         content_type: metadata.type,
-      }, Meteor.bindEnvironment(function(err, wstream) {
+      }, Meteor.bindEnvironment(function (err, wstream) {
         if (err) {
           console.log(err);
           fs.unlink(`${os.tmpdir()}/${docId}.doc.temp`);
           throw err;
         }
-        wstream.on('close', Meteor.bindEnvironment(function(fileObj) {
+        wstream.on('close', Meteor.bindEnvironment(function (fileObj) {
           UltiSite.Documents.update(docId, {
             $set: {
-              gridId: `${fileObj._id}`, size: fileStats.size },
+              gridId: `${fileObj._id}`, size: fileStats.size,
+            },
             $unset: { progress: 1 },
           });
           fs.unlink(`${os.tmpdir()}/${docId}.doc.temp`);
@@ -148,14 +153,14 @@ Meteor.methods({
     let file = UltiSite.Images.findOne(fileId);
     if (file) {
       if (this.userId !== file.creator && !UltiSite.isAdmin(this.userId)) {
-        throw new Meteor.Error('not-allowed'); 
-}
+        throw new Meteor.Error('not-allowed');
+      }
       UltiSite.Images.remove(fileId);
     } else {
       file = UltiSite.Documents.findOne(fileId);
       if (!file) {
-        throw new Meteor.Error('not-found'); 
-}
+        throw new Meteor.Error('not-found');
+      }
       if (this.userId !== file.creator && !UltiSite.isAdmin(this.userId)) {
         throw new Meteor.Error('not-allowed');
       }
@@ -181,15 +186,15 @@ Meteor.methods({
 });
 
 
-Meteor.startup(function() {
-    /*
-    UltiSite.Folders.find().observeChanges({
-        removed: function(id, doc) {
-        }
-    });*/
+Meteor.startup(function () {
+  /*
+  UltiSite.Folders.find().observeChanges({
+      removed: function(id, doc) {
+      }
+  });*/
 });
 
-WebApp.connectHandlers.use("/dynamicAppIcon", function(req, res, next) {
+WebApp.connectHandlers.use("/dynamicAppIcon", function (req, res, next) {
   const query = Npm.require('url').parse(req.url, true).query;
   const icon = UltiSite.Images.findOne(UltiSite.settings().imageIcon);
   if (!icon) {
@@ -201,16 +206,16 @@ WebApp.connectHandlers.use("/dynamicAppIcon", function(req, res, next) {
   res.setHeader('Content-Type', icon.type);
   if (query.size) {
     sharp(new Buffer(icon.base64, 'base64'))
-            .resize(Number(query.size))
-            .toBuffer()
-            .then((data) => {
-              res.writeHead(200);
-              res.end(data);
-            })
-            .catch((err) => {
-              res.writeHead(500);
-              res.end(JSON.stringify(err));
-            });
+      .resize(Number(query.size))
+      .toBuffer()
+      .then((data) => {
+        res.writeHead(200);
+        res.end(data);
+      })
+      .catch((err) => {
+        res.writeHead(500);
+        res.end(JSON.stringify(err));
+      });
   } else { res.end(new Buffer(icon.base64, 'base64')); }
 });
 
