@@ -34,9 +34,15 @@
           </ul>
         </div>
         <div class="btn-group" role="group" aria-label="...">
-          <button type="button" class="btn btn-default {{#if equals state.align "justify"}}active{{/if}} align-justify" title="Blocksatz"><span class="fa fa-align-justify"></span></button>
-          <button type="button" class="btn btn-default {{#if equals state.align "right"}}active{{/if}} align-right" title="Rechts"><span class="fa fa-align-right"></span></button>
-          <button type="button" class="btn btn-default {{#if equals state.align "center"}}active{{/if}} align-center" title="Zentriert"><span class="fa fa-align-center"></span></button>
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Überschriften">
+            <span class="fa fa-align-{{state.align}}"></span> 
+          </button>
+          <ul class="dropdown-menu alignment">
+            <li><a href="#" class="left"><span class="fa fa-align-left"></span></a></li>
+            <li><a href="#" class="right"><span class="fa fa-align-right"></span></a></li>
+            <li><a href="#" class="center"><span class="fa fa-align-center"></span></a></li>
+            <li><a href="#" class="justify"><span class="fa fa-align-justify"></span></a></li>
+          </ul>
         </div>
       {{/unless}}
       <div class="btn-group" role="group" aria-label="...">

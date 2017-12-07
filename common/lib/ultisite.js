@@ -24,6 +24,12 @@ moment.locale("de", {
   },
 });
 
+const translationTable = {
+  folder: 'Ordner',
+  files: 'Dokumente',
+  wikipage: 'Wikiseite',
+};
+
 Ground.Collection(Meteor.users);
 
 if (Meteor.isServer) {
@@ -192,7 +198,9 @@ _.extend(UltiSite, {
     if (state === 100) { return "Sicher"; } else if (state >= 50) { return "Vielleicht"; } else if (state >= 10) { return "Interesse"; }
     return "Kann nicht";
   },
-
+  translate(term) {
+    return translationTable[term] || term;
+  },
 });
 
 if (Meteor.isClient) {

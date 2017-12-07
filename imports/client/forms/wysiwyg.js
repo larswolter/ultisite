@@ -16,7 +16,7 @@ const htmlEncode = function (string) {
 };
 
 Template.ultisiteWysiwyg.onCreated(function () {
-  this.state = new ReactiveVar({});
+  this.state = new ReactiveVar({ align: 'left' });
 });
 Template.ultisiteWysiwyg.onRendered(function () {
   const template = this;
@@ -72,7 +72,7 @@ Template.ultisiteWysiwyg.onRendered(function () {
       if (elem.tagName === 'H4') {
         state.heading = 4;
       }
-      state.align = elem.style && elem.style.textAlign;
+      state.align = (elem.style && elem.style.textAlign) || 'left';
     };
     let elem = document.getSelection().anchorNode && document.getSelection().anchorNode.parentNode;
     while (elem && elem.className !== 'rich-text-input') {
@@ -138,31 +138,9 @@ Template.ultisiteWysiwyg.events({
     tmpl.textEditor.removeFormat();
     tmpl.syncField();
   },
-  'click .align-right'(evt, tmpl) {
+  'click .alignment a'(evt, tmpl) {
     evt.preventDefault();
-    if (evt.currentTarget.className.indexOf('active') >= 0) {
-      tmpl.textEditor.align('left');
-    } else {
-      tmpl.textEditor.align('right');
-    }
-    tmpl.syncField();
-  },
-  'click .align-center'(evt, tmpl) {
-    evt.preventDefault();
-    if (evt.currentTarget.className.indexOf('active') >= 0) {
-      tmpl.textEditor.align('left');
-    } else {
-      tmpl.textEditor.align('center');
-    }
-    tmpl.syncField();
-  },
-  'click .align-justify'(evt, tmpl) {
-    evt.preventDefault();
-    if (evt.currentTarget.className.indexOf('active') >= 0) {
-      tmpl.textEditor.align('left');
-    } else {
-      tmpl.textEditor.align('justify');
-    }
+    tmpl.textEditor.align(evt.currentTarget.className);
     tmpl.syncField();
   },
   'click .add-image'(evt, tmpl) {

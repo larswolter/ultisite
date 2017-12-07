@@ -26,6 +26,11 @@
                 <small>{{skillLevel}}</small>
             </h4>
         </div>
+        {{#if planned}}
+            <div class="caption">
+                {{planned.yes}} wollen am {{planned.day}} kommen 
+            </div>
+        {{/if}}
         {{#if mapImage}}
             <div class="practice-map-image" style="background-image:url('{{imageUrl mapImage}}')"></div>
         {{/if}}

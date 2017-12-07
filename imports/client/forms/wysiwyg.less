@@ -1,7 +1,12 @@
+@import "/client/lib/custom.bootstrap.import.less";
+
 .ultisite-wysiwyg {
   position: relative;
   padding: 10px;
   padding-top: 40px;
+  @media(max-width:@screen-xs-max) {
+    padding-top:80px;
+  }
   background-color: white;
   .rich-text-input {
     min-height: 4em;
@@ -24,5 +29,6 @@
   .wysiwyg-toolbar.fixed {
     position: fixed;
     top:50px;
+    padding-top:15px
   }
 }
