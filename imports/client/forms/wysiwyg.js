@@ -151,7 +151,8 @@ Template.ultisiteWysiwyg.events({
           const path = FlowRouter.path("image", {
             _id: fileObj._id,
           });
-          tmpl.textEditor.insertHTML(`<div class="editable-image"><a href="${path}"><img src="${fileObj.url(120)}"></a></div>`);
+          tmpl.textEditor.insertHTML(`<div class=editable-image><a href="${path}"><img src="${fileObj.url(120)}"></a></div>`);
+          console.log('inserted html');
         }
         UltiSite.fileBrowserHideDialog();
       });

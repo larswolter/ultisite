@@ -239,3 +239,21 @@ blockquote {
     padding: 0px 15px;
     height: 0px;
 }
+
+@media(max-width:@screen-xs-max) {
+    
+  .modal-dialog {
+      .modal-header {
+        position: sticky;
+        z-index: 100;
+        background-color: white;
+        top: 0px;
+        button.close {
+          float:left;
+        }
+        .modal-title {
+          padding-left: 20px;
+        }
+      }
+  }
+}

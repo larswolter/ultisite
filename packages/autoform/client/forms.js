@@ -38,10 +38,11 @@ Template.autoForm.onCreated(function () {
 });
 
 Template.autoForm.events({
-  'submit form' (evt, tmpl) {
+  'submit form'(evt, tmpl) {
     evt.preventDefault();
     const form = AutoForm.formData();
     let doc = AutoForm.content.findOne(form.formId).doc;
+    const docId = doc._id;
     doc = form.schema.clean(doc);
     const initial = AutoForm.content.findOne(form.formId).initial;
     const callbackHandler = function (err, res) {
@@ -64,16 +65,20 @@ Template.autoForm.events({
         return false;
       }
       if (form.collection && (form.type === 'insert')) {
-        if (form.collection.insert) { form.collection.insert(doc, callbackHandler); } else {
+        if (form.collection.insert) {
+          form.collection.insert(doc, callbackHandler);
+        } else {
           let collection = global;
           form.collection.split('.').forEach(p => collection = collection[p]);
           collection.insert(doc, callbackHandler);
         }
       } else if (form.collection && (form.type === 'update')) {
-        if (form.collection.insert) { form.collection.update(doc._id, { $set: _.omit(doc, '_id') }, callbackHandler); } else {
+        if (form.collection.insert) {
+          form.collection.update(docId, { $set: _.omit(doc, '_id') }, {}, callbackHandler);
+        } else {
           let collection = global;
           form.collection.split('.').forEach(p => collection = collection[p]);
-          collection.update(doc._id, { $set: _.omit(doc, '_id') }, callbackHandler);
+          collection.update(docId, { $set: _.omit(doc, '_id') }, {}, callbackHandler);
         }
       } else if (form.meteormethod) {
         Meteor.call(form.meteormethod, doc, callbackHandler);
@@ -208,7 +213,7 @@ Template.afArrayField.helpers({
   },
 });
 Template.afArrayField.events({
-  'click .action-remove' (event, template) {
+  'click .action-remove'(event, template) {
     event.preventDefault();
     const value = {};
     console.log('removing', template.data.name, this.idx);
@@ -218,7 +223,7 @@ Template.afArrayField.events({
     value2[`doc.${AutoForm.arrayCheck(template.data.name)}`] = null;
     AutoForm.content.update(template.data.formId, { $pull: value });
   },
-  'click .action-insert' (event, template) {
+  'click .action-insert'(event, template) {
     event.preventDefault();
     const element = AutoForm.content.findOne(`${template.data.formId}.${template.data.name}`).doc;
     const value = {};
@@ -240,14 +245,13 @@ Template.afQuickFields.helpers({
   },
 });
 
-const debUpdateValue = function(formId, value) {
-  console.log('Setting value:', value);
+const debUpdateValue = function (formId, value) {
   AutoForm.content.update(formId, { $set: value });
 };
 
 
 Template.afFieldInput.events({
-  'click .autoform-checkbox.multi' (evt, tmpl) {
+  'click .autoform-checkbox.multi'(evt, tmpl) {
     evt.preventDefault();
     const form = AutoForm.formData();
     if (!this.name) { return; }
@@ -260,7 +264,7 @@ Template.afFieldInput.events({
     }
     return AutoForm.content.update(form.formId, { $pull: value });
   },
-  'keyup input, change input, change textarea, change select' (evt, tmpl) {
+  'keyup input, change input, change textarea, change select'(evt, tmpl) {
     evt.preventDefault();
     if (!this.name) { return; }
     const form = AutoForm.formData();

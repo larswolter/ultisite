@@ -1,3 +1,4 @@
+import { AutoForm } from 'meteor/ultisite:autoform';
 import './tournament.less';
 import './tournament.html';
 import './team.js';
@@ -303,6 +304,26 @@ Template.tournament.helpers({
         stateColor: UltiSite.stateColor(teamObj.state),
       }, teamObj);
     });
+  },
+});
+
+AutoForm.hooks({
+  tournamentUpdateForm: {
+    // Called when any submit operation succeeds
+    onSuccess(formType, result) {
+      console.log('tournamentUpdateForm success');
+      UltiSite.hideModal();
+      if (formType === 'insert') {
+        FlowRouter.go("tournament", {
+          _id: result,
+        });
+      }
+    },
+    // Called when any submit operation fails
+    onError(formType, error) {
+      console.log('tournamentUpdateForm:', error);
+      if (formType === 'insert') { UltiSite.notify(`Fehler beim Turnier anlegen:${error.message}`, "error"); } else { UltiSite.notify(`Fehler beim Turnier ändern:${error.message}`, "error"); }
+    },
   },
 });
 

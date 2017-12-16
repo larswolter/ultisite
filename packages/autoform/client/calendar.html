@@ -1,15 +1,21 @@
 <template name="autoformCalendar">
   <div class="autoform-calendar">
     <div class="row">
-      <button class="btn btn-default col-xs-3 prev" type="button">
-        <span class="fa fa-chevron-left"></span>
-      </button>
-      <div class="form-control-static col-xs-6">
-        {{month}}
+      <div class="col-xs-3">
+        <button class="btn btn-default prev" type="button">
+          <span class="fa fa-chevron-left"></span>
+        </button>
       </div>
-      <button class="btn btn-default next col-xs-3" type="button">
-        <span class="fa fa-chevron-right"></span>
-      </button>
+      <div class="col-xs-6">
+        <div class="form-control-static">
+          {{month}}
+        </div>
+      </div>
+      <div class="col-xs-3">
+        <button class="btn btn-default next" type="button">
+          <span class="fa fa-chevron-right"></span>
+        </button>
+      </div>
     </div>
     <div class="day-header">Mo</div>
     <div class="day-header">Di</div>
