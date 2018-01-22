@@ -36,6 +36,7 @@ Activitylog
 
 - Install meteor [https://www.meteor.com](https://www.meteor.com)
 - clone Repository 
+- Run `meteor npm install` in the main directory
 - Run `meteor` in the main directory
 - The site is then available under [http://localhost:3000](http://localhost:3000)
 - On the first access you will be prompted to create the Admin user that can configure the rest of the site
