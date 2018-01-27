@@ -15,6 +15,10 @@
                         <button class="btn btn-default pull-right btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="true">Zugriff erlauben</button>
                         <button class="btn btn-warning pull-right btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="false">Zugriff ablehnen</button>
                     </div>
+                    {{else}}
+                    <div class="list-group-item">
+                        {{>EmptySmall}}
+                    </div>
                     {{/each}}
                 </div>
             </div>
@@ -39,15 +43,15 @@
                                 {{/each}}
                             </div>
                         {{/each}}
-                        <div class="col-sm-1">
+                        <div class="col-xs-12 colsm-10 col-sm-offset-2">
                             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#linksEditDialog">
-                                <span class="fa fa-edit"></span>
+                                <span class="fa fa-edit"></span> Bearbeiten
                             </button>
                         </div>
                     </div>
                     <form class="form-horizontal direct-admin">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Zuordnung der Wikiseiten</label>
+                            <label class="col-sm-2 control-label">Zuordnung der <a href="/wikipage">Wikiseiten</a></label>
                             <div class="dropdown col-sm-2 wiki-association">
                                 <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
                                     <small>Start:</small><br /> {{wikiPageName settings.wikiStart}}

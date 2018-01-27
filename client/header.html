@@ -43,7 +43,7 @@
 					</li>
 				{{/if}}
 			</ul>
-			<ul class="nav navbar-nav visible-xs">
+			<ul class="nav navbar-nav pull-left visible-xs">
 				<li>
 					<a href="#" class="action-toggle-sidebar">
 						<span class="{{#if AdminNotifications.count}}text-info{{/if}} fa fa-bars fa-lg"></span>
@@ -180,8 +180,12 @@
 					{{/with}}
 				</a>
 			{{/if}}
+			<a class="list-group-item" href="https://github.com/larswolter/ultisite">
+				<span class="fa fa-github fa-fw"></span>  
+				Quellen und Feedback
+			</a>	
 			<a class="list-group-item" href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">
-				<span class="fa fa-info-circle"></span> Impressum
+				<span class="fa fa-info-circle fa-fw"></span> Impressum
 			</a>
 		</div>
 	</div>
@@ -233,5 +237,5 @@
 	<div class="pull-right">
 		<a href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">Impressum</a>
 	</div>
-	<span class="fa fa-github"></span>  <a href="https://github.com/larswolter/ultisite">Quellen und Feedback</a>	
+	<span class="fa fa-github"></span>  <a href="https://github.com/larswolter/ultisite" target="github">Quellen und Feedback</a>	
 </template>
