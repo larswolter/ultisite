@@ -312,6 +312,9 @@
                             </li>
                             <li class="list-group-item">
                                 <small>Gespielte Turniere ({{playedTournamentYears.count}}/<span class="text-muted">{{playedTournamentYears.total}}</span>)</small> 
+                                <a href="/_myTournaments.xlsx?token={{currentUser.profile.downloadToken}}" target="_blank">
+                                    <span class="fa fa-download"></span>
+                                </a>
                                 {{#each playedTournamentYears.years}}
                                     <div>{{y}} ({{t.length}})</div>
                                     {{#each t}}
