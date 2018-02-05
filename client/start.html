@@ -101,7 +101,7 @@
     </h5>
     {{#each detail}}
         <p class="list-group-item-text small cutoff-text">
-            {{formatDateRelative time}} - {{alias}}: {{text}}
+            {{formatDateRelative time}} - {{#if alias}}<i>{{alias}}</i>: {{/if}} {{text}}
             {{#if images}}
                 <br />
                 {{#each images}}

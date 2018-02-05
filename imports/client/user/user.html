@@ -12,9 +12,9 @@
 <template name="userdisplay">
     {{#if currentUser}}
         <span class="fa {{sexIcon}} fa-fw {{#if status.online}}text-success{{/if}}"></span> 
-        &nbsp; {{getAlias}} 
+        &nbsp; {{getAlias this}} 
     {{else}} 
-        {{getAlias}} 
+        {{getAlias this}} 
     {{/if}} 
 </template>
 

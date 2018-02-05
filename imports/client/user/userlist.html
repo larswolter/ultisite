@@ -95,13 +95,13 @@
 			{{/if}}
 		</div>
 		<div class="col-xs-7 visible-xs">
-			<h5>{{getAlias}}
+			<h5>{{getAlias this}}
 				{{#if profile.sex}}<small>{{profile.sex}}</small>{{/if}}
 			</h5>
 			{{profile.name}} {{profile.surname}} - {{formatDate profile.birthday}} {{club.state}}
 		</div>
 		<div class="hidden-xs col-sm-2">
-			{{getAlias}}
+			{{getAlias this}}
 		</div>
 		<div class="hidden-xs col-sm-2">
 			{{profile.name}}
