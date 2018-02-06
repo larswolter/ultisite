@@ -12,7 +12,7 @@
   </head>
 <body>  	
 <div class="ultisite-{{settings.design}} base-layout {{#if settings.imageTitleImage}}with-title-image{{/if}}">
-  <nav class="navbar navbar-default navbar-fixed-top">
+  <nav class="navbar navbar-default navbar-fixed-top" style="height:40px">
     <div class="title-image hidden-xs" style="height:{{settings.titleImageHeight}}px">
       <div style="background-image:url('/_image?imageId={{settings.imageTitleImage}}')"> </div>
       <img src="/_image?imageId={{settings.imageLogo}}" />
@@ -29,35 +29,6 @@
 	</nav>
   <div class="container-fluid page-content">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-xs-12 start-content">
-          <div class="wikipage">
-            {{{content}}}
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
-          <div class="panel panel-default">
-              <div class="panel-heading">
-                &nbsp;
-              </div>
-              <div class="list-group">
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-              </div>
-          </div>        
-        </div>
-      </div>
     </div>
   </div>
   <nav class="hidden-xs navbar navbar-default navbar-footer">

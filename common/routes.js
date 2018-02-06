@@ -1,3 +1,4 @@
+import { FlowRouter } from 'meteor/kadira:flow-router';
 
 if (Meteor.isClient) {
   Meteor.startup(() => {

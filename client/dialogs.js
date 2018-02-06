@@ -1,3 +1,5 @@
+import { FlowRouter } from 'meteor/kadira:flow-router';
+
 let getTextCallback;
 const getTextOptions = new ReactiveVar();
 

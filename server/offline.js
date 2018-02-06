@@ -1,14 +1,16 @@
+import { moment } from 'meteor/momentjs:moment';
 
-
-const getOfflineSyncDate = function() {
-  return { $gte: moment().subtract(1, 'month').startOf('year').toDate() };
+const getOfflineSyncDate = function () {
+  return { $gte: moment().subtract(3, 'month').startOf('year').toDate() };
 };
 
-const refreshDownloadToken = function(userId) {
+const offlineForce = moment();
+
+const refreshDownloadToken = function (userId) {
   Meteor.users.update(userId, {
     $set: {
-      'profile.downloadToken': Random.id(40)
-    }
+      'profile.downloadToken': Random.id(40),
+    },
   });
 };
 
@@ -21,18 +23,19 @@ Accounts.onLogout(function (attempt) {
 
 Meteor.methods({
   ping() {
-    if (this.connection.httpHeaders && this.connection.httpHeaders['save-data'] === 'on')
+    if (this.connection.httpHeaders && this.connection.httpHeaders['save-data'] === 'on') {
       Meteor.users.update({
         _id: this.userId,
         $or: [{ 'connection.saveData': { $exists: false } },
-                { 'connection.saveData': false }]
+        { 'connection.saveData': false }],
       }, { $set: { 'connection.saveData': true } });
-    else
-            Meteor.users.update({
-              _id: this.userId,
-              $or: [{ 'connection.saveData': { $exists: false } },
-                { 'connection.saveData': true }]
-            }, { $set: { 'connection.saveData': false } });
+    } else {
+      Meteor.users.update({
+        _id: this.userId,
+        $or: [{ 'connection.saveData': { $exists: false } },
+        { 'connection.saveData': true }],
+      }, { $set: { 'connection.saveData': false } });
+    }
   },
   offlineCheckForNew(since) {
     check(since, Date);
@@ -40,14 +43,16 @@ Meteor.methods({
       tournamentCount: UltiSite.Tournaments.find({ date: getOfflineSyncDate() }, { sort: { date: -1 } }).count(),
       teamCount: UltiSite.Teams.find({ tournamentDate: getOfflineSyncDate() }).count(),
     };
-    const tChange = UltiSite.Tournaments.find({ lastChange: { $gte: since } }).count();
-    const teChange = UltiSite.Teams.find({ lastChange: { $gte: since } }).count();
-    if (tChange > 3)
+    if (offlineForce.isAfter(moment(since))) {
       info.mustSync = true;
-    if (teChange > 3)
-      info.mustSync = true;
+    } else {
+      const tChange = UltiSite.Tournaments.find({ lastChange: { $gte: since } }).count();
+      const teChange = UltiSite.Teams.find({ lastChange: { $gte: since } }).count();
+      if (tChange > 3) { info.mustSync = true; }
+      if (teChange > 3) { info.mustSync = true; }
+    }
     return info;
-  }
+  },
 });
 
 WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => {
@@ -73,10 +78,10 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
   const offline = {
     tournaments: UltiSite.Tournaments.find(tournamentSearch, { sort: { date: -1 } }).fetch(),
     teams: UltiSite.Teams.find(teamSearch).fetch(),
-    removed: []
+    removed: [],
   };
 
   console.log('LOAD tournaments as *.json');
   const content = JSON.stringify(offline);
   response.end(content);
-});    
+});
