@@ -8,85 +8,74 @@
 			</div>
 		{{/unless}}
 
-		<div class="container-fluid">
-			<ul class="nav navbar-nav pull-right">
-				{{#if currentUser}}
-					<li class="{{#if equals routeName 'search'}}active{{/if}}">
-						<a href="#" class="action-search">
-							<span class="fa fa-search fa-lg"></span>
-						</a>
-					</li>
-					<li class="hidden-xs {{#if equals routeName 'help'}}active{{/if}}">
-						<a href="{{pathFor route='help'}}">
-							<span class="fa fa-question-circle fa-lg"></span>
-						</a>
-					</li>
-					<li class="hidden-xs dropdown">
-						<a href="#" class="text-default dropdown-toggle"
-							data-toggle="dropdown" aria-expanded="true">
-							<span class="fa fa-user fa-lg"></span>
-						</a>
-						{{>userHeader}}
-					</li>
-				{{else}}
-					<li class="dropdown">
-						<a href="#" title="Anmelden" class="btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
-							<span class="fa fa-sign-in fa-lg fa-fw"></span> <span class="hidden-xs">Anmelden</span>
-						</a>
-					</li>
-				{{/if}}					
-				{{#if isAdmin}}
-					<li class="hidden-xs {{#if equals routeName 'admin'}}active{{/if}}">
-						<a href="{{pathFor route='admin'}}">
-							<span class="fa fa-cog fa-lg"></span>
-						</a>
-					</li>
-				{{/if}}
-			</ul>
-			<ul class="nav navbar-nav pull-left visible-xs">
-				<li>
-					<a href="#" class="action-toggle-sidebar">
-						<span class="{{#if AdminNotifications.count}}text-info{{/if}} fa fa-bars fa-lg"></span>
-						<span class="sr-only">Toggle navigation</span>
-					</a>
-				</li>
+		<div class="row">
+			<div class="col-xs-2 visible-xs">
+				<a href="#" class="action-toggle-sidebar">
+					<span class="{{#if AdminNotifications.count}}text-info{{/if}} fa fa-bars fa-lg"></span>
+					<span class="sr-only">Toggle navigation</span>
+				</a>				
+			</div>
+			<div class="hidden-xs col-sm-9 col-md-9 col-lg-10">
+				{{>navLinks}}
+			</div>
+			<div class="col-xs-8 visible-xs">
 				{{#with sitePageHeader}}
 					{{#if this.link}}
-						<li>
-							<a href="{{this.link}}">
+						<a href="{{this.link}}">
 							{{#if this.back}}
 								{{this.back}}
 							{{else}}
 								<span class="fa fa-angle-left fa-lg"></span>
 							{{/if}}
-							</a>
-						</li>
+						</a>
 						{{#if this.name}}
-							<li>
-								<a href="#">
-									{{this.name}}
-								</a>
-							</li>
+							&nbsp;&nbsp;
+							<a href="#">
+								{{this.name}}
+							</a>
 						{{/if}}
 					{{else}}
-						<li>
 							<a href="#">{{this.name}}</a>
-						</li>
 					{{/if}}
 				{{/with}}
-			</ul>
-			<ul class="nav navbar-nav hidden-xs">
-				{{>navLinks}}
-			</ul>
+			</div>
+
+			<div class="col-xs-2 col-sm-3 col-md-3 col-lg-2 text-right">
+				{{#if currentUser}}
+					<a href="#" class="action-search {{#if equals routeName 'search'}}active{{/if}}">
+						<span class="fa fa-search fa-lg"></span>
+					</a>
+					<a href="{{pathFor route='help'}}" class="hidden-xs {{#if equals routeName 'help'}}active{{/if}}">
+						<span class="fa fa-question-circle fa-lg"></span>
+					</a>
+					<span class="hidden-xs dropdown">
+						<a href="#" class="text-default dropdown-toggle"
+							data-toggle="dropdown" aria-expanded="true">
+							<span class="fa fa-user fa-lg"></span>
+						</a>
+						{{>userHeader}}
+					</span>
+				{{else}}
+					<a href="#" title="Anmelden" class="btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
+						<span class="fa fa-sign-in fa-lg fa-fw"></span> <span class="hidden-xs">Anmelden</span>
+					</a>
+				{{/if}}					
+				{{#if isAdmin}}
+					<a href="{{pathFor route='admin'}}" class="hidden-xs {{#if equals routeName 'admin'}}active{{/if}}">
+						<span class="fa fa-cog fa-lg"></span>
+					</a>
+				{{/if}}
+			</div>
 		</div>
 	</nav>
 </template>
+
 <template name="navLinks">
 	{{#each settings.objectHeaderLinks.links}}
 		{{#if showMenuEntry}}
 			{{#if this.submenu}}
-				<li class="dropdown {{../liClass}} {{#if isActive}}active{{/if}}">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+				<span class="dropdown">
+					<a href="#" class="dropdown-toggle {{../liClass}} {{#if isActive}}active{{/if}}" data-toggle="dropdown" role="button" aria-expanded="false">
                         {{this.text}} <span class="caret"></span>
                     </a>
 					<ul class="dropdown-menu" role="menu">
@@ -100,10 +89,9 @@
 							{{/if}}
 						{{/each}}
 					</ul>
-				</li>
+				</span>
 			{{else}}
-				<li class="{{../liClass}} {{#if isActive}}active{{/if}}"><a class="" href="{{this.target}}">{{this.text}}</a>
-				</li>
+				<a class="{{../liClass}} {{#if isActive}}active{{/if}}" href="{{this.target}}">{{this.text}}</a>
 			{{/if}}
 		{{/if}}
 	{{/each}}

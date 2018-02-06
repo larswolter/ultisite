@@ -1,23 +1,33 @@
 @import "/client/lib/custom.bootstrap.import.less";
 
 
-.navbar-default {
-    margin-bottom: 0px;
-    width:100vw;
-    hr {
-        margin:10px 0px;
-    }
-    .navbar-back {
-        float:left;
-        padding: 15px 8px 15px 20px;
-    }
-    .navbar-nav.visible-xs {
-      li {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+.navbar.navbar-default.navbar-fixed-top {
+  margin-bottom: 0px;
+  width:100vw;
+  min-height: auto;
+  >.row {
+    margin:0px; 
+    >div {
+      height: 40px;
+      padding: 10px 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      a {
+        text-decoration: none;
+        padding: 10px 10px;
       }
-  }
+      @media (min-width: @screen-sm-min) {
+        a {
+          margin-bottom: 2px;
+        }
+        a.active {
+          margin-bottom: 0px;
+          border-bottom: 2px solid @navbar-default-color;
+        }
+      }
+    } 
+  } 
 }
 #dropdownUserMenu.btn-danger {
     background-color: @brand-danger;

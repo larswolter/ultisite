@@ -28,6 +28,10 @@ body {
         border-radius: 0px;
         box-shadow: 0px 4px 8px rgba(0,0,0,0.5);
         color: @hallunkenOrange;
+        >.row >div >a {
+            background-color: @hallunkenGreen;
+            border-bottom-color: @hallunkenOrange; 
+        }
         a,
         a:visited {
             color: @hallunkenOrange;
@@ -60,10 +64,6 @@ body {
         .navbar-nav > li > a:focus,
         .navbar-nav > li > a:active {
             color: @hallunkenOrangeDark;
-        }
-        .navbar-nav > li.active > a {
-            background-color: @hallunkenGreen;
-            border-bottom-color: @hallunkenOrange; 
         }
     }
     .navbar-default.navbar-footer {

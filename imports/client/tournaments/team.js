@@ -3,14 +3,14 @@ import './team.html';
 import './team.less';
 
 Template.participant.events({
-  'click .action-participate'(e, t) {
+  'click .action-participate': function(e, t) {
     e.preventDefault();
     e.stopPropagation();
     const partValue = Number(t.$(e.currentTarget).attr('data-participation'));
     const teamId = Template.parentData()._id;
     Meteor.call('participationUpdate', teamId, this.user, partValue);
   },
-  'click button.action-comment'(e, t) {
+  'click button.action-comment': function(e, t) {
     e.preventDefault();
     const self = this;
     const teamId = Template.parentData()._id;
@@ -20,7 +20,7 @@ Template.participant.events({
       });
     });
   },
-  'keyup input.comment'(e, t) {
+  'keyup input.comment': function(e, t) {
     t.$('button.comment').removeClass('disabled');
   },
 });
@@ -28,7 +28,7 @@ Template.participant.events({
 
 Template.team.onCreated(function () {
   const self = this;
-  self.searchTerm = new ReactiveVar("");
+  self.searchTerm = new ReactiveVar('');
   self.inviteOther = new ReactiveVar(false);
   this.teamEmails = new ReactiveVar();
   this.autorun(() => {
@@ -57,53 +57,53 @@ Template.team.onRendered(function () {
 
 
 Template.team.events({
-  'click .action-historic-view'(e) {
+  'click .action-historic-view': function(e) {
     e.preventDefault();
     UltiSite.showModal('teamHistoricView', { teamId: this._id });
   },
-  'click .action-participate'(e) {
+  'click .action-participate': function(e) {
     e.preventDefault();
     UltiSite.showModal('participateDialog', { teamId: this._id });
   },
-  'click .action-edit-team'(e) {
+  'click .action-edit-team': function(e) {
     e.preventDefault();
     UltiSite.showModal('teamUpdate', { tournamentId: this.tournamentId, teamId: this._id });
   },
-  'click .action-edit-remarks'(e, t) {
+  'click .action-edit-remarks': function(e, t) {
     UltiSite.getHTMLTextDialog({ content: this.remarks, header: 'Anmerkungen zum Team bearbeiten' }, (text) => {
       UltiSite.Teams.update(this._id, {
         $set: { remarks: text },
       });
     });
   },
-  'click .team-remove'(e, t) {
+  'click .team-remove': function(e, t) {
     e.preventDefault();
-    UltiSite.confirmDialog("Willst du wirklich das gesamte Team löschen?", () => {
+    UltiSite.confirmDialog('Willst du wirklich das gesamte Team löschen?', () => {
       Meteor.call('teamRemove', this._id, UltiSite.userFeedbackFunction('Team löschen'));
     });
   },
-  'click .action-set-state'(e, t) {
+  'click .action-set-state': function(e, t) {
     e.preventDefault();
     const state = t.$(e.currentTarget).attr('data-state');
     if (state === 'dabei') {
-      UltiSite.confirmDialog("Sicher, das das Team bestätigt wurde? Jetzt wird auch der Verantwortliche ausgelost!", () => {
+      UltiSite.confirmDialog('Sicher, das das Team bestätigt wurde? Jetzt wird auch der Verantwortliche ausgelost!', () => {
         Meteor.call('teamUpdateState', this._id, state, UltiSite.userFeedbackFunction('Team Status ändern'));
       });
     } else {
       Meteor.call('teamUpdateState', this._id, state, UltiSite.userFeedbackFunction('Team Status ändern'));
     }
   },
-  'click .action-be-responsible'(e, t) {
+  'click .action-be-responsible': function(e, t) {
     e.preventDefault();
     UltiSite.Teams.update({
       _id: this._id,
     }, {
-        $set: {
+      $set: {
           lastChange: new Date(),
           responsible: Meteor.userId(),
           responsibleName: Meteor.user().username,
         },
-      });
+    });
   },
 });
 
@@ -177,8 +177,8 @@ Template.participateDialog.helpers({
     return function (term) {
       return {
         name: `Das nicht Mitglied ${term} in die Liste eintragen`,
-        icon: "fa-user-plus",
-        link: "",
+        icon: 'fa-user-plus',
+        link: '',
         username: term,
       };
     };
@@ -186,29 +186,29 @@ Template.participateDialog.helpers({
 });
 
 Template.participateDialog.events({
-  'click .action-switch-invite'(e, t) {
+  'click .action-switch-invite': function(e, t) {
     t.inviteOther.set(true);
   },
-  'keyup .alias-field'(e, t) {
+  'keyup .alias-field': function(e, t) {
     e.preventDefault();
-    t.$(".user-id").val("");
+    t.$('.user-id').val('');
   },
-  'change [name="teamId"]'(e, t) {
+  'change [name="teamId"]': function(e, t) {
     t.selectedTeam.set(t.$('[name="teamId"]').val());
   },
-  'click .action-insert'(e, t) {
+  'click .action-insert': function(e, t) {
     const teamId = t.$('[name="teamId"]').val();
     e.preventDefault();
     const params = {
-      state: t.$(e.currentTarget).data("value"),
+      state: t.$(e.currentTarget).data('value'),
       userid: t.selectedUser.get()._id || t.selectedUser.get().username,
       sex: t.$('input[name="female"]')[0] && t.$('input[name="female"]')[0].checked,
     };
     t.inserting.set(true);
     console.log('Inserting part:', params);
-    Meteor.call("participantInsert", params, teamId, UltiSite.userFeedbackFunction('Spieler eintragen', e.currentTarget, function () {
-      t.$('.user-id').val("");
-      t.$('.alias-field').val("");
+    Meteor.call('participantInsert', params, teamId, UltiSite.userFeedbackFunction('Spieler eintragen', e.currentTarget, function () {
+      t.$('.user-id').val('');
+      t.$('.alias-field').val('');
       $('.modal').modal('hide');
       t.inserting.set(false);
     }));
@@ -224,13 +224,13 @@ Template.teamCountBar.helpers({
     if (this.participants) {
       this.participants.forEach(function (participant) {
         if (participant.state > 90)
-          full += 1;
+          {full += 1;}
         else if (participant.state > 50)
-          half += 1;
+          {half += 1;}
         else if (participant.state > 10)
-          rest += 1;
+          {rest += 1;}
         if (participant.sex === 'W')
-          females += 1;
+          {females += 1;}
       });
     }
     if (full + half + rest === 0) { return undefined; }
@@ -272,49 +272,46 @@ Template.team.helpers({
     return Template.instance().teamEmails.get();
   },
   notAvailable() {
-    return _.filter(this.participants, (p) => p.state === 0).map(function (participant) {
+    return _.filter(this.participants, p => p.state === 0).map(function (participant) {
       const user = Meteor.users.findOne(participant.user);
       const partUser = _.extend({}, user, participant);
       return partUser;
     });
   },
   participantUsers() {
-
     return UltiSite.participantList(this._id);
   },
   teamRemovable() {
-    if (_.find(this.participants, (p) => p.state === 100)) { return false; }
+    if (_.find(this.participants, p => p.state === 100)) { return false; }
     return true;
   },
   saveRemarks() {
-    let self = this;
+    const self = this;
     return function (newContent, finished) {
       UltiSite.Teams.update({
         _id: self._id,
       }, {
-          $set: {
+        $set: {
             lastChange: new Date(),
             remarks: newContent.trim(),
           },
-        }, function (err) {
-          if (err) { UltiSite.notify("Error saving team:" + err, "error"); }
-
-          else {
-            Meteor.call("storeContentVersion", self._id, newContent);
-            UltiSite.notify("Anmerkungen gespeichert", "success");
+      }, function (err) {
+          if (err) { UltiSite.notify('Error saving team:' + err, 'error'); }          else {
+            Meteor.call('storeContentVersion', self._id, newContent);
+            UltiSite.notify('Anmerkungen gespeichert', 'success');
             finished();
           }
         });
     };
   },
   currentUserAlias() {
-    if (_.find(this.participants, (p) => p.user === Meteor.userId())) {
-      return "";
+    if (_.find(this.participants, p => p.user === Meteor.userId())) {
+      return '';
     }
     return Meteor.user().username;
   },
   iamParticipating() {
-    if (_.find(this.participants, (p) => p.user === Meteor.userId())) {
+    if (_.find(this.participants, p => p.user === Meteor.userId())) {
       return true;
     }
     return false;
@@ -324,7 +321,7 @@ Template.team.helpers({
     if (this.clubTeam) { return true; }
     if (this.responsible === Meteor.userId()) { return true; }
     if (UltiSite.isAdmin()) { return true; }
-    if (_.find(this.participants, (p) => p.user === Meteor.userId())) {
+    if (_.find(this.participants, p => p.user === Meteor.userId())) {
       return true;
     }
     return false;
@@ -361,14 +358,14 @@ Template.participant.helpers({
 AutoForm.hooks({
   teamUpdateForm: {
     onSubmit(insertDoc, updateDoc, currentDoc, form) {
-      console.log("teamUpdateForm onSubmit", insertDoc, updateDoc, currentDoc);
+      console.log('teamUpdateForm onSubmit', insertDoc, updateDoc, currentDoc);
       if (currentDoc && currentDoc._id) {
         updateDoc.$set.lastChange = new Date();
         UltiSite.Teams.update({
           _id: currentDoc._id,
         }, updateDoc, UltiSite.userFeedbackFunction('Team editieren', null, () => UltiSite.hideModal()));
       } else {
-        Meteor.call("addTeam", insertDoc, form.tournamentId, UltiSite.userFeedbackFunction('Team hinzufügen', null, () => UltiSite.hideModal()));
+        Meteor.call('addTeam', insertDoc, form.tournamentId, UltiSite.userFeedbackFunction('Team hinzufügen', null, () => UltiSite.hideModal()));
       }
     },
   },
@@ -424,52 +421,56 @@ Template.teamUpdate.events({
 Template.teamReport.onCreated(function () {
 });
 Template.teamReport.events({
-  'click .action-add-me'(e, t) {
+  'click .action-add-me': function(e, t) {
     e.preventDefault();
 
     const params = {
       state: 100,
       userid: Meteor.userId(),
       alias: UltiSite.getAlias(Meteor.userId()),
-      comment: "",
+      comment: '',
     };
-    if (_.find(t.data.participants, (p) => p.user === Meteor.userId())) { Meteor.call("participationUpdate", t.data._id, Meteor.userId(), 100, UltiSite.userFeedbackFunction('Mich hinzufügen', e.currentTarget)); }
-    else { Meteor.call("participantInsert", params, t.data._id, UltiSite.userFeedbackFunction('Mich hinzufügen', e.currentTarget)); }
+    if (_.find(t.data.participants, p => p.user === Meteor.userId())) { Meteor.call('participationUpdate', t.data._id, Meteor.userId(), 100, UltiSite.userFeedbackFunction('Mich hinzufügen', e.currentTarget)); }    else { Meteor.call('participantInsert', params, t.data._id, UltiSite.userFeedbackFunction('Mich hinzufügen', e.currentTarget)); }
   },
-  'click .action-remove-team'(e, t) {
+  'click .action-remove-team': function(e, t) {
     e.preventDefault();
     Meteor.call('teamUpdateState', this._id, 'geplant', UltiSite.userFeedbackFunction('Team Status ändern'));
   },
-  'click .action-delete-team'(e, t) {
+  'click .action-delete-team': function(e, t) {
     e.preventDefault();
-    UltiSite.confirmDialog("Willst du wirklich das gesamte Team löschen?", () => {
+    UltiSite.confirmDialog('Willst du wirklich das gesamte Team löschen?', () => {
       UltiSite.Teams.remove(this._id, UltiSite.userFeedbackFunction('Team löschen'));
     });
   },
-  'click .action-add-team'(e, t) {
+  'click .action-add-team': function(e, t) {
     e.preventDefault();
     Meteor.call('teamUpdateState', this._id, 'dabei', UltiSite.userFeedbackFunction('Team Status ändern'));
   },
-  'click .action-remove-me'(e, t) {
+  'click .action-remove-me': function(e, t) {
     e.preventDefault();
-    let params = {
+    const params = {
       userid: Meteor.userId(),
     };
-    Meteor.call("participantRemove", params, t.data._id, UltiSite.userFeedbackFunction('Mich entfernen', e.currentTarget));
+    Meteor.call('participantRemove', params, t.data._id, UltiSite.userFeedbackFunction('Mich entfernen', e.currentTarget));
   },
-  'click .action-team-image'() {
+  'click .action-show-team-image': function() {
+    FlowRouter.go('image', {
+      _id: this.image,
+      associated: this.tournamentId,
+    });
+  },
+  'click .action-team-image': function() {
     const teamId = this._id;
     UltiSite.fileBrowserShowDialog(this.tournamentId, function (file) {
       if (file) {
         UltiSite.Images.update(file._id, {
           $addToSet: {
             associated: teamId,
-            tags: 'Teamfoto'
-          }
+            tags: 'Teamfoto',
+          },
         });
-      }
-      else {
-        let img = UltiSite.Images.findOne({
+      }      else {
+        const img = UltiSite.Images.findOne({
           associated: teamId,
         });
         UltiSite.Images.update(img._id, {
@@ -482,48 +483,48 @@ Template.teamReport.events({
       UltiSite.fileBrowserHideDialog();
     });
   },
-  'change .team-report .form-control'(e, t) {
-    let value = t.$(e.currentTarget).val();
-    let name = $(e.currentTarget).attr("name");
-    let node = $(e.currentTarget.parentNode);
-    let toSet = {};
+  'change .team-report .form-control': function(e, t) {
+    const value = t.$(e.currentTarget).val();
+    const name = $(e.currentTarget).attr('name');
+    const node = $(e.currentTarget.parentNode);
+    const toSet = {};
     toSet[name] = value;
     toSet.lastChange = new Date();
     UltiSite.Teams.update({
       _id: this._id,
     }, {
-        $set: toSet,
-      }, UltiSite.userFeedbackFunction("Speichern der Ergebnisse"));
+      $set: toSet,
+    }, UltiSite.userFeedbackFunction('Speichern der Ergebnisse'));
   },
 
 });
 
 Template.teamReport.helpers({
   myTeamState() {
-    return !!_.find(this.participants, (p) => (p.user === Meteor.userId()) && (p.state === 100));
+    return !!_.find(this.participants, p => (p.user === Meteor.userId()) && (p.state === 100));
   },
   teamRemovable() {
-    if (_.find(this.participants, (p) => p.state === 100)) { return false; }
+    if (_.find(this.participants, p => p.state === 100)) { return false; }
     return true;
   },
   noChangeRights() {
     if (!Meteor.userId()) { return true; }
-    if (_.find(this.participants, (p) => p.user === Meteor.userId())) { return false; }
+    if (_.find(this.participants, p => p.user === Meteor.userId())) { return false; }
     if (UltiSite.isAdmin()) { return false; }
     if (this.responsible === Meteor.userId()) { return false; }
     return true;
   },
   selectUser() {
-    let teamId = this._id;
+    const teamId = this._id;
     return function (elem) {
-      let params = {
+      const params = {
         state: 100,
         userid: elem.id,
         alias: elem.name,
         sex: elem.female ? 'W' : 'M',
-        comment: "",
+        comment: '',
       };
-      Meteor.call("participantInsert", params, teamId);
+      Meteor.call('participantInsert', params, teamId);
       return true;
     };
   },
@@ -568,19 +569,19 @@ Template.teamHistoricView.helpers({
     return marks;
   },
   historicBlocks() {
-    let team = UltiSite.getTeam(Template.instance().data.teamId);
+    const team = UltiSite.getTeam(Template.instance().data.teamId);
     if (!team) { return []; }
     const earlyReg = _.sortBy(team.participants, 'entryDate');
-    let turnier = UltiSite.getTournament(team.tournamentId);
+    const turnier = UltiSite.getTournament(team.tournamentId);
     let start = moment();
     if (earlyReg.length > 0) { start = moment(earlyReg[0].entryDate); }
-    let ende = moment(turnier.date);
-    let diff = 100.0 / start.diff(ende, 'minutes');
-    let entryDate = moment(this.entryDate).clone();
+    const ende = moment(turnier.date);
+    const diff = 100.0 / start.diff(ende, 'minutes');
+    const entryDate = moment(this.entryDate).clone();
     let last = entryDate.clone();
-    let results = this.history && this.history.map(function (block) {
-      let width = last.diff(moment(block.until).clone(), 'minutes');
-      let startOffset = start.diff(entryDate, 'minutes');
+    const results = this.history && this.history.map(function (block) {
+      const width = last.diff(moment(block.until).clone(), 'minutes');
+      const startOffset = start.diff(entryDate, 'minutes');
       last = moment(block.until).clone();
       return {
         stateClass: ` ${block.state < 10 ? 'progress-bar-muted' : block.state < 70 ? 'progress-bar-danger' : block.state < 100 ? 'progress-bar-warning' : 'progress-bar-success'}`,
@@ -588,8 +589,8 @@ Template.teamHistoricView.helpers({
         offset: startOffset * diff,
       };
     }) || [];
-    let width = last.diff(ende, 'minutes');
-    let offset = start.diff(last, 'minutes');
+    const width = last.diff(ende, 'minutes');
+    const offset = start.diff(last, 'minutes');
     results.push({
       stateClass: ` ${this.state < 10 ? 'progress-bar-muted' : this.state < 70 ? 'progress-bar-danger' : this.state < 100 ? 'progress-bar-warning' : 'progress-bar-success'}`,
       width: width * diff,

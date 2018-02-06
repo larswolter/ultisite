@@ -1,160 +1,162 @@
 import Grid from 'gridfs-locking-stream';
 
-const gridFS=Grid(UltiSite.Documents.rawDatabase(),Npm.require('mongodb'),'documents-grid');
+const gridFS = Grid(UltiSite.Documents.rawDatabase(), Npm.require('mongodb'), 'documents-grid');
 
 
-Meteor.startup(function(){
-    console.log('starting migrations...');
-    // Update participants without safestateDate
-/*
-    UltiSite.Participants.find({safeStateDate:{$exists:false}}).forEach((p)=>{
-        UltiSite.Participants.update(p._id,{$set:{safeStateDate:p.entryDate}});
-    });
-    UltiSite.Teams.find({teamType:/Verein/}).forEach((p)=>{
-        UltiSite.Teams.update(p._id,{$set:{clubTeam:true}});
-    });
-    UltiSite.Participants.find().forEach((p)=>{
-        let team = p.teamId;
-        let part = p._id;
-        delete p._id;
-        delete p.teamId;
-        delete p.tournamentId;
-        UltiSite.Teams.update(team,{$push:{participants:p}});
-        UltiSite.Participants.remove(part);
-    });
-    UltiSite.Teams.find({participants:{$exists:true},'participants.username':{$exists:false}}).forEach((t)=>{
-        t.participants.forEach((p)=>{
-            let user = Meteor.users.findOne(p.user);
-            if(user)
-                UltiSite.Teams.update({'participants.user':p.user,_id:t._id},{$set:{
-                    'participants.$.username':user.username,
-                    'participants.$.sex':user.profile.sex
-                }});
-            else
-                UltiSite.Teams.update({'participants.user':p.user,_id:t._id},{$set:{
-                    'participants.$.username':p.user,
-                    'participants.$.sex':p.sex?'W':'M'
-                }});
-        });
-    });
-    UltiSite.Teams.find({participants:{$exists:true},'participants.responsibleName':{$exists:false}}).forEach((t)=>{
-        t.participants.forEach((p)=>{
-            let user = Meteor.users.findOne(p.responsible);
-            if(user)
-                UltiSite.Teams.update({'participants.user':p.user,_id:t._id},{$set:{
-                    'participants.$.responsibleName':user.username}});
-        });
-    });
-    UltiSite.Teams.find({responsible:"[object Object]"}).forEach((t)=>{
-        UltiSite.Teams.update({_id:t._id},{$set:{
-            responsible:null}});
-    });
+Meteor.startup(function () {
+  console.log('starting migrations...');
+  // Update participants without safestateDate
+  /*
+      UltiSite.Participants.find({safeStateDate:{$exists:false}}).forEach((p)=>{
+          UltiSite.Participants.update(p._id,{$set:{safeStateDate:p.entryDate}});
+      });
+      UltiSite.Teams.find({teamType:/Verein/}).forEach((p)=>{
+          UltiSite.Teams.update(p._id,{$set:{clubTeam:true}});
+      });
+      UltiSite.Participants.find().forEach((p)=>{
+          let team = p.teamId;
+          let part = p._id;
+          delete p._id;
+          delete p.teamId;
+          delete p.tournamentId;
+          UltiSite.Teams.update(team,{$push:{participants:p}});
+          UltiSite.Participants.remove(part);
+      });
+      UltiSite.Teams.find({participants:{$exists:true},'participants.username':{$exists:false}}).forEach((t)=>{
+          t.participants.forEach((p)=>{
+              let user = Meteor.users.findOne(p.user);
+              if(user)
+                  UltiSite.Teams.update({'participants.user':p.user,_id:t._id},{$set:{
+                      'participants.$.username':user.username,
+                      'participants.$.sex':user.profile.sex
+                  }});
+              else
+                  UltiSite.Teams.update({'participants.user':p.user,_id:t._id},{$set:{
+                      'participants.$.username':p.user,
+                      'participants.$.sex':p.sex?'W':'M'
+                  }});
+          });
+      });
+      UltiSite.Teams.find({participants:{$exists:true},'participants.responsibleName':{$exists:false}}).forEach((t)=>{
+          t.participants.forEach((p)=>{
+              let user = Meteor.users.findOne(p.responsible);
+              if(user)
+                  UltiSite.Teams.update({'participants.user':p.user,_id:t._id},{$set:{
+                      'participants.$.responsibleName':user.username}});
+          });
+      });
+      UltiSite.Teams.find({responsible:"[object Object]"}).forEach((t)=>{
+          UltiSite.Teams.update({_id:t._id},{$set:{
+              responsible:null}});
+      });
 
-    UltiSite.Teams.find({responsible:{$ne:null},responsibleName:{$exists:false}}).forEach((t)=>{
-        const user = Meteor.users.findOne(t.responsible);
-        if(user)
-            UltiSite.Teams.update(t._id,{
-                $set:{
-                    responsibleName:user.username
-                }
-            });
-    });
-    UltiSite.Teams.find({state:{$exists:false}}).forEach((t)=>{
-        UltiSite.Teams.update(t._id,{$set:{state:'geplant'}});
-    });
-    UltiSite.Images.find({size:{$exists:false},base64:{$exists:true}}).forEach((img)=>{
-        UltiSite.Images.update(img._id,{$set:{size:(img.base64.length - 814) / 1.37}});
-    });
-    Meteor.users.find({'profile.avatar':{$exists:false}}).forEach((u)=>{
-        const uImg = UltiSite.Images.findOne({name:'user-'+u._id});
-        if(uImg) {
-           Meteor.users.update(u._id,{$set:{'profile.avatar':uImg._id}});
-        }
-    });
+      UltiSite.Teams.find({responsible:{$ne:null},responsibleName:{$exists:false}}).forEach((t)=>{
+          const user = Meteor.users.findOne(t.responsible);
+          if(user)
+              UltiSite.Teams.update(t._id,{
+                  $set:{
+                      responsibleName:user.username
+                  }
+              });
+      });
+      UltiSite.Teams.find({state:{$exists:false}}).forEach((t)=>{
+          UltiSite.Teams.update(t._id,{$set:{state:'geplant'}});
+      });
+      UltiSite.Images.find({size:{$exists:false},base64:{$exists:true}}).forEach((img)=>{
+          UltiSite.Images.update(img._id,{$set:{size:(img.base64.length - 814) / 1.37}});
+      });
+      Meteor.users.find({'profile.avatar':{$exists:false}}).forEach((u)=>{
+          const uImg = UltiSite.Images.findOne({name:'user-'+u._id});
+          if(uImg) {
+             Meteor.users.update(u._id,{$set:{'profile.avatar':uImg._id}});
+          }
+      });
 
-    UltiSite.Teams.find({image:{$exists:false}}).forEach((t)=>{
-        const image = UltiSite.Images.findOne({associated:t._id});
-        if(image)
-            UltiSite.Teams.update(t._id,{
-                $set:{
-                    image: image._id
-                }
-            });
-    });
-    UltiSite.Blogs.find({author:{$ne:null},authorName:{$exists:false}}).forEach((t)=>{
-        const user = Meteor.users.findOne(t.author);
-        if(user)
-            UltiSite.Blogs.update(t._id,{
-                $set:{
-                    authorName:user.username
-                }
-            });
-    });
-    UltiSite.WikiPages.find({editor:{$ne:null},editorName:{$exists:false}}).forEach((t)=>{
-        const user = Meteor.users.findOne(t.editor);
-        if(user)
-            UltiSite.WikiPages.update(t._id,{
-                $set:{
-                    editorName:user.username
-                }
-            });
-    });
-    UltiSite.WikiPageDiscussions.find({editor:{$ne:null},editorName:{$exists:false}}).forEach((t)=>{
-        const user = Meteor.users.findOne(t.editor);
-        if(user)
-            UltiSite.WikiPageDiscussions.update(t._id,{
-                $set:{
-                    editorName:user.username
-                }
-            });
-    });
-    UltiSite.ContentVersions.find({author:{$ne:null},authorName:{$exists:false}}).forEach((t)=>{
-        const user = Meteor.users.findOne(t.author);
-        if(user)
-            UltiSite.ContentVersions.update(t._id,{
-                $set:{
-                    authorName:user.username
-                }
-            });
-    });
-  */
-    UltiSite.Tournaments.find({'divisions.division': {$exists:true}}).forEach( (t) => {
-        const surfaces=[];
-        const divisions = [];
-        t.divisions.forEach((d) => {
-            if(d.surface)
-                surfaces.push(d.surface);
-            if(d.division)
-                divisions.push(d.division);
-        });
-        UltiSite.Tournaments.update(t._id,{$set:{divisions:_.uniq(divisions),surfaces:_.uniq(surfaces)}});
-    });
-    Meteor.users.find({'profile.birthday':{$type:'string'}}).forEach((user) => {
-        let date = moment(user.profile.birthday,'DD.MM.YYYY');
-        if(!date.isValid())
-            date = moment(user.profile.birthday,'YYYY-MM-DD');
-        if(date.isValid())
-            Meteor.users.update(user._id,{$set:{'profile.birthday':date.toDate()}});
-    });
-    console.log('migrations finished');
+      UltiSite.Teams.find({image:{$exists:false}}).forEach((t)=>{
+          const image = UltiSite.Images.findOne({associated:t._id});
+          if(image)
+              UltiSite.Teams.update(t._id,{
+                  $set:{
+                      image: image._id
+                  }
+              });
+      });
+      UltiSite.Blogs.find({author:{$ne:null},authorName:{$exists:false}}).forEach((t)=>{
+          const user = Meteor.users.findOne(t.author);
+          if(user)
+              UltiSite.Blogs.update(t._id,{
+                  $set:{
+                      authorName:user.username
+                  }
+              });
+      });
+      UltiSite.WikiPages.find({editor:{$ne:null},editorName:{$exists:false}}).forEach((t)=>{
+          const user = Meteor.users.findOne(t.editor);
+          if(user)
+              UltiSite.WikiPages.update(t._id,{
+                  $set:{
+                      editorName:user.username
+                  }
+              });
+      });
+      UltiSite.WikiPageDiscussions.find({editor:{$ne:null},editorName:{$exists:false}}).forEach((t)=>{
+          const user = Meteor.users.findOne(t.editor);
+          if(user)
+              UltiSite.WikiPageDiscussions.update(t._id,{
+                  $set:{
+                      editorName:user.username
+                  }
+              });
+      });
+      UltiSite.ContentVersions.find({author:{$ne:null},authorName:{$exists:false}}).forEach((t)=>{
+          const user = Meteor.users.findOne(t.author);
+          if(user)
+              UltiSite.ContentVersions.update(t._id,{
+                  $set:{
+                      authorName:user.username
+                  }
+              });
+      });
+      UltiSite.Tournaments.find({'divisions.division': {$exists:true}}).forEach( (t) => {
+          const surfaces=[];
+          const divisions = [];
+          t.divisions.forEach((d) => {
+              if(d.surface)
+                  surfaces.push(d.surface);
+              if(d.division)
+                  divisions.push(d.division);
+          });
+          UltiSite.Tournaments.update(t._id,{$set:{divisions:_.uniq(divisions),surfaces:_.uniq(surfaces)}});
+      });
+      Meteor.users.find({'profile.birthday':{$type:'string'}}).forEach((user) => {
+          let date = moment(user.profile.birthday,'DD.MM.YYYY');
+          if(!date.isValid())
+              date = moment(user.profile.birthday,'YYYY-MM-DD');
+          if(date.isValid())
+              Meteor.users.update(user._id,{$set:{'profile.birthday':date.toDate()}});
+      });
+    */
+  UltiSite.Teams.find({ responsible: { $exists: true }, responsibleName: { $exists: false } }).forEach((team) => {
+    const user = Meteor.users.findOne(team.responsible) || { username: 'Unbekannt' };
+    UltiSite.Teams.update(team._id, { $set: { responsibleName: user.username } });
+    console.log('Migrated Team:', team._id, team.responsible, user.username);
+  });
+  console.log('migrations finished');
 });
 Meteor.methods({
-    cleanupTournaments: function(id) {
-        if(!UltiSite.isAdmin(this.userId))
-            throw new Meteor.Error('access-denied');
-        const search = {teams:{$exists:true}};
-        if(id)
-            search._id = id;
-        UltiSite.Tournaments.find(search, {fields:{teams:1, name:1}}).forEach((t)=>{
-            const toRemove=[];
-            t.teams.forEach((team) => {
-                if(!UltiSite.Teams.findOne(team, {fields:{_id:1}}))
-                    toRemove.push(team);
-            });
-            if(toRemove) {
-                UltiSite.Tournaments.update(t._id, {$pullAll: { teams: toRemove }});
-                console.log('cleaned '+toRemove.length+' Teams from '+t.name);
-            }
-        });
-    }    
+  cleanupTournaments(id) {
+    if (!UltiSite.isAdmin(this.userId)) { throw new Meteor.Error('access-denied'); }
+    const search = { teams: { $exists: true } };
+    if (id) { search._id = id; }
+    UltiSite.Tournaments.find(search, { fields: { teams: 1, name: 1 } }).forEach((t) => {
+      const toRemove = [];
+      t.teams.forEach((team) => {
+        if (!UltiSite.Teams.findOne(team, { fields: { _id: 1 } })) { toRemove.push(team); }
+      });
+      if (toRemove) {
+        UltiSite.Tournaments.update(t._id, { $pullAll: { teams: toRemove } });
+        console.log('cleaned ' + toRemove.length + ' Teams from ' + t.name);
+      }
+    });
+  },
 });

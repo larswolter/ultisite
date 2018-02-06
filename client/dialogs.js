@@ -16,7 +16,6 @@ UltiSite.getHTMLTextDialog = function (options, callback) {
   getTextCallback = callback;
   $('#getHTMLTextDialog').modal('show');
 };
-
 UltiSite.modalDialogTemplate = null;
 UltiSite.showModal = function (templateName, data, options) {
   if (options && options.dynamicImport) {
@@ -37,9 +36,16 @@ UltiSite.showModal = function (templateName, data, options) {
     modal.on('hidden.bs.modal', function (event) {
       Blaze.remove(view);
       UltiSite.modalDialogTemplate = null;
+      if (FlowRouter.current().queryParams && FlowRouter.current().queryParams.modalDialog) {
+        window.history.back();
+      }
     });
     UltiSite.modalDialogTemplate = modal;
     modal.modal(options || {});
+    FlowRouter.go(
+      FlowRouter.current().path,
+      {},
+      Object.assign({ modalDialog: 1 }, FlowRouter.current().queryParams));
   }
 };
 
@@ -53,13 +59,13 @@ UltiSite.hideModal = function (afterHidden) {
 };
 
 Template.confirmDialog.helpers({
-  options () {
+  options() {
     return getTextOptions.get();
   },
 });
 
 Template.confirmDialog.events({
-  "click .action-confirm" (event, template) {
+  'click .action-confirm': function (event, template) {
     event.preventDefault();
     getTextCallback(true);
     $('#confirmDialog').modal('hide');
@@ -67,56 +73,59 @@ Template.confirmDialog.events({
 });
 
 Template.getTextDialog.helpers({
-  options () {
+  options() {
     return getTextOptions.get();
   },
 });
 
 Template.getTextDialog.events({
-  "submit form" (event, template) {
+  'submit form': function (event, template) {
     event.preventDefault();
     getTextCallback(template.$('.text-input').val());
     $('#getTextDialog').modal('hide');
   },
 });
 
-Template.getHTMLTextDialog.onCreated(function() {
+Template.getHTMLTextDialog.onCreated(function () {
   this.wysiwygLoaded = new ReactiveVar(false);
 });
 
 Template.getHTMLTextDialog.helpers({
-  wysiwygLoaded () {
+  wysiwygLoaded() {
     return Template.instance().wysiwygLoaded.get();
   },
-  options () {
+  options() {
     return getTextOptions.get();
   },
 });
 
 Template.getHTMLTextDialog.events({
-  "click .action-save" (event, template) {
+  'click .action-save': function (event, template) {
     event.preventDefault();
     getTextCallback(template.$('textarea.wysiwyg-textarea').val());
     $('#getHTMLTextDialog').modal('hide');
   },
-  'shown.bs.modal #getHTMLTextDialog' (evt, tmpl) {
+  'shown.bs.modal #getHTMLTextDialog': function (evt, tmpl) {
     import('/imports/client/forms/wysiwyg.js').then(() => tmpl.wysiwygLoaded.set(true));
   },
-  'hidden.bs.modal #getHTMLTextDialog' () {
+  'hidden.bs.modal #getHTMLTextDialog': function () {
     getTextOptions.set(undefined);
   },
 });
-const searchDependency = new ReactiveVar("Users,Images,Tournaments,Documents,WikiPages,Blogs");
+const searchDependency = new ReactiveVar('Users,Images,Tournaments,Documents,WikiPages,Blogs');
 
 Template.searchDialog.onRendered(function () {
   searchDependency.set(_.filter(this.$('.search-type'), st => st.checked).map(st => this.$(st).attr('data-type')).join(','));
 });
 Template.searchDialog.events({
-  'change .search-type' (e, t) {
+  'change .search-type': function (e, t) {
     searchDependency.set(_.filter(t.$('.search-type'), st => st.checked).map(st => t.$(st).attr('data-type')).join(','));
   },
 });
 Template.searchDialog.helpers({
+  clickFunc() {
+    return () => { UltiSite.hideModal(); };
+  },
   activeSearch() {
     console.log(searchDependency.get());
     return searchDependency.get();
