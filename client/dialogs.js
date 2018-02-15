@@ -117,16 +117,32 @@ Template.getHTMLTextDialog.events({
 const searchDependency = new ReactiveVar('Users,Images,Tournaments,Documents,WikiPages,Blogs');
 
 Template.searchDialog.onRendered(function () {
-  searchDependency.set(_.filter(this.$('.search-type'), st => st.checked).map(st => this.$(st).attr('data-type')).join(','));
+  this.autorun(() => {
+    if (FlowRouter.current().route.name === 'users') {
+      searchDependency.set('Users');
+    } else if (FlowRouter.current().route.name === 'tournaments') {
+      searchDependency.set('Tournaments');
+    } else if (FlowRouter.current().route.name === 'files') {
+      searchDependency.set('Images,Tournaments');
+    } else {
+      searchDependency.set('Images,Tournaments,Users,Tournaments,WikiPages,Blogs');
+    }
+  });
 });
 Template.searchDialog.events({
-  'change .search-type': function (e, t) {
-    searchDependency.set(_.filter(t.$('.search-type'), st => st.checked).map(st => t.$(st).attr('data-type')).join(','));
+  'change .search-type': function (evt, tmpl) {
+    searchDependency.set(_.filter(tmpl.$('.search-type'), st => st.checked).map(st => tmpl.$(st).attr('data-type')).join(','));
   },
 });
 Template.searchDialog.helpers({
+  isActive(type) {
+    return _.contains(searchDependency.get().split(','), type);
+  },
   clickFunc() {
-    return () => { UltiSite.hideModal(); };
+    return (searchResult) => {
+      UltiSite.hideModal();
+      FlowRouter.go(searchResult.link);
+    };
   },
   activeSearch() {
     console.log(searchDependency.get());
