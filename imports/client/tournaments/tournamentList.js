@@ -1,3 +1,6 @@
+import { moment } from 'meteor/momentjs:moment';
+import { FlowRouter } from 'meteor/kadira:flow-router';
+
 import './team.js';
 import './tournament.js';
 import './tournament.less';
@@ -8,10 +11,10 @@ const integratedTournamentList = new Meteor.Collection(null);
 const prefillData = new ReactiveVar(undefined);
 const tournamentQuery = new ReactiveVar({});
 const tournamentFilter = new ReactiveVar({
-  surface: "Alle",
-  category: "Alle",
-  division: "Alle",
-  type: "Alle",
+  surface: 'Alle',
+  category: 'Alle',
+  division: 'Alle',
+  type: 'Alle',
   withTeams: true,
   year: 'Kommende',
 });
@@ -27,11 +30,17 @@ Meteor.startup(function () {
   UltiSite.integratedTournamentList = integratedTournamentList;
   Tracker.autorun(function () {
     if (UltiSite.screenSize.get() > 767) {
-      if (tabSelection.get().length !== 3) { tabSelection.set(['played', 'planned', 'month']); }
+      if (tabSelection.get().length !== 3) {
+        tabSelection.set(['played', 'planned', 'month']);
+      }
     } else if (tabSelection.get().length !== 1) {
-      if (Meteor.userId()) { tabSelection.set(['planned']); } else { tabSelection.set(['month']); }
+      if (Meteor.userId()) {
+        tabSelection.set(['planned']);
+      } else {
+        tabSelection.set(['month']);
+      }
     }
-    console.log("adjusting to screensize....");
+    console.log('adjusting to screensize....');
   });
   Tracker.autorun(function () {
     const myteams = UltiSite.Teams.find({
@@ -48,26 +57,30 @@ Meteor.startup(function () {
 
 
 Template.tournamentList.events({
-  'click .action-add-tournament'(e, tmpl) {
-    e.preventDefault();
+  'click .action-add-tournament': function (evt, tmpl) {
+    evt.preventDefault();
     UltiSite.showModal('tournamentUpdate', { type: 'insert', tournament: prefillData.get() }, { dynamicImport: '/imports/client/tournaments/tournament.js' });
   },
-  'click .action-toggle-filter'(e, tmpl) {
-    e.preventDefault();
+  'click .action-toggle-filter': function (evt, tmpl) {
+    evt.preventDefault();
     tmpl.showFilter.set(!tmpl.showFilter.get());
   },
-  'click .btn-more'(e) {
-    e.preventDefault();
+  'click .btn-more': function (evt) {
+    evt.preventDefault();
     let neu = null;
     let last = null;
-    if (!_.contains(tabSelection.get(), "past")) {
+    if (!_.contains(tabSelection.get(), 'past')) {
       last = months.findOne({}, {
         sort: {
           year: -1,
           code: -1,
         },
       });
-      neu = moment().year(last.year).month(last.month).startOf('month').add(1, "month");
+      neu = moment()
+        .year(last.year)
+        .month(last.month)
+        .startOf('month')
+        .add(1, 'month');
     } else {
       last = months.findOne({}, {
         sort: {
@@ -75,50 +88,54 @@ Template.tournamentList.events({
           code: 1,
         },
       });
-      neu = moment().year(last.year).month(last.month).startOf('month').subtract(1, "month");
+      neu = moment()
+        .year(last.year)
+        .month(last.month)
+        .startOf('month')
+        .subtract(1, 'month');
     }
-    console.log(`additional month:${neu.format("MM.YYYY")}`);
+    console.log(`additional month:${neu.format('MM.YYYY')}`);
     months.insert({
       unix: neu.unix(),
-      code: neu.format("MM.YYYY"),
-      month: neu.format("MMMM"),
-      year: neu.format("YYYY"),
+      code: neu.format('MM.YYYY'),
+      month: neu.format('MMMM'),
+      year: neu.format('YYYY'),
     });
-    console.log("months", months.find().fetch());
+    console.log('months', months.find().fetch());
   },
-  'click .action-prev-month'(e, t) {
-    e.preventDefault();
+  'click .action-prev-month': function (evt, tmpl) {
+    evt.preventDefault();
     currentMonth.set(currentMonth.get().subtract(1, 'month'));
   },
-  'click .action-next-month'(e, t) {
-    e.preventDefault();
+  'click .action-next-month': function (evt, tmpl) {
+    evt.preventDefault();
     currentMonth.set(currentMonth.get().add(1, 'month'));
   },
-  'click .action-use-filter'(e, t) {
-    e.preventDefault();
+  'click .action-use-filter': function (evt, tmpl) {
+    evt.preventDefault();
     tabSelection.set(_.union(_.without(tabSelection.get(), 'month', 'map'), ['filter']));
   },
-  'click .action-use-map'(e, t) {
-    e.preventDefault();
+  'click .action-use-map': function (evt, tmpl) {
+    evt.preventDefault();
     tabSelection.set(_.union(_.without(tabSelection.get(), 'filter', 'month'), ['map']));
   },
-  'click .action-use-month'(e, t) {
-    e.preventDefault();
+  'click .action-use-month': function (evt, tmpl) {
+    evt.preventDefault();
     tabSelection.set(_.union(_.without(tabSelection.get(), 'filter', 'map'), ['month']));
   },
-  'click .tournament-tabs a'(e, t) {
-    e.preventDefault();
-    tabSelection.set([t.$(e.currentTarget).attr('data-target')]);
+  'click .tournament-tabs a': function (evt, tmpl) {
+    evt.preventDefault();
+    tabSelection.set([tmpl.$(evt.currentTarget).attr('data-target')]);
   },
-  'click .btn-add-tournament'(e) {
+  'click .btn-add-tournament': function (evt) {
     prefillData.set({
       date: new Date(),
       address: {
-        country: "DE",
+        country: 'DE',
       },
       divisions: [],
       surfaces: [],
-      category: "Turnier",
+      category: 'Turnier',
       numDays: 2,
     });
   },
@@ -126,10 +143,10 @@ Template.tournamentList.events({
 
 Template.tournamentList.onCreated(function () {
   this.showFilter = new ReactiveVar(false);
-  this.topListEntries = new ReactiveVar();
+  this.topListEntries = new ReactiveVar(10);
   this.autorun(() => {
     const lastSync = moment(localStorage.getItem('offlineLastSync'));
-    this.subscribe("Tournaments", lastSync.toDate());
+    this.subscribe('Tournaments', lastSync.toDate());
   });
   Meteor.defer(() => {
     this.autorun(() => {
@@ -212,7 +229,7 @@ Template.tournamentList.helpers({
   },
   plannedTournaments() {
     const cursor = integratedTournamentList.find(tournamentQuery.get());
-    Template.instance().topListEntries.set(cursor.count());
+    Template.instance().topListEntries.set(Math.max(cursor.count(), 10));
     const grouped = _.groupBy(_.sortBy(cursor.fetch(), 'date'), t => moment(t.date).format('MMMM YYYY'));
     return Object.keys(grouped).map(key => ({
       _id: key,
@@ -224,57 +241,62 @@ Template.tournamentList.helpers({
     if (Template.instance().topListEntries.get()) {
       const count = 0;
 
-      return integratedTournamentList.find({ date: { $lte: new Date() }, teams: { $exists: true } }, { $sort: { date: -1, name: 1 } }).map((tourney) => {
+      return integratedTournamentList.find({
+        date: { $lte: new Date() }, teams: { $exists: true }
+      }, { $sort: { date: -1, name: 1 } }).map((tourney) => {
         if (count === Template.instance().topListEntries.get()) {
           return undefined;
         }
         if (_.find(tourney.teams || [], (t) => {
           const team = UltiSite.getTeam(t);
           return team && team.state === 'dabei';
-        })) { return tourney; }
+        })) {
+          return tourney;
+        }
+        return undefined;
       }).filter(x => !!x);
     }
     return [];
   },
   showTournamentsFilter() {
-    return _.contains(tabSelection.get(), "filter");
+    return _.contains(tabSelection.get(), 'filter');
   },
   showTournamentsMonth() {
-    return _.contains(tabSelection.get(), "month");
+    return _.contains(tabSelection.get(), 'month');
   },
   showTournamentsMap() {
-    return _.contains(tabSelection.get(), "map");
+    return _.contains(tabSelection.get(), 'map');
   },
   showPlayed() {
-    return _.contains(tabSelection.get(), "played");
+    return _.contains(tabSelection.get(), 'played');
   },
   showPlanned() {
-    return _.contains(tabSelection.get(), "planned");
+    return _.contains(tabSelection.get(), 'planned');
   },
   activeMonth() {
     return {
-      month: currentMonth.get().format("MMMM"),
-      year: currentMonth.get().format("YYYY"),
+      month: currentMonth.get().format('MMMM'),
+      year: currentMonth.get().format('YYYY'),
     };
   },
   formatMonth(month) {
-    return moment().month(month).format("MMMM");
+    return moment().month(month).format('MMMM');
   },
 });
 
 Template.tournamentFilter.events({
-  "click a"(e) {
-    e.preventDefault();
-    console.log(`${$(e.currentTarget).data('target')}->${$(e.currentTarget).text()}`);
+  'click a': function (evt) {
+    evt.preventDefault();
+    console.log(`${$(evt.currentTarget).data('target')}->${$(evt.currentTarget).text()}`);
     const filter = tournamentFilter.get();
-    filter[$(e.currentTarget).data('target')] = $(e.currentTarget).text();
+    filter[$(evt.currentTarget).data('target')] = $(evt.currentTarget).text();
     tournamentFilter.set(filter);
   },
-  "click .btn-mit-teams"(e) {
-    e.preventDefault();
-    $(e.currentTarget).toggleClass("checked");
+  'click .btn-mit-teams': function (evt) {
+    evt.preventDefault();
+    $(evt.currentTarget).toggleClass('checked');
     const filter = tournamentFilter.get();
-    filter[$(e.currentTarget).data('target')] = $(e.currentTarget).hasClass("checked");
+    filter[$(evt.currentTarget).data('target')] = $(evt.currentTarget).hasClass('checked');
     tournamentFilter.set(filter);
   },
 });
@@ -284,14 +306,14 @@ Template.tournamentFilter.helpers({
     return tournamentFilter.get();
   },
   tournamentYears() {
-    return [moment().format("YYYY"),
-      moment().subtract(1, "year").format("YYYY"),
-      moment().subtract(2, "year").format("YYYY"),
-      moment().subtract(3, "year").format("YYYY"),
-      moment().subtract(4, "year").format("YYYY"),
-      moment().subtract(5, "year").format("YYYY"),
-      moment().subtract(6, "year").format("YYYY"),
-      moment().subtract(7, "year").format("YYYY"),
+    return [moment().format('YYYY'),
+    moment().subtract(1, 'year').format('YYYY'),
+    moment().subtract(2, 'year').format('YYYY'),
+    moment().subtract(3, 'year').format('YYYY'),
+    moment().subtract(4, 'year').format('YYYY'),
+    moment().subtract(5, 'year').format('YYYY'),
+    moment().subtract(6, 'year').format('YYYY'),
+    moment().subtract(7, 'year').format('YYYY'),
     ];
   },
 });
@@ -302,7 +324,7 @@ const helpers = {
   },
   over() {
     if (!Template.instance().data) { return false; }
-    if (moment(Template.instance().data.date).isBefore(moment(), "day")) { return true; }
+    if (moment(Template.instance().data.date).isBefore(moment(), 'day')) { return true; }
     return false;
   },
   dateState() {
@@ -313,65 +335,65 @@ const helpers = {
   tags() {
     const tags = [];
     this.divisions.forEach(function (elem) {
-      if (elem.indexOf("Damen") > -1) {
+      if (elem.indexOf('Damen') > -1) {
         tags.push({
-          icon: "venus",
+          icon: 'venus',
           text: elem,
         });
       }
-      if (elem.indexOf("Open") > -1) {
+      if (elem.indexOf('Open') > -1) {
         tags.push({
-          icon: "mars",
+          icon: 'mars',
           text: elem,
         });
       }
-      if (elem.indexOf("Mixed") > -1) {
+      if (elem.indexOf('Mixed') > -1) {
         tags.push({
-          icon: "venus-mars",
+          icon: 'venus-mars',
           text: elem,
         });
       }
-      if (elem.indexOf("Masters") > -1) {
+      if (elem.indexOf('Masters') > -1) {
         tags.push({
-          icon: "user-secret",
+          icon: 'user-secret',
           text: elem,
         });
       }
-      if (elem.indexOf("Junioren") > -1) {
+      if (elem.indexOf('Junioren') > -1) {
         tags.push({
-          icon: "child",
+          icon: 'child',
           text: elem,
         });
       }
     });
     this.surfaces.forEach(function (elem) {
-      if (elem === "Sand") {
+      if (elem === 'Sand') {
         tags.push({
-          icon: "sun-o",
+          icon: 'sun-o',
           text: elem,
         });
       }
-      if (elem === "Halle") {
+      if (elem === 'Halle') {
         tags.push({
-          icon: "home",
+          icon: 'home',
           text: elem,
         });
       }
     });
-    if (this.category === "HAT-Turnier") {
+    if (this.category === 'HAT-Turnier') {
       tags.push({
-        icon: "graduation-cap",
-        text: "HAT",
+        icon: 'graduation-cap',
+        text: 'HAT',
       });
-    } else if (this.category === "Veranstaltung") {
+    } else if (this.category === 'Veranstaltung') {
       tags.push({
-        icon: "birthday-cake",
-        text: "Event",
+        icon: 'birthday-cake',
+        text: 'Event',
       });
-    } else if (this.category === "DFV-Turnier") {
+    } else if (this.category === 'DFV-Turnier') {
       tags.push({
-        img: "/dfv.png",
-        text: "DFV Turnier",
+        img: '/dfv.png',
+        text: 'DFV Turnier',
       });
     }
     return _.unique(tags, false, function (item) {
@@ -380,10 +402,10 @@ const helpers = {
   },
   divisionIcon() {
     if (!this.division) { return 'question'; }
-    if (this.division.indexOf("Damen") >= 0) { return "venus"; }
-    if (this.division.indexOf("Mixed") >= 0) { return "venus-mars"; }
-    if (this.division.indexOf("Open") >= 0) { return "mars"; }
-    return "question";
+    if (this.division.indexOf('Damen') >= 0) { return 'venus'; }
+    if (this.division.indexOf('Mixed') >= 0) { return 'venus-mars'; }
+    if (this.division.indexOf('Open') >= 0) { return 'mars'; }
+    return 'question';
   },
   myTeamState() {
     return (_.find(this.participants, p => p.user === Meteor.userId()));

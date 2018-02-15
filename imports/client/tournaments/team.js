@@ -3,14 +3,14 @@ import './team.html';
 import './team.less';
 
 Template.participant.events({
-  'click .action-participate': function(e, t) {
+  'click .action-participate': function (e, t) {
     e.preventDefault();
     e.stopPropagation();
     const partValue = Number(t.$(e.currentTarget).attr('data-participation'));
     const teamId = Template.parentData()._id;
     Meteor.call('participationUpdate', teamId, this.user, partValue);
   },
-  'click button.action-comment': function(e, t) {
+  'click button.action-comment': function (e, t) {
     e.preventDefault();
     const self = this;
     const teamId = Template.parentData()._id;
@@ -20,7 +20,7 @@ Template.participant.events({
       });
     });
   },
-  'keyup input.comment': function(e, t) {
+  'keyup input.comment': function (e, t) {
     t.$('button.comment').removeClass('disabled');
   },
 });
@@ -57,32 +57,32 @@ Template.team.onRendered(function () {
 
 
 Template.team.events({
-  'click .action-historic-view': function(e) {
+  'click .action-historic-view': function (e) {
     e.preventDefault();
     UltiSite.showModal('teamHistoricView', { teamId: this._id });
   },
-  'click .action-participate': function(e) {
+  'click .action-participate': function (e) {
     e.preventDefault();
     UltiSite.showModal('participateDialog', { teamId: this._id });
   },
-  'click .action-edit-team': function(e) {
+  'click .action-edit-team': function (e) {
     e.preventDefault();
     UltiSite.showModal('teamUpdate', { tournamentId: this.tournamentId, teamId: this._id });
   },
-  'click .action-edit-remarks': function(e, t) {
+  'click .action-edit-remarks': function (e, t) {
     UltiSite.getHTMLTextDialog({ content: this.remarks, header: 'Anmerkungen zum Team bearbeiten' }, (text) => {
       UltiSite.Teams.update(this._id, {
         $set: { remarks: text },
       });
     });
   },
-  'click .team-remove': function(e, t) {
+  'click .team-remove': function (e, t) {
     e.preventDefault();
     UltiSite.confirmDialog('Willst du wirklich das gesamte Team löschen?', () => {
       Meteor.call('teamRemove', this._id, UltiSite.userFeedbackFunction('Team löschen'));
     });
   },
-  'click .action-set-state': function(e, t) {
+  'click .action-set-state': function (e, t) {
     e.preventDefault();
     const state = t.$(e.currentTarget).attr('data-state');
     if (state === 'dabei') {
@@ -93,7 +93,7 @@ Template.team.events({
       Meteor.call('teamUpdateState', this._id, state, UltiSite.userFeedbackFunction('Team Status ändern'));
     }
   },
-  'click .action-be-responsible': function(e, t) {
+  'click .action-be-responsible': function (e, t) {
     e.preventDefault();
     UltiSite.Teams.update({
       _id: this._id,
@@ -186,17 +186,17 @@ Template.participateDialog.helpers({
 });
 
 Template.participateDialog.events({
-  'click .action-switch-invite': function(e, t) {
+  'click .action-switch-invite': function (e, t) {
     t.inviteOther.set(true);
   },
-  'keyup .alias-field': function(e, t) {
+  'keyup .alias-field': function (e, t) {
     e.preventDefault();
     t.$('.user-id').val('');
   },
-  'change [name="teamId"]': function(e, t) {
+  'change [name="teamId"]': function (e, t) {
     t.selectedTeam.set(t.$('[name="teamId"]').val());
   },
-  'click .action-insert': function(e, t) {
+  'click .action-insert': function (e, t) {
     const teamId = t.$('[name="teamId"]').val();
     e.preventDefault();
     const params = {
@@ -223,14 +223,8 @@ Template.teamCountBar.helpers({
     let females = 0;
     if (this.participants) {
       this.participants.forEach(function (participant) {
-        if (participant.state > 90)
-          {full += 1;}
-        else if (participant.state > 50)
-          {half += 1;}
-        else if (participant.state > 10)
-          {rest += 1;}
-        if (participant.sex === 'W')
-          {females += 1;}
+        if (participant.state > 90) { full += 1; }        else if (participant.state > 50) { half += 1; }        else if (participant.state > 10) { rest += 1; }
+        if (participant.sex === 'W') { females += 1; }
       });
     }
     if (full + half + rest === 0) { return undefined; }
@@ -296,7 +290,7 @@ Template.team.helpers({
             remarks: newContent.trim(),
           },
       }, function (err) {
-          if (err) { UltiSite.notify('Error saving team:' + err, 'error'); }          else {
+          if (err) { UltiSite.notify('Error saving team:' + err, 'error'); } else {
             Meteor.call('storeContentVersion', self._id, newContent);
             UltiSite.notify('Anmerkungen gespeichert', 'success');
             finished();
@@ -411,7 +405,6 @@ Template.teamUpdate.helpers({
       maxPlayers,
       minFemale,
       division,
-      responsible: Meteor.userId(),
     };
   },
 });
@@ -421,7 +414,7 @@ Template.teamUpdate.events({
 Template.teamReport.onCreated(function () {
 });
 Template.teamReport.events({
-  'click .action-add-me': function(e, t) {
+  'click .action-add-me': function (e, t) {
     e.preventDefault();
 
     const params = {
@@ -430,36 +423,36 @@ Template.teamReport.events({
       alias: UltiSite.getAlias(Meteor.userId()),
       comment: '',
     };
-    if (_.find(t.data.participants, p => p.user === Meteor.userId())) { Meteor.call('participationUpdate', t.data._id, Meteor.userId(), 100, UltiSite.userFeedbackFunction('Mich hinzufügen', e.currentTarget)); }    else { Meteor.call('participantInsert', params, t.data._id, UltiSite.userFeedbackFunction('Mich hinzufügen', e.currentTarget)); }
+    if (_.find(t.data.participants, p => p.user === Meteor.userId())) { Meteor.call('participationUpdate', t.data._id, Meteor.userId(), 100, UltiSite.userFeedbackFunction('Mich hinzufügen', e.currentTarget)); } else { Meteor.call('participantInsert', params, t.data._id, UltiSite.userFeedbackFunction('Mich hinzufügen', e.currentTarget)); }
   },
-  'click .action-remove-team': function(e, t) {
+  'click .action-remove-team': function (e, t) {
     e.preventDefault();
     Meteor.call('teamUpdateState', this._id, 'geplant', UltiSite.userFeedbackFunction('Team Status ändern'));
   },
-  'click .action-delete-team': function(e, t) {
+  'click .action-delete-team': function (e, t) {
     e.preventDefault();
     UltiSite.confirmDialog('Willst du wirklich das gesamte Team löschen?', () => {
       UltiSite.Teams.remove(this._id, UltiSite.userFeedbackFunction('Team löschen'));
     });
   },
-  'click .action-add-team': function(e, t) {
+  'click .action-add-team': function (e, t) {
     e.preventDefault();
     Meteor.call('teamUpdateState', this._id, 'dabei', UltiSite.userFeedbackFunction('Team Status ändern'));
   },
-  'click .action-remove-me': function(e, t) {
+  'click .action-remove-me': function (e, t) {
     e.preventDefault();
     const params = {
       userid: Meteor.userId(),
     };
     Meteor.call('participantRemove', params, t.data._id, UltiSite.userFeedbackFunction('Mich entfernen', e.currentTarget));
   },
-  'click .action-show-team-image': function() {
+  'click .action-show-team-image': function () {
     FlowRouter.go('image', {
       _id: this.image,
       associated: this.tournamentId,
     });
   },
-  'click .action-team-image': function() {
+  'click .action-team-image': function () {
     const teamId = this._id;
     UltiSite.fileBrowserShowDialog(this.tournamentId, function (file) {
       if (file) {
@@ -469,7 +462,7 @@ Template.teamReport.events({
             tags: 'Teamfoto',
           },
         });
-      }      else {
+      } else {
         const img = UltiSite.Images.findOne({
           associated: teamId,
         });
@@ -483,7 +476,7 @@ Template.teamReport.events({
       UltiSite.fileBrowserHideDialog();
     });
   },
-  'change .team-report .form-control': function(e, t) {
+  'change .team-report .form-control': function (e, t) {
     const value = t.$(e.currentTarget).val();
     const name = $(e.currentTarget).attr('name');
     const node = $(e.currentTarget.parentNode);
