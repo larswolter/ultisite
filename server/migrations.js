@@ -144,6 +144,17 @@ Meteor.startup(function () {
   console.log('migrations finished');
 });
 Meteor.methods({
+  removeResponsibilities() {
+    if (!UltiSite.isAdmin(this.userId)) { throw new Meteor.Error('access-denied'); }
+    UltiSite.Teams.update({
+      state: { $in: ['geplant', 'angemeldet'] },
+      teamType: /Auslosung/,
+      tournamentDate: { $gte: new Date() },
+      responsible: { $exists: true },
+    }, {
+        $unset: { responsible: true, responsibleName: true },
+      }, { multi: true });
+  },
   cleanupTournaments(id) {
     if (!UltiSite.isAdmin(this.userId)) { throw new Meteor.Error('access-denied'); }
     const search = { teams: { $exists: true } };
