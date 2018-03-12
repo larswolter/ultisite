@@ -1,34 +1,40 @@
-<html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="/merged-stylesheets.css"/>
-    <style>
-      @media(min-width: 768px) {
-        .page-content {
-          padding-top: calc({{settings.titleImageHeight}}px + 90px);
-        }
-      }
-    </style>
-
-  </head>
-<body>  	
-<div class="ultisite-{{settings.design}} base-layout {{#if settings.imageTitleImage}}with-title-image{{/if}}">
-  <nav class="navbar navbar-default navbar-fixed-top" style="height:40px">
+<div id="serverRendered" 
+  style="position: absolute;z-index:10000;opacity:1;transition:all 200ms"
+  class="ultisite-{{settings.design}} base-layout {{#if settings.imageTitleImage}}with-title-image{{/if}}">
+  <nav class="navbar navbar-default navbar-fixed-top">
     <div class="title-image hidden-xs" style="height:{{settings.titleImageHeight}}px">
-      <div style="background-image:url('/_image?imageId={{settings.imageTitleImage}}')"> </div>
+      <div style="background-image:url('/_image?imageId={{settings.imageTitleImage}}&size=20')"> </div>
       <img src="/_image?imageId={{settings.imageLogo}}" />
     </div>
-		<div class="container-fluid">
-			<ul class="nav navbar-nav">
-        <li>
-          <a href="#">
-            <span class="fa fa-spinner fa-spin" ></span> Lade {{settings.teamname}} WebApp
-          </a>
-        </li>
-			</ul>
+		<div class="row" style="height:40px">
+			<div class="col-xs-12">
+        <a href="#">
+          <span class="fa fa-spinner fa-spin" ></span> Lade {{settings.teamname}} WebApp
+        </a>
+			</div>
 		</div>
 	</nav>
   <div class="container-fluid page-content">
+    <br />
     <div class="container-fluid">
+      <div class="row">
+        <div class="wikipage col-xs-12 col-sm-6">
+          <div class="page-details">
+            <span class="">
+                Zuletzt geändert am ...
+            </span>
+          </div>
+          <div>
+            {{{content}}}
+          </div>  
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">&nbsp;</div>
+            <div class="panel-body" style="height:400px">&nbsp;</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <nav class="hidden-xs navbar navbar-default navbar-footer">
@@ -37,5 +43,3 @@
     </div>
   </nav>
 </div>
-</body>
-</html>

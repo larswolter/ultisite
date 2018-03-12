@@ -1,11 +1,15 @@
 import { onPageLoad } from 'meteor/server-render';
+import handlebars from 'handlebars';
 
-onPageLoad((link) => {
-  link.appendToBody('<script type="text/javascript" src="/libs/jquery-3.2.1.min.js"></script>');
-  link.appendToHead(`${'<style type="text/css">' +
-    'body {background-color:'}${UltiSite.settings().backgroundColor};} ` +
-    'iframe.static-start-page {z-index:1;position:absolute;overflow:hidden; border:none; width:100%;height:100%;padding:0px;margin:0px;}' +
-    '</style>');
+onPageLoad((sink) => {
+  sink.appendToBody('<script type="text/javascript" src="/libs/jquery-3.2.1.min.js"></script>');
 
-  link.appendToBody('<iframe class="static-start-page" src="/staticStartpage"></iframe>');
+  const wiki = UltiSite.WikiPages.findOne(UltiSite.settings().wikiStart);
+  const layout = handlebars.compile(Assets.getText('mail-templates/static-layout.html'));
+  const context = {
+    settings: UltiSite.settings(),
+    content: wiki.content,
+  };
+
+  sink.appendToBody(layout(context));
 });
