@@ -40,37 +40,37 @@ Template.practiceDialog.helpers({
       template.$('input[name="imageMapZoom"]').val(map.getView().getZoom());
       canvas.toBlob((blob) => {
         mapImageFile = blob;
-      }, 'image/png');
-      mapImageUrl.set(canvas.toDataURL('image/jpeg',0.75));
+      }, 'image/jpeg', 0.75);
+      mapImageUrl.set(canvas.toDataURL('image/jpeg', 0.75));
     };
   },
 });
 
 AutoForm.hooks({
   practiceDialogForm: {
-        // Called when any submit operation succeeds
+    // Called when any submit operation succeeds
     onSubmit: function (insertDoc, updateDoc, currentDoc) {
       const id = currentDoc && currentDoc._id;
       Meteor.call('updatePractice', id, id ? updateDoc : insertDoc, (err, res) => {
         if (mapImageFile) {
           const fsFile = {
-              file: mapImageFile,
-              metadata: {
-                  _meteorCall: 'updatePracticeImage',
-                  associated: [res],
-                  tags: ['Karte', 'Training'],
-                  creator: Meteor.userId(),
-                  name: "Trainingskarte.png",
-                  type: 'image/jpg'
-                }
-            };
+            file: mapImageFile,
+            metadata: {
+              _meteorCall: 'updatePracticeImage',
+              associated: [res],
+              tags: ['Karte', 'Training'],
+              creator: Meteor.userId(),
+              name: "Trainingskarte.png",
+              type: 'image/jpg'
+            }
+          };
           UltiSite.pushToUploadQueue(fsFile);
           UltiSite.triggerUpload();
         }
         if (err)
           UltiSite.notify('Fehler beim Speichern des Trainings:' + err.message, "error");
         else
-                    UltiSite.hideModal();
+          UltiSite.hideModal();
       });
       return false;
     },
@@ -128,22 +128,22 @@ Template.practiceSmall.events({
 Template.practice.helpers({
   weekdayText: function () {
     switch (Number(this.weekday)) {
-    case 0:
-      return "Sonntags";
-    case 1:
-      return "Montags";
-    case 2:
-      return "Dienstags";
-    case 3:
-      return "Mittwochs";
-    case 4:
-      return "Donnerstags";
-    case 5:
-      return "Freitags";
-    case 6:
-      return "Samstags";
-    default:
-      return "Nulltag";
+      case 0:
+        return "Sonntags";
+      case 1:
+        return "Montags";
+      case 2:
+        return "Dienstags";
+      case 3:
+        return "Mittwochs";
+      case 4:
+        return "Donnerstags";
+      case 5:
+        return "Freitags";
+      case 6:
+        return "Samstags";
+      default:
+        return "Nulltag";
     }
   }
 });
