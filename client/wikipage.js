@@ -59,19 +59,19 @@ Template.wikipage.onCreated(function () {
       UltiSite.WikiPages.update({
         _id: this.activePage.get()._id,
       }, {
-        $set: {
-          locked: Meteor.userId(),
-          lockedName: Meteor.user().username,
-        },
-      });
+          $set: {
+            locked: Meteor.userId(),
+            lockedName: Meteor.user().username,
+          },
+        });
     } else {
       UltiSite.WikiPages.update({
         _id: this.activePage.get()._id,
       }, {
-        $unset: {
-          locked: 0,
-        },
-      });
+          $unset: {
+            locked: 0,
+          },
+        });
     }
   });
 });
@@ -116,16 +116,16 @@ Template.wikipage.events({
     UltiSite.WikiPages.update({
       _id: t.activePage.get()._id,
     }, {
-      $set: {
-        editor: Meteor.userId(),
-        content: newContent,
-        lastChange: new Date(),
-      },
-    }, UltiSite.userFeedbackFunction("Inhalt speichern", null, function () {
-      Meteor.call("storeContentVersion", t.activePage.get()._id, newContent);
-      console.log("saved wikipage content");
-      t.activeTab.set(undefined);
-    }));
+        $set: {
+          editor: Meteor.userId(),
+          content: newContent,
+          lastChange: new Date(),
+        },
+      }, UltiSite.userFeedbackFunction("Inhalt speichern", null, function () {
+        Meteor.call("storeContentVersion", t.activePage.get()._id, newContent);
+        console.log("saved wikipage content");
+        t.activeTab.set(undefined);
+      }));
   },
 
 });
@@ -178,7 +178,7 @@ Template.wikipage.helpers({
 
 Template.wikipageOverview.onCreated(function () {
   Meteor.call("getWikiPageNames", function (err, res) {
-    Session.set("wikiPageNames", res);
+    UltiSite.State.set("wikiPageNames", res);
   });
 });
 
@@ -193,7 +193,7 @@ Template.wikipageOverview.events({
       content: "",
     }, UltiSite.userFeedbackFunction("Wikiseite Anlegen", e.currentTarget, function () {
       Meteor.call("getWikiPageNames", function (err, res) {
-        Session.set("wikiPageNames", res);
+        UltiSite.State.set("wikiPageNames", res);
       });
     }));
   },
@@ -202,7 +202,7 @@ Template.wikipageOverview.events({
       UltiSite.WikiPages.remove($(e.currentTarget).attr('data-id'),
         UltiSite.userFeedbackFunction("Wikiseite Entfernen", e.currentTarget, function () {
           Meteor.call("getWikiPageNames", function (err, res) {
-            Session.set("wikiPageNames", res);
+            UltiSite.State.set("wikiPageNames", res);
           });
         }),
       );
@@ -211,7 +211,7 @@ Template.wikipageOverview.events({
 });
 Template.wikipageOverview.helpers({
   wikiPages() {
-    return Session.get("wikiPageNames");
+    return UltiSite.State.get("wikiPageNames");
   },
   canRemove() {
     if (this.owner === Meteor.userId()) { return true; }

@@ -24,7 +24,7 @@ const fileBrowserCallback = new ReactiveVar(undefined);
 Meteor.startup(function () {
   _.extend(UltiSite, {
     fileBrowserShowDialog(id, callback) {
-      Session.set("fileBrowserFolder", id);
+      UltiSite.State.set("fileBrowserFolder", id);
       fileBrowserCallback.set(callback);
       UltiSite.showModal('fileBrowserDialog');
     },
@@ -59,28 +59,28 @@ Template.editFileDialog.helpers({
 
 
 Template.fileBrowser.onCreated(function () {
-  Session.set("fileBrowserFolder", UltiSite.settings().rootFolderId);
-  Session.setDefault("fileBrowserGalleryView", false);
+  UltiSite.State.set("fileBrowserFolder", UltiSite.settings().rootFolderId);
+  UltiSite.State.setDefault("fileBrowserGalleryView", false);
 
   this.autorun(() => {
     const id = FlowRouter.getParam("_id");
     const dataId = Template.currentData().fileBrowserFolder;
     if (dataId) {
-      Session.set("fileBrowserFolder", dataId);
+      UltiSite.State.set("fileBrowserFolder", dataId);
     } else
       if (id) {
-        Session.set("fileBrowserFolder", id);
+        UltiSite.State.set("fileBrowserFolder", id);
       }
   });
   this.autorun(() => {
-    this.subscribe('Files', Session.get("fileBrowserFolder"));
+    this.subscribe('Files', UltiSite.State.get("fileBrowserFolder"));
   });
 
   this.readme = new ReactiveVar();
 
   this.autorun(() => {
     const readmeFile = UltiSite.Documents.findOne({
-      associated: Session.get("fileBrowserFolder"),
+      associated: UltiSite.State.get("fileBrowserFolder"),
       name: 'README.md',
     });
     if (readmeFile) {
@@ -94,7 +94,7 @@ Template.fileBrowser.onCreated(function () {
 Template.fileBrowser.events({
   'click .toggle-gallery-view'(e, t) {
     e.preventDefault();
-    Session.set("fileBrowserGalleryView", !Session.get("fileBrowserGalleryView"));
+    UltiSite.State.set("fileBrowserGalleryView", !UltiSite.State.get("fileBrowserGalleryView"));
   },
   'click .btn-new-folder'(e, t) {
     e.preventDefault();
@@ -102,20 +102,20 @@ Template.fileBrowser.events({
     UltiSite.Folders.insert({
       rename: true,
       name: "Neuer Ordner",
-      associated: [Session.get("fileBrowserFolder")],
+      associated: [UltiSite.State.get("fileBrowserFolder")],
     });
   },
 });
 
 Template.fileBrowser.helpers({
   galleryView() {
-    return Session.get("fileBrowserGalleryView");
+    return UltiSite.State.get("fileBrowserGalleryView");
   },
   readme() {
     return Template.instance().readme.get();
   },
   curFolder() {
-    return UltiSite.getAnyById(Session.get("fileBrowserFolder")) || { _id: Session.get("fileBrowserFolder") };
+    return UltiSite.getAnyById(UltiSite.State.get("fileBrowserFolder")) || { _id: UltiSite.State.get("fileBrowserFolder") };
   },
   rootFolder() {
     return UltiSite.getAnyById(UltiSite.settings().rootFolderId);
@@ -152,7 +152,7 @@ Template.fileBrowserItem.helpers({
 
 Template.fileBrowserDialog.onCreated(function () {
   const self = this;
-  this.initialFolder = Session.get("fileBrowserFolder");
+  this.initialFolder = UltiSite.State.get("fileBrowserFolder");
   this.activePane = new ReactiveVar(this.initialFolder);
 });
 Template.fileBrowserDialog.onDestroyed(function () {
@@ -165,7 +165,7 @@ Template.fileBrowserDialog.events({
   },
   'click .action-switch-source'(e, t) {
     e.preventDefault();
-    if (t.$(e.currentTarget).attr("data-value") !== 'search') { Session.set("fileBrowserFolder", t.$(e.currentTarget).attr("data-value")); }
+    if (t.$(e.currentTarget).attr("data-value") !== 'search') { UltiSite.State.set("fileBrowserFolder", t.$(e.currentTarget).attr("data-value")); }
     t.activePane.set(t.$(e.currentTarget).attr("data-value"));
   },
   'click .action-select-nothing'(e) {
@@ -183,7 +183,7 @@ Template.fileBrowserDialog.helpers({
     return Template.instance().initialFolder;
   },
   fileBrowserFolder() {
-    return Session.get("fileBrowserFolder");
+    return UltiSite.State.get("fileBrowserFolder");
   },
   activePane() {
     return Template.instance().activePane.get();
@@ -197,14 +197,14 @@ Template.fileBrowserDialog.helpers({
 const helpers = {
   icon: getIcon,
   folder() {
-    return UltiSite.getAnyById(Session.get("fileBrowserFolder")) || {};
+    return UltiSite.getAnyById(UltiSite.State.get("fileBrowserFolder")) || {};
   },
   files() {
     return _.sortBy(UltiSite.Images.find({
-      associated: Session.get("fileBrowserFolder"),
+      associated: UltiSite.State.get("fileBrowserFolder"),
     }).fetch().concat(
       UltiSite.Documents.find({
-        associated: Session.get("fileBrowserFolder"),
+        associated: UltiSite.State.get("fileBrowserFolder"),
       }).fetch()), function (doc) {
       return doc.created;
     });
@@ -218,7 +218,7 @@ const helpers = {
       }
     }
     return folders.concat(UltiSite.Folders.find({
-      associated: Session.get("fileBrowserFolder"),
+      associated: UltiSite.State.get("fileBrowserFolder"),
     }).fetch());
   },
   fileActions() {
@@ -259,7 +259,7 @@ Template.fileBrowserList.onRendered(function () {
 Template.fileBrowserList.helpers(_.extend({}, helpers));
 Template.fileBrowserList.events({
   'click .folder-link'(e, t) {
-    Session.set("fileBrowserFolder", this._id);
+    UltiSite.State.set("fileBrowserFolder", this._id);
     e.preventDefault();
   },
   'click .remove-folder'(e, t) {
@@ -304,7 +304,7 @@ Template.fileBrowserGallery.helpers(helpers);
 Template.fileBrowserGallery.events({
   'click .action-open-folder'(e, t) {
     e.preventDefault();
-    Session.set("fileBrowserFolder", this._id);
+    UltiSite.State.set("fileBrowserFolder", this._id);
   },
 });
 
@@ -365,7 +365,7 @@ Template.fileBrowserGalleryItem.helpers(helpers);
 
 Template.folderTreeItem.helpers({
   isSelectedFolder() {
-    return this._id === Session.get("fileBrowserFolder");
+    return this._id === UltiSite.State.get("fileBrowserFolder");
   },
   folders() {
     return UltiSite.Folders.find({

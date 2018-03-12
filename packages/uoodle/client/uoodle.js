@@ -47,7 +47,7 @@ Template.uoodles.helpers({
 Template.uoodles.events({
     'click .action-add-uoodle': function (e) {
         e.preventDefault();
-        Session.set('uoodleCurrent',undefined);
+        UltiSite.State.set('uoodleCurrent',undefined);
         UltiSite.showModal('uoodleAddDialog');    
     },
 });
@@ -66,7 +66,7 @@ Template.uoodleItem.events({
     'click .action-edit': function (e) {
         e.preventDefault();
         console.log('setting uoodle',this);
-        Session.set('uoodleCurrent',this._id);
+        UltiSite.State.set('uoodleCurrent',this._id);
         UltiSite.showModal('uoodleAddDialog');    
     },
     'click .action-remove': function (e, t) {
@@ -155,10 +155,10 @@ Template.uoodleDetails.events({
 
 Template.uoodleAddDialog.helpers({
     current: function () {
-        return Uoodles.findOne(Session.get('uoodleCurrent'));
+        return Uoodles.findOne(UltiSite.State.get('uoodleCurrent'));
     },
     autoFormType: function () {
-        return Session.get('uoodleCurrent')?'update':'insert';
+        return UltiSite.State.get('uoodleCurrent')?'update':'insert';
     },
     uoodleSchema: function () {
         return uoodleSchema;

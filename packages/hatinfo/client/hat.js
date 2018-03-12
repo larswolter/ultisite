@@ -30,12 +30,12 @@ Meteor.startup(function () {
 
 Template.hatInfoSettings.helpers({
   wikiPages() {
-    return Session.get("wikiPageNames");
+    return UltiSite.State.get("wikiPageNames");
   },
   wikiPageName(id) {
     let name = "";
-    if (Session.get("wikiPageNames")) {
-      Session.get("wikiPageNames").forEach(function (page) {
+    if (UltiSite.State.get("wikiPageNames")) {
+      UltiSite.State.get("wikiPageNames").forEach(function (page) {
         if (page._id == id) { name = page.name; }
       });
     }
@@ -165,7 +165,7 @@ Template.hatParticipateDialog.helpers({
     return UltiSite.HatInfo.schema;
   },
   error() {
-    return Session.get('hatParticipateError');
+    return UltiSite.State.get('hatParticipateError');
   },
   method() {
     if (activeEntry.get()) {
@@ -177,7 +177,7 @@ Template.hatParticipateDialog.helpers({
 
 Template.hatParticipateDialogError.helpers({
   error() {
-    return Session.get('hatParticipateError');
+    return UltiSite.State.get('hatParticipateError');
   },
 });
 
@@ -194,7 +194,7 @@ AutoForm.hooks({
     onError(formType, error) {
       console.log('hatParticipantForm:', error);
       UltiSite.hideModal(() => {
-        Session.set('hatParticipateError', error.message);
+        UltiSite.State.set('hatParticipateError', error.message);
         UltiSite.showModal('hatParticipateDialogError');
       });
     },

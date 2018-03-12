@@ -5,12 +5,12 @@ import '../files/files.js';
 
 Template.adminPanel.onCreated(function () {
   Meteor.call('getWikiPageNames', function (err, res) {
-    Session.set('wikiPageNames', res);
+    UltiSite.State.set('wikiPageNames', res);
   });
   Meteor.call('queryCollectionStatus', function (err, res) {
-    Session.set('collectionStatus', res);
+    UltiSite.State.set('collectionStatus', res);
   });
-  Session.set('adminPanel.viewAll', false);
+  UltiSite.State.set('adminPanel.viewAll', false);
 });
 
 function handleUpdate(err, res) {
@@ -80,25 +80,25 @@ Template.adminPanel.helpers({
     return UltiSite.adminPageTemplates.find();
   },
   viewAll() {
-    return Session.get('adminPanel.viewAll');
+    return UltiSite.State.get('adminPanel.viewAll');
   },
   designs() {
     return ['hallunken', 'default'];
   },
   wikiPages() {
-    return Session.get('wikiPageNames');
+    return UltiSite.State.get('wikiPageNames');
   },
   wikiPageName(id) {
     let name = '';
-    if (Session.get('wikiPageNames')) {
-      Session.get('wikiPageNames').forEach(function (page) {
+    if (UltiSite.State.get('wikiPageNames')) {
+      UltiSite.State.get('wikiPageNames').forEach(function (page) {
         if (page._id == id) { name = page.name; }
       });
     }
     return name;
   },
   collectionStatus() {
-    return Session.get('collectionStatus');
+    return UltiSite.State.get('collectionStatus');
   },
 });
 
@@ -168,7 +168,7 @@ Template.adminPanel.events({
     }
   },
   'click .all-settings-header': function () {
-    Session.set('adminPanel.viewAll', !Session.get('adminPanel.viewAll'));
+    UltiSite.State.set('adminPanel.viewAll', !UltiSite.State.get('adminPanel.viewAll'));
   },
   'click .action-add-mailinglist': function (e, t) {
     e.preventDefault();

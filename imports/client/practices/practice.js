@@ -20,7 +20,7 @@ Template.practiceDialog.events({
     tmpl.$('input[name="imageMapZoom"]').val('');
     mapImageUrl.set(undefined);
     mapImageFile = undefined;
-  }
+  },
 });
 Template.practiceDialog.helpers({
   practiceSchema() {
@@ -31,9 +31,9 @@ Template.practiceDialog.helpers({
   },
   mapImage() {
     if (mapImageUrl.get())
-      return mapImageUrl.get();
+      {return mapImageUrl.get();}
   },
-  mapCaptureCallback: function () {
+  mapCaptureCallback () {
     var template = Template.instance();
     return function (canvas, map) {
       template.$('input[name="imageMapCenter"]').val(map.getView().getCenter());
@@ -49,7 +49,7 @@ Template.practiceDialog.helpers({
 AutoForm.hooks({
   practiceDialogForm: {
     // Called when any submit operation succeeds
-    onSubmit: function (insertDoc, updateDoc, currentDoc) {
+    onSubmit (insertDoc, updateDoc, currentDoc) {
       const id = currentDoc && currentDoc._id;
       Meteor.call('updatePractice', id, id ? updateDoc : insertDoc, (err, res) => {
         if (mapImageFile) {
@@ -74,7 +74,7 @@ AutoForm.hooks({
       });
       return false;
     },
-  }
+  },
 });
 
 Template.practicesDetailed.onCreated(function () {
@@ -82,7 +82,7 @@ Template.practicesDetailed.onCreated(function () {
 });
 
 Template.practicesDetailed.helpers({
-  clubPractices: function () {
+  clubPractices () {
     return UltiSite.Practices.find({}, {
       sort: {
         weekday: 1,
@@ -91,42 +91,42 @@ Template.practicesDetailed.helpers({
         hostingTeam: 1
       }
     });
-  }
+  },
 });
 
 Template.practicesDetailed.events({
   'click .action-new': function (evt, tmpl) {
     UltiSite.showModal('practiceDialog');
-  }
+  },
 });
 
 Template.practiceCalendar.helpers({
-  practices: function (selWeekday) {
+  practices (selWeekday) {
     return UltiSite.Practices.find({
       weekday: selWeekday
     });
   },
-  selPractice: function () {
-    return UltiSite.Practices.findOne(Session.get("clickedPractice"));
-  }
+  selPractice () {
+    return UltiSite.Practices.findOne(UltiSite.State.get("clickedPractice"));
+  },
 });
 
 Template.practiceSmall.helpers({
-  practiceTime: function () {
+  practiceTime () {
     return moment(this.start).format("HH:mm");
-  }
+  },
 });
 
 Template.practiceSmall.events({
   'click .btn': function (e) {
-    Session.set("clickedPractice", $(e.currentTarget).data("id"));
+    UltiSite.State.set('clickedPractice', $(e.currentTarget).data('id'));
     $('#practice-dialog').modal('show');
-  }
+  },
 });
 
 
 Template.practice.helpers({
-  weekdayText: function () {
+  weekdayText () {
     switch (Number(this.weekday)) {
       case 0:
         return "Sonntags";
@@ -145,6 +145,6 @@ Template.practice.helpers({
       default:
         return "Nulltag";
     }
-  }
+  },
 });
 

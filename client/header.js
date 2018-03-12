@@ -1,42 +1,42 @@
 var lastConnectedStatus = true;
 
 Meteor.startup(function () {
-    Session.set("searchResults", ['Mind. drei Zeichen']);
-    Session.setDefault("message", {});
+    UltiSite.State.set("searchResults", ['Mind. drei Zeichen']);
+    UltiSite.State.setDefault("message", {});
     document.title = UltiSite.settings().siteTitle +
         (UltiSite.settings().siteSubTitle ? ' - ' + UltiSite.settings().siteSubTitle : '');
     $('meta[name=application-name]').attr('content', UltiSite.settings().siteTitle);
-    $('meta[name=msapplication-tooltip]').attr('content', UltiSite.settings().siteSubTitle||UltiSite.settings().siteTitle);
+    $('meta[name=msapplication-tooltip]').attr('content', UltiSite.settings().siteSubTitle || UltiSite.settings().siteTitle);
     $('meta[name=apple-mobile-web-app-name]').attr('content', UltiSite.settings().siteTitle);
 
-    $( window ).scroll(()=> {
+    $(window).scroll(() => {
         const imgHeight = Number(UltiSite.settings().titleImageHeight || 150);
         if (UltiSite.screenSize.get() >= 768) {
-            const titleHeight = Math.max(0,imgHeight - $(window).scrollTop());
-            $('.page-content').css('padding-top',imgHeight + 90);
-            $('.title-image').css('height',titleHeight);
+            const titleHeight = Math.max(0, imgHeight - $(window).scrollTop());
+            $('.page-content').css('padding-top', imgHeight + 90);
+            $('.title-image').css('height', titleHeight);
         }
         else {
-            $('.page-content').css('padding-top',60);
-            $('.title-image').css('height',0);
+            $('.page-content').css('padding-top', 60);
+            $('.title-image').css('height', 0);
         }
-    });    
+    });
 });
 
-Template.header.onRendered(function(){
-    $('iframe').fadeOut(500, ()=>$('iframe').remove());
-    this.autorun(()=>{
+Template.header.onRendered(function () {
+    $('iframe').fadeOut(500, () => $('iframe').remove());
+    this.autorun(() => {
         const imgHeight = Number(UltiSite.settings().titleImageHeight || 150);
         if (UltiSite.screenSize.get() >= 768) {
-            const titleHeight = Math.max(0,imgHeight - $(window).scrollTop());
-            $('.page-content').css('padding-top', imgHeight+ 90);
-            $('.title-image').css('height',titleHeight);
+            const titleHeight = Math.max(0, imgHeight - $(window).scrollTop());
+            $('.page-content').css('padding-top', imgHeight + 90);
+            $('.title-image').css('height', titleHeight);
         }
         else {
-            $('.page-content').css('padding-top',60);
-            $('.title-image').css('height',0);
+            $('.page-content').css('padding-top', 60);
+            $('.title-image').css('height', 0);
         }
-    });    
+    });
 });
 
 Template.header.events({
@@ -77,7 +77,7 @@ Template.userHeader.events({
 
 Template.header.helpers({
     searchResults: function () {
-        return Session.get("searchResults");
+        return UltiSite.State.get("searchResults");
     },
     AdminNotifications: function () {
         return UltiSite.AdminNotifications.find();
@@ -135,7 +135,7 @@ var linkHelper = {
         const matcher = this.activeMatch || this.target;
         FlowRouter.getRouteName();
         FlowRouter.getParam('_id');
-        if(matcher==='/')
+        if (matcher === '/')
             return decodeURI(location.pathname) === '/';
         return 0 === decodeURI(location.pathname).indexOf(matcher);
     }
