@@ -1,11 +1,13 @@
 <div id="serverRendered" 
-  style="position: absolute;z-index:10000;opacity:1;transition:all 200ms"
+  style="position: absolute;z-index:10000"
   class="ultisite-{{settings.design}} base-layout {{#if settings.imageTitleImage}}with-title-image{{/if}}">
   <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="title-image hidden-xs" style="height:{{settings.titleImageHeight}}px">
-      <div style="background-image:url('/_image?imageId={{settings.imageTitleImage}}&size=20')"> </div>
-      <img src="/_image?imageId={{settings.imageLogo}}" />
-    </div>
+    {{#if settings.imageTitleImage}}
+      <div class="title-image hidden-xs" style="height:{{settings.titleImageHeight}}px">
+        <div style="background-image:url('/_image?imageId={{settings.imageTitleImage}}&size=80')"> </div>
+        <img src="/_image?imageId={{settings.imageLogo}}" />
+      </div>
+    {{/if}}
 		<div class="row" style="height:40px">
 			<div class="col-xs-12">
         <a href="#">
@@ -15,20 +17,21 @@
 		</div>
 	</nav>
   <div class="container-fluid page-content">
-    <br />
     <div class="container-fluid">
       <div class="row">
-        <div class="wikipage col-xs-12 col-sm-6">
-          <div class="page-details">
-            <span class="">
-                Zuletzt geändert am ...
-            </span>
+        <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-xs-12 start-content">
+          <div class="wikipage">
+            <div class="page-details">
+              <span class="">
+                  Zuletzt geändert am ...
+              </span>
+            </div>
+            <div>
+              {{{content}}}
+            </div>  
           </div>
-          <div>
-            {{{content}}}
-          </div>  
         </div>
-        <div class="col-xs-12 col-sm-6">
+        <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
           <div class="panel panel-default">
             <div class="panel-heading">&nbsp;</div>
             <div class="panel-body" style="height:400px">&nbsp;</div>
