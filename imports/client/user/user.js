@@ -1,4 +1,8 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
+import { FlowRouter } from 'meteor/kadira:flow-router';
+import { Roles } from 'meteor/alanning:roles';
+import { moment } from 'meteor/momentjs:moment';
+
 import './user.less';
 import './user.html';
 import './userlist.html';
@@ -15,7 +19,7 @@ const userHelper = {
     return this.username;
   },
   sexIcon() {
-    return this.profile ? this.profile.sex === 'W' ? "fa-female" : "fa-male" : "fa-user";
+    return this.profile ? this.profile.sex === 'W' ? 'fa-female' : 'fa-male' : 'fa-user';
   },
   isEditable() {
     if (Roles.userIsInRole(Meteor.userId(), ['admin'])) { return true; }
@@ -39,12 +43,12 @@ const userHelper = {
     return this.emails[0];
   },
   userRoles() {
-    let self = this;
+    const self = this;
     if (UltiSite.isAdmin(Meteor.userId())) {
       return Roles.getAllRoles().map(function (r) {
         return {
           name: r.name,
-          active: Roles.userIsInRole(self, r.name)
+          active: Roles.userIsInRole(self, r.name),
         };
       });
     }
@@ -56,12 +60,12 @@ const userHelper = {
     });
   },
   notificationsStatus() {
-    return ("Notification" in window) ? Notification.permission : 'unsupported';
+    return ('Notification' in window) ? Notification.permission : 'unsupported';
   },
   emailNotificationTypes() {
     let mls = [];
     if (UltiSite.settings()) {
-      mls = UltiSite.settings().mailingListConfigs.map((mc) => ({ type: mc.from.toCamelCase(), name: 'Mailingliste ' + mc.from }));
+      mls = UltiSite.settings().mailingListConfigs.map(mc => ({ type: mc.from.toCamelCase(), name: 'Mailingliste ' + mc.from }));
     }
     return mls.concat([
       { type: 'wiki', name: 'Wiki' },
@@ -84,7 +88,7 @@ const userHelper = {
   plannedTournaments() {
     return (UltiSite.Statistics.findOne({
       target: this._id,
-      type: "plannedTournaments",
+      type: 'plannedTournaments',
     }) || { data: [] }).data;
   },
   playedTournamentYears() {
@@ -93,23 +97,23 @@ const userHelper = {
     let total = 0;
     const data = (UltiSite.Statistics.findOne({
       target: this._id,
-      type: "playedTournaments",
+      type: 'playedTournaments',
     }, {
-        sort: {
+      sort: {
           'data.date': -1,
         },
-      }) || {
+    }) || {
         data: [],
       }).data;
     data.forEach(function (elem) {
       const m = moment(elem.date);
       if (m.isValid()) {
-        if (elem.unsure) { unsure++; }
-        total++;
-        const year = m.format("YYYY");
+        if (elem.unsure) { unsure += 1; }
+        total += 1;
+        const year = m.format('YYYY');
         if (!years[year]) { years[year] = []; }
         years[year].push(elem);
-      } else console.log("Invalid statistics:", elem);
+      } else console.log('Invalid statistics:', elem);
     });
     return {
       count: total - unsure,
@@ -125,7 +129,7 @@ const userHelper = {
   top10Players() {
     return (UltiSite.Statistics.findOne({
       target: this._id,
-      type: "top10Players",
+      type: 'top10Players',
     }) || { data: [] }).data;
   },
   // TODO: add statistics, like top 10 cities
@@ -144,15 +148,35 @@ Template.user.onCreated(function () {
 });
 
 Template.user.events({
-  'click .action-edit-email'(e, t) {
-    UltiSite.getTextDialog({ text: this.address, header: 'Neue E-Mail eingeben' }, (newAddress) => {
+  'click .action-remove-user': function (evt) {
+    evt.preventDefault();
+    UltiSite.confirmDialog('Nutzer wirklich löschen?', () => {
       const userId = FlowRouter.getParam('_id');
-      Meteor.call('userUpdateEmail', userId, this.address, newAddress, (err) => {
-        if (err) { UltiSite.notify('Konnte E-Mail nicht ändern nicht speicher', 'error'); }
+      Meteor.call('userRemove', userId, (err, res) => {
+        if (err) {
+          UltiSite.notify('Konnte E-Mail nicht ändern nicht speicher', 'error');
+        } else {
+          FlowRouter.go('users');
+        }
       });
     });
   },
-  'click .btn-edit-image'(e, t) {
+  'click .action-block-user': function (evt) {
+    evt.preventDefault();
+    const userId = FlowRouter.getParam('_id');
+    Meteor.call('userToggleBlocked', userId);
+  },
+  'click .action-edit-email': function (e, t) {
+    UltiSite.getTextDialog({ text: this.address, header: 'Neue E-Mail eingeben' }, (newAddress) => {
+      const userId = FlowRouter.getParam('_id');
+      Meteor.call('userUpdateEmail', userId, this.address, newAddress, (err) => {
+        if (err) {
+          UltiSite.notify('Konnte E-Mail nicht ändern nicht speicher', 'error');
+        }
+      });
+    });
+  },
+  'click .btn-edit-image': function (e, t) {
     e.preventDefault();
     const userId = FlowRouter.getParam('_id');
     UltiSite.fileBrowserShowDialog(userId, function (file) {
@@ -168,82 +192,82 @@ Template.user.events({
       UltiSite.fileBrowserHideDialog();
     });
   },
-  'click .user-contacts .btn-remove'(e, t) {
+  'click .user-contacts .btn-remove': function (e, t) {
     e.preventDefault();
-    UltiSite.confirmDialog("Wollen sie den Eintrag wirklich löschen?", () => {
+    UltiSite.confirmDialog('Wollen sie den Eintrag wirklich löschen?', () => {
       const modifier = {};
 
       modifier[`profile.contactDetails.${$(e.currentTarget).attr('data-index')}`] = null;
       Meteor.users.update({
         _id: FlowRouter.getParam('_id'),
       }, {
-          $set: modifier,
-        });
+        $set: modifier,
+      });
 
       Meteor.users.update({
         _id: FlowRouter.getParam('_id'),
       }, {
-          $pull: {
-            "profile.contactDetails": null,
+        $pull: {
+            'profile.contactDetails': null,
           },
-        });
+      });
     });
   },
-  'click .user-contacts .type-selector a'(e, t) {
+  'click .user-contacts .type-selector a': function (e, t) {
     e.preventDefault();
     const modifier = {};
     modifier[`profile.contactDetails.${$(e.currentTarget).attr('data-index')}.type`] = $(e.currentTarget).text();
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $set: modifier,
-      }, UltiSite.userFeedbackFunction('Kontaktinfo speichern'));
+      $set: modifier,
+    }, UltiSite.userFeedbackFunction('Kontaktinfo speichern'));
   },
-  'click .user-contacts .btn-add-contact'(e, t) {
+  'click .user-contacts .btn-add-contact': function (e, t) {
     e.preventDefault();
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $push: {
-          "profile.contactDetails": {
-            type: "",
-            detail: "",
+      $push: {
+          'profile.contactDetails': {
+            type: '',
+            detail: '',
           },
         },
-      });
+    });
   },
-  'click .action-remove-role'(e) {
-    e.preventDefault();
+  'click .action-remove-role': function (evt) {
+    evt.preventDefault();
     Roles.removeUsersFromRoles(FlowRouter.getParam('_id'), this.name);
   },
-  'click .action-add-role'(e) {
-    e.preventDefault();
+  'click .action-add-role': function (evt) {
+    evt.preventDefault();
     Roles.addUsersToRoles(FlowRouter.getParam('_id'), this.name);
   },
-  'click .action-immediate'(e) {
-    e.preventDefault();
+  'click .action-immediate': function (evt) {
+    evt.preventDefault();
     const user = Meteor.users.findOne(FlowRouter.getParam('_id'));
     const toSet = {};
     toSet[`settings.email.${this.type}`] = 'immediate';
     if (user.settings && user.settings.email && user.settings.email[this.type] === 'immediate') { toSet[`settings.email.${this.type}`] = null; }
     Meteor.users.update(user._id, { $set: toSet }, UltiSite.userFeedbackFunction(`Mail Bencharichtigung für ${this.name} setzen`));
   },
-  'click .action-digest'(e) {
+  'click .action-digest': function (e) {
     e.preventDefault();
     Meteor.users.update(FlowRouter.getParam('_id'), { $set: { 'settings.noDigestMail': false } }, UltiSite.userFeedbackFunction('Tägliche Mail Bencharichtigung aktivieren'));
   },
-  'click .action-no-digest'(e) {
+  'click .action-no-digest': function (e) {
     e.preventDefault();
     Meteor.users.update(FlowRouter.getParam('_id'), { $set: { 'settings.noDigestMail': true } }, UltiSite.userFeedbackFunction('Tägliche Mail Bencharichtigung deaktivieren'));
   },
-  'change .user-contacts .opt-editable-field'(e, t) {
+  'change .user-contacts .opt-editable-field': function (e, t) {
     const modifier = {};
     let value = $(e.currentTarget).val();
-    if (t.$(e.currentTarget).attr('data-type') === "Adresse") {
+    if (t.$(e.currentTarget).attr('data-type') === 'Adresse') {
       value = {
-        street: value.split(",")[0],
-        postcode: value.split(",")[1],
-        city: value.split(",")[2],
+        street: value.split(',')[0],
+        postcode: value.split(',')[1],
+        city: value.split(',')[2],
       };
     }
     modifier[`profile.contactDetails.${t.$(e.currentTarget).attr('data-index')}.detail`] = value;
@@ -251,48 +275,48 @@ Template.user.events({
     Meteor.users.update({
       _id: userId,
     }, {
-        $set: modifier,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
+      $set: modifier,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
         if (name === 'username') {
           Meteor.call('correctParticipants', userId);
         }
       }));
   },
-  'click .user-base .dropdown-select-item'(e, t) {
+  'click .user-base .dropdown-select-item': function (e, t) {
     e.preventDefault();
-    const value = t.$(e.currentTarget).attr("data-value");
-    const name = t.$(e.currentTarget).attr("data-name");
-    const type = t.$(e.currentTarget).attr("data-type");
+    const value = t.$(e.currentTarget).attr('data-value');
+    const name = t.$(e.currentTarget).attr('data-name');
+    const type = t.$(e.currentTarget).attr('data-type');
     const toSet = {};
-    if (type && (type === "boolean")) {
+    if (type && (type === 'boolean')) {
       toSet[name] = !!value;
-    } else if (type && (type === "number")) { toSet[name] = Number(value); } else { toSet[name] = value; }
+    } else if (type && (type === 'number')) { toSet[name] = Number(value); } else { toSet[name] = value; }
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $set: toSet,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode));
+      $set: toSet,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode));
   },
-  'change .user-base .opt-editable-field,.user-base .radio-select'(e, t) {
+  'change .user-base .opt-editable-field,.user-base .radio-select': function (e, t) {
     const value = t.$(e.currentTarget).val();
-    const name = $(e.currentTarget).attr("name");
-    const type = $(e.currentTarget).attr("data-type");
+    const name = $(e.currentTarget).attr('name');
+    const type = $(e.currentTarget).attr('data-type');
     const toSet = {};
-    if (type && (type === "boolean")) { toSet[name] = !!value; } else if (type && (type === "number")) { toSet[name] = Number(value); } else if (type && (type === "date")) { toSet[name] = moment(value, 'DD.MM.YYYY'); } else { toSet[name] = value; }
+    if (type && (type === 'boolean')) { toSet[name] = !!value; } else if (type && (type === 'number')) { toSet[name] = Number(value); } else if (type && (type === 'date')) { toSet[name] = moment(value, 'DD.MM.YYYY'); } else { toSet[name] = value; }
     const userId = FlowRouter.getParam('_id');
 
     Meteor.users.update({
       _id: userId,
     }, {
-        $set: toSet,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
+      $set: toSet,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
         if (name === 'profile.sex') {
           Meteor.call('correctParticipants', userId);
         }
       }));
   },
-  'click .action-check-notification-permissions'(e, t) {
-    if (!("Notification" in window)) { console.log("This browser does not support desktop notification"); }
+  'click .action-check-notification-permissions': function (e, t) {
+    if (!('Notification' in window)) { console.log('This browser does not support desktop notification'); }
     // Otherwise, we need to ask the user for permission
     else if (Notification.permission !== 'denied') {
       Notification.requestPermission(function (permission) {
@@ -316,7 +340,7 @@ Template.userCreateDialog.onCreated(function () {
   });
 });
 Template.userCreateDialog.events({
-  'click button[type="submit"]'(evt) {
+  'click button[type="submit"]': function (evt) {
   },
 });
 
@@ -325,7 +349,7 @@ Template.userCreateDialog.helpers({
     return Template.instance().setupNeeded.get();
   },
   userSchema() {
-    if (Meteor.userId() || (UltiSite.settings().siteRegistration !== "password")) { return UltiSite.schemas.user.get(); }
+    if (Meteor.userId() || (UltiSite.settings().siteRegistration !== 'password')) { return UltiSite.schemas.user.get(); }
     return UltiSite.schemas.userRegister.get();
   },
 });
@@ -334,14 +358,14 @@ AutoForm.hooks({
   userAddForm: {
     onSuccess() {
       $('.modal').modal('hide');
-      AutoForm.resetForm("userAddForm");
+      AutoForm.resetForm('userAddForm');
       UltiSite.notify('Eine E-Mail wurde verschickt, prüfe deinen Posteingang');
     },
     onError(formType, err) {
       console.log(formType, err);
-      if (err.error === 'duplicate-email') { AutoForm.addStickyValidationError('userAddForm', "email", err.reason); }
-      if (err.error === 'wrong-password') { AutoForm.addStickyValidationError('userAddForm', "sitePassword", err.reason); }
-      if (err.error === 'duplicate-username') { AutoForm.addStickyValidationError('userAddForm', "alias", err.reason); }
+      if (err.error === 'duplicate-email') { AutoForm.addStickyValidationError('userAddForm', 'email', err.reason); }
+      if (err.error === 'wrong-password') { AutoForm.addStickyValidationError('userAddForm', 'sitePassword', err.reason); }
+      if (err.error === 'duplicate-username') { AutoForm.addStickyValidationError('userAddForm', 'alias', err.reason); }
     },
   },
 });
