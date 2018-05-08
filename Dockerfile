@@ -1,4 +1,4 @@
-FROM debian:jessie as builder
+FROM node:8.9 as builder
 RUN apt-get update && apt-get install -y curl git python build-essential
 RUN curl https://install.meteor.com/?release=1.6.0.1 | sh
 

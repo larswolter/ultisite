@@ -1,9 +1,8 @@
 import './forms.js';
 import './forms.less';
+import { SimpleSchema } from '../schema.js';
 
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';;
-
-export const AutoForm = {
+const AutoForm = {
   content: new Meteor.Collection(null),
   _hooks: {},
   hooks(hook) {
@@ -13,17 +12,13 @@ export const AutoForm = {
 
   },
   formData(local) {
-    if (local && local.form && local.form.schema)
-      return local.form;
-    if (local && local.schema)
-      return local;
+    if (local && local.form && local.form.schema) { return local.form; }
+    if (local && local.schema) { return local; }
     for (let i = 0; i < 6; i++) {
       try {
-        if (Template.parentData(i) && Template.parentData(i).form && Template.parentData(i).form.schema)
-          return Template.parentData(i).form;
-        if (Template.parentData(i) && Template.parentData(i).schema)
-          return Template.parentData(i);
-      } catch(err) {}
+        if (Template.parentData(i) && Template.parentData(i).form && Template.parentData(i).form.schema) { return Template.parentData(i).form; }
+        if (Template.parentData(i) && Template.parentData(i).schema) { return Template.parentData(i); }
+      } catch (err) { }
     }
   },
   arrayCheck(fieldName) {
@@ -34,12 +29,10 @@ export const AutoForm = {
     return fieldName;
   },
   transformValue(value, fieldDef) {
-    if (value === undefined)
-      return '';
+    if (value === undefined) { return ''; }
     if (fieldDef.type === Date) {
       const mom = moment(value);
-      if (mom.isValid())
-        return mom.format(fieldDef.autoform && fieldDef.autoform.format);
+      if (mom.isValid()) { return mom.format(fieldDef.autoform && fieldDef.autoform.format); }
       return '';
     }
     if (fieldDef.type === Boolean) {
@@ -48,13 +41,12 @@ export const AutoForm = {
     return value;
   },
   getFieldValue(fieldName, form) {
-    if (!fieldName)
-      return;
+    if (!fieldName) { return; }
     form = AutoForm.formData(form);
-    let content = (AutoForm.content.findOne(form && form.formId) || {}).doc;
+    const content = (AutoForm.content.findOne(form && form.formId) || {}).doc;
     if (content) {
       let value = content;
-      this.arrayCheck(fieldName).split('.').forEach(x => value = value[x]);
+      this.arrayCheck(fieldName).split('.').forEach((x) => { value = value && value[x]; });
       if (form) {
         return this.transformValue(value, form.schema._schema[fieldName]);
       }
@@ -74,11 +66,8 @@ export const AutoForm = {
   resetForm(formId) {
     const doc = this.content.findOne(formId);
     AutoForm.content.update(formId, { $set: { errors: {}, doc: doc.initial } });
-  }
+  },
 };
 
 console.log('configuring simple schema');
-
-SimpleSchema.extendOptions({
-    autoform: Match.Optional(Object),
-});
+export { AutoForm, SimpleSchema };

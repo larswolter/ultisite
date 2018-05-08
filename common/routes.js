@@ -2,6 +2,9 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 
 if (Meteor.isClient) {
   Meteor.startup(() => {
+    if (FlowRouter.current().queryParams.modalDialog) {
+      FlowRouter.go(FlowRouter.current().route.name);
+    }
     Meteor.defer(() => {
       Blaze.renderWithData(Template.baseLayout, {}, window.document.getElementsByTagName('body')[0]);
     });

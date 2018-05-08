@@ -4,37 +4,36 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-ecmascript@0.9.0
+ecmascript@0.11.0-rc17.3
 huttonr:bootstrap3
-less@2.7.11
+less@2.7.12
 kadira:flow-router
-accounts-password@1.5.0
+accounts-password@1.5.1
 momentjs:moment
 reywood:publish-composite
 reactive-var@1.0.11
 fortawesome:fontawesome
 deps@1.0.12
 ground:db
-http@1.3.0
+http@1.4.1
 markdown@1.0.12
 percolate:synced-cron
-meteor-base@1.2.0
+meteor-base@1.4.0-rc17.3
 mobile-experience@1.0.5
-mongo@1.3.1
+mongo@1.5.0-rc17.3
 blaze-html-templates
 session@1.1.7
-tracker@1.1.3
-logging@1.1.19
-reload@1.1.11
-random@1.0.10
+tracker@1.2.0-rc17.3
+logging@1.1.20
+reload@1.2.0
+random@1.1.0
 ejson@1.1.0
 spacebars
-check@1.2.5
+check@1.3.1
 alanning:roles
-standard-minifier-css@1.3.5
-standard-minifier-js@2.2.0
-shell-server@0.3.0
-aldeed:simple-schema
+standard-minifier-css@1.4.1
+standard-minifier-js@2.3.4
+shell-server@0.3.1
 
 ultisite:uoodle
 ultisite:autoform
@@ -43,11 +42,11 @@ ultisite:hatinfo
 #ultisite:telegram-bot
 
 #kadira:debug
-appcache@1.1.0
+appcache@1.2.0-rc17.3
 matb33:collection-hooks
 blaze@2.3.2
-dynamic-import@0.2.0
+dynamic-import@0.4.0-rc17.3
 dispatch:mocha
 xolvio:cleaner
 underscore@1.0.10
-server-render
+server-render@0.3.0

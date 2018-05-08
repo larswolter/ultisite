@@ -7,14 +7,9 @@ Meteor.startup(function () {
   };
 });
 Template.baseLayout.onCreated(function () {
-  this.autorun((comp) => {
-    if (UltiSite.WikiPages.findOne(UltiSite.settings().wikiStart)) {
-      $('#serverRendered').fadeOut(1200, () => {
-        const old = $('#serverRendered')[0];
-        old.parentElement.removeChild(old);
-      });
-      comp.stop();
-    }
+  $('#serverRendered').fadeOut(1200, () => {
+    const old = $('#serverRendered')[0];
+    old.parentElement.removeChild(old);
   });
 });
 Template.baseLayout.helpers({

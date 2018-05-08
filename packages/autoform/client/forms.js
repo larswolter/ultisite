@@ -6,8 +6,12 @@ import './forms.html';
 
 Template.registerHelper('afFieldLabelText', (params) => {
   const form = AutoForm.formData();
-  if (form) {
-    return form.schema._schema[params.hash.name].label || params.hash.name;
+  try {
+    if (form) {
+      return form.schema._schema[params.hash.name].label || params.hash.name;
+    }
+  } catch (err) {
+    console.log('error in label text:', params.hash.name, form.schema._schema);
   }
 });
 Template.registerHelper('afFieldMessage', params => '-');
@@ -23,12 +27,13 @@ Template.registerHelper('afFieldIsInvalid', (params) => {
     return true;
   }
   const content = AutoForm.content.findOne(form.formId).doc;
-  return !form.validationContext.validateOne(form.schema.clean(content, { getAutoValues: false }), fieldName);
+  return !form.schema.validate(form.schema.clean(content, {
+    getAutoValues: false,
+  }), { keys: [fieldName] }).isValid();
 });
 
 
 Template.autoForm.onCreated(function () {
-  this.data.validationContext = this.data.schema.newContext();
   this.data.formId = this.data.id;
   AutoForm.content.upsert(this.data.formId, {
     doc: this.data.doc || this.data.schema.clean({}),
@@ -38,7 +43,7 @@ Template.autoForm.onCreated(function () {
 });
 
 Template.autoForm.events({
-  'submit form'(evt, tmpl) {
+  'submit form': function (evt, tmpl) {
     evt.preventDefault();
     const form = AutoForm.formData();
     let doc = AutoForm.content.findOne(form.formId).doc;
@@ -60,8 +65,9 @@ Template.autoForm.events({
       doc = AutoForm._hooks[form.formId].formToDoc(doc);
     }
     try {
-      if (!form.validationContext.validate(doc)) {
-        console.log('Validation Error', form.validationContext.invalidKeys());
+      const res = form.schema.validate(doc);
+      if (!res.isValid()) {
+        console.log('Validation Error', res.invalidKeys());
         return false;
       }
       if (form.collection && (form.type === 'insert')) {
@@ -69,7 +75,7 @@ Template.autoForm.events({
           form.collection.insert(doc, callbackHandler);
         } else {
           let collection = global;
-          form.collection.split('.').forEach(p => collection = collection[p]);
+          form.collection.split('.').forEach((p) => { collection = collection[p]; });
           collection.insert(doc, callbackHandler);
         }
       } else if (form.collection && (form.type === 'update')) {
@@ -77,7 +83,7 @@ Template.autoForm.events({
           form.collection.update(docId, { $set: _.omit(doc, '_id') }, {}, callbackHandler);
         } else {
           let collection = global;
-          form.collection.split('.').forEach(p => collection = collection[p]);
+          form.collection.split('.').forEach((p) => { collection = collection[p]; });
           collection.update(docId, { $set: _.omit(doc, '_id') }, {}, callbackHandler);
         }
       } else if (form.meteormethod) {
@@ -124,19 +130,27 @@ const helpers = {
     if (errors && errors[Template.instance().data.name]) { return errors[Template.instance().data.name]; }
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
     if (!content) { return ''; }
-    const valid = form.validationContext.validateOne(form.schema.clean(content, { getAutoValues: false }), Template.instance().data.name);
-    if (!valid) { return form.validationContext.keyErrorMessage(Template.instance().data.name); }
+    const result = form.schema.validate(form.schema.clean(content, { getAutoValues: false }), { keys: [Template.instance().data.name] });
+    if (!result.isValid()) {
+      return result.keyErrorMessage(Template.instance().data.name);
+    }
   },
   validity() {
     const form = this.form || AutoForm.formData();
     if (!form) { return ''; }
     const errors = (AutoForm.content.findOne(form.formId) || {}).errors;
-    if (errors && errors[Template.instance().data.name]) { return 'has-error'; }
+    if (errors && errors[Template.instance().data.name]) {
+      return 'has-error';
+    }
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
     if (!content) { return ''; }
-    const valid = form.validationContext.validateOne(form.schema.clean(content, { getAutoValues: false }), Template.instance().data.name);
-    if (valid) { return 'has-success'; }
-    return 'has-error';
+    const result = form.schema.validate(form.schema.clean(content, {
+      getAutoValues: false,
+    }), { keys: [Template.instance().data.name] });
+    if (result.keyIsInvalid(Template.instance().data.name)) {
+      return 'has-error';
+    }
+    return 'has-success';
   },
   isDate() {
     if (this.type === Date) { return true; }
@@ -145,7 +159,9 @@ const helpers = {
   isChecked(option) {
     const form = this.form || AutoForm.formData();
     if (!form) { return; }
-    if (!Template.instance().data.name) { return console.log('fieldValue without name', Template.instance().data); }
+    if (!Template.instance().data.name) {
+      return console.log('fieldValue without name', Template.instance().data);
+    }
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
     if (content) {
       let value = content;
@@ -213,7 +229,7 @@ Template.afArrayField.helpers({
   },
 });
 Template.afArrayField.events({
-  'click .action-remove'(event, template) {
+  'click .action-remove': function (event, template) {
     event.preventDefault();
     const value = {};
     console.log('removing', template.data.name, this.idx);
@@ -223,7 +239,7 @@ Template.afArrayField.events({
     value2[`doc.${AutoForm.arrayCheck(template.data.name)}`] = null;
     AutoForm.content.update(template.data.formId, { $pull: value });
   },
-  'click .action-insert'(event, template) {
+  'click .action-insert': function (event, template) {
     event.preventDefault();
     const element = AutoForm.content.findOne(`${template.data.formId}.${template.data.name}`).doc;
     const value = {};
@@ -251,7 +267,7 @@ const debUpdateValue = function (formId, value) {
 
 
 Template.afFieldInput.events({
-  'click .autoform-checkbox.multi'(evt, tmpl) {
+  'click .autoform-checkbox.multi': function (evt, tmpl) {
     evt.preventDefault();
     const form = AutoForm.formData();
     if (!this.name) { return; }
@@ -264,7 +280,7 @@ Template.afFieldInput.events({
     }
     return AutoForm.content.update(form.formId, { $pull: value });
   },
-  'keyup input, change input, change textarea, change select'(evt, tmpl) {
+  'keyup input, change input, change textarea, change select': function (evt, tmpl) {
     evt.preventDefault();
     if (!this.name) { return; }
     const form = AutoForm.formData();
