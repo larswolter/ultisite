@@ -21,6 +21,9 @@ Template.practices.helpers({
 });
 
 Template.practice.helpers({
+  hideHostingTeam() {
+    return _.uniq(UltiSite.Practices.find({}).map(x => x.hostingTeam)).length === 1;
+  },
   formatedDuration() {
     if (this.duration === 60) { return 'eine Stunde'; }
     if (this.duration % 60 === 0) { return `${this.duration / 60} Stunden`; }
@@ -36,10 +39,30 @@ Template.practice.helpers({
     }
     return undefined;
   },
+  weekdayText() {
+    switch (Number(this.weekday)) {
+    case 0:
+      return 'Sonntags';
+    case 1:
+      return 'Montags';
+    case 2:
+      return 'Dienstags';
+    case 3:
+      return 'Mittwochs';
+    case 4:
+      return 'Donnerstags';
+    case 5:
+      return 'Freitags';
+    case 6:
+      return 'Samstags';
+    default:
+      return 'Nulltag';
+    }
+  },
 });
 
 Template.practice.events({
-  'click .action-edit'(evt, tmpl) {
+  'click .action-edit': function (evt, tmpl) {
     UltiSite.showModal('practiceDialog', this);
   },
 });
@@ -47,3 +70,4 @@ Template.practice.events({
 Template.practice.onCreated(function () {
   if (this.data.mapImage) { mapImageUrl.set(`/_image?imageId=${this.data.mapImage}`); }
 });
+

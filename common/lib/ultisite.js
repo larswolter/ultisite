@@ -37,9 +37,9 @@ if (Meteor.isServer) {
     onlineOnly: ['/icons/countries/'],
   };
   if (Meteor.absoluteUrl('').indexOf('localhost') > -1) {
-    appCacheConfig.chrome = false;
-    appCacheConfig.firefox = false;
-    appCacheConfig.ie = false;
+//    appCacheConfig.chrome = false;
+//    appCacheConfig.firefox = false;
+//    appCacheConfig.ie = false;
   }
   Meteor.AppCache.config(appCacheConfig);
 }

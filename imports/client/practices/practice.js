@@ -30,11 +30,10 @@ Template.practiceDialog.helpers({
     return AutoForm.getFieldValue('address.geocoords', 'practiceDialogForm');
   },
   mapImage() {
-    if (mapImageUrl.get())
-      {return mapImageUrl.get();}
+    if (mapImageUrl.get()) { return mapImageUrl.get(); }
   },
-  mapCaptureCallback () {
-    var template = Template.instance();
+  mapCaptureCallback() {
+    const template = Template.instance();
     return function (canvas, map) {
       template.$('input[name="imageMapCenter"]').val(map.getView().getCenter());
       template.$('input[name="imageMapZoom"]').val(map.getView().getZoom());
@@ -49,7 +48,7 @@ Template.practiceDialog.helpers({
 AutoForm.hooks({
   practiceDialogForm: {
     // Called when any submit operation succeeds
-    onSubmit (insertDoc, updateDoc, currentDoc) {
+    onSubmit(insertDoc, updateDoc, currentDoc) {
       const id = currentDoc && currentDoc._id;
       Meteor.call('updatePractice', id, id ? updateDoc : insertDoc, (err, res) => {
         if (mapImageFile) {
@@ -60,17 +59,14 @@ AutoForm.hooks({
               associated: [res],
               tags: ['Karte', 'Training'],
               creator: Meteor.userId(),
-              name: "Trainingskarte.png",
-              type: 'image/jpg'
-            }
+              name: 'Trainingskarte.png',
+              type: 'image/jpg',
+            },
           };
           UltiSite.pushToUploadQueue(fsFile);
           UltiSite.triggerUpload();
         }
-        if (err)
-          UltiSite.notify('Fehler beim Speichern des Trainings:' + err.message, "error");
-        else
-          UltiSite.hideModal();
+        if (err) { UltiSite.notify('Fehler beim Speichern des Trainings:' + err.message, 'error'); }        else { UltiSite.hideModal(); }
       });
       return false;
     },
@@ -82,14 +78,14 @@ Template.practicesDetailed.onCreated(function () {
 });
 
 Template.practicesDetailed.helpers({
-  clubPractices () {
+  clubPractices() {
     return UltiSite.Practices.find({}, {
       sort: {
         weekday: 1,
         start: 1,
         club: -1,
-        hostingTeam: 1
-      }
+        hostingTeam: 1,
+      },
     });
   },
 });
@@ -101,19 +97,19 @@ Template.practicesDetailed.events({
 });
 
 Template.practiceCalendar.helpers({
-  practices (selWeekday) {
+  practices(selWeekday) {
     return UltiSite.Practices.find({
-      weekday: selWeekday
+      weekday: selWeekday,
     });
   },
-  selPractice () {
-    return UltiSite.Practices.findOne(UltiSite.State.get("clickedPractice"));
+  selPractice() {
+    return UltiSite.Practices.findOne(UltiSite.State.get('clickedPractice'));
   },
 });
 
 Template.practiceSmall.helpers({
-  practiceTime () {
-    return moment(this.start).format("HH:mm");
+  practiceTime() {
+    return moment(this.start).format('HH:mm');
   },
 });
 
@@ -121,30 +117,6 @@ Template.practiceSmall.events({
   'click .btn': function (e) {
     UltiSite.State.set('clickedPractice', $(e.currentTarget).data('id'));
     $('#practice-dialog').modal('show');
-  },
-});
-
-
-Template.practice.helpers({
-  weekdayText () {
-    switch (Number(this.weekday)) {
-      case 0:
-        return "Sonntags";
-      case 1:
-        return "Montags";
-      case 2:
-        return "Dienstags";
-      case 3:
-        return "Mittwochs";
-      case 4:
-        return "Donnerstags";
-      case 5:
-        return "Freitags";
-      case 6:
-        return "Samstags";
-      default:
-        return "Nulltag";
-    }
   },
 });
 

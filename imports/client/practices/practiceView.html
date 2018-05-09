@@ -17,11 +17,16 @@
 <template name="practice">
     <div class="list-group-item">
         <div class="caption">
-            <button class="btn btn-default pull-right action-edit">
-                <span class="fa fa-edit"></span>
-            </button>
+            {{#if currentUser}}
+                <button class="btn btn-default pull-right action-edit">
+                    <span class="fa fa-edit"></span>
+                </button>
+            {{/if}}
             <h4>
-                {{hostingTeam}} {{weekdayText}} {{startTime}} für {{formatedDuration}}
+                {{#unless hideHostingTeam}}
+                    {{hostingTeam}}
+                {{/unless}} 
+                {{weekdayText}} {{startTime}} für {{formatedDuration}}
                 <br />
                 <small>{{skillLevel}}</small>
             </h4>
