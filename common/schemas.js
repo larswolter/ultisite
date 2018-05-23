@@ -345,6 +345,7 @@ const setSchemas = function () {
     address: {
       label: 'Adresse',
       type: addressSchema,
+      defaultValue: { country: 'DE' },
     },
     tournamentDirector: {
       type: String,

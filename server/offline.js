@@ -85,3 +85,10 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
   const content = JSON.stringify(offline);
   response.end(content);
 });
+
+WebApp.connectHandlers.use('/sw.js', (req, response) => {
+  const sworker = Assets.getText('serviceWorker.js');
+  response.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  response.writeHead(200);
+  response.end(sworker);
+});

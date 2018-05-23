@@ -2,25 +2,25 @@ const collectionLookup = new Meteor.Collection(null);
 
 UltiSite = {};
 
-moment.locale("de", {
+moment.locale('de', {
   months: [
-    "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
-    "August", "September", "Oktober", "November", "Dezember",
+    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli',
+    'August', 'September', 'Oktober', 'November', 'Dezember',
   ],
   relativeTime: {
-    future: "%s noch",
-    past: "%s her",
-    s: "Sekunden",
-    m: "eine Minute",
-    mm: "%d Minuten",
-    h: "eine Stunde",
-    hh: "%d Stunden",
-    d: "ein Tag",
-    dd: "%d Tage",
-    M: "ein Monat",
-    MM: "%d Monate",
-    y: "ein Jahr",
-    yy: "%d Jahre",
+    future: '%s noch',
+    past: '%s her',
+    s: 'Sekunden',
+    m: 'eine Minute',
+    mm: '%d Minuten',
+    h: 'eine Stunde',
+    hh: '%d Stunden',
+    d: 'ein Tag',
+    dd: '%d Tage',
+    M: 'ein Monat',
+    MM: '%d Monate',
+    y: 'ein Jahr',
+    yy: '%d Jahre',
   },
 });
 
@@ -36,10 +36,11 @@ if (Meteor.isServer) {
   const appCacheConfig = {
     onlineOnly: ['/icons/countries/'],
   };
+  // appCacheConfig.chrome = false;
   if (Meteor.absoluteUrl('').indexOf('localhost') > -1) {
-//    appCacheConfig.chrome = false;
-//    appCacheConfig.firefox = false;
-//    appCacheConfig.ie = false;
+    //    appCacheConfig.chrome = false;
+    //    appCacheConfig.firefox = false;
+    //    appCacheConfig.ie = false;
   }
   Meteor.AppCache.config(appCacheConfig);
 }
@@ -63,22 +64,22 @@ _.extend(UltiSite, {
   },
   initialSubsReady: new ReactiveVar(false),
   LookupId: new Meteor.Collection(null),
-  AdminNotifications: new Meteor.Collection("AdminNotifications"),
+  AdminNotifications: new Meteor.Collection('AdminNotifications'),
   LastChanges: new Meteor.Collection('LastChanges'),
-  WikiPages: new Meteor.Collection("WikiPages"),
-  WikiPageDiscussions: new Meteor.Collection("WikiPagDiscussiones"),
-  Blogs: new Meteor.Collection("Blogs"),
-  Statistics: new Meteor.Collection("Statistics"),
-  Practices: new Meteor.Collection("Practices"),
-  Tournaments: new Meteor.Collection("Tournaments"),
-  TournamentList: new Meteor.Collection("tournamentList"),
-  Teams: new Meteor.Collection("Teams"),
-  Participants: new Meteor.Collection("Participants"),
-  Events: new Meteor.Collection("Events"),
-  Countries: new Meteor.Collection("Countries"),
-  Cities: new Meteor.Collection("Cities"),
-  ContentVersions: new Meteor.Collection("ContentVersions"),
-  Images: new Meteor.Collection("photos", {
+  WikiPages: new Meteor.Collection('WikiPages'),
+  WikiPageDiscussions: new Meteor.Collection('WikiPagDiscussiones'),
+  Blogs: new Meteor.Collection('Blogs'),
+  Statistics: new Meteor.Collection('Statistics'),
+  Practices: new Meteor.Collection('Practices'),
+  Tournaments: new Meteor.Collection('Tournaments'),
+  TournamentList: new Meteor.Collection('tournamentList'),
+  Teams: new Meteor.Collection('Teams'),
+  Participants: new Meteor.Collection('Participants'),
+  Events: new Meteor.Collection('Events'),
+  Countries: new Meteor.Collection('Countries'),
+  Cities: new Meteor.Collection('Cities'),
+  ContentVersions: new Meteor.Collection('ContentVersions'),
+  Images: new Meteor.Collection('photos', {
     transform(doc) {
       if (Meteor.isServer) {
         return doc;
@@ -94,7 +95,7 @@ _.extend(UltiSite, {
       });
     },
   }),
-  Documents: new Meteor.Collection("documents", {
+  Documents: new Meteor.Collection('documents', {
     transform(doc) {
       return _.extend(doc, {
         isImage() {
@@ -107,13 +108,13 @@ _.extend(UltiSite, {
       });
     },
   }),
-  Folders: new Meteor.Collection("Folders"),
+  Folders: new Meteor.Collection('Folders'),
 });
 
 _.extend(UltiSite, {
   getAlias(userOrId) {
-    if (typeof (userOrId) === "undefined") { return "Unbekannt"; }
-    if (userOrId === null) { return "Unbekannt"; }
+    if (typeof (userOrId) === 'undefined') { return 'Unbekannt'; }
+    if (userOrId === null) { return 'Unbekannt'; }
     const user = Meteor.users.findOne(userOrId);
     if (user) { return user.username; }
     if (userOrId.username) { return userOrId.username; }
@@ -123,9 +124,9 @@ _.extend(UltiSite, {
     const self = this;
     let idArray = ids;
     if (!idArray.length) { return undefined; }
-    if (typeof (idArray) === "string") { idArray = [ids]; }
+    if (typeof (idArray) === 'string') { idArray = [ids]; }
     let res;
-    if (typeof (ids) === "string") {
+    if (typeof (ids) === 'string') {
       res = UltiSite.LookupId.findOne(ids);
       if (res) { return res; }
     } else {
@@ -136,19 +137,19 @@ _.extend(UltiSite, {
       });
       if (res.count() === idArray.length) { return res; }
     }
-    Meteor.call("getAnyObjectByIds", idArray, function (err, res) {
+    Meteor.call('getAnyObjectByIds', idArray, function (err, res) {
       if (err) { console.log(err); } else {
         res.forEach(function (o) {
           let elem = o;
           if (elem.type === 'team') {
             elem = _.extend({
-              link: FlowRouter.path("tournament", {
+              link: FlowRouter.path('tournament', {
                 _id: elem.tournamentId,
               }),
             }, elem);
           } else if (elem.type === 'folder') {
             elem = _.extend({
-              link: FlowRouter.path("files", {
+              link: FlowRouter.path('files', {
                 _id: elem._id,
               }),
             }, elem);
@@ -167,8 +168,8 @@ _.extend(UltiSite, {
     return res;
   },
   hostname() {
-    let host = Meteor.absoluteUrl("");
-    if (host[host.length - 1] === "/") { host = host.substr(0, host.length - 1); }
+    let host = Meteor.absoluteUrl('');
+    if (host[host.length - 1] === '/') { host = host.substr(0, host.length - 1); }
     return host;
   },
   settingsDep: new Tracker.Dependency(),
@@ -195,8 +196,8 @@ _.extend(UltiSite, {
     });
   },
   textState(state) {
-    if (state === 100) { return "Sicher"; } else if (state >= 50) { return "Vielleicht"; } else if (state >= 10) { return "Interesse"; }
-    return "Kann nicht";
+    if (state === 100) { return 'Sicher'; } else if (state >= 50) { return 'Vielleicht'; } else if (state >= 10) { return 'Interesse'; }
+    return 'Kann nicht';
   },
   translate(term) {
     return translationTable[term] || term;
@@ -228,7 +229,7 @@ Meteor.methods({
         return {
           _id: elem._id,
           name: elem.name,
-          type: "folder",
+          type: 'folder',
         };
       }));
     res = res.concat(
@@ -240,7 +241,7 @@ Meteor.methods({
         return {
           _id: elem._id,
           name: elem.name,
-          type: "wikipage",
+          type: 'wikipage',
         };
       }));
     res = res.concat(
@@ -252,7 +253,7 @@ Meteor.methods({
         return {
           _id: elem._id,
           name: elem.name,
-          type: "tournament",
+          type: 'tournament',
         };
       }));
     res = res.concat(
@@ -265,7 +266,7 @@ Meteor.methods({
           _id: elem._id,
           tournamentId: elem.tournamentId,
           name: elem.name,
-          type: "team",
+          type: 'team',
         };
       }));
     res = res.concat(
@@ -277,7 +278,7 @@ Meteor.methods({
         return {
           _id: elem._id,
           name: elem.username,
-          type: "user",
+          type: 'user',
         };
       }));
     res = res.concat(
@@ -289,7 +290,7 @@ Meteor.methods({
         return {
           _id: elem._id,
           name: elem.title,
-          type: "blog",
+          type: 'blog',
         };
       }));
     if (this.isSimulation) {
@@ -304,7 +305,7 @@ Meteor.methods({
 String.prototype.toCamelCase = function () {
   let str = this;
   // Replace special characters with a space
-  str = str.replace(/[^a-zA-Z0-9 ]/g, " ");
+  str = str.replace(/[^a-zA-Z0-9 ]/g, ' ');
   // put a space before an uppercase letter
   str = str.replace(/([a-z](?=[A-Z]))/g, '$1 ');
   // Lower case first character and some other stuff that I don't understand

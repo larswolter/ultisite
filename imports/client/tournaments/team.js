@@ -10,6 +10,14 @@ Template.participant.events({
     const teamId = Template.parentData()._id;
     Meteor.call('participationUpdate', teamId, this.user, partValue);
   },
+  'click .action-remove': function (e, t) {
+    e.preventDefault();
+    e.stopPropagation();
+    const teamId = Template.parentData()._id;
+    UltiSite.confirmDialog('Willst du wirklich den Spieler löschen?', () => {
+      Meteor.call('participationRemove', teamId, this.user);
+    });
+  },
   'click button.action-comment': function (e, t) {
     e.preventDefault();
     const self = this;

@@ -238,6 +238,20 @@ Meteor.methods({
       text: `${this.userId === user._id ? '' : user.username} sagt: ${comment}`,
     });
   },
+  participationRemove(teamId, userId) {
+    check(teamId, String);
+    check(userId, String);
+    if(!UltiSite.isAdmin(this.userId)) {
+      throw new Meteor.Error('access-denied','Nur Admins');
+    }
+    UltiSite.Teams.update({ _id: teamId, 'participants.user': userId }, {
+      $pull: {
+        participants: {
+          user: userId,
+        }
+      }
+    });
+  },
   participationUpdate(teamId, userId, participantValue) {
     check(teamId, String);
     check(userId, String);

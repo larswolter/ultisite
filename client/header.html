@@ -172,9 +172,16 @@
 				<span class="fa fa-github fa-fw"></span>  
 				Quellen und Feedback
 			</a>	
-			<a class="list-group-item" href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">
-				<span class="fa fa-info-circle fa-fw"></span> Impressum
-			</a>
+			{{#if settings.wikiDatenschutz}}
+				<a class="list-group-item" href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">
+					<span class="fa fa-info-circle fa-fw"></span> Datenschutz
+				</a>
+			{{/if}}
+			{{#if settings.wikiImpressum}}
+				<a class="list-group-item" href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">
+					<span class="fa fa-info-circle fa-fw"></span> Impressum
+				</a>
+			{{/if}}
 		</div>
 	</div>
 
@@ -223,7 +230,13 @@
 
 <template name="footer">
 	<div class="pull-right">
-		<a href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">Impressum</a>
+	{{#if settings.wikiImpressum}}
+			<a href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">Impressum</a>
+	{{/if}}
+	&nbsp;&nbsp;
+	{{#if settings.wikiDatenschutz}}
+			<a href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">Datenschutz</a>
+	{{/if}}
 	</div>
 	<span class="fa fa-github"></span>  <a href="https://github.com/larswolter/ultisite" target="github">Quellen und Feedback</a>	
 </template>

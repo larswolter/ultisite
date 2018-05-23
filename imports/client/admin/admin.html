@@ -93,6 +93,19 @@
                             </div>
                             <div class="dropdown col-sm-2 wiki-association">
                                 <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                                    <small>Datenschutz:</small><br /> {{wikiPageName settings.wikiDatenschutz}}
+                                    <span class="fa fa-caret-down"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    {{#each wikiPages}}
+                                    <li role="presentation">
+                                        <a href="#" role="menuitem" data-name="wikiDatenschutz" data-id="{{_id}}">{{name}}</a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                            <div class="dropdown col-sm-2 wiki-association">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
                                     <small>Hilfe:</small><br /> {{wikiPageName settings.wikiHelp}}
                                     <span class="fa fa-caret-down"></span>
                                 </button>

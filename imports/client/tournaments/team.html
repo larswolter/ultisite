@@ -302,6 +302,11 @@
                 <li>
                     <a class="text-muted action-participate" href="#" data-participation='0'>Kann nicht</a>
                 </li>
+                {{#if isAdmin}}
+                    <li>
+                        <a class="action-remove" href="#">Austragen</a>
+                    </li>
+                {{/if}}
             </ul>
         </div>
         {{else}}

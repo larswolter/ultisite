@@ -1,6 +1,12 @@
 import './forms.js';
 import './forms.less';
-import { SimpleSchema } from '../schema.js';
+import SimpleSchema from 'simpl-schema';
+
+console.log('configuring simple schema');
+
+SimpleSchema.extendOptions({
+  autoform: Match.Optional(Object),
+});
 
 const AutoForm = {
   content: new Meteor.Collection(null),
@@ -48,7 +54,7 @@ const AutoForm = {
       let value = content;
       this.arrayCheck(fieldName).split('.').forEach((x) => { value = value && value[x]; });
       if (form) {
-        return this.transformValue(value, form.schema._schema[fieldName]);
+        return this.transformValue(value, form.schema.mergedSchema()[fieldName]);
       }
       return value;
     }

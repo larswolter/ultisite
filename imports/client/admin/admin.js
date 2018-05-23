@@ -86,7 +86,8 @@ Template.adminPanel.helpers({
     return ['hallunken', 'default'];
   },
   wikiPages() {
-    return UltiSite.State.get('wikiPageNames');
+    const pages = UltiSite.State.get('wikiPageNames');
+    return pages && pages.concat([{ _id: '', name: '[Keine]' }]);
   },
   wikiPageName(id) {
     let name = '';

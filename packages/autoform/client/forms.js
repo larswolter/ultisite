@@ -6,12 +6,8 @@ import './forms.html';
 
 Template.registerHelper('afFieldLabelText', (params) => {
   const form = AutoForm.formData();
-  try {
-    if (form) {
-      return form.schema._schema[params.hash.name].label || params.hash.name;
-    }
-  } catch (err) {
-    console.log('error in label text:', params.hash.name, form.schema._schema);
+  if (form) {
+    return form.schema.label(params.hash.name);
   }
 });
 Template.registerHelper('afFieldMessage', params => '-');
@@ -27,13 +23,12 @@ Template.registerHelper('afFieldIsInvalid', (params) => {
     return true;
   }
   const content = AutoForm.content.findOne(form.formId).doc;
-  return !form.schema.validate(form.schema.clean(content, {
-    getAutoValues: false,
-  }), { keys: [fieldName] }).isValid();
+  return !form.schema.newContext().validate(form.schema.clean(content, { getAutoValues: false }), { keys: [fieldName] });
 });
 
 
 Template.autoForm.onCreated(function () {
+  this.data.validationContext = this.data.schema.newContext();
   this.data.formId = this.data.id;
   AutoForm.content.upsert(this.data.formId, {
     doc: this.data.doc || this.data.schema.clean({}),
@@ -65,9 +60,9 @@ Template.autoForm.events({
       doc = AutoForm._hooks[form.formId].formToDoc(doc);
     }
     try {
-      const res = form.schema.validate(doc);
-      if (!res.isValid()) {
-        console.log('Validation Error', res.invalidKeys());
+      const ctx = form.schema.newContext();
+      if (!ctx.validate(doc)) {
+        console.log('Validation Error', ctx.invalidKeys());
         return false;
       }
       if (form.collection && (form.type === 'insert')) {
@@ -75,7 +70,7 @@ Template.autoForm.events({
           form.collection.insert(doc, callbackHandler);
         } else {
           let collection = global;
-          form.collection.split('.').forEach((p) => { collection = collection[p]; });
+          form.collection.split('.').forEach(p => collection = collection[p]);
           collection.insert(doc, callbackHandler);
         }
       } else if (form.collection && (form.type === 'update')) {
@@ -83,7 +78,7 @@ Template.autoForm.events({
           form.collection.update(docId, { $set: _.omit(doc, '_id') }, {}, callbackHandler);
         } else {
           let collection = global;
-          form.collection.split('.').forEach((p) => { collection = collection[p]; });
+          form.collection.split('.').forEach(p => collection = collection[p]);
           collection.update(docId, { $set: _.omit(doc, '_id') }, {}, callbackHandler);
         }
       } else if (form.meteormethod) {
@@ -109,14 +104,21 @@ Template.afObjectField.helpers({
     if (!this.form) { return; }
     const subFields = this.form.schema._schemaKeys
       .filter(x => x.indexOf(`${this.name}.`) === 0)
-      .map(x => _.extend({ name: x, formId: this.form.formId, form: this.form }, this.form.schema._schema[x]));
+      .map(x => _.extend({ name: x, formId: this.form.formId, form: this.form }, this.form.schema.mergedSchema()[x]));
     return subFields;
   },
 });
 
 const helpers = {
   isArray() {
-    if (this.type === Array) { return true; }
+    const form = this.form || AutoForm.formData();
+    // for select types no array
+    if (form.schema.mergedSchema()[this.name].autoform && form.schema.mergedSchema()[this.name].autoform.options) {
+      return false;
+    }
+    if (form.schema.getQuickTypeForKey(this.name).indexOf('Array') >= 0) {
+      return true;
+    }
     return false;
   },
   isObject() {
@@ -130,38 +132,31 @@ const helpers = {
     if (errors && errors[Template.instance().data.name]) { return errors[Template.instance().data.name]; }
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
     if (!content) { return ''; }
-    const result = form.schema.validate(form.schema.clean(content, { getAutoValues: false }), { keys: [Template.instance().data.name] });
-    if (!result.isValid()) {
-      return result.keyErrorMessage(Template.instance().data.name);
-    }
+    const ctx = form.schema.newContext();
+    const valid = ctx.validate(form.schema.clean(content, { getAutoValues: false }), { keys: [Template.instance().data.name] });
+    if (!valid) { return ctx.keyErrorMessage(Template.instance().data.name); }
   },
   validity() {
     const form = this.form || AutoForm.formData();
     if (!form) { return ''; }
     const errors = (AutoForm.content.findOne(form.formId) || {}).errors;
-    if (errors && errors[Template.instance().data.name]) {
-      return 'has-error';
-    }
+    if (errors && errors[Template.instance().data.name]) { return 'has-error'; }
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
     if (!content) { return ''; }
-    const result = form.schema.validate(form.schema.clean(content, {
-      getAutoValues: false,
-    }), { keys: [Template.instance().data.name] });
-    if (result.keyIsInvalid(Template.instance().data.name)) {
-      return 'has-error';
-    }
-    return 'has-success';
+    const ctx = form.schema.newContext();
+    const valid = ctx.validate(form.schema.clean(content, { getAutoValues: false }), { keys: [Template.instance().data.name] });
+    if (valid) { return 'has-success'; }
+    return 'has-error';
   },
   isDate() {
-    if (this.type === Date) { return true; }
+    const form = this.form || AutoForm.formData();
+    if (form.schema.getQuickTypeForKey(this.name) === 'date') return true;
     return false;
   },
   isChecked(option) {
     const form = this.form || AutoForm.formData();
     if (!form) { return; }
-    if (!Template.instance().data.name) {
-      return console.log('fieldValue without name', Template.instance().data);
-    }
+    if (!Template.instance().data.name) { return console.log('fieldValue without name', Template.instance().data); }
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
     if (content) {
       let value = content;
@@ -181,7 +176,7 @@ const helpers = {
     if (form) {
       const data = _.extend(
         { autoform: {}, formId: form.formId, form, placeholder: '', autocomplete: 'on' },
-        form.schema._schema[Template.instance().data.name],
+        form.schema.mergedSchema()[Template.instance().data.name],
         Template.currentData());
       if (data.options) { data.autoform.options = data.options; }
       if (data.autoform && data.autoform.options === 'allowed') { data.autoform.options = data.allowedValues || []; }
@@ -211,8 +206,8 @@ Template.afArrayField.helpers({
         return {
           idx,
           properties: fieldNames.map(x => ({
-            label: _.isFunction(this.form.schema._schema[x].label) ? this.form.schema._schema[x].label() : this.form.schema._schema[x].label,
-            value: AutoForm.transformValue(element[AutoForm.arrayCheck(x)], this.form.schema._schema[x]),
+            label: this.form.schema.label(x),
+            value: AutoForm.transformValue(element[AutoForm.arrayCheck(x)], this.form.schema.mergedSchema()[x]),
             key: AutoForm.arrayCheck(x),
           })),
         };
@@ -224,7 +219,7 @@ Template.afArrayField.helpers({
     const form = _.clone(this.form);
     form.formId = `${form.formId}.${this.name}`;
     if (form) {
-      return _.extend({ name: `${this.name}.$`, noLabel: true, formId: form.formId, form }, this.form.schema._schema[`${this.name}.$`]);
+      return _.extend({ name: `${this.name}.$`, noLabel: true, formId: form.formId, form }, this.form.schema.mergedSchema()[`${this.name}.$`]);
     }
   },
 });
@@ -257,7 +252,7 @@ Template.afQuickFields.helpers({
     const pick = Template.currentData().fields && Template.currentData().fields.split(',');
     return form.schema._firstLevelSchemaKeys
       .filter(x => pick ? _.contains(pick, x) : !_.contains(omit, x))
-      .map(x => _.extend({ name: x, formId: form.formId }, form.schema._schema[x]));
+      .map(x => _.extend({ name: x, formId: form.formId }, form.schema.mergedSchema()[x]));
   },
 });
 
@@ -285,10 +280,11 @@ Template.afFieldInput.events({
     if (!this.name) { return; }
     const form = AutoForm.formData();
     if (!form) { return; }
-    const fieldDef = form.schema._schema[this.name];
-    if (!fieldDef) { return; }
     const value = {};
-    if (fieldDef.type === Date) { value[`doc.${AutoForm.arrayCheck(this.name)}`] = moment(evt.currentTarget.value, fieldDef.autoform && fieldDef.autoform.format).toDate(); } else {
+    if (form.schema.getQuickTypeForKey(this.name) === 'date') {
+      const fieldDef = form.schema.mergedSchema()[this.name];
+      value[`doc.${AutoForm.arrayCheck(this.name)}`] = moment(evt.currentTarget.value, fieldDef.autoform && fieldDef.autoform.format).toDate();
+    } else {
       value[`doc.${AutoForm.arrayCheck(this.name)}`] = evt.currentTarget.value;
     }
     debUpdateValue(form.formId, value);
