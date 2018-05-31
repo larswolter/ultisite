@@ -17,8 +17,10 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
   resp.setHeader('Cache-Control', 'max-age=864000');
   if (size) {
     if (image.thumb && image.thumb[size]) {
+      const buf = new Buffer(image.thumb[size], 'base64');
+      resp.setHeader('Content-Length', buf.length + '');
       resp.writeHead(200);
-      resp.end(new Buffer(image.thumb[size], 'base64'));
+      resp.end(buf);
     } else {
       const scale = size.split('x').map(x => Number(x));
       if (scale.length === 1) {
@@ -37,6 +39,7 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
             thumb['thumb.' + size] = data.toString('base64');
             UltiSite.Images.update(image._id, { $set: thumb });
           }
+          resp.setHeader('Content-Length', data.length + '');
           resp.writeHead(200);
           resp.end(data);
         }))
@@ -47,7 +50,9 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
         });
     }
   } else {
+    const buf = new Buffer(image.base64, 'base64');
+    resp.setHeader('Content-Length', buf.length + '');
     resp.writeHead(200);
-    resp.end(new Buffer(image.base64, 'base64'));
+    resp.end(buf);
   }
 });

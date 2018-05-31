@@ -1,7 +1,11 @@
 import { check } from 'meteor/check';
 import { Random } from 'meteor/random';
+import { Roles } from 'meteor/alanning:roles';
 
 Meteor.startup(function () {
+  if (!_.find(Roles.getAllRoles().fetch(), r => r.name === 'hatAdmin')) {
+    Roles.createRole('hatAdmin');
+  }
   UltiSite.HatInfo.HatParticipants.find({ payed: { $exists: false } }).forEach((elem) => {
     UltiSite.HatInfo.HatParticipants.update(elem._id, { $set: { payed: moment(elem.createdAt).clone().add(10, 'years').toDate() } });
   });
@@ -114,7 +118,7 @@ Meteor.publish('hatParticipant', function (accessKey) {
   return UltiSite.HatInfo.HatParticipants.find({ accessKey });
 });
 
-WebApp.connectHandlers.use("/_hatInfoExport", function (req, res, next) {
+WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
   const query = Npm.require('url').parse(req.url, true).query;
   const user = Meteor.users.findOne({ 'profile.downloadToken': query.downloadToken });
   if (!user) {
@@ -127,6 +131,6 @@ WebApp.connectHandlers.use("/_hatInfoExport", function (req, res, next) {
   csv += UltiSite.HatInfo.HatParticipants.find({
     hatId: UltiSite.settings().hatId || undefined,
   }).map(p => _.without(UltiSite.HatInfo.schema._schemaKeys, 'accessKey').map(key => `"${String(p[key]).replace(/"/g, '\'')}"`).join(';')).join('\n\r');
-  res.writeHead(200, { "content-type": "text/csv", "content-disposition": `attachment; filename="participants-${UltiSite.settings().hatName}.csv"` });
+  res.writeHead(200, { 'content-type': 'text/csv', 'content-disposition': `attachment; filename="participants-${UltiSite.settings().hatName}.csv"` });
   res.end(`${csv}\n\r`);
 });

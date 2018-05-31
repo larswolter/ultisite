@@ -4,9 +4,6 @@ import { Tracker } from 'meteor/tracker';
 const HatParticipants = new Meteor.Collection('HatParticipants');
 
 Meteor.startup(function () {
-  if (!_.find(Roles.getAllRoles().fetch(), r => r.name === 'hatAdmin')) {
-    Roles.createRole('hatAdmin');
-  }
   UltiSite.HatInfo = {
     HatParticipants,
     schema: new SimpleSchema({
