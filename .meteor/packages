@@ -4,7 +4,7 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-ecmascript@0.11.0-rc17.3
+ecmascript@0.11.0
 huttonr:bootstrap3
 less@2.7.12
 kadira:flow-router
@@ -18,12 +18,12 @@ ground:db
 http@1.4.1
 markdown@1.0.12
 percolate:synced-cron
-meteor-base@1.4.0-rc17.3
+meteor-base@1.4.0
 mobile-experience@1.0.5
-mongo@1.5.0-rc17.3
+mongo@1.5.0
 blaze-html-templates
 session@1.1.7
-tracker@1.2.0-rc17.3
+tracker@1.2.0
 logging@1.1.20
 reload@1.2.0
 random@1.1.0
@@ -42,11 +42,11 @@ ultisite:hatinfo
 #ultisite:telegram-bot
 
 #kadira:debug
-appcache@1.2.0-rc17.3
+appcache@1.2.0
 matb33:collection-hooks
 blaze@2.3.2
-dynamic-import@0.4.0-rc17.3
+dynamic-import@0.4.0
 dispatch:mocha
 xolvio:cleaner
 underscore@1.0.10
-server-render@0.3.0
+server-render@0.3.1
