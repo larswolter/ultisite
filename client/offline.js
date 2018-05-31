@@ -209,7 +209,6 @@ Meteor.startup(function () {
     });
   });
 });
-/*
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register(Meteor.absoluteUrl('sw.js')).then((registration) => {
     UltiSite.serviceWorker = registration;
@@ -258,4 +257,3 @@ if ('serviceWorker' in navigator) {
     // We're good here
   }
 }
-*/
