@@ -202,58 +202,67 @@
                 </div>
                 <div class="modal-body">
                     <form class="" id="participantInsertForm">
-                        <div class="form-group">
-                            <label>Team</label><br/>
-                            {{#if equals teams.length 1}}
-                                {{#each teams}}
-                                <input type="hidden" name="teamId" value="{{_id}}" />
-                                {{name}}
-                                {{/each}}
-                            {{else}}
-                                <select class="form-control" name="teamId">
-                                    <option value="" >Team auswählen</option>
+                        {{#if meteorStatus.connected}}
+                            <div class="form-group">
+                                <label>Team</label><br/>
+                                {{#if equals teams.length 1}}
                                     {{#each teams}}
-                                        <option value="{{_id}}" >{{name}}</option>
+                                    <input type="hidden" name="teamId" value="{{_id}}" />
+                                    {{name}}
                                     {{/each}}
-                                </select>
-                            {{/if}}
-                        </div>
-                        {{#if selectedTeam}}
-                            {{#if dabei}}
-                            <div class="form-group">
-                                <label>Ich bin bereits dabei!</label><br />
-                                Aber es kann auch ein anderer Spieler hinzugefügt werden, indem dessen Name in das Feld bei Spieler eingegeben wird
-                            </div>
-                            {{/if}}
-                            <div class="form-group">
-                                <label>Spieler</label><br />
-                                {{>searchField searchType="Users" inline=true leftMenu=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound value=selectedUser.username}}
-                            </div>
-                            {{#if selectedUser}} 
-                                {{#unless selectedUser._id}}
-                                <div class="form-group">
-                                    Willst du diesen Namen in die Liste eintragen, 
-                                    es ist kein eigener Nutzer und nur du kannst seinen Status ändern
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" name="female" value="1" checked={{femaleRequired}}>
-                                    <label>Weiblicher Spieler</label>                                
-                                </div>
-                                {{/unless}}
-                                {{#if femaleRequired}}
-                                    <div class="alert alert-warning">
-                                        Dies ist ein Team nur für Frauen und {{selectedUser.username}} ist laut seinem <a href="/user/{{selectedUser._id}}">Profil</a> keine!
-                                    </div>
+                                {{else}}
+                                    <select class="form-control" name="teamId">
+                                        <option value="" >Team auswählen</option>
+                                        {{#each teams}}
+                                            <option value="{{_id}}" >{{name}}</option>
+                                        {{/each}}
+                                    </select>
                                 {{/if}}
-                                <button class="btn btn-default btn-block action-insert" data-value="0" type="button">Kann nicht</button>
-                                <button class="btn btn-default btn-block action-insert" data-value="30" type="button">Interesse</button>
-                                <button class="btn btn-warning btn-block action-insert" data-value="70" type="button">Vielleicht</button>
-                                <button class="btn btn-success btn-block action-insert" data-value="100" type="button">Sicher</button>
+                            </div>
+                            {{#if selectedTeam}}
+                                {{#if dabei}}
+                                <div class="form-group">
+                                    <label>Ich bin bereits dabei!</label><br />
+                                    Aber es kann auch ein anderer Spieler hinzugefügt werden, indem dessen Name in das Feld bei Spieler eingegeben wird
+                                </div>
+                                {{/if}}
+                                <div class="form-group">
+                                    <label>Spieler</label><br />
+                                    <div class="col-xs-6">
+                                        {{selectedUser.username}}
+                                    </div>
+                                    <div class="col-xs-6">
+                                        {{>searchField searchType="Users" inline=true leftMenu=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound}}
+                                    </div>
+                                </div>
+                                {{#if selectedUser}} 
+                                    {{#unless selectedUser._id}}
+                                    <div class="form-group">
+                                        Willst du diesen Namen in die Liste eintragen, 
+                                        es ist kein eigener Nutzer und nur du kannst seinen Status ändern
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="checkbox" name="female" value="1" checked={{femaleRequired}}>
+                                        <label>Weiblicher Spieler</label>                                
+                                    </div>
+                                    {{/unless}}
+                                    {{#if femaleRequired}}
+                                        <div class="alert alert-warning">
+                                            Dies ist ein Team nur für Frauen und {{selectedUser.username}} ist laut seinem <a href="/user/{{selectedUser._id}}">Profil</a> keine!
+                                        </div>
+                                    {{/if}}
+                                    <button class="btn btn-default btn-block action-insert" data-value="0" type="button">Kann nicht</button>
+                                    <button class="btn btn-default btn-block action-insert" data-value="30" type="button">Interesse</button>
+                                    <button class="btn btn-warning btn-block action-insert" data-value="70" type="button">Vielleicht</button>
+                                    <button class="btn btn-success btn-block action-insert" data-value="100" type="button">Sicher</button>
+                                {{else}}
+                                    Bitte einen Spieler wählen
+                                {{/if}}
                             {{else}}
-                                Bitte einen Spieler wählen
+                                Bitte ein Team auswählen
                             {{/if}}
                         {{else}}
-                            Bitte ein Team auswählen
+                            Eintragen geht nur bei bestehender Verbindung
                         {{/if}}
                     </form>
                 </div>
@@ -331,7 +340,11 @@
     <div class="modal fade" id="teamUpdateDialog">
         <div class="modal-dialog">
             <div class="modal-content">
+                {{#autoForm schema=teamSchema tournamentId=this.tournamentId doc=team id="teamUpdateForm" type="normal"}}
                 <div class="modal-header">
+                    <button class="confirm" type="submit">
+                        {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
+                    </button>
                     <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                         <span class="fa fa-close"></span>
                     </button>
@@ -345,7 +358,6 @@
                             {{/if}}
                         </h4>
                 </div>
-                {{#autoForm schema=teamSchema tournamentId=this.tournamentId doc=team id="teamUpdateForm" type="normal"}}
                 <div class="modal-body row">
                     <fieldset>
                         <div class="col-xs-6">
@@ -353,7 +365,7 @@
                         </div>
                         <div class="col-xs-6">
                             {{#unless team._id}}
-                                {{> afQuickField name='teamType'}}
+                                {{> afQuickField name='teamType' }}
                             {{else}}
                                 {{> afQuickField name='teamType' readOnly=true}}
                             {{/unless}}
@@ -372,7 +384,7 @@
                         </div>
                     </fieldset>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer hidden-xs">
                     <button class="btn btn-primary" type="submit">
                         {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
                     </button>

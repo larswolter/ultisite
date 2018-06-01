@@ -1,11 +1,11 @@
 <template name="searchDialog">
-  <div class="modal fade" id="confirmDialog">
+  <div class="modal fade" id="searchDialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
-              <span class="fa fa-close"></span>
-          </button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span class="fa fa-close"></span>
+            </button>
           <h4 class="modal-title">Suche</h4>
         </div>
         <div class="modal-body">
@@ -39,7 +39,7 @@
           </div>
           {{>searchField inlineResults=true onResultClick=clickFunc searchType=activeSearch}}
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer hidden-xs">
             <button type="button" class="btn btn-primary" data-dismiss="modal">
                 Schließen
             </button>

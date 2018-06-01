@@ -36,7 +36,7 @@ if (Meteor.isServer) {
   const appCacheConfig = {
     onlineOnly: ['/icons/countries/'],
   };
-  appCacheConfig.chrome = false;
+  // appCacheConfig.chrome = false;
   if (Meteor.absoluteUrl('').indexOf('localhost') > -1) {
     //    appCacheConfig.chrome = false;
     //    appCacheConfig.firefox = false;

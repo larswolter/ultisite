@@ -26,7 +26,9 @@ UltiSite.showModal = function (templateName, data, options) {
     });
     return;
   }
-  if (!Template[templateName]) { throw new Meteor.Error(`template notfound:${templateName}`); }
+  if (!Template[templateName]) {
+    throw new Meteor.Error(`template notfound:${templateName}`);
+  }
   if (UltiSite.modalDialogTemplate === null) {
     const parentNode = $('div.base-layout')[0];
     const view = Blaze.renderWithData(Template[templateName], data, parentNode);

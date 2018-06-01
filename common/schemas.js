@@ -185,7 +185,11 @@ const setSchemas = function () {
       allowedValues: ['kein Mitglied', 'Mitglied', 'Vorstand'],
       defaultValue: 'kein Mitglied',
       autoform: {
-        options: 'allowed',
+        options() {
+          return ['kein Mitglied', 'Mitglied', 'Vorstand'].map((x) => {
+            return { label: x, value: x };
+          });
+        },
       },
     },
   }, { tracker: Tracker }));
@@ -212,7 +216,11 @@ const setSchemas = function () {
       defaultValue: 'Verein - Auslosung',
       allowedValues: ['Verein - Auslosung', 'Verein - Offiziell', 'Verein - International', 'Extern / Projekt'],
       autoform: {
-        options: 'allowed',
+        options() {
+          return ['Verein - Auslosung', 'Verein - Offiziell', 'Verein - International', 'Extern / Projekt'].map((x) => {
+            return { label: x, value: x };
+          });
+        },
       },
     },
     maxPlayers: {
@@ -231,7 +239,11 @@ const setSchemas = function () {
       allowedValues: ['dabei', 'auf Warteliste', 'angemeldet', 'geplant', 'abgesagt'],
       defaultValue: 'geplant',
       autoform: {
-        options: 'allowed',
+        options() {
+          return ['dabei', 'auf Warteliste', 'angemeldet', 'geplant', 'abgesagt'].map((x) => {
+            return { label: x, value: x };
+          });
+        },
       },
     },
     division: {
