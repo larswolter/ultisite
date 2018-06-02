@@ -11,6 +11,34 @@ UltiSite.checkedLocalStorage = false;
 UltiSite.offlineTeamDependency = new Tracker.Dependency();
 UltiSite.offlineTournamentDependency = new Tracker.Dependency();
 UltiSite.offlineFetchDependency = new Tracker.Dependency();
+Meteor.methods({
+  offlineInitUser(user) {
+    if (this.isSimulation) Meteor.users.insert(user);
+  },
+});
+
+Meteor.startup(function () {
+  Tracker.autorun(() => {
+    if (Meteor.userId()) {
+      if (Meteor.user()) {
+        localForage.setItem('ultisiteUser', Meteor.user());
+      }
+    } else if (Meteor.status().connected) {
+      localForage.removeItem('ultisiteUser');
+    }
+  });
+  Tracker.autorun((comp) => {
+    if (Meteor.userId()) {
+      localForage.getItem('ultisiteUser', (err, user) => {
+        console.log('go user', user, Meteor.status());
+        if (user && !Meteor.status().connected) {
+          Meteor.apply('offlineInitUser', [user], { noRetry: true }, (err) => { });
+        }
+      });
+      comp.stop();
+    }
+  });
+});
 
 UltiSite.getTournament = function (id) {
   UltiSite.offlineTournamentDependency.depend();
@@ -209,7 +237,7 @@ Meteor.startup(function () {
     });
   });
 });
-/*
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register(Meteor.absoluteUrl('sw.js')).then((registration) => {
     UltiSite.serviceWorker = registration;
@@ -258,4 +286,3 @@ if ('serviceWorker' in navigator) {
     // We're good here
   }
 }
-*/

@@ -27,7 +27,7 @@
     "handlebars": "^4.0.11",
     "imap": "^0.8.17",
     "localforage": "^1.7.1",
-    "meteor-node-stubs": "^0.2.3",
+    "meteor-node-stubs": "^0.4.1",
     "mongodb": "^2.2.35",
     "nodemailer": "^4.6.5",
     "quoted-printable": "^1.0.0",

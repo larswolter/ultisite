@@ -14,7 +14,6 @@ reywood:publish-composite
 reactive-var@1.0.11
 fortawesome:fontawesome
 deps@1.0.12
-ground:db
 http@1.4.1
 markdown@1.0.12
 percolate:synced-cron
@@ -42,7 +41,7 @@ ultisite:hatinfo
 #ultisite:telegram-bot
 
 #kadira:debug
-appcache@1.2.0
+#appcache@1.2.0
 matb33:collection-hooks
 blaze@2.3.2
 dynamic-import@0.4.0

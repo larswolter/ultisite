@@ -9,35 +9,39 @@
           <h4 class="modal-title">Suche</h4>
         </div>
         <div class="modal-body">
-          <div>
-            <div class="btn-group">
-              <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Users"}}checked{{/if}}" data-target="Users">
-                <span class="fa fa-fw {{#if isActive "Users"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
-                Nutzer
-              </button>
-              <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Tournaments"}}checked{{/if}}" data-target="Tournaments">
-                <span class="fa fa-fw {{#if isActive "Tournaments"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
-                Turniere
-              </button>
-              <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "WikiPages"}}checked{{/if}}" data-target="WikiPages">
-                <span class="fa fa-fw {{#if isActive "WikiPages"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
-                Wikiseiten
-              </button>
-              <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Blogs"}}checked{{/if}}" data-target="Blogs">
-                <span class="fa fa-fw {{#if isActive "Blogs"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
-                Artikel
-              </button>
-              <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Images"}}checked{{/if}}" data-target="Images">
-                <span class="fa fa-fw {{#if isActive "Images"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
-                Bilder
-              </button>
-              <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Documents"}}checked{{/if}}" data-target="Documents">
-                <span class="fa fa-fw {{#if isActive "Documents"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
-                Dokumente
-              </button>
+            {{#if meteorStatus.connected}}
+            <div>
+                <div class="btn-group">
+                <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Users"}}checked{{/if}}" data-target="Users">
+                    <span class="fa fa-fw {{#if isActive "Users"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
+                    Nutzer
+                </button>
+                <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Tournaments"}}checked{{/if}}" data-target="Tournaments">
+                    <span class="fa fa-fw {{#if isActive "Tournaments"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
+                    Turniere
+                </button>
+                <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "WikiPages"}}checked{{/if}}" data-target="WikiPages">
+                    <span class="fa fa-fw {{#if isActive "WikiPages"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
+                    Wikiseiten
+                </button>
+                <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Blogs"}}checked{{/if}}" data-target="Blogs">
+                    <span class="fa fa-fw {{#if isActive "Blogs"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
+                    Artikel
+                </button>
+                <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Images"}}checked{{/if}}" data-target="Images">
+                    <span class="fa fa-fw {{#if isActive "Images"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
+                    Bilder
+                </button>
+                <button type="button" class="btn btn-default btn-mit-teams {{#if isActive "Documents"}}checked{{/if}}" data-target="Documents">
+                    <span class="fa fa-fw {{#if isActive "Documents"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
+                    Dokumente
+                </button>
+                </div>
             </div>
-          </div>
-          {{>searchField inlineResults=true onResultClick=clickFunc searchType=activeSearch}}
+            {{>searchField inlineResults=true onResultClick=clickFunc searchType=activeSearch}}
+        {{else}}
+            Suche ist nur online möglich
+        {{/if}}
         </div>
         <div class="modal-footer hidden-xs">
             <button type="button" class="btn btn-primary" data-dismiss="modal">

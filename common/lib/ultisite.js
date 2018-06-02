@@ -30,7 +30,7 @@ const translationTable = {
   wikipage: 'Wikiseite',
 };
 
-Ground.Collection(Meteor.users);
+// Ground.Collection(Meteor.users);
 
 if (Meteor.isServer) {
   const appCacheConfig = {
@@ -42,7 +42,7 @@ if (Meteor.isServer) {
     //    appCacheConfig.firefox = false;
     //    appCacheConfig.ie = false;
   }
-  Meteor.AppCache.config(appCacheConfig);
+  //  Meteor.AppCache.config(appCacheConfig);
 }
 _.extend(UltiSite, {
   baseLayoutData: new ReactiveVar(),
