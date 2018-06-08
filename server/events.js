@@ -19,8 +19,8 @@ Accounts.onLogin(function (attempt) {
 });
 
 Meteor.startup(function () {
-  UltiSite.getEvents = function (limitCount) {
-    let search = { 'detail.time': { $gte: moment().subtract(1, 'day').toDate() } };
+  UltiSite.getEvents = function (limitCount, days = 1) {
+    let search = { 'detail.time': { $gte: moment().subtract(days, 'day').toDate() } };
     if (limitCount) { search = {}; }
     const events = {};
     UltiSite.Events.find(search, {
@@ -65,17 +65,20 @@ Meteor.startup(function () {
 });
 
 
-UltiSite.sendEventDigest = function (user, eventList) {
-  if (eventList.length === 0) { return false; }
-  if (user.settings.noDigestMail) { return false; }
+UltiSite.sendEventDigest = function (user, eventList, force = false) {
+  if (!force && (eventList.length === 0)) { return false; }
+  if (!force && (user.settings.noDigestMail)) { return false; }
   const template = Assets.getText('mail-templates/events.html');
   const layout = Assets.getText('mail-templates/layout.html');
+  const tournaments = UltiSite.getTournamentsStates(user._id);
 
   UltiSite.Mail.send([user._id], 'Tägliche Zusammenfassung',
     UltiSite.renderMailTemplate(layout, template, {
       user,
       profilUrl: FlowRouter.url('user', { _id: user._id }),
+      tournamentUrl: FlowRouter.url('tournaments', { _id: user._id }),
       events: eventList,
+      tournaments,
     }));
   return true;
 };
@@ -157,11 +160,15 @@ UltiSite.addEvent = function (info) {
 };
 
 Meteor.methods({
-  /**
-  info.type
-  info.text
-  info._id
-  */
+  sendEventDigestToMe() {
+    check(this.userId, String);
+    const eventList = UltiSite.getEvents(20, 100);
+    console.log('gathering digest');
+    Meteor.users.find({ _id: this.userId }).forEach(function (user) {
+      console.log('sendign to', user.username);
+      UltiSite.sendEventDigest(user, eventList, true);
+    });
+  },
   addEvent(info) {
     check(info, Object);
     if (!UltiSite.isAdmin(this.userId) || !info.userId) {

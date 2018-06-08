@@ -29,7 +29,7 @@ Template.start.helpers({
 });
 
 Template.eventList.onCreated(function () {
-  this.subscribe("Events");
+  this.subscribe('Events');
 });
 
 Template.eventItem.onCreated(function () {
@@ -40,7 +40,7 @@ Template.eventItem.helpers({
 });
 
 Template.eventItem.events({
-  'click .action-go-event'(e, t) {
+  'click .action-go-event': function(e, t) {
     FlowRouter.go(this.route, { _id: this.groupBy });
   },
 });

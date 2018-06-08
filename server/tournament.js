@@ -16,11 +16,33 @@ UltiSite.Teams.before.update(function (userId, doc, fieldNames, modifier, option
   modifier.$set.lastChange = new Date();
 });
 
+UltiSite.getTournamentsStates = function (userId) {
+  return UltiSite.Teams.find({ tournamentDate: { $gte: new Date() }, 'participants.user': userId }).map((team) => {
+    const part = _.find(team.participants, (p => p.user === userId));
+    const tournament = UltiSite.Tournaments.findOne(team.tournamentId);
+    return {
+      name: tournament.name,
+      date: moment(tournament.date).format('DD.MM.'),
+      city: tournament.address && tournament.address.city,
+      state: UltiSite.textState(part.state),
+      comment: part.comment,
+      teamName: team.name,
+      teamState: team.state,
+      sicher: team.participants.filter(p => p.state > 90).length,
+      wahrscheinlich: team.participants.filter(p => (p.state < 90) && (p.state > 50)).length,
+      interessiert: team.participants.filter(p => (p.state < 50) && (p.state > 0)).length,
+    };
+  });
+};
+
 Meteor.methods({
   offlineTournamentCheck(ids) {
     check(ids, [String]);
     const existing = UltiSite.Tournaments.find({ _id: { $in: ids } }).map(t => t._id);
     return _.without(ids, existing);
+  },
+  myTournamentStates() {
+    return UltiSite.getTournamentsStates(this.userId);
   },
   myTournaments() {
     const ids = UltiSite.Teams.find({
@@ -241,15 +263,15 @@ Meteor.methods({
   participationRemove(teamId, userId) {
     check(teamId, String);
     check(userId, String);
-    if(!UltiSite.isAdmin(this.userId)) {
-      throw new Meteor.Error('access-denied','Nur Admins');
+    if (!UltiSite.isAdmin(this.userId)) {
+      throw new Meteor.Error('access-denied', 'Nur Admins');
     }
     UltiSite.Teams.update({ _id: teamId, 'participants.user': userId }, {
       $pull: {
         participants: {
           user: userId,
-        }
-      }
+        },
+      },
     });
   },
   participationUpdate(teamId, userId, participantValue) {

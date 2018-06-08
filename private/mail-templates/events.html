@@ -1,22 +1,59 @@
 
+  <p>
+      auf der Webseite hat sich innerhalb der letzten 24 Stunden folgendes getan:
+  </p>
+  <ul>
+      {{#each events}}
+      <li>
         <p>
-            auf der Webseite hat sich innerhalb der letzten 24 Stunden folgendes getan:
+          <a href="{{url}}"><b>{{name}}</b></a>
+          <small>{{additional}}</small>
+          {{#each detail}}
+            <br/><small>{{timeFormatted}}</small> - <i>{{alias}}</i>: {{text}}
+          {{/each}}
         </p>
-        <ul>
-            {{#each events}}
-            <li>
-                <p>
-                    <a href="{{url}}">{{name}}</a>
-                    <small>{{additional}}</small>
-                </p>
-                {{#each detail}}
-                    <div>{{timeFormatted}} - {{alias}}: {{text}}</div>
-                {{/each}}
-            </li>
-            {{/each}}
-        </ul>
-        <p>
-            Falls du nicht zu allen Ereignissen E-Mails bekommen willst, oder über manche Dinge sofort per Mail 
-            informiert werden willst, kannst du den Mail Versand in deinem <a href="{{profilUrl}}">Profil</a> anpassen 
-        </p>
-            
+      </li>
+      {{else}}
+      <li>Nichts</li>
+      {{/each}}
+  </ul>
+  {{#if tournaments}}
+      <p>
+          Nachfolgend sind die Turniere bei denen du mit wahrscheinlich oder sicher eingetragen bist. 
+      </p>
+      <ul>
+          {{#each tournaments}}
+          <li>
+            <p>
+              <a href="{{url}}"><b>{{name}}</b></a> <small>{{date}} in {{city}}</small>
+              <br/>
+              Team <b>{{teamName}}</b> ist <b>{{teamState}}</b>, Spieler:
+              <span style="background-color:green;color:white">
+                &nbsp;{{sicher}}&nbsp;
+              </span>
+              <span style="background-color:yellow">
+                &nbsp;{{wahrscheinlich}}&nbsp;
+              </span>
+              <span style="background-color:lightgray">
+                &nbsp;{{interessiert}}&nbsp;
+              </span>
+              <br/>
+              Ich bin <b>{{state}}</b> - <small>{{comment}}</small>
+            </p>
+          </li>
+          {{/each}}
+      </ul>
+  {{else}}
+      <p>
+          Es gibt keine kommenden Turniere, bei denen du mit wahrscheinlich oder sicher eingetragen bist.
+          Gehe doch mal auf die <a href="{{tournamentUrl}}">Seite</a> und suche dir ein schönes Turnier
+      </p>
+  {{/if}}
+  <p>
+      Falls du nicht zu allen Ereignissen E-Mails bekommen willst, oder über manche Dinge sofort per Mail 
+      informiert werden willst, kannst du den Mail Versand in deinem <a href="{{profilUrl}}">Profil</a> anpassen 
+  </p>
+  <p>
+    Viele Grüße<br/>
+    Deine Hallunken
+  </p>

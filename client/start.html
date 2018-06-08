@@ -59,34 +59,33 @@
 <template name="eventList">
     <div class="panel panel-default">
         <div class="panel-heading">
+            <a href="/tournaments" class="pull-right">
+                Turniere
+            </a>
             <strong>Ereignisse</strong>
+            <span class="text-muted">
+            {{#unless Template.subscriptionsReady}}
+                <span class="fa fa-spin fa-spinner"></span>
+                {{lastEventSync}}
+            {{else}}
+                aktuell
+            {{/unless}}
+            </span>
         </div>
         <div class="list-group">
-            {{#if Template.subscriptionsReady}}
-                {{#each events}}
-                    <span class="list-group-item">
-                            {{>eventItem}}
-                    </span>
-                {{else}}
-                        {{>EmptySmall}}
-                {{/each}}
+            {{#each events}}
+                <span class="list-group-item">
+                    {{>eventItem}}
+                </span>
             {{else}}
-                {{#if meteorStatus.connected}}
-                    <span class="list-group-item">
-                        {{>Loading}}
-                    </span>
-                {{else}}
-                    <span class="list-group-item list-group-item-warning">
-                        <span class="fa fa-exclamation-triangle"></span>
-                        Ohne Netzwerkverbindung sind keine Ereignisse verfügbar
-                    </span>
-                    {{#if lastSync}}
-                        <a href="/tournaments" class="list-group-item">
-                            Turniere sind ohne Internet verfügbar <br />Stand {{lastSync}} Uhr
-                        </a>
-                    {{/if}}
-                {{/if}}
-            {{/if}}
+                {{>EmptySmall}}
+                <a href="/tournaments" class="list-group-item">
+                    Alle Turniere 
+                    {{#unless meteorStatus.connected}}
+                        <br />Stand {{lastSync}} Uhr
+                    {{/unless}}
+                </a>
+            {{/each}}
         </div>
     </div>
 </template>

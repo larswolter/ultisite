@@ -11,9 +11,36 @@ UltiSite.checkedLocalStorage = false;
 UltiSite.offlineTeamDependency = new Tracker.Dependency();
 UltiSite.offlineTournamentDependency = new Tracker.Dependency();
 UltiSite.offlineFetchDependency = new Tracker.Dependency();
+
+const makeOfflineCollection = function (col) {
+  const _super = Meteor.connection._stores[col._collection.name].update;
+  Meteor.connection._stores[col._collection.name].update = function (msg) {
+    if (msg.id) {
+      if (msg.msg === 'added') {
+        col._collection.remove(msg.id);
+      }
+    }
+    _super(msg);
+  };
+};
+
+makeOfflineCollection(Meteor.users);
+makeOfflineCollection(UltiSite.Events);
+makeOfflineCollection(UltiSite.Practices);
+makeOfflineCollection(UltiSite.WikiPages);
+makeOfflineCollection(UltiSite.Blogs);
+
 Meteor.methods({
   offlineInitUser(user) {
-    if (this.isSimulation) Meteor.users.insert(user);
+    check(user, Object);
+    Meteor.users.insert(user);
+  },
+  offlineInitCollections() {
+    ['Events', 'Practices', 'WikiPages', 'Blogs'].forEach((col) => {
+      localForage.getItem('ultisiteOffline' + col, (err, data) => {
+        data && data.forEach(i => UltiSite[col].insert(i));
+      });
+    });
   },
 });
 
@@ -24,7 +51,7 @@ Meteor.startup(function () {
         localForage.setItem('ultisiteUser', Meteor.user());
       }
     } else if (Meteor.status().connected) {
-      localForage.removeItem('ultisiteUser');
+      UltiSite.offlineClear();
     }
   });
   Tracker.autorun((comp) => {
@@ -38,6 +65,45 @@ Meteor.startup(function () {
       comp.stop();
     }
   });
+  Tracker.autorun(() => {
+    const events = UltiSite.Events.find();
+    if (events.count() > 0) {
+      console.log('storing events');
+      localForage.setItem('ultisiteOfflineEvents', events.fetch());
+    }
+  });
+  Tracker.autorun(() => {
+    const practices = UltiSite.Practices.find();
+    if (practices.count() > 0) {
+      console.log('storing practices');
+      localForage.setItem('ultisiteOfflinePractices', practices.fetch());
+    }
+  });
+  Tracker.autorun(() => {
+    const blogs = UltiSite.Blogs.find();
+    if (blogs.count() > 0) {
+      console.log('storing blogs');
+      localForage.setItem('ultisiteOfflineBlogs', blogs.fetch());
+    }
+  });
+  Tracker.autorun(() => {
+    const pages = UltiSite.WikiPages.find({
+      _id: {
+        $in: [
+          UltiSite.settings().wikiStart,
+          UltiSite.settings().wikiHelp,
+          UltiSite.settings().wikiDatenschutz,
+          UltiSite.settings().wikiImpressum,
+          UltiSite.settings().wikiPractice,
+        ],
+      },
+    });
+    if (pages.count() > 0) {
+      console.log('storing wikipages');
+      localForage.setItem('ultisiteOfflineWikiPages', pages.fetch());
+    }
+  });
+  Meteor.apply('offlineInitCollections', [], { noRetry: true }, (err) => { });
 });
 
 UltiSite.getTournament = function (id) {
@@ -62,6 +128,7 @@ UltiSite.offlineCheck = function () {
 };
 
 UltiSite.offlineClear = function () {
+  localForage.removeItem('ultisiteUser');
   localForage.removeItem('Tournaments', () => {
     this.offlineTournaments = [];
     this.offlineFetchDependency.changed();
