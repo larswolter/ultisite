@@ -1,6 +1,6 @@
 const manifest = {
   'name': UltiSite.settings().siteTitle,
-  'short_name': UltiSite.settings().siteTitle.split(' ')[0],
+  'short_name': UltiSite.settings().siteTitle && UltiSite.settings().siteTitle.split(' ')[0],
   'icons': [36, 48, 72, 96, 128, 144, 192, 256, 384, 512].map((res) => {
     return {
       src: '/dynamicAppIcon?size=' + res,
