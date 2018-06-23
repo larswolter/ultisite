@@ -9,7 +9,7 @@ onPageLoad((sink) => {
   const layout = handlebars.compile(Assets.getText('mail-templates/static-layout.html'));
   const context = {
     settings: UltiSite.settings(),
-    content: wiki.content,
+    content: wiki && wiki.content,
   };
 
   sink.appendToBody(layout(context));
