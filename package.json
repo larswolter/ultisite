@@ -7,6 +7,7 @@
     "test": "tests"
   },
   "scripts": {
+    "bundlevis": "meteor --production --extra-packages bundle-visualizer",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,10 +23,12 @@
     "base64-stream": "^0.1.3",
     "bcrypt": "^1.0.3",
     "blueimp-load-image": "^2.19.0",
+    "bootstrap": "^3.3.7",
     "exceljs": "^0.8.5",
     "gridfs-locking-stream": "^1.1.1",
     "handlebars": "^4.0.11",
     "imap": "^0.8.17",
+    "jquery": "^3.3.1",
     "localforage": "^1.7.1",
     "meteor-node-stubs": "^0.4.1",
     "mongodb": "^2.2.35",

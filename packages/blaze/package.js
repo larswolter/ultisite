@@ -1,12 +1,13 @@
 Package.describe({
   name: 'blaze',
-  summary: "Meteor Reactive Templating library",
+  summary: 'Meteor Reactive Templating library',
   version: '2.3.2',
-  git: 'https://github.com/meteor/blaze.git'
+  git: 'https://github.com/meteor/blaze.git',
 });
 
 Package.onUse(function (api) {
-  api.use('jquery@1.11.9','client',{weak:true}); // should be a weak dep, by having multiple "DOM backends"
+  api.use('ecmascript');
+  api.use('jquery@1.11.9', 'client', { weak: true }); // should be a weak dep, by having multiple "DOM backends"
   api.use('tracker@1.1.0');
   api.use('check@1.2.3');
   api.use('underscore@1.0.9');
@@ -17,14 +18,14 @@ Package.onUse(function (api) {
   api.export([
     'Blaze',
     'UI',
-    'Handlebars'
+    'Handlebars',
   ]);
 
   api.use('htmljs@1.0.11');
   api.imply('htmljs@1.0.11');
 
   api.addFiles([
-    'preamble.js'
+    'preamble.js',
   ]);
 
   // client-only files
@@ -33,7 +34,7 @@ Package.onUse(function (api) {
     'domrange.js',
     'events.js',
     'attrs.js',
-    'materializer.js'
+    'materializer.js',
   ], 'client');
 
   // client and server
@@ -43,7 +44,7 @@ Package.onUse(function (api) {
     'builtins.js',
     'lookup.js',
     'template.js',
-    'backcompat.js'
+    'backcompat.js',
   ]);
 });
 
