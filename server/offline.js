@@ -20,6 +20,18 @@ Accounts.onLogin(function (attempt) {
 Accounts.onLogout(function (attempt) {
   refreshDownloadToken(attempt.user && attempt.user._id);
 });
+Meteor.publish('lastChangedElements', function (modifiedAfter) {
+  check(modifiedAfter, Match.Maybe(Date));
+  check(this.userId, String);
+
+  return UltiSite.offlineCollections.map((col) => {
+    if (modifiedAfter) {
+      return UltiSite[col.name].find({ ...col.filter(), lastChanged: { $gt: modifiedAfter } });
+    } else {
+      return UltiSite[col.name].find(col.filter());
+    }
+  });
+});
 
 Meteor.methods({
   ping() {

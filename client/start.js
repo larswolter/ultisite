@@ -1,3 +1,5 @@
+import { moment } from 'meteor/momentjs:moment';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 import '/imports/client/practices/practiceView.js';
 
 Template.startImageCarousel.onCreated(function () {
@@ -40,7 +42,8 @@ Template.eventItem.helpers({
 });
 
 Template.eventItem.events({
-  'click .action-go-event': function(e, t) {
+  'click .action-go-event': function (evt) {
+    evt.preventDefault();
     FlowRouter.go(this.route, { _id: this.groupBy });
   },
 });
@@ -49,6 +52,9 @@ Template.eventItem.events({
 Template.eventList.helpers({
   lastSync() {
     return UltiSite.offlineLastChange.format('DD.MM.YYYY HH:mm');
+  },
+  lastEventSync() {
+    return moment(UltiSite.Events.lastSync).format('DD.MM.YYYY HH:mm');
   },
   events() {
     const events = {};
@@ -72,10 +78,10 @@ Template.eventList.helpers({
             if (_.find(events[event.groupBy].detail, d => d.text.indexOf(firstWord) === 0)) { return; }
           }
           events[event.groupBy].detail.push(_.omit(event.detail, '_id'));
-          entries++;
+          entries += 1;
         }
       } else {
-        entries++;
+        entries += 1;
         events[event.groupBy] = event;
         events[event.groupBy].detail = [_.omit(event.detail, '_id')];
       }

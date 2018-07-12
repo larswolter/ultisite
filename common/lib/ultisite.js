@@ -1,6 +1,51 @@
-const collectionLookup = new Meteor.Collection(null);
+import { moment } from 'meteor/momentjs:moment';
+import { FlowRouter } from 'meteor/kadira:flow-router';
+import { Roles } from 'meteor/alanning:roles';
 
-UltiSite = {};
+UltiSite = {
+  offlineCollections: [
+    {
+      name: 'Events',
+      filter() {
+        return { date: { $gte: moment().subtract(1, 'month').toDate() } };
+      },
+      options() {
+        return { limit: 30, sort: { 'detail.time': -1 } };
+      },
+    },
+    {
+      name: 'Blogs',
+      filter() {
+        return {};
+      },
+      options() {
+        return { limit: 5, sort: { date: -1 } };
+      },
+    },
+    {
+      name: 'WikiPages',
+      filter() {
+        return {
+          _id: {
+            $in: [
+              UltiSite.settings().wikiStart,
+              UltiSite.settings().wikiHelp,
+              UltiSite.settings().wikiDatenschutz,
+              UltiSite.settings().wikiImpressum,
+              UltiSite.settings().wikiPractice,
+            ],
+          },
+        };
+      },
+    },
+    {
+      name: 'Practices',
+      filter() {
+        return {};
+      },
+    },
+  ],
+};
 
 moment.locale('de', {
   months: [
@@ -211,12 +256,16 @@ if (Meteor.isClient) {
 
 Meteor.methods({
   getAnyObjectById(id) {
+    check(id, String);
+    check(this.userId, String);
     const res = this.getAnyObjectByIds([id]);
     if (res.length === 1) {
       if (res[0].count() === 1) { return res[0].fetch()[0]; }
     }
   },
   getAnyObjectByIds(ids) {
+    check(ids, Match.Maybe(ids, [String]));
+    check(this.userId, String);
     if (!ids) { return []; }
     let res = [];
 

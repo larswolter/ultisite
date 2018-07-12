@@ -1,0 +1,31 @@
+{
+  "env": {
+    "meteor": false,
+    "node": false,
+    "browser": true
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 3,
+    "sourceType": "script",
+    "ecmaFeatures": {
+      "jsx": false,
+      "experimentalObjectRestSpread": false
+    }
+  },
+  "extends": [
+    "airbnb-base",
+    "plugin:meteor/recommended"
+  ],
+  "rules": {
+    "indent": [
+      "warn",
+      2
+    ],
+    "no-unused-vars": 1,
+    "consistent-return": 0,
+    "linebreak-style": 0,
+    "quote-props": 0,
+    "func-names": 0
+  }
+}

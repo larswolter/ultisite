@@ -25,10 +25,9 @@ const makeOfflineCollection = function (col) {
 };
 
 makeOfflineCollection(Meteor.users);
-makeOfflineCollection(UltiSite.Events);
-makeOfflineCollection(UltiSite.Practices);
-makeOfflineCollection(UltiSite.WikiPages);
-makeOfflineCollection(UltiSite.Blogs);
+UltiSite.offlineCollections.forEach((col) => {
+  makeOfflineCollection(UltiSite[col.name]);
+});
 
 Meteor.methods({
   offlineInitUser(user) {
@@ -36,15 +35,26 @@ Meteor.methods({
     Meteor.users.insert(user);
   },
   offlineInitCollections() {
-    ['Events', 'Practices', 'WikiPages', 'Blogs'].forEach((col) => {
-      localForage.getItem('ultisiteOffline' + col, (err, data) => {
-        data && data.forEach(i => UltiSite[col].insert(i));
+    UltiSite.offlineCollections.forEach((col) => {
+      if (UltiSite[col.name].find().count() > 0) return;
+      localForage.getItem('ultisiteOffline' + col.name, (err, offline) => {
+        if (offline && offline.data) {
+          offline.data.forEach(i => UltiSite[col.name].insert({
+            ...i,
+            _offline: true,
+          }));
+          UltiSite[col.name].lastOfflineSync = offline.lastSync;
+        }
       });
     });
   },
 });
 
 Meteor.startup(function () {
+  localForage.getItem('ultisiteOfflineLastSync', (err, res) => {
+    UltiSite.lastOfflineSync = res;
+    Meteor.subscribe('lastChangedElements', res || null);
+  });
   Tracker.autorun(() => {
     if (Meteor.userId()) {
       if (Meteor.user()) {
@@ -65,43 +75,20 @@ Meteor.startup(function () {
       comp.stop();
     }
   });
-  Tracker.autorun(() => {
-    const events = UltiSite.Events.find();
-    if (events.count() > 0) {
-      console.log('storing events');
-      localForage.setItem('ultisiteOfflineEvents', events.fetch());
-    }
-  });
-  Tracker.autorun(() => {
-    const practices = UltiSite.Practices.find();
-    if (practices.count() > 0) {
-      console.log('storing practices');
-      localForage.setItem('ultisiteOfflinePractices', practices.fetch());
-    }
-  });
-  Tracker.autorun(() => {
-    const blogs = UltiSite.Blogs.find();
-    if (blogs.count() > 0) {
-      console.log('storing blogs');
-      localForage.setItem('ultisiteOfflineBlogs', blogs.fetch());
-    }
-  });
-  Tracker.autorun(() => {
-    const pages = UltiSite.WikiPages.find({
-      _id: {
-        $in: [
-          UltiSite.settings().wikiStart,
-          UltiSite.settings().wikiHelp,
-          UltiSite.settings().wikiDatenschutz,
-          UltiSite.settings().wikiImpressum,
-          UltiSite.settings().wikiPractice,
-        ],
-      },
+  UltiSite.offlineCollections.forEach((col) => {
+    Tracker.autorun(() => {
+      const elements = UltiSite[col.name].find({
+        ...col.filter(),
+        _offline: { $exists: false },
+        lastChanged: UltiSite.lastOfflineSync,
+      });
+      if (elements.count() > 0) {
+        console.log(`Storing ${elements.count()} elements of ${col.name}`);
+        localForage.setItem('ultisiteOffline' + col.name, {
+          lastSync: new Date(), data: UltiSite[col.name].find(col.filter()).fetch(),
+        });
+      }
     });
-    if (pages.count() > 0) {
-      console.log('storing wikipages');
-      localForage.setItem('ultisiteOfflineWikiPages', pages.fetch());
-    }
   });
   Meteor.apply('offlineInitCollections', [], { noRetry: true }, (err) => { });
 });
@@ -290,7 +277,9 @@ Meteor.startup(function () {
           t.tournamentDate = moment(t.tournamentDate).toDate();
           if (t.lastChange) {
             const lastChange = moment(t.lastChange);
-            if (lastChange.isAfter(UltiSite.offlineLastChange)) { UltiSite.offlineLastChange = lastChange.clone(); }
+            if (lastChange.isAfter(UltiSite.offlineLastChange)) {
+              UltiSite.offlineLastChange = lastChange.clone();
+            }
             t.lastChange = lastChange.toDate();
           }
           t.lastChange = moment().subtract(1, 'year').toDate();
