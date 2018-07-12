@@ -1,617 +1,633 @@
 <template name="team">
-    <div class="panel panel-default">
-        <div class="panel-heading tournament-heading">
-            {{#if isMyTeam}}
-            <div class="btn-group visible-xs visible-sm">
-                <div class="dropdown pull-right">
-                    <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li>
-                            <a class="action-edit-team" href="#">
-                                <span class="fa fa-edit"></span> editieren
-                            </a>
-                        </li>
-                        <li>
-                            <a class="action-historic-view" href="#">
-                                <span class="fa fa-line-chart"></span> Historie
-                            </a>
-                        </li>
-                        {{#if participantMails}}
-                            <li>
-                                <a href="mailto:{{participantMails}}">
-                                    <span class="fa fa-send"></span>
-                                    Mail an das Team
-                                 </a>
-                            </li>
-                        {{/if}}
-                        {{#if teamRemovable}}
-                        <li>
-                            <a class="team-remove text-danger" title="Team löschen">
-                                <span class="fa fa-trash"></span> löschen
-                            </a>
-                        </li>
-                        {{/if}}
-                    </ul>
-                </div>
-            </div>
-            <div class="hidden-xs hidden-sm pull-right">
-                <div>
-                    {{#if currentUser}}
-                    <div class="btn-group">
-                        <button class="btn {{#if iamParticipating}}btn-default{{else}}btn-primary{{/if}} action-participate" >
-                            <span class="fa fa-plus"></span> Mitspielen
-                        </button>
-                    </div>
-                    {{/if}} 
-                    {{#if participantMails}}
-                        <a class="btn btn-default" href="mailto:{{participantMails}}">
-                            <span class="fa fa-send"></span>
-                            Mail an das Team
-                        </a>
-                    {{/if}}
-                    {{#if isResponsible}}
-                    <button class="btn btn-default action-edit-team">
-                        <span class="fa fa-edit"></span> Editieren
-                    </button>
-                    {{/if}}
-                    {{#if isMyTeam}}
-                    <button class="btn btn-default action-historic-view">
-                        <span class="fa fa-line-chart"></span> Historie
-                    </button>
-                    {{/if}}
-                    {{#unless participantUsers}}
-                    <button class="btn btn-danger team-remove" title="Team löschen" type="button">
-                        <span class="fa fa-trash"></span>
-                        <span class="">
-                                    löschen</span>
-                    </button>
-                    {{/unless}}
-                </div>
-            </div>
+  <div class="panel panel-default">
+    <div class="panel-heading tournament-heading">
+      {{#if isMyTeam}}
+      <div class="btn-group visible-xs visible-sm">
+        <div class="dropdown pull-right">
+          <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            <li>
+              <a class="action-edit-team" href="#">
+                <span class="fa fa-edit"></span> editieren
+              </a>
+            </li>
+            <li>
+              <a class="action-historic-view" href="#">
+                <span class="fa fa-line-chart"></span> Historie
+              </a>
+            </li>
+            {{#if participantMails}}
+              <li>
+                <a href="mailto:{{participantMails}}">
+                  <span class="fa fa-send"></span>
+                  Mail an das Team
+                 </a>
+              </li>
             {{/if}}
-            <div class="team-name-status">
-                <strong class="btn-height-text">{{name}}</strong>
-                <span class="hidden-xs btn-height-text">das Team ist</span>
-                {{#if isResponsible}}
-                    <div class="btn-group" role="group">
-                        <button aria-expanded="false" class="btn btn-{{teamColorState}} dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
-                            {{state}}
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a class="action-set-state" data-state="geplant" href="#">Geplant</a>
-                            </li>
-                            <li>
-                                <a class="bg-warning action-set-state" data-state="angemeldet" href="#">Angemeldet</a>
-                            </li>
-                            <li>
-                                <a class="bg-success action-set-state" data-state="dabei" href="#">Bestätigt</a>
-                            </li>
-                            <li>
-                                <a class="bg-danger action-set-state" data-state="auf Warteliste" href="#">auf Warteliste</a>
-                            </li>
-                            <li>
-                                <a class="bg-danger action-set-state" data-state="abgesagt" href="#">Abgesagt</a>
-                            </li>
-                        </ul>
-                    </div>
-                {{else}} 
-                    {{state}} 
-                {{/if}}
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-6">
-                    {{>teamCountBar this}}
-                    {{division}} <span class="hidden-xs">Division</span>, Max. Spieler:
-                    {{maxPlayers}}
-                    {{#if minFemale}}, Min. Frauen:
-                        {{minFemale}}
-                    {{/if}}
-                    {{#if isMyTeam}}
-                        <br/>
-                        Verantwortlich:
-                        {{#if responsible}} 
-                            {{responsibleName}}
-                        {{else}}
-                            Wird ausgelost 
-                            <button class="btn btn-primary btn-sm action-be-responsible">
-                                Übernehmen
-                            </button>
-                        {{/if}}
-                    {{/if}}               
-                    {{#if drawingDate}}
-                        <br/>
-                        {{#if drawingResult}}
-                            Ausgelost am {{formatDateTime drawingResult.date}}
-                            <span class="small hidden-xs hidden-sm">
-                                <span class="fa fa-clock"></span> Früh genug eingetragen,
-                                <span class="fa fa-magic"></span> gelost,
-                                <span class="fa fa-venus-mars"></span> Wegen Mixed-Status
-                            </span>
-                        {{else}}
-                            Auslosung am {{formatDate drawingDate}}
-                        {{/if}}
-                    {{/if}}     
-                </div>
-
-                <div class="col-xs-12 col-sm-6">
-                    <b>Anmerkungen:</b> 
-                    {{#if isMyTeam}}
-                        <button class="btn btn-link action-edit-remarks">
-                            <span class="fa fa-edit"></span>
-                        </button>
-                    {{/if}}
-                    <br/>
-                    <small>
-                        {{#if remarks}}
-                            {{{remarks}}}
-                        {{else}}
-                         <span class="text-muted">Keine vorhanden</span>
-                        {{/if}}
-                    </small>
-                </div>
-            </div>
+            {{#if teamRemovable}}
+            <li>
+              <a class="team-remove text-danger" title="Team löschen">
+                <span class="fa fa-trash"></span> löschen
+              </a>
+            </li>
+            {{/if}}
+          </ul>
         </div>
-        {{#if isMyTeam}}
-        <div class="list-group team-participants" id="team-participants">
-            {{#each participantUsers}} 
-                {{#if this.waiting}}
-                <div class="list-group-item">
-                    Warteliste
-                </div>
-                {{/if}}
-                {{#if visible}}
-                    {{>participant}}
-                {{/if}}
-            {{else}} 
-                {{>EmptySmall}} 
-            {{/each}}
-            {{#if notAvailable.length}}
-                <div class="list-group-item">
-                    Können nicht:
-                    {{#each notAvailable}}
-                        &nbsp;&nbsp;&nbsp;
-                        
-                        {{#if this.comment}}
-                            {{#popoverIcon text=comment}}
-                                {{getAlias this}} <span class="fa fa-comment"></span>
-                            {{/popoverIcon}}
-                        {{else}}
-                            {{getAlias this}}
-                        {{/if}}
-                    {{/each}}
-                </div>
-            {{/if}} 
+      </div>
+      <div class="hidden-xs hidden-sm pull-right">
+        <div>
+          {{#if currentUser}}
+          <div class="btn-group">
+            <button class="btn {{#if iamParticipating}}btn-default{{else}}btn-primary{{/if}} action-participate" >
+              <span class="fa fa-plus"></span> Mitspielen
+            </button>
+          </div>
+          {{/if}} 
+          {{#if participantMails}}
+            <a class="btn btn-default" href="mailto:{{participantMails}}">
+              <span class="fa fa-send"></span>
+              Mail an das Team
+            </a>
+          {{/if}}
+          {{#if isResponsible}}
+          <button class="btn btn-default action-edit-team">
+            <span class="fa fa-edit"></span> Editieren
+          </button>
+          {{/if}}
+          {{#if isMyTeam}}
+          <button class="btn btn-default action-historic-view">
+            <span class="fa fa-line-chart"></span> Historie
+          </button>
+          {{/if}}
+          {{#unless participantUsers}}
+          <button class="btn btn-danger team-remove" title="Team löschen" type="button">
+            <span class="fa fa-trash"></span>
+            <span class="">
+                  löschen</span>
+          </button>
+          {{/unless}}
+        </div>
+      </div>
+      {{/if}}
+      <div class="team-name-status">
+        <strong class="btn-height-text">{{name}}</strong>
+        <span class="hidden-xs btn-height-text">das Team ist</span>
+        {{#if isResponsible}}
+          <div class="btn-group" role="group">
+            <button aria-expanded="false" class="btn btn-{{teamColorState}} dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
+              {{state}}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li>
+                <a class="action-set-state" data-state="geplant" href="#">Geplant</a>
+              </li>
+              <li>
+                <a class="bg-warning action-set-state" data-state="angemeldet" href="#">Angemeldet</a>
+              </li>
+              <li>
+                <a class="bg-success action-set-state" data-state="dabei" href="#">Bestätigt</a>
+              </li>
+              <li>
+                <a class="bg-danger action-set-state" data-state="auf Warteliste" href="#">auf Warteliste</a>
+              </li>
+              <li>
+                <a class="bg-danger action-set-state" data-state="abgesagt" href="#">Abgesagt</a>
+              </li>
+            </ul>
+          </div>
+        {{else}} 
+          {{state}} 
+        {{/if}}
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6">
+          {{>teamCountBar this}}
+          {{division}} <span class="hidden-xs">Division</span>, Max. Spieler:
+          {{maxPlayers}}
+          {{#if minFemale}}, Min. Frauen:
+            {{minFemale}}
+          {{/if}}
+          {{#if isMyTeam}}
+            <br/>
+            Verantwortlich:
+            {{#if responsible}} 
+              {{responsibleName}}
+            {{else}}
+              Wird ausgelost 
+              <button class="btn btn-primary btn-sm action-be-responsible">
+                Übernehmen
+              </button>
+            {{/if}}
+          {{/if}}               
+          {{#if drawingDate}}
+            <br/>
+            {{#if drawingResult}}
+              Ausgelost am {{formatDateTime drawingResult.date}}
+              <span class="small hidden-xs hidden-sm">
+                <span class="fa fa-clock"></span> Früh genug eingetragen,
+                <span class="fa fa-magic"></span> gelost,
+                <span class="fa fa-venus-mars"></span> Wegen Mixed-Status
+              </span>
+            {{else}}
+              Auslosung am {{formatDate drawingDate}}
+            {{/if}}
+          {{/if}}     
+        </div>
+
+        <div class="col-xs-12 col-sm-6">
+          <b>Anmerkungen:</b> 
+          {{#if isMyTeam}}
+            <button class="btn btn-link action-edit-remarks">
+              <span class="fa fa-edit"></span>
+            </button>
+          {{/if}}
+          <br/>
+          <small>
+            {{#if remarks}}
+              {{{remarks}}}
+            {{else}}
+             <span class="text-muted">Keine vorhanden</span>
+            {{/if}}
+          </small>
+        </div>
+      </div>
+    </div>
+    {{#if isMyTeam}}
+    <div class="list-group team-participants" id="team-participants">
+      {{#each participantUsers}} 
+        {{#if this.waiting}}
+        <div class="list-group-item">
+          Warteliste
         </div>
         {{/if}}
+        {{#if visible}}
+          {{>participant}}
+        {{/if}}
+      {{else}} 
+        {{>EmptySmall}} 
+      {{/each}}
+      {{#if notAvailable.length}}
+        <div class="list-group-item">
+          Können nicht:
+          {{#each notAvailable}}
+            &nbsp;&nbsp;&nbsp;
+            
+            {{#if this.comment}}
+              {{#popoverIcon text=comment}}
+                {{getAlias this}} <span class="fa fa-comment"></span>
+              {{/popoverIcon}}
+            {{else}}
+              {{getAlias this}}
+            {{/if}}
+          {{/each}}
+        </div>
+      {{/if}} 
     </div>
+    {{/if}}
+  </div>
 </template>
 
 <template name="participateDialog">
-    <div class="modal fade" id="participateDialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span class="fa fa-close"></span>
-                    </button>
-                    <h4>Für ein Team eintragen</h4>
-                </div>
-                <div class="modal-body">
-                    <form class="" id="participantInsertForm">
-                        {{#if meteorStatus.connected}}
-                            <div class="form-group">
-                                <label>Team</label><br/>
-                                {{#if equals teams.length 1}}
-                                    {{#each teams}}
-                                    <input type="hidden" name="teamId" value="{{_id}}" />
-                                    {{name}}
-                                    {{/each}}
-                                {{else}}
-                                    <select class="form-control" name="teamId">
-                                        <option value="" >Team auswählen</option>
-                                        {{#each teams}}
-                                            <option value="{{_id}}" >{{name}}</option>
-                                        {{/each}}
-                                    </select>
-                                {{/if}}
-                            </div>
-                            {{#if selectedTeam}}
-                                {{#if dabei}}
-                                <div class="form-group">
-                                    <label>Ich bin bereits dabei!</label><br />
-                                    Aber es kann auch ein anderer Spieler hinzugefügt werden, indem dessen Name in das Feld bei Spieler eingegeben wird
-                                </div>
-                                {{/if}}
-                                <div class="form-group">
-                                    <label>Spieler</label><br />
-                                    <div class="col-xs-6">
-                                        {{selectedUser.username}}
-                                    </div>
-                                    <div class="col-xs-6">
-                                        {{>searchField searchType="Users" inline=true leftMenu=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound}}
-                                    </div>
-                                </div>
-                                {{#if selectedUser}} 
-                                    {{#unless selectedUser._id}}
-                                    <div class="form-group">
-                                        Willst du diesen Namen in die Liste eintragen, 
-                                        es ist kein eigener Nutzer und nur du kannst seinen Status ändern
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="checkbox" name="female" value="1" checked={{femaleRequired}}>
-                                        <label>Weiblicher Spieler</label>                                
-                                    </div>
-                                    {{/unless}}
-                                    {{#if femaleRequired}}
-                                        <div class="alert alert-warning">
-                                            Dies ist ein Team nur für Frauen und {{selectedUser.username}} ist laut seinem <a href="/user/{{selectedUser._id}}">Profil</a> keine!
-                                        </div>
-                                    {{/if}}
-                                    <button class="btn btn-default btn-block action-insert" data-value="0" type="button">Kann nicht</button>
-                                    <button class="btn btn-default btn-block action-insert" data-value="30" type="button">Interesse</button>
-                                    <button class="btn btn-warning btn-block action-insert" data-value="70" type="button">Vielleicht</button>
-                                    <button class="btn btn-success btn-block action-insert" data-value="100" type="button">Sicher</button>
-                                {{else}}
-                                    Bitte einen Spieler wählen
-                                {{/if}}
-                            {{else}}
-                                Bitte ein Team auswählen
-                            {{/if}}
-                        {{else}}
-                            Eintragen geht nur bei bestehender Verbindung
-                        {{/if}}
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Abbrechen</button>
-                </div>
-            </div>
+  <div class="modal fade" id="participateDialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span class="fa fa-close"></span>
+          </button>
+          <h4>Für ein Team eintragen</h4>
         </div>
+        <div class="modal-body">
+          <form class="" id="participantInsertForm">
+            {{#if meteorStatus.connected}}
+              <div class="form-group">
+                <label>Team</label><br/>
+                {{#if equals teams.length 1}}
+                  {{#each teams}}
+                  <input type="hidden" name="teamId" value="{{_id}}" />
+                  {{name}}
+                  {{/each}}
+                {{else}}
+                  <select class="form-control" name="teamId">
+                    <option value="" >Team auswählen</option>
+                    {{#each teams}}
+                      <option value="{{_id}}" >{{name}}</option>
+                    {{/each}}
+                  </select>
+                {{/if}}
+              </div>
+              {{#if selectedTeam}}
+                {{#if dabei}}
+                <div class="form-group">
+                  <label>Ich bin bereits dabei!</label><br />
+                  Aber es kann auch ein anderer Spieler hinzugefügt werden, indem dessen Name in das Feld bei Spieler eingegeben wird
+                </div>
+                {{/if}}
+                <div class="form-group row">
+                  <div class="col-xs-6">
+                    <label>Spieler</label><br />
+                    {{selectedUser.username}}
+                  </div>
+                  <div class="col-xs-6">
+                    <label>Anderen Suchen</label><br />
+                    {{>searchField searchType="Users" inline=true leftMenu=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound}}
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Kommentar</label><br />
+                  <input class="form-control" placeholder="Kommentar" name="comment"/>
+                </div>
+                {{#if selectedUser}} 
+                  {{#unless selectedUser._id}}
+                  <div class="form-group">
+                    Willst du diesen Namen in die Liste eintragen, 
+                    es ist kein eigener Nutzer und nur du kannst seinen Status ändern
+                  </div>
+                  <div class="form-group">
+                    <input type="checkbox" name="female" value="1" checked={{femaleRequired}}>
+                    <label>Weiblicher Spieler</label>                                
+                  </div>
+                  {{/unless}}
+                  {{#if femaleRequired}}
+                    <div class="alert alert-warning">
+                      Dies ist ein Team nur für Frauen und {{selectedUser.username}} ist laut seinem <a href="/user/{{selectedUser._id}}">Profil</a> keine!
+                    </div>
+                  {{/if}}
+                  <div class="form-group">
+                    <label>Status</label><br />
+                    <button class="btn btn-success btn-block action-insert" data-value="100" type="button">
+                      Sicher
+                    </button>
+                    <button class="btn btn-default btn-block action-insert" data-value="0" type="button">
+                      Kann nicht
+                    </button>
+                    <button class="btn btn-default btn-block action-insert" data-value="70" type="button">
+                      Vielleicht
+                    </button>
+                    <small>
+                      Du kannst noch nicht sicher zu- oder absagen, dann trage oben einen Kommentar einen
+                    </small>
+                  </div>
+                {{else}}
+                  Bitte einen Spieler wählen
+                {{/if}}
+              {{else}}
+                Bitte ein Team auswählen
+              {{/if}}
+            {{else}}
+              Eintragen geht nur bei bestehender Verbindung
+            {{/if}}
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Abbrechen</button>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 
 <template name="participant">
-    <div class="list-group-item">
-        {{#if isWoman}}
-        <div class="woman-indicator"></div>
-        {{/if}} 
-        {{#unless noChangeRights}}
-        <button class="btn btn-link action-comment pull-right">
-            <span class="fa fa-comment"></span>
-        </button>{{!--
-        <button class="btn btn-link action-transport pull-right">
-            <span class="fa fa-car"></span>3
-        </button>
-        <button class="btn btn-link action-sleep pull-right">
-            <span class="fa fa-home"></span>1
-        </button>--}}
-        <div class="btn-group participant-state" role="group">
-            <button aria-expanded="false" class="btn btn-{{colorState this.state}} btn-block dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
-                <span class="fa {{iconState}} fa-fw"></span>
-                <span class="hidden-xs">
-                    {{textState this.state}}
-                </span>
-                <span class="fa fa-caret-down"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                <li class="action-participate" data-participation='30'>
-                    <a href="#">Interesse</a>
-                </li>
-                <li>
-                    <a class="bg-warning action-participate" href="#" data-participation='70'>Vielleicht</a>
-                </li>
-                <li>
-                    <a class="bg-success action-participate" href="#" data-participation='100'>Sicher</a>
-                </li>
-                <li>
-                    <a class="text-muted action-participate" href="#" data-participation='0'>Kann nicht</a>
-                </li>
-                {{#if isAdmin}}
-                    <li>
-                        <a class="action-remove" href="#">Austragen</a>
-                    </li>
-                {{/if}}
-            </ul>
-        </div>
-        {{else}}
-        <div class="bg-{{colorState this.state}} participant-state" style="padding:6px 12px;display:inline-block">
-            <span class="fa {{iconState}} fa-fw"></span>
-            <span class="hidden-xs">{{textState this.state}}</span>
-        </div>
-        {{/unless}}
-        <span style="padding:6px 12px;">
-            <span class="fa {{#if equals sex 'W'}}fa-female{{else}}fa-male{{/if}} fa-fw"></span> 
-            &nbsp; {{username}}
+  <div class="list-group-item">
+    {{#if isWoman}}
+    <div class="woman-indicator"></div>
+    {{/if}} 
+    {{#unless noChangeRights}}
+    <button class="btn btn-link action-comment pull-right">
+      <span class="fa fa-comment"></span>
+    </button>{{!--
+    <button class="btn btn-link action-transport pull-right">
+      <span class="fa fa-car"></span>3
+    </button>
+    <button class="btn btn-link action-sleep pull-right">
+      <span class="fa fa-home"></span>1
+    </button>--}}
+    <div class="btn-group participant-state" role="group">
+      <button aria-expanded="false" class="btn btn-{{colorState this.state}} btn-block dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
+        <span class="fa {{iconState}} fa-fw"></span>
+        <span class="hidden-xs">
+          {{textState this.state}}
         </span>
-        {{#unless equals responsible user}}
-            <small>durch {{responsibleName}}</small>
-        {{/unless}}
-        <div class="comment">{{comment}}</div> 
+        <span class="fa fa-caret-down"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li class="action-participate" data-participation='30'>
+          <a href="#">Interesse</a>
+        </li>
+        <li>
+          <a class="bg-warning action-participate" href="#" data-participation='70'>Vielleicht</a>
+        </li>
+        <li>
+          <a class="bg-success action-participate" href="#" data-participation='100'>Sicher</a>
+        </li>
+        <li>
+          <a class="text-muted action-participate" href="#" data-participation='0'>Kann nicht</a>
+        </li>
+        {{#if isAdmin}}
+          <li>
+            <a class="action-remove" href="#">Austragen</a>
+          </li>
+        {{/if}}
+      </ul>
     </div>
+    {{else}}
+    <div class="bg-{{colorState this.state}} participant-state" style="padding:6px 12px;display:inline-block">
+      <span class="fa {{iconState}} fa-fw"></span>
+      <span class="hidden-xs">{{textState this.state}}</span>
+    </div>
+    {{/unless}}
+    <span style="padding:6px 12px;">
+      <span class="fa {{#if equals sex 'W'}}fa-female{{else}}fa-male{{/if}} fa-fw"></span> 
+      &nbsp; {{username}}
+    </span>
+    {{#unless equals responsible user}}
+      <small>durch {{responsibleName}}</small>
+    {{/unless}}
+    <div class="comment">{{comment}}</div> 
+  </div>
 </template>
 
 <template name="teamUpdate">
-    {{#if currentUser}}
-    <div class="modal fade" id="teamUpdateDialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                {{#autoForm schema=teamSchema tournamentId=this.tournamentId doc=team id="teamUpdateForm" type="normal"}}
-                <div class="modal-header">
-                    <button class="confirm" type="submit">
-                        {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
-                    </button>
-                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                        <span class="fa fa-close"></span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">
-                            {{#if team._id}}
-                                Team
-                                {{team.name}}
-                                editieren
-                            {{else}}
-                                Neues Team anlegen
-                            {{/if}}
-                        </h4>
-                </div>
-                <div class="modal-body row">
-                    <fieldset>
-                        <div class="col-xs-6">
-                            {{> afQuickField name='name'}}
-                        </div>
-                        <div class="col-xs-6">
-                            {{#unless team._id}}
-                                {{> afQuickField name='teamType' }}
-                            {{else}}
-                                {{> afQuickField name='teamType' readOnly=true}}
-                            {{/unless}}
-                        </div>
-                        <div class="col-xs-6">
-                            {{> afQuickField name='maxPlayers'}}
-                        </div>
-                        <div class="col-xs-6">
-                            {{> afQuickField name='minFemale'}}
-                        </div>
-                        <div class="col-xs-6">
-                            {{> afQuickField name='state' defaultValue='geplant'}}
-                        </div>
-                        <div class="col-xs-6">
-                            {{> afQuickField name='division' options=tournamentDivisions}}
-                        </div>
-                    </fieldset>
-                </div>
-                <div class="modal-footer hidden-xs">
-                    <button class="btn btn-primary" type="submit">
-                        {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
-                    </button>
-                </div>
-                {{/autoForm}} 
-            </div>
+  {{#if currentUser}}
+  <div class="modal fade" id="teamUpdateDialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        {{#autoForm schema=teamSchema tournamentId=this.tournamentId doc=team id="teamUpdateForm" type="normal"}}
+        <div class="modal-header">
+          <button class="confirm" type="submit">
+            {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
+          </button>
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span class="fa fa-close"></span>
+          </button>
+          <h4 class="modal-title" id="myModalLabel">
+              {{#if team._id}}
+                Team
+                {{team.name}}
+                editieren
+              {{else}}
+                Neues Team anlegen
+              {{/if}}
+            </h4>
         </div>
+        <div class="modal-body row">
+          <fieldset>
+            <div class="col-xs-6">
+              {{> afQuickField name='name'}}
+            </div>
+            <div class="col-xs-6">
+              {{#unless team._id}}
+                {{> afQuickField name='teamType' }}
+              {{else}}
+                {{> afQuickField name='teamType' readOnly=true}}
+              {{/unless}}
+            </div>
+            <div class="col-xs-6">
+              {{> afQuickField name='maxPlayers'}}
+            </div>
+            <div class="col-xs-6">
+              {{> afQuickField name='minFemale'}}
+            </div>
+            <div class="col-xs-6">
+              {{> afQuickField name='state' defaultValue='geplant'}}
+            </div>
+            <div class="col-xs-6">
+              {{> afQuickField name='division' options=tournamentDivisions}}
+            </div>
+          </fieldset>
+        </div>
+        <div class="modal-footer hidden-xs">
+          <button class="btn btn-primary" type="submit">
+            {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
+          </button>
+        </div>
+        {{/autoForm}} 
+      </div>
     </div>
-    {{/if}}
+  </div>
+  {{/if}}
 </template>
 
 <template name="teamCountBar">
-    <div class="progress team-player-state text-center">
-        {{#if teamCount}}
-            <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{teamCount.percentFull}}%">{{teamCount.full}}</div>
-            <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{teamCount.percentHalf}}%">{{teamCount.half}}</div>
-            <div class="progress-bar progress-bar-disabled" role="progressbar" style="width:{{teamCount.percentRest}}%">{{teamCount.rest}}</div>
-            <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{teamCount.percentOver}}%" title="zu Viele">{{teamCount.over}}</div>
-            {{teamCount.spots}} 
-        {{else}}
-            {{maxPlayers}}
-        {{/if}}
-    </div>
-    {{!-- 
-    {{#if minFemale}}
-        <div class="progress team-player-state text-center">
-            <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{teamCount.percentFemales}}%">{{teamCount.females}}</div>
-            {{teamCount.missingFemales}}
-        </div>
+  <div class="progress team-player-state text-center">
+    {{#if teamCount}}
+      <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{teamCount.percentFull}}%">{{teamCount.full}}</div>
+      <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{teamCount.percentHalf}}%">{{teamCount.half}}</div>
+      <div class="progress-bar progress-bar-disabled" role="progressbar" style="width:{{teamCount.percentRest}}%">{{teamCount.rest}}</div>
+      <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{teamCount.percentOver}}%" title="zu Viele">{{teamCount.over}}</div>
+      {{teamCount.spots}} 
+    {{else}}
+      {{maxPlayers}}
     {{/if}}
-    --}}
+  </div>
+  {{!-- 
+  {{#if minFemale}}
+    <div class="progress team-player-state text-center">
+      <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{teamCount.percentFemales}}%">{{teamCount.females}}</div>
+      {{teamCount.missingFemales}}
+    </div>
+  {{/if}}
+  --}}
 </template>
 
 <template name="teamReport">
-    <div class="team-report">
-        <div class="panel panel-default">
-            <div class="panel-heading tournament-heading">
-                {{#unless noChangeRights}}
-                    <span class="visible-xs-inline pull-right">
-                        <div class="dropdown">
-                            <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                                {{#if teamRemovable}}
-                                <li>
-                                    <a href="#" class="action-delete-team">
-                                        <span class="fa fa-trash fa-fw"></span> löschen
-                                    </a>
-                                </li>
-                                {{/if}}
-                                <li>
-                                {{#unless myTeamState}}
-                                    <a href="#" class="action-add-me">
-                                        <span class="fa fa-sign-in fa-fw"></span> Mich eintragen
-                                    </a>
-                                {{else}}
-                                    <a href="#" class="action-remove-me">
-                                        <span class="fa fa-sign-out fa-fw"></span> Mich austragen
-                                    </a>
-                                {{/unless}}
-                                </li>
-                                <li>
-                                {{#if equals this.state "dabei"}}
-                                    <a href="#" class="action-remove-team">
-                                        <span class="fa fa-users fa-fw text-muted"></span> Auf nicht angetreten setzen
-                                    </a>
-                                {{else}}
-                                    <a href="#" class="action-add-team">
-                                        <span class="fa fa-users fa-fw"></span> Auf angetreten setzen
-                                    </a>
-                                {{/if}}
-                                </li>
-                                <li>
-                                    <a href="#" class="action-historic-view">
-                                        <span class="fa fa-line-chart"></span> Historie
-                                    </a>
-                                </li>                                
-                            </ul>
-                        </div>
-                    </span>
-                    <span class="hidden-xs">
-                    <button class="btn btn-default action-historic-view pull-right">
-                        <span class="fa fa-line-chart"></span> Historie
-                    </button>
-                    {{#if teamRemovable}}
-                        <button class="btn btn-danger action-delete-team pull-right" title="Team löschen">
-                            Team löschen
-                        </button>
-                    {{/if}}
-                    {{#unless myTeamState}}
-                        <button class="btn btn-default action-add-me pull-right" >Mich eintragen</button>
-                    {{else}} 
-                        <button class="btn btn-default action-remove-me pull-right" >Mich austragen</button>
-                    {{/unless}}
-                    
-                    {{#if equals this.state "dabei"}}
-                        <button class="btn btn-default action-remove-team pull-right" >Auf nicht angetreten setzen</button>
-                    {{else}} 
-                        <button class="btn btn-default action-add-team pull-right" >Auf angetreten setzen</button>
-                    {{/if}}
-                    </span>
+  <div class="team-report">
+    <div class="panel panel-default">
+      <div class="panel-heading tournament-heading">
+        {{#unless noChangeRights}}
+          <span class="visible-xs-inline pull-right">
+            <div class="dropdown">
+              <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                {{#if teamRemovable}}
+                <li>
+                  <a href="#" class="action-delete-team">
+                    <span class="fa fa-trash fa-fw"></span> löschen
+                  </a>
+                </li>
+                {{/if}}
+                <li>
+                {{#unless myTeamState}}
+                  <a href="#" class="action-add-me">
+                    <span class="fa fa-sign-in fa-fw"></span> Mich eintragen
+                  </a>
+                {{else}}
+                  <a href="#" class="action-remove-me">
+                    <span class="fa fa-sign-out fa-fw"></span> Mich austragen
+                  </a>
                 {{/unless}}
-                <h4>
-                    {{name}}
-                    {{#unless equals this.state "dabei"}}
-                    <small>sind nicht angetreten</small>
-                    {{/unless}}
-                    {{#if myTeamState}}
-                        <span class="fa fa-user text-success" title="{{myTeamState}}"></span>
-                    {{/if}}
-                </h4>
+                </li>
+                <li>
+                {{#if equals this.state "dabei"}}
+                  <a href="#" class="action-remove-team">
+                    <span class="fa fa-users fa-fw text-muted"></span> Auf nicht angetreten setzen
+                  </a>
+                {{else}}
+                  <a href="#" class="action-add-team">
+                    <span class="fa fa-users fa-fw"></span> Auf angetreten setzen
+                  </a>
+                {{/if}}
+                </li>
+                <li>
+                  <a href="#" class="action-historic-view">
+                    <span class="fa fa-line-chart"></span> Historie
+                  </a>
+                </li>                                
+              </ul>
             </div>
+          </span>
+          <span class="hidden-xs">
+          <button class="btn btn-default action-historic-view pull-right">
+            <span class="fa fa-line-chart"></span> Historie
+          </button>
+          {{#if teamRemovable}}
+            <button class="btn btn-danger action-delete-team pull-right" title="Team löschen">
+              Team löschen
+            </button>
+          {{/if}}
+          {{#unless myTeamState}}
+            <button class="btn btn-default action-add-me pull-right" >Mich eintragen</button>
+          {{else}} 
+            <button class="btn btn-default action-remove-me pull-right" >Mich austragen</button>
+          {{/unless}}
+          
+          {{#if equals this.state "dabei"}}
+            <button class="btn btn-default action-remove-team pull-right" >Auf nicht angetreten setzen</button>
+          {{else}} 
+            <button class="btn btn-default action-add-team pull-right" >Auf angetreten setzen</button>
+          {{/if}}
+          </span>
+        {{/unless}}
+        <h4>
+          {{name}}
+          {{#unless equals this.state "dabei"}}
+          <small>sind nicht angetreten</small>
+          {{/unless}}
+          {{#if myTeamState}}
+            <span class="fa fa-user text-success" title="{{myTeamState}}"></span>
+          {{/if}}
+        </h4>
+      </div>
 
-            {{#if currentUser}} 
-                <div class="list-group">
-                    <li class="list-group-item form-inline">
-                        {{#each participants}}
-                            {{#if equals this.state 100}}
-                                {{#if this.comment}}
-                                    {{#popoverIcon text=comment}}
-                                        <a href="/user/{{this.user}}" class="btn btn-link">{{this.username}}</a>                                
-                                        <span class="fa fa-comment"></span>
-                                    {{/popoverIcon}}
-                                {{else}}
-                                    <a href="/user/{{this.user}}" class="btn btn-link">{{this.username}}</a>                                
-                                {{/if}}
-                            {{/if}}
-                        {{/each}}
-                        {{>searchField type="button" leftMenu=true inline=true icon="fa fa-plus"  searchType="Users" value="" class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound}}
-                    </li> 
-                </div>
-            {{/if}}
-            {{#if equals this.state "dabei"}}
-            <div class="panel-body">
-                <div class="row">                    
-                    <div class="image {{#if image}}pointer action-show-team-image{{/if}} col-xs-12 col-sm-4 col-md-3 col-lg-2" 
-                        style="background-image:url('{{#if image}}{{imageUrl image 160}}{{else}}/placeholder/team.svg{{/if}}'); text-center">
-                        <button class="btn btn-default btn-sm action-team-image">
-                            <span class="fa fa-edit"></span>
-                        </button>
-                    </div>
-                    {{#unless noChangeRights}}
-                    <div class="col-xs-12 col-sm-4 col-md-3 form-horizontal">
-                        <div class="form-group"> 
-                            <label class="col-xs-6 control-label">Platz</label>
-                            <div  class="col-xs-6">
-                                <input class="form-control" name="results.placement" size="3" type="number" value="{{results.placement}}">
-                            </div>
-                        </div>
-                        <div class="form-group"> 
-                            <label class="col-xs-6 control-label">Spirit</label>
-                            <div  class="col-xs-6">
-                                <input class="form-control" name="results.spirit" size="3" type="number" value="{{results.spirit}}">
-                            </div>
-                        </div>
-                        <div class="form-group"> 
-                            <label class="col-xs-6 control-label">Beerrace</label>
-                            <div  class="col-xs-6">
-                                <input class="form-control" name="results.beerrace" size="3" type="number" value="{{results.beerrace}}">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-4 col-md-6 col-lg-7">
-                        <label>Kommentar</label>
-                        <textarea class="form-control" name="results.comment">{{results.comment}}</textarea>
-                    </div>
-                    {{else}} 
-                    <div class="col-xs-12 col-sm-4 col-md-3"> 
-                        Platz: {{#with results.placement}}{{this}}{{else}}?{{/with}}
-                        {{#with results.spirit}}<br/> Spirit: {{this}}{{/with}}
-                        {{#with results.beerrace}}<br/> Beerace: {{this}}{{/with}}
-                    </div>
-                    {{#if results.comment}}
-                        <div class="col-xs-12 col-sm-4 col-md-6 col-lg-7">
-                            Kommentar:
-                            <small>{{results.comment}}</small> 
-                        </div> 
-                    {{/if}}
-                    {{/unless}}
-                </div>
-            </div>
-            {{/if}}
+      {{#if currentUser}} 
+        <div class="list-group">
+          <li class="list-group-item form-inline">
+            {{#each participants}}
+              {{#if equals this.state 100}}
+                {{#if this.comment}}
+                  {{#popoverIcon text=comment}}
+                    <a href="/user/{{this.user}}" class="btn btn-link">{{this.username}}</a>                                
+                    <span class="fa fa-comment"></span>
+                  {{/popoverIcon}}
+                {{else}}
+                  <a href="/user/{{this.user}}" class="btn btn-link">{{this.username}}</a>                                
+                {{/if}}
+              {{/if}}
+            {{/each}}
+            {{>searchField type="button" leftMenu=true inline=true icon="fa fa-plus"  searchType="Users" value="" class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound}}
+          </li> 
         </div>
+      {{/if}}
+      {{#if equals this.state "dabei"}}
+      <div class="panel-body">
+        <div class="row">                    
+          <div class="image {{#if image}}pointer action-show-team-image{{/if}} col-xs-12 col-sm-4 col-md-3 col-lg-2" 
+            style="background-image:url('{{#if image}}{{imageUrl image 160}}{{else}}/placeholder/team.svg{{/if}}'); text-center">
+            <button class="btn btn-default btn-sm action-team-image">
+              <span class="fa fa-edit"></span>
+            </button>
+          </div>
+          {{#unless noChangeRights}}
+          <div class="col-xs-12 col-sm-4 col-md-3 form-horizontal">
+            <div class="form-group"> 
+              <label class="col-xs-6 control-label">Platz</label>
+              <div  class="col-xs-6">
+                <input class="form-control" name="results.placement" size="3" type="number" value="{{results.placement}}">
+              </div>
+            </div>
+            <div class="form-group"> 
+              <label class="col-xs-6 control-label">Spirit</label>
+              <div  class="col-xs-6">
+                <input class="form-control" name="results.spirit" size="3" type="number" value="{{results.spirit}}">
+              </div>
+            </div>
+            <div class="form-group"> 
+              <label class="col-xs-6 control-label">Beerrace</label>
+              <div  class="col-xs-6">
+                <input class="form-control" name="results.beerrace" size="3" type="number" value="{{results.beerrace}}">
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4 col-md-6 col-lg-7">
+            <label>Kommentar</label>
+            <textarea class="form-control" name="results.comment">{{results.comment}}</textarea>
+          </div>
+          {{else}} 
+          <div class="col-xs-12 col-sm-4 col-md-3"> 
+            Platz: {{#with results.placement}}{{this}}{{else}}?{{/with}}
+            {{#with results.spirit}}<br/> Spirit: {{this}}{{/with}}
+            {{#with results.beerrace}}<br/> Beerace: {{this}}{{/with}}
+          </div>
+          {{#if results.comment}}
+            <div class="col-xs-12 col-sm-4 col-md-6 col-lg-7">
+              Kommentar:
+              <small>{{results.comment}}</small> 
+            </div> 
+          {{/if}}
+          {{/unless}}
+        </div>
+      </div>
+      {{/if}}
     </div>
+  </div>
 </template>
 
 <template name="teamHistoricView">
-    {{#if currentUser}}
-    <div class="modal fade team-historic-view" id="teamHistoricView">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                        <span class="fa fa-close"></span>
-                    </button>
-                    <h4 class="modal-title">Historische Ansicht</h4>
-                </div>
-                <div class="modal-body">
-                    <div class='line'>
-                        <div class="blocks">
-                            {{#each marks}}
-                            <div class='marks small {{stateClass}}' style='width:{{width}}%;left:{{offset}}%'>
-                                {{text}}
-                            </div>
-                            {{/each}}
-                        </div>
-                    </div>
-                    {{#each participants}}
-                    <div class='line'>
-                        {{username}}
-                        <div class="blocks progress">
-                            {{#each historicBlocks}}
-                            <div class='progress-bar {{stateClass}}' style='width:{{width}}%;{{#if equals @index 0}}margin-left:{{offset}}%{{/if}}'>
-                            </div>
-                            {{/each}}
-                        </div>
-                    </div>
-                    {{/each}}
-                </div>
-                <div class="modal-footer">
-                    <button aria-label="Close" class="btn btn-primary" data-dismiss="modal" type="button">
-                        Ok
-                    </button>
-                </div>
-            </div>
+  {{#if currentUser}}
+  <div class="modal fade team-historic-view" id="teamHistoricView">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span class="fa fa-close"></span>
+          </button>
+          <h4 class="modal-title">Historische Ansicht</h4>
         </div>
+        <div class="modal-body">
+          <div class='line'>
+            <div class="blocks">
+              {{#each marks}}
+              <div class='marks small {{stateClass}}' style='width:{{width}}%;left:{{offset}}%'>
+                {{text}}
+              </div>
+              {{/each}}
+            </div>
+          </div>
+          {{#each participants}}
+          <div class='line'>
+            {{username}}
+            <div class="blocks progress">
+              {{#each historicBlocks}}
+              <div class='progress-bar {{stateClass}}' style='width:{{width}}%;{{#if equals @index 0}}margin-left:{{offset}}%{{/if}}'>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        <div class="modal-footer">
+          <button aria-label="Close" class="btn btn-primary" data-dismiss="modal" type="button">
+            Ok
+          </button>
+        </div>
+      </div>
     </div>
-    {{/if}}
+  </div>
+  {{/if}}
 </template>

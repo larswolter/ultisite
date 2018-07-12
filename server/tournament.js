@@ -331,12 +331,18 @@ Meteor.methods({
     let user = Meteor.users.findOne(params.userid);
     if (!user) { user = UltiSite.userByAlias(params.alias, this.connection); }
     if (!user) {
-      user = { _id: params.userid, username: params.userid, profile: { sex: params.sex ? 'W' : 'M' } };
+      user = {
+        _id: params.userid,
+        username: params.userid,
+profile: { sex: params.sex ? 'W' : 'M' },
+      };
       params.dummy = true;
     }
     const team = UltiSite.Teams.findOne(teamId);
     if (!team) { throw new Meteor.Error('does-not-exist', `Das Team ${teamId} existiert nicht`); }
-    if (_.find(team.participants, p => p.user === user._id)) { throw new Meteor.Error('already-there', 'Der Spieler ist bereits beim Team dabei'); }
+    if (_.find(team.participants, p => p.user === user._id)) {
+      throw new Meteor.Error('already-there', 'Der Spieler ist bereits beim Team dabei');
+    }
     delete (params.alias);
     params.user = user._id;
     params.drawing = 1000;
@@ -350,14 +356,15 @@ Meteor.methods({
     UltiSite.Teams.update({ _id: teamId }, {
       $set: { lastChange: new Date() },
       $push: { participants: params },
-    }, function (err, affected) {
+    }, (err, affected) => {
       if (err) { throw err; }
 
       Meteor.call('addEvent', {
         type: 'team',
         userId: this.userId,
         _id: team._id,
-        text: (this.userId === user._id ? '' : `${user.username}: `) + UltiSite.textState(params.state),
+        text: (this.userId === user._id ? '' : `${user.username}: `) +
+          UltiSite.textState(params.state) + (params.comment ? ` und sagt: ${params.comment}` : ''),
       });
       if (!params.dummy) { Meteor.call('computeStatistics', user._id); }
     });
