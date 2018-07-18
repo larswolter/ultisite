@@ -2,7 +2,7 @@
   "env": {
     "meteor": false,
     "node": false,
-    "browser": true
+    "serviceworker": true
   },
   "parser": "babel-eslint",
   "parserOptions": {
@@ -13,10 +13,7 @@
       "experimentalObjectRestSpread": false
     }
   },
-  "extends": [
-    "airbnb-base",
-    "plugin:meteor/recommended"
-  ],
+  "extends": [],
   "rules": {
     "indent": [
       "warn",
