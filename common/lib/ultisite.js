@@ -262,7 +262,7 @@ Meteor.methods({
     }
   },
   getAnyObjectByIds(ids) {
-    check(ids, Match.Maybe(ids, [String]));
+    check(ids, Match.Maybe([String]));
     check(this.userId, String);
     if (!ids) { return []; }
     let res = [];

@@ -7,7 +7,7 @@
       <li>
         <p>
           <a href="{{url}}"><b>{{name}}</b></a>
-          <small>{{additional}}</small>
+          <small>{{translate additional}}</small>
           {{#each detail}}
             <br/><small>{{timeFormatted}}</small> - <i>{{alias}}</i>: {{text}}
           {{/each}}
@@ -38,7 +38,7 @@
                 &nbsp;{{interessiert}}&nbsp;
               </span>
               <br/>
-              Ich bin <b>{{state}}</b> - <small>{{comment}}</small>
+              Ich bin <b>{{state}}</b> dabei {{#if comment}}: <small>{{comment}}</small>{{/if}}
             </p>
           </li>
           {{/each}}

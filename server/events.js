@@ -100,11 +100,11 @@ UltiSite.addEvent = function (info) {
   UltiSite.LastChanges.upsert({
     type: info.type,
   }, {
-    $set: {
+      $set: {
         type: info.type,
         date: new Date(),
       },
-  });
+    });
   info.alias = info.userId && UltiSite.getAlias(info.userId);
   if (info.type === 'files' && info.images) {
     const ev = UltiSite.Events.findOne({

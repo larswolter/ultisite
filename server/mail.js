@@ -10,18 +10,6 @@ UltiSite.renderMailTemplate = function (layout, source, context) {
 };
 
 
-Meteor.startup(function () {
-  UltiSite.Nodemailer = nodemailer;
-  UltiSite.Mail = {};
-  setupMailServer(UltiSite.settings());
-});
-
-Meteor.methods({
-  updateMailserver() {
-    setupMailServer(UltiSite.settings());
-  },
-});
-
 function setupMailServer(club) {
   // create reusable transporter object using SMTP transport
   if (!club.emailServer || Meteor.absoluteUrl().match(/localhost/)) {
@@ -94,3 +82,18 @@ function setupMailServer(club) {
   };
 }
 
+Meteor.startup(function () {
+  UltiSite.Nodemailer = nodemailer;
+  UltiSite.Mail = {};
+  handlebars.registerHelper('translate', (term) => {
+    return UltiSite.translate(term);
+  });
+
+  setupMailServer(UltiSite.settings());
+});
+
+Meteor.methods({
+  updateMailserver() {
+    setupMailServer(UltiSite.settings());
+  },
+});
