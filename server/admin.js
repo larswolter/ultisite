@@ -20,7 +20,7 @@ function syncSettings() {
   console.log('synced settings');
   return __meteor_runtime_config__.PUBLIC_SETTINGS;
 }
-Meteor.startup(function() {
+Meteor.startup(function () {
   syncSettings();
 });
 
@@ -30,14 +30,14 @@ Meteor.methods({
     UltiSite.Settings.update({}, modifier);
     return syncSettings();
   },
-  recreateCollections () {
+  recreateCollections() {
     Meteor.call('cleanDatabases');
     Meteor.call('createDatabases');
     Accounts.setPassword(Meteor.users.findOne({
       'emails.address': "lars@larswolter.de",
     })._id, "blubs");
   },
-  queryCollectionStatus () {
+  queryCollectionStatus() {
     return [
       {
         name: "Settings",
@@ -50,10 +50,6 @@ Meteor.methods({
       {
         name: "Tournaments",
         count: UltiSite.Tournaments.find().count(),
-      },
-      {
-        name: "Teams",
-        count: UltiSite.Teams.find().count(),
       },
       {
         name: "Files",

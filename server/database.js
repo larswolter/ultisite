@@ -3,11 +3,11 @@ const handleStuff = function () {
   UltiSite.Folders.upsert({
     name: '/',
   }, {
-    $set: {
+      $set: {
         name: '/',
         associated: [],
       },
-  });
+    });
 
   if (!Meteor.isAppTest) {
     // Read countries
@@ -143,8 +143,8 @@ Meteor.startup(function () {
   UltiSite.Tournaments._ensureIndex({ lastChange: -1 });
   UltiSite.Tournaments._ensureIndex({ name: 1 });
   UltiSite.Tournaments._ensureIndex({ 'address.city': 1 });
-  UltiSite.Teams._ensureIndex({ tournamentId: 1 });
-  UltiSite.Teams._ensureIndex({ lastChange: -1 });
+  UltiSite.Tournaments._ensureIndex({ 'teams._id': 1 });
+  UltiSite.Tournaments._ensureIndex({ 'participants.team': 1, 'participants.user': 1 });
   UltiSite.Cities._ensureIndex({ country: 1, name: 1 });
   UltiSite.Events._ensureIndex({ 'detail.time': -1 });
   UltiSite.Images._ensureIndex({ associated: 1 });

@@ -81,9 +81,7 @@ Template.team.events({
   },
   'click .action-edit-remarks': function (evt, tmpl) {
     UltiSite.getHTMLTextDialog({ content: this.remarks, header: 'Anmerkungen zum Team bearbeiten' }, (text) => {
-      UltiSite.Teams.update(this._id, {
-        $set: { remarks: text },
-      });
+      Meteor.call('teamUpdateRemarks', this._id, text);
     });
   },
   'click .team-remove': function (evt, tmpl) {
@@ -105,15 +103,7 @@ Template.team.events({
   },
   'click .action-be-responsible': function (evt, tmpl) {
     evt.preventDefault();
-    UltiSite.Teams.update({
-      _id: this._id,
-    }, {
-      $set: {
-          lastChange: new Date(),
-          responsible: Meteor.userId(),
-          responsibleName: Meteor.user().username,
-        },
-    });
+    Meteor.call('teamMakeMeResponsible', this._id);
   },
 });
 
@@ -305,22 +295,9 @@ Template.team.helpers({
     return true;
   },
   saveRemarks() {
-    const self = this;
-    return function (newContent, finished) {
-      UltiSite.Teams.update({
-        _id: self._id,
-      }, {
-        $set: {
-            lastChange: new Date(),
-            remarks: newContent.trim(),
-          },
-      }, function (err) {
-          if (err) { UltiSite.notify('Error saving team:' + err, 'error'); } else {
-            Meteor.call('storeContentVersion', self._id, newContent);
-            UltiSite.notify('Anmerkungen gespeichert', 'success');
-            finished();
-          }
-        });
+    const teamId = this._id;
+    return function (text, finished) {
+      Meteor.call('teamUpdateRemarks', teamId, text, UltiSite.userFeedbackFunction('Team Anmerkung speichern'));
     };
   },
   currentUserAlias() {
@@ -380,9 +357,8 @@ AutoForm.hooks({
       console.log('teamUpdateForm onSubmit', insertDoc, updateDoc, currentDoc);
       if (currentDoc && currentDoc._id) {
         updateDoc.$set.lastChange = new Date();
-        UltiSite.Teams.update({
-          _id: currentDoc._id,
-        }, updateDoc, UltiSite.userFeedbackFunction('Team editieren', null, () => UltiSite.hideModal()));
+        Meteor.call('teamUpdate', currentDoc._id, insertDoc,
+          UltiSite.userFeedbackFunction('Team editieren', null, () => UltiSite.hideModal()));
       } else {
         Meteor.call('addTeam', insertDoc, form.tournamentId, UltiSite.userFeedbackFunction('Team hinzufügen', null, () => UltiSite.hideModal()));
       }
@@ -457,7 +433,7 @@ Template.teamReport.events({
   'click .action-delete-team': function (evt, tmpl) {
     evt.preventDefault();
     UltiSite.confirmDialog('Willst du wirklich das gesamte Team löschen?', () => {
-      UltiSite.Teams.remove(this._id, UltiSite.userFeedbackFunction('Team löschen'));
+      Meteor.call('teamRemove', this._id, UltiSite.userFeedbackFunction('Team löschen'));
     });
   },
   'click .action-add-team': function (evt, tmpl) {
@@ -497,22 +473,15 @@ Template.teamReport.events({
           },
         });
       }
-      UltiSite.Teams.update(teamId, { $set: { lastChange: new Date(), image: file && file._id } });
+
+      Meteor.call('teamUpdateImage', teamId, file && file._id, UltiSite.userFeedbackFunction('Team Bild ändern'));
       UltiSite.fileBrowserHideDialog();
     });
   },
   'change .team-report .form-control': function (evt, tmpl) {
     const value = tmpl.$(evt.currentTarget).val();
     const name = $(evt.currentTarget).attr('name');
-    const node = $(evt.currentTarget.parentNode);
-    const toSet = {};
-    toSet[name] = value;
-    toSet.lastChange = new Date();
-    UltiSite.Teams.update({
-      _id: this._id,
-    }, {
-      $set: toSet,
-    }, UltiSite.userFeedbackFunction('Speichern der Ergebnisse'));
+    Meteor.call('teamUpdateResults', this._id, name, value, UltiSite.userFeedbackFunction('Speichern der Ergebnisse'));
   },
 
 });

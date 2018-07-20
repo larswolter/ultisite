@@ -42,17 +42,6 @@ Meteor.startup(function () {
     }
     console.log('adjusting to screensize....');
   });
-  Tracker.autorun(function () {
-    const myteams = UltiSite.Teams.find({
-      $or: [
-        { 'participants.user': Meteor.userId() },
-        { clubTeam: true },
-      ],
-    }).map(function (t) {
-      return t._id;
-    });
-    UltiSite.myTeamIds.set(myteams);
-  });
 });
 
 
@@ -239,22 +228,9 @@ Template.tournamentList.helpers({
   },
   playedTournaments() {
     if (Template.instance().topListEntries.get()) {
-      const count = 0;
-
       return integratedTournamentList.find({
-        date: { $lte: new Date() }, teams: { $exists: true }
-      }, { $sort: { date: -1, name: 1 } }).map((tourney) => {
-        if (count === Template.instance().topListEntries.get()) {
-          return undefined;
-        }
-        if (_.find(tourney.teams || [], (t) => {
-          const team = UltiSite.getTeam(t);
-          return team && team.state === 'dabei';
-        })) {
-          return tourney;
-        }
-        return undefined;
-      }).filter(x => !!x);
+        date: { $lte: new Date() }, 'teams.state': 'dabei',
+      });
     }
     return [];
   },
@@ -413,11 +389,11 @@ const helpers = {
   teaminfo() {
     const teams = this.teams || [];
 
-    return teams.map(function (id) {
-      const teamObj = UltiSite.getTeam(id) || { name: '-unbekannt-' };
+    return teams.map((team) => {
       return _.extend({
-        stateColor: UltiSite.stateColor(teamObj.state),
-      }, teamObj);
+        participants: this.participants.filter(p => p.team === team._id),
+        stateColor: UltiSite.stateColor(team.state),
+      }, team);
     });
   },
 };
@@ -425,19 +401,15 @@ Template.tournamentListItem.helpers(helpers);
 Template.detailedTournamentListItem.helpers(helpers);
 Template.pastTournamentListItem.helpers({
   teamImages() {
-    return (this.teams || []).map(function (team) {
-      const teamObj = UltiSite.getTeam(team);
-      return teamObj && teamObj.image;
-    }).filter(t => !!t);
+    return (this.teams || []).map(t => t.image).filter(i => !!i);
   },
   teamNames() {
     let iamIn = false;
     let names = (this.teams || []).map((team) => {
-      const teamObj = UltiSite.getTeam(team);
-      if (!teamObj) { return '-'; }
-      if (teamObj.state !== 'dabei') { return '-'; }
-      iamIn = iamIn || !!_.find(teamObj.participants, p => (p.user === Meteor.userId()) && (p.state === 100));
-      return teamObj.name + (teamObj.results && teamObj.results.placement ? ` machten Platz ${teamObj.results.placement}` : ' waren dabei ');
+      if (!team) { return '-'; }
+      if (team.state !== 'dabei') { return '-'; }
+      iamIn = iamIn || !!_.find(team.participants, p => (p.user === Meteor.userId()) && (p.state === 100));
+      return team.name + (team.results && team.results.placement ? ` machten Platz ${team.results.placement}` : ' waren dabei ');
     }).filter(x => x !== '-');
     if (iamIn) {
       names = ['Ich'].concat(names);

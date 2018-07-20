@@ -1,7 +1,7 @@
 Accounts.onLogin(function (attempt) {
   if (attempt.user) {
     Roles.addUsersToRoles(attempt.user, ['user']);
-    if (UltiSite.Teams.findOne({ 'participants.user': attempt.user._id })) { Roles.addUsersToRoles(attempt.user, ['player']); }
+    if (UltiSite.Tournaments.findOne({ 'participants.user': attempt.user._id })) { Roles.addUsersToRoles(attempt.user, ['player']); }
     if (!attempt.user.settings) { Meteor.users.update(attempt.user._id, { $set: { settings: {} } }); }
   }
 });
@@ -62,20 +62,20 @@ Meteor.methods({
     if (this.userId !== userId && !UltiSite.isAdmin(this.userId)) { return; }
     const user = Meteor.users.findOne(userId);
     if (user) {
-      UltiSite.Teams.update({ 'participants.user': userId }, {
+      UltiSite.Tournaments.update({ 'participants.user': userId }, {
         $set: {
           lastChange: new Date(),
           'participants.$.username': user.username,
           'participants.$.sex': user.profile.sex,
         },
       }, { multi: true });
-      UltiSite.Teams.update({ 'participants.responsible': userId }, {
+      UltiSite.Tournaments.update({ 'participants.responsible': userId }, {
         $set: {
           lastChange: new Date(),
           'participants.$.responsibleName': user.username,
         },
       }, { multi: true });
-      UltiSite.Teams.update({ responsible: userId }, {
+      UltiSite.Tournaments.update({ responsible: userId }, {
         $set: {
           lastChange: new Date(),
           responsibleName: user.username,

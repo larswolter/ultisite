@@ -125,7 +125,7 @@ UltiSite.addEvent = function (info) {
   }
   const event = {};
   if (info.type === 'team' || info.type === 'tournament') {
-    event.groupBy = (info.type === 'team' ? UltiSite.Teams.findOne(info._id || info.group).tournamentId : info._id);
+    event.groupBy = (info.type === 'team' ? UltiSite.getTeam(info._id || info.group).tournamentId : info._id);
     const tourney = UltiSite.Tournaments.findOne(event.groupBy);
     event.route = 'tournament';
     event.name = tourney.name;

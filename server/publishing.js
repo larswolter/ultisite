@@ -89,7 +89,7 @@ Meteor.startup(function () {
     return Meteor.users.find({
       _id: { $in: [userId, this.userId] },
     }, {
-        fields: {
+      fields: {
           profile: 1,
           status: 1,
           settings: 1,
@@ -99,33 +99,27 @@ Meteor.startup(function () {
           emails: 1,
           connection: 1,
         },
-      });
+    });
   });
   Meteor.publish('Events', function () {
     if (!this.userId) { return undefined; }
     return UltiSite.Events.find({
     }, {
-        limit: 30,
-        sort: { 'detail.time': -1 },
-      });
+      limit: 30,
+      sort: { 'detail.time': -1 },
+    });
   });
   Meteor.publish('tournamentDetails', function (tournamentId) {
+    check(tournamentId,String);
     if (!this.userId) { return undefined; }
-    return [
-      UltiSite.Tournaments.find({ _id: tournamentId }),
-      UltiSite.Teams.find({ tournamentId })];
+    return UltiSite.Tournaments.find({ _id: tournamentId });
   });
 
   Meteor.publish('Tournaments', function (since, query) {
     if (!since && query) {
-      const tcursor = UltiSite.Tournaments.find(query, { fields: { description: 0, 'reports.content': 0 } });
-      const teamIds = _.flatten(tcursor.map(t => t.teams));
-      return [tcursor, UltiSite.Teams.find({ _id: { $in: teamIds } })];
+      return UltiSite.Tournaments.find(query, { fields: { description: 0, 'reports.content': 0 } });
     }
-    return [
-      UltiSite.Tournaments.find({ lastChange: { $gte: since } }, { limit: 10 }),
-      UltiSite.Teams.find({ lastChange: { $gte: since } }, { limit: 10 }),
-    ];
+    return UltiSite.Tournaments.find({ lastChange: { $gte: since } }, { limit: 10 });
   });
 
   Meteor.publish('WikiPageDiscussions', function (id) {

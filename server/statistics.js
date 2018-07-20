@@ -11,55 +11,55 @@ Meteor.methods({
     this.unblock();
     let players = [];
 
-    const teams = UltiSite.Teams.find({
-      state: 'dabei',
-      participants: {
+    const teams = [];
+    UltiSite.Tournaments.find({
+      'team.state': 'dabei',
+      'participants': {
         $elemMatch: {
           user: userId,
           state: 100,
         },
       },
-    }).map(function (team) {
-      const tournament = UltiSite.Tournaments.findOne(team.tournamentId);
-      if (!tournament) { return undefined; }
-      if (!team) { return undefined; }
+    }).forEach(function (tournament) {
+      tournament.teams.forEach((team) => {
+        const participants = tournament.participants.filter(p => p.team === team._id);
+        if (Array.isArray(participants) && moment().isAfter(tournament.date)) {
+          players = players.concat(participants.filter(part => (part._id !== userId) && (part.state === 100)).map(function (participant) {
+            return participant.user;
+          }));
+        }
 
-      if (Array.isArray(team.participants) && moment().isAfter(tournament.date)) {
-        players = players.concat(team.participants.filter(part => (part._id !== userId) && (part.state === 100)).map(function (participant) {
-          return participant.user;
-        }));
-      }
-
-      return {
-        name: tournament.name,
-        date: tournament.date,
-        city: tournament.address.city,
-        country: tournament.address.country,
-        teamname: team.name,
-        teamId: team._id,
-        teamImage: team.image,
-        tournamentId: tournament._id,
-        unsure: (team.state !== "dabei") || (tournament.category === "Veranstaltung"),
-      };
+        teams.push({
+          name: tournament.name,
+          date: tournament.date,
+          city: tournament.address.city,
+          country: tournament.address.country,
+          teamname: team.name,
+          teamId: team._id,
+          teamImage: team.image,
+          tournamentId: tournament._id,
+          unsure: (team.state !== 'dabei') || (tournament.category === 'Veranstaltung'),
+        });
+      });
     });
     const played = _.sortBy(teams.filter(function (elem) {
       if (!elem) { return false; }
       if (moment(elem.date).isAfter(moment())) { return false; }
       return true;
     }), function (elem) {
-      return -moment(elem.date).diff(moment(), "seconds");
+      return -moment(elem.date).diff(moment(), 'seconds');
     });
     const planned = _.sortBy(teams.filter(function (elem) {
       if (!elem) { return false; }
       if (moment(elem.date).isBefore(moment())) { return false; }
       return true;
     }), function (elem) {
-      return moment(elem.date).diff(moment(), "seconds");
+      return moment(elem.date).diff(moment(), 'seconds');
     });
 
     let stats = {
       target: userId,
-      type: "playedTournaments",
+      type: 'playedTournaments',
       data: played,
     };
     UltiSite.Statistics.upsert({
@@ -72,7 +72,7 @@ Meteor.methods({
     });
     stats = {
       target: userId,
-      type: "plannedTournaments",
+      type: 'plannedTournaments',
       data: planned,
     };
     UltiSite.Statistics.upsert({
@@ -97,7 +97,7 @@ Meteor.methods({
 
     const top10Stats = {
       target: userId,
-      type: "top10Players",
+      type: 'top10Players',
       data: result,
     };
     UltiSite.Statistics.upsert({

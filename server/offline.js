@@ -53,15 +53,12 @@ Meteor.methods({
     check(since, Date);
     const info = {
       tournamentCount: UltiSite.Tournaments.find({ date: getOfflineSyncDate() }, { sort: { date: -1 } }).count(),
-      teamCount: UltiSite.Teams.find({ tournamentDate: getOfflineSyncDate() }).count(),
     };
     if (offlineForce.isAfter(moment(since))) {
       info.mustSync = true;
     } else {
       const tChange = UltiSite.Tournaments.find({ lastChange: { $gte: since } }).count();
-      const teChange = UltiSite.Teams.find({ lastChange: { $gte: since } }).count();
       if (tChange > 3) { info.mustSync = true; }
-      if (teChange > 3) { info.mustSync = true; }
     }
     return info;
   },
@@ -89,7 +86,6 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
   }
   const offline = {
     tournaments: UltiSite.Tournaments.find(tournamentSearch, { sort: { date: -1 } }).fetch(),
-    teams: UltiSite.Teams.find(teamSearch).fetch(),
     removed: [],
   };
 

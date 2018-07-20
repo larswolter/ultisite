@@ -24,7 +24,7 @@ const fileBrowserCallback = new ReactiveVar(undefined);
 Meteor.startup(function () {
   _.extend(UltiSite, {
     fileBrowserShowDialog(id, callback) {
-      UltiSite.State.set("fileBrowserFolder", id);
+      UltiSite.State.set('fileBrowserFolder', id);
       fileBrowserCallback.set(callback);
       UltiSite.showModal('fileBrowserDialog');
     },
@@ -35,16 +35,16 @@ Meteor.startup(function () {
   });
 });
 
-Template.registerHelper("fileRootFolder", function () {
+Template.registerHelper('fileRootFolder', function () {
   return UltiSite.Folders.findOne(UltiSite.settings().rootFolderId);
 });
 
 const getIcon = function () {
   let file = this;
   if (!file.type && this.file) { file = this.file; }
-  if (!file.type) { return "fa-question"; }
-  if (file.type.indexOf('image') === 0) { return "fa-file-image-o"; } else if (file.type.indexOf('video') === 0) { return "fa-file-video-o"; }
-  return "fa-file-o";
+  if (!file.type) { return 'fa-question'; }
+  if (file.type.indexOf('image') === 0) { return 'fa-file-image-o'; } else if (file.type.indexOf('video') === 0) { return 'fa-file-video-o'; }
+  return 'fa-file-o';
 };
 // FUTURE: add editing capabilities
 Template.editFileDialog.helpers({
@@ -59,28 +59,28 @@ Template.editFileDialog.helpers({
 
 
 Template.fileBrowser.onCreated(function () {
-  UltiSite.State.set("fileBrowserFolder", UltiSite.settings().rootFolderId);
-  UltiSite.State.setDefault("fileBrowserGalleryView", false);
+  UltiSite.State.set('fileBrowserFolder', UltiSite.settings().rootFolderId);
+  UltiSite.State.setDefault('fileBrowserGalleryView', false);
 
   this.autorun(() => {
-    const id = FlowRouter.getParam("_id");
+    const id = FlowRouter.getParam('_id');
     const dataId = Template.currentData().fileBrowserFolder;
     if (dataId) {
-      UltiSite.State.set("fileBrowserFolder", dataId);
+      UltiSite.State.set('fileBrowserFolder', dataId);
     } else
       if (id) {
-        UltiSite.State.set("fileBrowserFolder", id);
+        UltiSite.State.set('fileBrowserFolder', id);
       }
   });
   this.autorun(() => {
-    this.subscribe('Files', UltiSite.State.get("fileBrowserFolder"));
+    this.subscribe('Files', UltiSite.State.get('fileBrowserFolder'));
   });
 
   this.readme = new ReactiveVar();
 
   this.autorun(() => {
     const readmeFile = UltiSite.Documents.findOne({
-      associated: UltiSite.State.get("fileBrowserFolder"),
+      associated: UltiSite.State.get('fileBrowserFolder'),
       name: 'README.md',
     });
     if (readmeFile) {
@@ -92,30 +92,30 @@ Template.fileBrowser.onCreated(function () {
 });
 
 Template.fileBrowser.events({
-  'click .toggle-gallery-view'(e, t) {
+  'click .toggle-gallery-view': function(e, t) {
     e.preventDefault();
-    UltiSite.State.set("fileBrowserGalleryView", !UltiSite.State.get("fileBrowserGalleryView"));
+    UltiSite.State.set('fileBrowserGalleryView', !UltiSite.State.get('fileBrowserGalleryView'));
   },
-  'click .btn-new-folder'(e, t) {
+  'click .btn-new-folder': function(e, t) {
     e.preventDefault();
-    console.log("Add folder", e);
+    console.log('Add folder', e);
     UltiSite.Folders.insert({
       rename: true,
-      name: "Neuer Ordner",
-      associated: [UltiSite.State.get("fileBrowserFolder")],
+      name: 'Neuer Ordner',
+      associated: [UltiSite.State.get('fileBrowserFolder')],
     });
   },
 });
 
 Template.fileBrowser.helpers({
   galleryView() {
-    return UltiSite.State.get("fileBrowserGalleryView");
+    return UltiSite.State.get('fileBrowserGalleryView');
   },
   readme() {
     return Template.instance().readme.get();
   },
   curFolder() {
-    return UltiSite.getAnyById(UltiSite.State.get("fileBrowserFolder")) || { _id: UltiSite.State.get("fileBrowserFolder") };
+    return UltiSite.getAnyById(UltiSite.State.get('fileBrowserFolder')) || { _id: UltiSite.State.get('fileBrowserFolder') };
   },
   rootFolder() {
     return UltiSite.getAnyById(UltiSite.settings().rootFolderId);
@@ -124,18 +124,18 @@ Template.fileBrowser.helpers({
 
 
 Template.fileBrowserItem.events({
-  'click .remove-file'(e, t) {
+  'click .remove-file': function(e, t) {
     e.preventDefault();
     UltiSite.confirmDialog(`Willst du die Datei ${this.name} wirklich löschen?`, () => {
       Meteor.call('removeFile', this._id);
     });
   },
-  'click .edit-file'(e) {
+  'click .edit-file': function(e) {
     e.preventDefault();
     currentlyEditedFile.set(this);
     $('#editFileDialog').modal('show');
   },
-  'click .select-file'(e, t) {
+  'click .select-file': function(e, t) {
     e.preventDefault();
     e.stopPropagation();
     const callback = fileBrowserCallback.get();
@@ -152,7 +152,7 @@ Template.fileBrowserItem.helpers({
 
 Template.fileBrowserDialog.onCreated(function () {
   const self = this;
-  this.initialFolder = UltiSite.State.get("fileBrowserFolder");
+  this.initialFolder = UltiSite.State.get('fileBrowserFolder');
   this.activePane = new ReactiveVar(this.initialFolder);
 });
 Template.fileBrowserDialog.onDestroyed(function () {
@@ -160,15 +160,15 @@ Template.fileBrowserDialog.onDestroyed(function () {
 });
 
 Template.fileBrowserDialog.events({
-  'hidden.bs.modal .modal'(e, t) {
+  'hidden.bs.modal .modal': function(e, t) {
     fileBrowserCallback.set(null);
   },
-  'click .action-switch-source'(e, t) {
+  'click .action-switch-source': function(e, t) {
     e.preventDefault();
-    if (t.$(e.currentTarget).attr("data-value") !== 'search') { UltiSite.State.set("fileBrowserFolder", t.$(e.currentTarget).attr("data-value")); }
-    t.activePane.set(t.$(e.currentTarget).attr("data-value"));
+    if (t.$(e.currentTarget).attr('data-value') !== 'search') { UltiSite.State.set('fileBrowserFolder', t.$(e.currentTarget).attr('data-value')); }
+    t.activePane.set(t.$(e.currentTarget).attr('data-value'));
   },
-  'click .action-select-nothing'(e) {
+  'click .action-select-nothing': function(e) {
     e.preventDefault();
     const callback = fileBrowserCallback.get();
     if (callback) {
@@ -183,7 +183,7 @@ Template.fileBrowserDialog.helpers({
     return Template.instance().initialFolder;
   },
   fileBrowserFolder() {
-    return UltiSite.State.get("fileBrowserFolder");
+    return UltiSite.State.get('fileBrowserFolder');
   },
   activePane() {
     return Template.instance().activePane.get();
@@ -197,43 +197,41 @@ Template.fileBrowserDialog.helpers({
 const helpers = {
   icon: getIcon,
   folder() {
-    return UltiSite.getAnyById(UltiSite.State.get("fileBrowserFolder")) || {};
+    return UltiSite.getAnyById(UltiSite.State.get('fileBrowserFolder')) || {};
   },
   files() {
     return _.sortBy(UltiSite.Images.find({
-      associated: UltiSite.State.get("fileBrowserFolder"),
+      associated: UltiSite.State.get('fileBrowserFolder'),
     }).fetch().concat(
       UltiSite.Documents.find({
-        associated: UltiSite.State.get("fileBrowserFolder"),
+        associated: UltiSite.State.get('fileBrowserFolder'),
       }).fetch()), function (doc) {
       return doc.created;
     });
   },
   folders() {
     const folders = [];
-    if (this.type === "folder") {
+    if (this.type === 'folder') {
       const folder = UltiSite.Folders.findOne(this._id);
       if (folder && folder.associated.length > 0) {
         folders.push({ name: '..', isParent: true, _id: folder.associated[0], type: 'folder' });
       }
     }
     return folders.concat(UltiSite.Folders.find({
-      associated: UltiSite.State.get("fileBrowserFolder"),
+      associated: UltiSite.State.get('fileBrowserFolder'),
     }).fetch());
   },
   fileActions() {
     const element = UltiSite.getAnyById(this._id);
     if (!element) { return []; }
-    if (element.type === "tournament") {
-      const turnier = UltiSite.getTournament(element._id);
-      if (!turnier) { return []; }
-      const elems = UltiSite.Teams.find({
-        _tournamentId: element._id,
-      }).map(function (elem) {
+    if (element.type === 'tournament') {
+      const tournament = UltiSite.getTournament(element._id);
+      if (!tournament) { return []; }
+      const elems = tournament.teams.map(function (elem) {
         return {
           text: `Teamfoto:${elem.name}`,
           action(file) {
-            console.log("Updating teamfoto");
+            console.log('Updating teamfoto');
             UltiSite.Images.update(file._id, {
               $addToSet: {
                 associated: elem._id,
@@ -249,26 +247,26 @@ const helpers = {
 
 
 Template.fileBrowserList.onCreated(function () {
-  console.log("List: onCreated");
+  console.log('List: onCreated');
   const self = this;
 });
 Template.fileBrowserList.onRendered(function () {
-  console.log("List: onRendered");
+  console.log('List: onRendered');
 });
 
 Template.fileBrowserList.helpers(_.extend({}, helpers));
 Template.fileBrowserList.events({
-  'click .folder-link'(e, t) {
-    UltiSite.State.set("fileBrowserFolder", this._id);
+  'click .folder-link': function(e, t) {
+    UltiSite.State.set('fileBrowserFolder', this._id);
     e.preventDefault();
   },
-  'click .remove-folder'(e, t) {
+  'click .remove-folder': function(e, t) {
     e.preventDefault();
     UltiSite.Folders.remove({
       _id: this._id,
     });
   },
-  'click .rename-folder'(e, t) {
+  'click .rename-folder': function(e, t) {
     e.preventDefault();
     const input = $(e.currentTarget);
     UltiSite.Folders.update({
@@ -279,7 +277,7 @@ Template.fileBrowserList.events({
         },
     });
   },
-  'change .folder-name'(e, t) {
+  'change .folder-name': function(e, t) {
     e.preventDefault();
     const input = $(e.currentTarget);
     UltiSite.Folders.update({
@@ -296,20 +294,20 @@ Template.fileBrowserList.events({
 });
 
 Template.fileBrowserGallery.onCreated(function () {
-  console.log("Gallery created for ID", this.data);
+  console.log('Gallery created for ID', this.data);
   const self = this;
 });
 
 Template.fileBrowserGallery.helpers(helpers);
 Template.fileBrowserGallery.events({
-  'click .action-open-folder'(e, t) {
+  'click .action-open-folder': function(e, t) {
     e.preventDefault();
-    UltiSite.State.set("fileBrowserFolder", this._id);
+    UltiSite.State.set('fileBrowserFolder', this._id);
   },
 });
 
 Template.fileBrowserGalleryItem.events({
-  'click .file-browser-gallery-item .image'() {
+  'click .file-browser-gallery-item .image': function() {
     try {
       if (Template.instance().$('.file-browser-item').parent('#fileBrowserDialog')) {
         const callback = fileBrowserCallback.get();
@@ -325,7 +323,7 @@ Template.fileBrowserGalleryItem.events({
       associated: this.associatedId,
     });
   },
-  'click .file-browser-gallery-item .icon-image'() {
+  'click .file-browser-gallery-item .icon-image': function() {
     try {
       if (Template.instance().$('.file-browser-item').parent('#fileBrowserDialog')) {
         const callback = fileBrowserCallback.get();
@@ -337,27 +335,27 @@ Template.fileBrowserGalleryItem.events({
     } catch (err) { }
     window.open(this.file.url(), '_blank');
   },
-  'click .remove-file'(e, t) {
+  'click .remove-file': function(e, t) {
     e.preventDefault();
     UltiSite.confirmDialog(`Willst du die Datei ${this.file.name} wirklich löschen?`, () => {
       Meteor.call('removeFile', this.file._id);
     });
   },
-  'click .edit-file'(e) {
+  'click .edit-file': function(e) {
     e.preventDefault();
     currentlyEditedFile.set(this.file);
     $('#editFileDialog').modal('show');
   },
-  'click .select-file'(e, t) {
+  'click .select-file': function(e, t) {
     e.preventDefault();
     e.stopPropagation();
     const callback = fileBrowserCallback.get();
     if (callback) { callback(this.file); }
   },
-  'click .custom-action'(e, t) {
+  'click .custom-action': function(e, t) {
     e.preventDefault();
     // e.stopPropagation();
-    console.log("Custom:", this);
+    console.log('Custom:', this);
     this.action(t.data.file);
   },
 });
@@ -365,7 +363,7 @@ Template.fileBrowserGalleryItem.helpers(helpers);
 
 Template.folderTreeItem.helpers({
   isSelectedFolder() {
-    return this._id === UltiSite.State.get("fileBrowserFolder");
+    return this._id === UltiSite.State.get('fileBrowserFolder');
   },
   folders() {
     return UltiSite.Folders.find({

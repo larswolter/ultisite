@@ -96,7 +96,6 @@ _.extend(UltiSite, {
   blogsReady: new ReactiveVar(false),
   filesReady: new ReactiveVar(false),
   usersReady: new ReactiveVar(false),
-  myTeamIds: new ReactiveVar([]),
   schemas: {
     links: new ReactiveVar(null),
     team: new ReactiveVar(null),
@@ -118,7 +117,6 @@ _.extend(UltiSite, {
   Practices: new Meteor.Collection('Practices'),
   Tournaments: new Meteor.Collection('Tournaments'),
   TournamentList: new Meteor.Collection('tournamentList'),
-  Teams: new Meteor.Collection('Teams'),
   Participants: new Meteor.Collection('Participants'),
   Events: new Meteor.Collection('Events'),
   Countries: new Meteor.Collection('Countries'),
@@ -303,19 +301,6 @@ Meteor.methods({
           _id: elem._id,
           name: elem.name,
           type: 'tournament',
-        };
-      }));
-    res = res.concat(
-      UltiSite.Teams.find({
-        _id: {
-          $in: ids,
-        },
-      }).map(function (elem) {
-        return {
-          _id: elem._id,
-          tournamentId: elem.tournamentId,
-          name: elem.name,
-          type: 'team',
         };
       }));
     res = res.concat(
