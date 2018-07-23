@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
+import { moment } from 'meteor/momentjs:moment';
 
 Meteor.startup(() => {
   UltiSite.Statistics.remove({});
@@ -13,7 +14,7 @@ Meteor.methods({
 
     const teams = [];
     UltiSite.Tournaments.find({
-      'team.state': 'dabei',
+      'teams.state': 'dabei',
       'participants': {
         $elemMatch: {
           user: userId,
@@ -22,6 +23,7 @@ Meteor.methods({
       },
     }).forEach(function (tournament) {
       tournament.teams.forEach((team) => {
+        if (!tournament.participants.find(p => (p.team === team._id) && (p.user === userId))) return;
         const participants = tournament.participants.filter(p => p.team === team._id);
         if (Array.isArray(participants) && moment().isAfter(tournament.date)) {
           players = players.concat(participants.filter(part => (part._id !== userId) && (part.state === 100)).map(function (participant) {
@@ -66,10 +68,10 @@ Meteor.methods({
       target: stats.target,
       type: stats.type,
     }, {
-      $set: {
+        $set: {
           data: stats.data,
         },
-    });
+      });
     stats = {
       target: userId,
       type: 'plannedTournaments',
@@ -79,19 +81,21 @@ Meteor.methods({
       target: stats.target,
       type: stats.type,
     }, {
-      $set: {
+        $set: {
           data: stats.data,
         },
-    });
+      });
     let result = [];
     const playerCounts = _.countBy(players, p => p);
 
     Object.keys(playerCounts).forEach((pc) => {
-      result.push({
-        userId: pc,
-        username: (Meteor.users.findOne(pc) || {}).username || pc,
-        count: playerCounts[pc],
-      });
+      if (pc !== userId) {
+        result.push({
+          userId: pc,
+          username: (Meteor.users.findOne(pc) || {}).username || pc,
+          count: playerCounts[pc],
+        });
+      }
     });
     result = _.first(_.sortBy(result, 'count').reverse(), 10);
 

@@ -55,7 +55,9 @@ Meteor.startup(function () {
     const res = UltiSite.Statistics.find({
       target,
     });
-    if (res.count() === 0) { Meteor.call('computeStatistics', target); }
+    if (res.count() === 0) {
+      Meteor.call('computeStatistics', target);
+    }
     return res;
   });
   Meteor.publish('Files', function (associatedIds, others) {
@@ -89,7 +91,7 @@ Meteor.startup(function () {
     return Meteor.users.find({
       _id: { $in: [userId, this.userId] },
     }, {
-      fields: {
+        fields: {
           profile: 1,
           status: 1,
           settings: 1,
@@ -99,18 +101,18 @@ Meteor.startup(function () {
           emails: 1,
           connection: 1,
         },
-    });
+      });
   });
   Meteor.publish('Events', function () {
     if (!this.userId) { return undefined; }
     return UltiSite.Events.find({
     }, {
-      limit: 30,
-      sort: { 'detail.time': -1 },
-    });
+        limit: 30,
+        sort: { 'detail.time': -1 },
+      });
   });
   Meteor.publish('tournamentDetails', function (tournamentId) {
-    check(tournamentId,String);
+    check(tournamentId, String);
     if (!this.userId) { return undefined; }
     return UltiSite.Tournaments.find({ _id: tournamentId });
   });
