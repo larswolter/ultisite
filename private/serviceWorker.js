@@ -1,30 +1,31 @@
+/* eslint-env worker */
 
 const CACHE_NAME = 'CURRENT_CACHE_NAME';
 
 self.addEventListener('install', function (event) {
-  console.log('installing service worker...');
+  console.log('SW-installing service worker...');
   event.waitUntil(
     caches.open(CACHE_NAME).then(function (cache) {
-      return cache.add('/').then(function () {
-        console.log('installed service worker');
+      return cache.addAll(
+        'FILES_TO_CACHE'
+      ).then(() => {
+        console.log('SW-installed service worker', CACHE_NAME);
+        return Promise.resolve();
       });
     }));
 });
 
 self.addEventListener('fetch', function (event) {
+  if ((event.request.method === 'POST') || (event.request.url.indexOf('/sockjs') > 0)) {
+    return fetch(event.request).catch(function () {
+      return new Response('no network', { status: 404 });
+    });
+  }
   event.respondWith(
     caches.match(event.request).then(function (resp) {
-      return resp || fetch(event.request).then(function (response) {
-        return caches.open(CACHE_NAME).then(function (cache) {
-          if (event.request.method === 'GET') {
-            console.log('SW-AddToCache:', event.request.method, event.request.url);
-            cache.put(event.request, response.clone());
-          }
-          return response;
-        });
-      });
+      return resp || fetch(event.request);
     }).catch(function () {
-      return caches.match('/sw-test/gallery/myLittleVader.jpg');
+      return caches.match('/');
     })
   );
 });
@@ -38,8 +39,10 @@ self.addEventListener('activate', function (event) {
     caches.keys().then(function (keyList) {
       return Promise.all(keyList.map(function (key) {
         if (cacheWhitelist.indexOf(key) === -1) {
+          console.log('SW-removing old cache:', key);
           return caches.delete(key);
         }
+        return Promise.resolve();
       }));
     })
   );
