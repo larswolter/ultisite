@@ -1,3 +1,7 @@
+import { Meteor } from 'meteor/meteor';
+import { isModern } from 'meteor/modern-browsers';
+import { WebApp } from 'meteor/webapp';
+
 import { moment } from 'meteor/momentjs:moment';
 
 const getOfflineSyncDate = function () {
@@ -93,9 +97,17 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
   const content = JSON.stringify(offline);
   response.end(content);
 });
-
+Meteor.methods({
+  clientData() {
+    return WebApp.clientPrograms;
+  },
+});
 WebApp.connectHandlers.use('/sw.js', (req, response) => {
-  const sworker = Assets.getText('serviceWorker.js');
+  let sworker = Assets.getText('serviceWorker.js');
+  const arch = isModern(req) ? 'web.browser' : 'web.browser.legacy';
+  const clientHash = WebApp.clientHash(arch);
+
+  sworker = sworker.replace(/CURRENT_CACHE_NAME/g, clientHash);
   response.setHeader('Content-Type', 'application/javascript; charset=utf-8');
   response.writeHead(200);
   response.end(sworker);
