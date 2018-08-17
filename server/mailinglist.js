@@ -67,6 +67,7 @@ var registerMailinglist = function() {
                                     if(exists)
                                         blogId = exists._id;
                                     UltiSite.Blogs.upsert(blogId,{$set:{
+                                        lastChange: new Date(),
                                         _id:blogId,
                                         title: header.subject[0],
                                         public: false,

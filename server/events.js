@@ -123,7 +123,7 @@ UltiSite.addEvent = function (info) {
       });
     }
   }
-  const event = {};
+  const event = { lastChange: new Date() };
   if (info.type === 'team' || info.type === 'tournament') {
     event.groupBy = (info.type === 'team' ? UltiSite.getTeam(info._id || info.group).tournamentId : info._id);
     const tourney = UltiSite.Tournaments.findOne(event.groupBy);

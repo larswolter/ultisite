@@ -7,7 +7,7 @@ UltiSite = {
     {
       name: 'Events',
       filter() {
-        return { date: { $gte: moment().subtract(1, 'month').toDate() } };
+        return { 'details.time': { $gte: moment().subtract(1, 'month').toDate() } };
       },
       options() {
         return { limit: 30, sort: { 'detail.time': -1 } };
@@ -19,7 +19,7 @@ UltiSite = {
         return {};
       },
       options() {
-        return { limit: 5, sort: { date: -1 } };
+        return { sort: { date: -1 } };
       },
     },
     {
@@ -246,11 +246,6 @@ _.extend(UltiSite, {
     return translationTable[term] || term;
   },
 });
-
-if (Meteor.isClient) {
-  Meteor.subscribe('WikiPage', UltiSite.settings().wikiStart);
-}
-
 
 Meteor.methods({
   getAnyObjectById(id) {

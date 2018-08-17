@@ -207,11 +207,11 @@ Template.tournamentList.helpers({
       date: {
         $gte: moment().toDate(),
       },
-      lastChanged: {
+      lastChange: {
         $gte: moment().subtract(1, 'day').toDate(),
       },
 
-    }, { limit: 1, sort: { lastChanged: -1 } });
+    }, { limit: 1, sort: { lastChange: -1 } });
   },
   hasPast() {
     return moment(this.date).isBefore(moment().subtract(this.numDays));

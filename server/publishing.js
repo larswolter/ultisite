@@ -1,5 +1,10 @@
+import { moment } from 'meteor/momentjs:moment';
+
+
 Meteor.startup(function () {
   Meteor.publish('Blogs', function (limit) {
+    check(limit, Match.Maybe(Number));
+
     const search = {};
     if (!this.userId) { search.public = true; }
 
@@ -14,6 +19,7 @@ Meteor.startup(function () {
     });
   });
   Meteor.publish('BlogsStart', function () {
+    if (this.userId) return this.ready();
     const search = {
     };
     if (!this.userId) { search.public = true; }
@@ -125,12 +131,15 @@ Meteor.startup(function () {
   });
 
   Meteor.publish('WikiPageDiscussions', function (id) {
+    check(id, String);
     return UltiSite.WikiPageDiscussions.find({ pageId: id });
   });
   Meteor.publish('ContentVersions', function (id) {
+    check(id, String);
     return UltiSite.ContentVersions.find({ associated: id }, { fields: { content: 0 } });
   });
   Meteor.publish('WikiPage', function (id) {
+    check(id, String);
     return UltiSite.WikiPages.find({
       $or: [{
         _id: id,
@@ -141,6 +150,7 @@ Meteor.startup(function () {
   });
 
   Meteor.publish('ContentVersion', function (id) {
+    check(id, String);
     if (this.userId) { return UltiSite.ContentVersions.find({ _id: id }); }
     this.ready();
   });

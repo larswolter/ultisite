@@ -162,14 +162,16 @@ Template.blogUpdate.events({
       UltiSite.Blogs.update({
         _id: id,
       }, {
-        $set: {
+          $set: {
+            lastChange: new Date(),
+
             title,
             content,
             image,
             preview,
             public: isPublic,
           },
-      }, function (err) {
+        }, function (err) {
           if (err) { console.log(err); } else {
             FlowRouter.go('blog', {
               _id: id,
@@ -192,6 +194,7 @@ Template.blogUpdate.events({
         author: Meteor.userId(),
         authorName: Meteor.user().username,
         date: new Date(),
+        lastChange: new Date(),
       }, function (err, res) {
         if (err) { console.log(err); } else {
           FlowRouter.go('blog');

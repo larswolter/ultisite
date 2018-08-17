@@ -43,7 +43,6 @@ Meteor.methods({
             ...i,
             _offline: true,
           }));
-          UltiSite[col.name].lastOfflineSync = offline.lastSync;
         }
       });
     });
@@ -51,9 +50,35 @@ Meteor.methods({
 });
 
 Meteor.startup(function () {
-  localForage.getItem('ultisiteOfflineLastSync', (err, res) => {
-    UltiSite.lastOfflineSync = res;
-    Meteor.subscribe('lastChangedElements', res || null);
+  localForage.getItem('ultisiteOfflineLastSync').then((date) => {
+    Tracker.autorun(() => {
+      if (Meteor.userId()) {
+        UltiSite.lastOfflineSync = date || moment().subtract(10, 'years').toDate();
+        console.log('subscribing', UltiSite.lastOfflineSync);
+        Meteor.subscribe('lastChangedElements', UltiSite.lastOfflineSync, () => {
+          Tracker.autorun(() => {
+            const startSync = new Date();
+            UltiSite.offlineCollections.forEach((col) => {
+              const elements = UltiSite[col.name].find({
+                ...col.filter(),
+                _offline: { $exists: false },
+                lastChange: { $gte: UltiSite.lastOfflineSync },
+              });
+              console.log('checking offline col', col.name, elements.count());
+              if (elements.count() > 0) {
+                console.log(`Storing ${elements.count()} elements of ${col.name}`);
+                localForage.setItem('ultisiteOffline' + col.name, {
+                  data: UltiSite[col.name].find(col.filter()).fetch(),
+                });
+              }
+            });
+            console.log('Refreshing last sync time');
+            UltiSite.lastOfflineSync = startSync;
+            localForage.setItem('ultisiteOfflineLastSync', UltiSite.lastOfflineSync);
+          });
+        });
+      }
+    });
   });
   Tracker.autorun(() => {
     if (Meteor.userId()) {
@@ -74,21 +99,6 @@ Meteor.startup(function () {
       });
       comp.stop();
     }
-  });
-  UltiSite.offlineCollections.forEach((col) => {
-    Tracker.autorun(() => {
-      const elements = UltiSite[col.name].find({
-        ...col.filter(),
-        _offline: { $exists: false },
-        lastChanged: UltiSite.lastOfflineSync,
-      });
-      if (elements.count() > 0) {
-        console.log(`Storing ${elements.count()} elements of ${col.name}`);
-        localForage.setItem('ultisiteOffline' + col.name, {
-          lastSync: new Date(), data: UltiSite[col.name].find(col.filter()).fetch(),
-        });
-      }
-    });
   });
   Meteor.apply('offlineInitCollections', [], { noRetry: true }, (err) => { });
 });

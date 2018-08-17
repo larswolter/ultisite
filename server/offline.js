@@ -26,11 +26,15 @@ Accounts.onLogout(function (attempt) {
 });
 Meteor.publish('lastChangedElements', function (modifiedAfter) {
   check(modifiedAfter, Match.Maybe(Date));
-  check(this.userId, String);
+
+  if (!this.userId) return this.ready();
 
   return UltiSite.offlineCollections.map((col) => {
     if (modifiedAfter) {
-      return UltiSite[col.name].find({ ...col.filter(), lastChanged: { $gt: modifiedAfter } });
+      return UltiSite[col.name].find({
+        ...col.filter(),
+        lastChange: { $gt: modifiedAfter }
+      });
     } else {
       return UltiSite[col.name].find(col.filter());
     }

@@ -28,14 +28,14 @@ Meteor.methods({
   updatePracticeImage(image) {
     console.log('Updated practices map');
     UltiSite.Practices.update(image.associated[0], {
-      $set: { mapImage: image._id },
+      $set: { mapImage: image._id, lastChange: new Date() },
     });
   },
   updatePractice(id, practice) {
     if (id) {
-      UltiSite.Practices.update(id, practice);
+      UltiSite.Practices.update(id, { ...practice, lastChange: new Date() });
     } else {
-      return UltiSite.Practices.insert(practice);
+      return UltiSite.Practices.insert({ ...practice, lastChange: new Date() });
     }
     return id;
   },
