@@ -3,6 +3,8 @@ import { Meteor } from 'meteor/meteor';
 import { Reload } from 'meteor/reload';
 import { moment } from 'meteor/momentjs:moment';
 
+Package.appcache = true;
+
 UltiSite.serviceWorker = null;
 UltiSite.offlineTournaments = [];
 UltiSite.offlineLastChange = moment().subtract(1, 'year');
@@ -99,7 +101,7 @@ UltiSite.getTournament = function (id) {
 UltiSite.getTournamentByTeam = function (id) {
   UltiSite.offlineTournamentDependency.depend();
   const t = UltiSite.Tournaments.findOne({ 'teams._id': id }) ||
-    _.find(this.offlineTournaments, tournament => _.find(tournament.teams, te => te._id === id))
+    _.find(this.offlineTournaments, tournament => _.find(tournament.teams, te => te._id === id));
   return t;
 };
 UltiSite.getTeam = function (id) {

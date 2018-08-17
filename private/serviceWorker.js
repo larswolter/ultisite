@@ -16,22 +16,21 @@ self.addEventListener('install', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-  if ((event.request.method === 'POST') || (event.request.url.indexOf('/sockjs') > 0)) {
-    return fetch(event.request).catch(function () {
-      return new Response('no network', { status: 404 });
-    });
+  if (!(event.request.method === 'POST') && !(event.request.url.indexOf('/sockjs') > 0)) {
+    event.respondWith(
+      caches.match(event.request).then(function (resp) {
+        return resp || fetch(event.request);
+      }).catch(function () {
+        return caches.match('/');
+      })
+    );
   }
-  event.respondWith(
-    caches.match(event.request).then(function (resp) {
-      return resp || fetch(event.request);
-    }).catch(function () {
-      return caches.match('/');
-    })
-  );
 });
+
 self.addEventListener('sync', function (event) {
   console.log('syncing....');
 });
+
 self.addEventListener('activate', function (event) {
   const cacheWhitelist = [CACHE_NAME];
 
