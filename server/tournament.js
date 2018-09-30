@@ -15,11 +15,12 @@ UltiSite.getTournamentsStates = function (userId) {
   const teams = [];
   UltiSite.Tournaments.find({
     date: { $gte: new Date() },
-    participants: { $elemMatch: { user: userId, state: { $gt: 50 } } }
+    participants: { $elemMatch: { user: userId, state: { $gt: 50 } } },
   }).forEach((tournament) => {
     tournament.participants.filter(p => p.user === userId).forEach((part) => {
       const team = _.find(tournament.teams, t => t._id === part.team);
       teams.push({
+        url: FlowRouter.url('tournament', { _id: tournament._id }),
         name: tournament.name,
         date: moment(tournament.date).format('DD.MM.'),
         city: tournament.address && tournament.address.city,
@@ -68,8 +69,8 @@ Meteor.methods({
         { 'participants.user': this.userId },
       ],
     }, {
-        limit: 5, fields: { _id: 1 },
-      }).map(function (t) {
+      limit: 5, fields: { _id: 1 },
+    }).map(function (t) {
         return t._id;
       }));
     return ids;
@@ -122,11 +123,11 @@ Meteor.methods({
       _id: id,
       'description._id': infoId,
     }, {
-        $set: {
+      $set: {
           lastChange: new Date(),
           'description.$.content': content,
         },
-      });
+    });
   },
   tournamentUpdateReport(id, infoId, content) {
     check(id, String);
@@ -136,11 +137,11 @@ Meteor.methods({
       _id: id,
       'reports._id': infoId,
     }, {
-        $set: {
+      $set: {
           lastChange: new Date(),
           'reports.$.content': content,
         },
-      });
+    });
   },
   tournamentAddReport(id, report) {
     check(id, String);
@@ -148,16 +149,16 @@ Meteor.methods({
     UltiSite.Tournaments.update({
       _id: id,
     }, {
-        $set: {
+      $set: {
           lastChange: new Date(),
         },
-        $push: {
+      $push: {
           reports: {
             $each: [report],
             $position: 0,
           },
         },
-      });
+    });
   },
   tournamentCoordinates() {
     return UltiSite.Tournaments.find({
@@ -174,12 +175,12 @@ Meteor.methods({
         $gte: new Date(),
       },
     }, {
-        fields: {
+      fields: {
           'address.geocoords': 1,
           name: 1,
           date: 1,
         },
-      }).fetch();
+    }).fetch();
   },
 });
 

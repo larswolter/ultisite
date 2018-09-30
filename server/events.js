@@ -76,7 +76,7 @@ UltiSite.sendEventDigest = function (user, eventList, force = false) {
     UltiSite.renderMailTemplate(layout, template, {
       user,
       profilUrl: FlowRouter.url('user', { _id: user._id }),
-      tournamentUrl: FlowRouter.url('tournaments', { _id: user._id }),
+      tournamentUrl: FlowRouter.url('tournaments', {}),
       events: eventList,
       tournaments,
     }));
