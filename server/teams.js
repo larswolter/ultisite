@@ -119,27 +119,29 @@ Meteor.methods({
         UltiSite.renderMailTemplate(layout, template, {
           user: Meteor.users.findOne(update.responsible),
           infoText: text,
-          tournament: UltiSite.Tournaments.findOne(team.tournamentId),
-          formatedDate: moment(team.tournamentDate).format('DD.MM.YYYY'),
+          tournament,
+          formatedDate: moment(tournament.date).format('DD.MM.YYYY'),
           team,
           participants: UltiSite.participantList(team._id),
-          tournamentUrl: FlowRouter.url('tournament', { _id: team.tournamentId }),
+          tournamentUrl: FlowRouter.url('tournament', { _id: tournament._id }),
         }));
       UltiSite.addEvent({
-        type: 'team',
-        _id: team._id,
+        type: 'tournament',
+        _id: tournament._id,
         text: `Für das Team ${team.name} ist jetzt ${update.responsibleName} Zuständig`,
       });
     }
+    const upd = {};
+    Object.keys(update).forEach((key) => { upd['teams.$.' + key] = update[key]; });
 
     UltiSite.Tournaments.update({
       'teams._id': teamId,
     }, {
-      $set: { 'teams.$': update },
+      $set: upd,
     });
     Meteor.call('addEvent', {
-      type: 'team',
-      _id: team._id,
+      type: 'tournament',
+      _id: tournament._id,
       text: `Das Team ${team.name} ist jetzt ${state}`,
     });
   },
@@ -167,8 +169,8 @@ Meteor.methods({
     let user = Meteor.users.findOne(userId);
     if (!user) { user = { username: userId }; }
     Meteor.call('addEvent', {
-      type: 'team',
-      _id: teamId,
+      type: 'tournament',
+      _id: tournament._id,
       userId: this.userId,
       text: `${this.userId === user._id ? '' : user.username} sagt: ${comment}`,
     });
@@ -240,9 +242,9 @@ Meteor.methods({
     }, (err, res) => {
         if (err) { throw err; }
         Meteor.call('addEvent', {
-          type: 'team',
+          type: 'tournament',
           userId: this.userId,
-          _id: teamId,
+          _id: tournament._id,
           text: (this.userId === user._id ? '' : `${user.username}: `) + UltiSite.textState(participantValue) + (part.comment ? `(${part.comment})` : ''),
         });
         if (user && user._id) { Meteor.call('computeStatistics', user._id); }

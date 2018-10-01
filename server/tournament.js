@@ -109,8 +109,8 @@ Meteor.methods({
       $push: { teams: teamData },
     });
     Meteor.call('addEvent', {
-      type: 'team',
-      _id: teamData._id,
+      type: 'tournament',
+      _id: tournamentId,
       text: `Neues Team ${teamData.name}`,
     });
     return teamData._id;
@@ -232,8 +232,8 @@ Meteor.startup(function () {
         console.log(`finished drawing:${drawnParticipants}`);
         if (team.maxPlayers < partCount * 2) {
           Meteor.call('addEvent', {
-            type: 'team',
-            _id: team._id,
+            type: 'tournament',
+            _id: tournament._id,
             text: `Auslosung bei ${team.name}:${drawnParticipants}`,
           });
         }
