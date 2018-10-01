@@ -3,7 +3,42 @@ import { isModern } from 'meteor/modern-browsers';
 import { WebApp } from 'meteor/webapp';
 
 import { moment } from 'meteor/momentjs:moment';
+import crypto from 'crypto';
 
+const sha256 = crypto.createHash('sha256');
+
+// Store for each client-device a list of stored document _id/hashes
+// On subscription observe documents and clientHashes - disable mergebox
+// When subscribed with clientId check each document if is in there,
+//   if yes and same hash dont add to the client
+//   if yes and diff hash add to the client (update no possible without mergebox)
+//   if no add to the client
+//   send remove for removed documents in he clientHash collection
+// Client stores subscribed documents and commits their
+// storage/removal to the server, which
+// adds it to the clientHashes and mark a client as lastUsed
+// observe documents on server, on change remove all obsolete hashes
+// on remove mark tournament as removed
+
+// check if offline storage is valid by checking the hashes
+// of the client side and server side on login
+// load documents on the client from localstorage when subscribing
+
+// super offline mode, do this in a service worker on sync
+
+const clientHashes = new Mongo.Collection(null);
+/*
+Meteor.startup(function () {
+  UltiSite.Tournaments.find().observe({
+    changed(doc) {
+      clientHashes.update({ 'docs.i': doc._id }, { $set: { 'docs.$.h': null } }, { multi: true });
+    },
+    removed(docId) {
+      clientHashes.update({ 'docs.i': docId }, { $set: { 'docs.$.r': true } }, { multi: true });
+    },
+  });
+});
+*/
 const getOfflineSyncDate = function () {
   return { $gte: moment().subtract(3, 'month').startOf('year').toDate() };
 };
@@ -24,6 +59,8 @@ Accounts.onLogin(function (attempt) {
 Accounts.onLogout(function (attempt) {
   refreshDownloadToken(attempt.user && attempt.user._id);
 });
+
+
 Meteor.publish('lastChangedElements', function (modifiedAfter) {
   check(modifiedAfter, Match.Maybe(Date));
 
@@ -33,7 +70,7 @@ Meteor.publish('lastChangedElements', function (modifiedAfter) {
     if (modifiedAfter) {
       return UltiSite[col.name].find({
         ...col.filter(),
-        lastChange: { $gt: modifiedAfter }
+        lastChange: { $gt: modifiedAfter },
       });
     } else {
       return UltiSite[col.name].find(col.filter());

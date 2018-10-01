@@ -117,11 +117,12 @@ Template.participateDialog.onCreated(function () {
     const team = UltiSite.getTeam(this.data.teamId);
     this.teams.set([team]);
   } else {
-    const teams = this.data.teams.map(tmpl => UltiSite.getTeam(tmpl));
-    this.teams.set(teams);
+    this.teams.set(this.data.teams);
   }
 
-  if (this.teams.get().length === 1) { this.selectedTeam.set(this.teams.get()[0]._id); }
+  if (this.teams.get().length === 1) {
+    this.selectedTeam.set(this.teams.get()[0]._id);
+  }
   this.autorun(() => {
     const team = UltiSite.getTeam(this.selectedTeam.get());
     if (team) { this.dabei.set(_.find(team.participants, p => p.userid === Meteor.userId())); }
