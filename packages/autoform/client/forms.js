@@ -207,7 +207,7 @@ Template.afArrayField.helpers({
           idx,
           properties: fieldNames.map(x => ({
             label: this.form.schema.label(x),
-            value: AutoForm.transformValue(element[AutoForm.arrayCheck(x)], this.form.schema.mergedSchema()[x]),
+            value: AutoForm.transformValue(element[AutoForm.arrayCheck(x)], x, this.form),
             key: AutoForm.arrayCheck(x),
           })),
         };

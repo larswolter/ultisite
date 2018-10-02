@@ -34,11 +34,14 @@ const AutoForm = {
     }
     return fieldName;
   },
-  transformValue(value, fieldDef) {
+  transformValue(value, fieldName, form) {
     if (value === undefined) { return ''; }
-    if (fieldDef.type === Date) {
+    const fieldDef = form.schema.mergedSchema()[fieldName];
+    if (form.schema.getQuickTypeForKey(fieldName) === 'date') {
       const mom = moment(value);
-      if (mom.isValid()) { return mom.format(fieldDef.autoform && fieldDef.autoform.format); }
+      if (mom.isValid()) {
+        return mom.format(fieldDef.autoform && fieldDef.autoform.format);
+      }
       return '';
     }
     if (fieldDef.type === Boolean) {
@@ -54,7 +57,7 @@ const AutoForm = {
       let value = content;
       this.arrayCheck(fieldName).split('.').forEach((x) => { value = value && value[x]; });
       if (form) {
-        return this.transformValue(value, form.schema.mergedSchema()[fieldName]);
+        return this.transformValue(value, fieldName, form);
       }
       return value;
     }
