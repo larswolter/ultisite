@@ -14,7 +14,7 @@ Package.describe({
 /* This defines your actual package */
 Package.onUse(function (api) {
     api.versionsFrom('1.2.0.1');
-    api.use(['less',
+    api.use(['fourseven:scss',
         'ecmascript',
         'kadira:flow-router',
         'standard-minifiers',
@@ -34,6 +34,6 @@ Package.onUse(function (api) {
         'reactive-var',
     ]);
 
-    api.addFiles(['tweeter.less','tweeter.html', 'tweeter.js'], 'client');
+    api.addFiles(['tweeter.scss', 'tweeter.html', 'tweeter.js'], 'client');
     api.addFiles('server.js', 'server');
 });

@@ -1,76 +1,74 @@
 <template name="tournamentList">
     <div>
-        <div class="row">
-            <div class="col-xs-12 visible-xs tournament-tabs navbar-default">
+        <div class="row tournament-filter-offset">
+            <div class="col-12 d-block d-sm-none tournament-tabs navbar-light">
                 {{#if currentUser}}
                     <a href="#" class="{{#if showPlanned}}active{{/if}}" data-target="planned" role="tab">Geplant</a>
                     <a href="#" class="{{#if showPlayed}}active{{/if}}" data-target="played" role="tab">Gespielt</a> 
                 {{/if}}
             </div>
-            <div class="tournament-filter-offset">
-                {{#if currentUser}} 
-                    {{#if showPlanned}}
-                        <div class="col-xs-12 col-sm-8 col-md-7">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <button class="btn btn-link pull-right action-toggle-filter" type="button">
-                                        <span class="fa fa-filter"></span> 
-                                        <span class="hidden-xs">
-                                            Filter 
-                                            {{#if showFilter}}
-                                                ausblenden
-                                            {{else}}
-                                                einblenden
-                                            {{/if}}
-                                            </span>                            
-                                    </button>
-                                    <strong class="btn-height-text">{{filterAsText}}</strong> 
-                                </div>
-                                <div class="panel-body {{#if showFilter}}active{{/if}} filter-container">
-                                    {{#if showFilter}}
-                                        {{>tournamentFilter}}
-                                    {{/if}}
-                                </div>
-                            </div>
-                            {{#each plannedTournaments}} 
-                                {{header}}
-                                <div class="panel panel-default">
-                                    <div class="list-group">
-                                    {{#each elements}}
-                                        {{#if hasPast}}
-                                            {{>pastTournamentListItem}}
-                                        {{else}} 
-                                            {{>detailedTournamentListItem}} 
+            {{#if currentUser}} 
+                {{#if showPlanned}}
+                    <div class="col-12 col-sm-8 col-md-7">
+                        <div class="card">
+                            <div class="card-header">
+                                <button class="btn btn-link pull-right action-toggle-filter" type="button">
+                                    <span class="fa fa-filter"></span> 
+                                    <span class="d-none d-sm-inline">
+                                        Filter 
+                                        {{#if showFilter}}
+                                            ausblenden
+                                        {{else}}
+                                            einblenden
                                         {{/if}}
-                                    {{/each}}
-                                    </div>
-                                </div>
-                            {{else}} 
-                                {{>EmptySmall}} 
-                            {{/each}}
-                        </div>
-                    {{/if}} 
-                    {{#if showPlayed}}
-                        <div class="col-xs-12 col-sm-4 col-md-5">
-                            <div class="panel panel-default">
-                                <div class="panel-heading hidden-xs">
-                                    <strong>Gespielte Turniere</strong> 
-                                    {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Team gespielt hat"}}
-                                </div>
-                                <div class="list-group">
-                                    {{#each playedTournaments}} 
-                                        {{>pastTournamentListItem}} 
-                                    {{else}} 
-                                        {{>EmptySmall}} 
-                                    {{/each}}
-                                </div>
+                                        </span>                            
+                                </button>
+                                <strong class="btn-height-text">{{filterAsText}}</strong> 
+                            </div>
+                            <div class="card-body {{#if showFilter}}active{{/if}} filter-container">
+                                {{#if showFilter}}
+                                    {{>tournamentFilter}}
+                                {{/if}}
                             </div>
                         </div>
-                    {{/if}} 
+                        {{#each plannedTournaments}} 
+                            {{header}}
+                            <div class="card">
+                                <div class="list-group">
+                                {{#each elements}}
+                                    {{#if hasPast}}
+                                        {{>pastTournamentListItem}}
+                                    {{else}} 
+                                        {{>detailedTournamentListItem}} 
+                                    {{/if}}
+                                {{/each}}
+                                </div>
+                            </div>
+                        {{else}} 
+                            {{>EmptySmall}} 
+                        {{/each}}
+                    </div>
                 {{/if}} 
-            </div>
+                {{#if showPlayed}}
+                    <div class="col-12 col-sm-4 col-md-5">
+                        <div class="card">
+                            <div class="card-header d-none d-sm-block">
+                                <strong>Gespielte Turniere</strong> 
+                                {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Team gespielt hat"}}
+                            </div>
+                            <div class="list-group">
+                                {{#each playedTournaments}} 
+                                    {{>pastTournamentListItem}} 
+                                {{else}} 
+                                    {{>EmptySmall}} 
+                                {{/each}}
+                            </div>
+                        </div>
+                    </div>
+                {{/if}} 
+            {{/if}} 
             {{#if currentUser}}
-            <button class="btn btn-default btn-floating action-add-tournament" title="Turnier anlegen" type="button">
+            <button class="btn btn-secondary btn-floating action-add-tournament" title="Turnier anlegen" type="button">
                 <span class="fa fa-plus fa-lg"></span>
             </button>
             {{/if}}
@@ -95,7 +93,7 @@
 <template name="tournamentFilter">
     <div class="tournament-filter">
         <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.surface "Alle"}}
                     Untergrund
                 {{else}}
@@ -111,7 +109,7 @@
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.division "Alle"}}
                 Klasse
                 {{else}}
@@ -127,7 +125,7 @@
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.category "Alle"}}
                 Typ
                 {{else}}
@@ -143,7 +141,7 @@
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if filter.year}}{{filter.year}}{{else}}Kommende{{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
@@ -155,7 +153,7 @@
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-default btn-mit-teams {{#if filter.withTeams}}checked{{/if}}" data-target="withTeams">
+            <button type="button" class="btn btn-secondary btn-mit-teams {{#if filter.withTeams}}checked{{/if}}" data-target="withTeams">
                 <span class="fa {{#if filter.withTeams}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                 Mit Teams
             </button>
@@ -167,15 +165,15 @@
 <template name="detailedTournamentListItem">
     <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item tournament-list-item" title="{{name}}">
         <div class="row">
-            <div class="col-xs-12 cutoff-text">
-                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="visible-xs pull-right"/>
+            <div class="col-12 cutoff-text">
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none pull-right"/>
                 {{dayOfDate date}}. <strong>{{name}}</strong> in {{address.city}}
-                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="hidden-xs"/>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-none d-sm-block"/>
             </div>
         </div>
         {{#each teaminfo}}
         <div class="row">
-            <div class="col-xs-8 cutoff-text">
+            <div class="col-8 cutoff-text">
                 {{#with myTeamState}}
                 <div class="pull-right">
                     <span class="fa fa-user text-{{colorState this.state}}" title="{{this.state}}"></span>
@@ -193,7 +191,7 @@
                     {{/if}} 
                 </small>
             </div>
-            <div class="col-xs-4">
+            <div class="col-4">
                 {{#if gte teamCount.spots 10}} Spieler gesucht! {{else}} {{>teamCountBar this}} {{/if}}
             </div>
         </div>
@@ -205,10 +203,10 @@
     {{#if teamNames}}
     <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item tournament-list-item" title="{{name}}">
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-12">
                 <span class="badge pull-right" title="Anzahl Berichte">{{reports.length}}</span> 
                 {{#each teamImages}}
-                    <div class="detail-team-image hidden-sm pull-left" 
+                    <div class="detail-team-image d-sm-none pull-left" 
                         style="background-image:url('{{imageUrl this '160x160'}}');">
                     </div>
                 {{/each}}
@@ -226,22 +224,22 @@
 
 <template name="tournamentListItem">
     <a href='{{pathFor "tournament" _id=this._id}}' data-id="{{this._id}}" class="list-group-item tournament-list-item">
-        <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="visible-xs"/>
+        <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none"/>
         <div class="row">
-            <div class="col-xs-2 col-sm-1 {{dateState}}">
+            <div class="col-2 col-sm-1 {{dateState}}">
                 {{dayOfDate date}}.{{monthOfDate date}}.
             </div>
-            <div class="col-xs-10 col-sm-6">
+            <div class="col-10 col-sm-6">
                 <strong>{{name}}</strong> 
                 {{#if address.city}}
-                    <span class="hidden-xs">in {{address.city}}</span>
+                    <span class="d-none d-sm-inline">in {{address.city}}</span>
                 {{/if}}
-                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="hidden-xs"/>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-none d-sm-block"/>
             </div>
-            <div class="col-xs-12 col-sm-5">
+            <div class="col-12 col-sm-5">
                 {{#if address.city}}
-                    <span class="fa fa-map-marker visible-xs-inline"></span>
-                    <small class="visible-xs-inline">{{address.city}}</small>
+                    <span class="fa fa-map-marker d-inline d-sm-none"></span>
+                    <small class="d-inline d-sm-none">{{address.city}}</small>
                 {{/if}}
                 {{#each tags}}
                     {{#if icon}}

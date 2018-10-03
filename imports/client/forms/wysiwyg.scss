@@ -1,0 +1,34 @@
+@import "{}/client/lib/custom.bootstrap.import.scss";
+
+.ultisite-wysiwyg {
+  position: relative;
+  padding: 10px;
+  padding-top: 40px;
+  @include media-breakpoint-down(xs) {
+    padding-top:80px;
+  }
+  background-color: white;
+  .rich-text-input {
+    min-height: 4em;
+    border-top:1px solid lightgray;
+  }
+  .wysiwyg-toolbar {
+    top: 0px;
+    margin:0px;
+    padding: 3px;
+    position: absolute;
+    background-color: white;
+    white-space: normal;
+    .wysiwyg-toolbar-icon {
+        color:black;
+    }
+    .dropdown-menu.colors {
+      min-width: auto;
+    }
+  }
+  .wysiwyg-toolbar.fixed {
+    position: fixed;
+    top:50px;
+    padding-top:15px
+  }
+}

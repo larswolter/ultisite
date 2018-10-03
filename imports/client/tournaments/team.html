@@ -1,10 +1,10 @@
 <template name="team">
-  <div class="panel panel-default">
-    <div class="panel-heading tournament-heading">
+  <div class="card">
+    <div class="card-header tournament-heading">
       {{#if isMyTeam}}
-      <div class="btn-group visible-xs visible-sm">
+      <div class="btn-group d-block d-md-none">
         <div class="dropdown pull-right">
-          <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+          <button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -36,28 +36,28 @@
           </ul>
         </div>
       </div>
-      <div class="hidden-xs hidden-sm pull-right">
+      <div class="d-none d-sm-block d-sm-none pull-right">
         <div>
           {{#if currentUser}}
           <div class="btn-group">
-            <button class="btn {{#if iamParticipating}}btn-default{{else}}btn-primary{{/if}} action-participate" >
+            <button class="btn {{#if iamParticipating}}btn-secondary{{else}}btn-primary{{/if}} action-participate" >
               <span class="fa fa-plus"></span> Mitspielen
             </button>
           </div>
           {{/if}} 
           {{#if participantMails}}
-            <a class="btn btn-default" href="mailto:{{participantMails}}">
+            <a class="btn btn-secondary" href="mailto:{{participantMails}}">
               <span class="fa fa-send"></span>
               Mail an das Team
             </a>
           {{/if}}
           {{#if isResponsible}}
-          <button class="btn btn-default action-edit-team">
+          <button class="btn btn-secondary action-edit-team">
             <span class="fa fa-edit"></span> Editieren
           </button>
           {{/if}}
           {{#if isMyTeam}}
-          <button class="btn btn-default action-historic-view">
+          <button class="btn btn-secondary action-historic-view">
             <span class="fa fa-line-chart"></span> Historie
           </button>
           {{/if}}
@@ -73,7 +73,7 @@
       {{/if}}
       <div class="team-name-status">
         <strong class="btn-height-text">{{name}}</strong>
-        <span class="hidden-xs btn-height-text">das Team ist</span>
+        <span class="d-none d-sm-inline btn-height-text">das Team ist</span>
         {{#if isResponsible}}
           <div class="btn-group" role="group">
             <button aria-expanded="false" class="btn btn-{{teamColorState}} dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
@@ -103,9 +103,9 @@
         {{/if}}
       </div>
       <div class="row">
-        <div class="col-xs-12 col-sm-6">
+        <div class="col-12 col-sm-6">
           {{>teamCountBar this}}
-          {{division}} <span class="hidden-xs">Division</span>, Max. Spieler:
+          {{division}} <span class="d-none d-sm-inline">Division</span>, Max. Spieler:
           {{maxPlayers}}
           {{#if minFemale}}, Min. Frauen:
             {{minFemale}}
@@ -126,7 +126,7 @@
             <br/>
             {{#if drawingResult}}
               Ausgelost am {{formatDateTime drawingResult.date}}
-              <span class="small hidden-xs hidden-sm">
+              <span class="small d-none d-sm-inline d-sm-none">
                 <span class="fa fa-clock"></span> Früh genug eingetragen,
                 <span class="fa fa-magic"></span> gelost,
                 <span class="fa fa-venus-mars"></span> Wegen Mixed-Status
@@ -137,7 +137,7 @@
           {{/if}}     
         </div>
 
-        <div class="col-xs-12 col-sm-6">
+        <div class="col-12 col-sm-6">
           <b>Anmerkungen:</b> 
           {{#if isMyTeam}}
             <button class="btn btn-link action-edit-remarks">
@@ -227,11 +227,11 @@
                 </div>
                 {{/if}}
                 <div class="form-group row">
-                  <div class="col-xs-6">
+                  <div class="col-6">
                     <label>Spieler</label><br />
                     {{selectedUser.username}}
                   </div>
-                  <div class="col-xs-6">
+                  <div class="col-6">
                     <label>Anderen Suchen</label><br />
                     {{>searchField searchType="Users" inline=true leftMenu=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound}}
                   </div>
@@ -261,10 +261,10 @@
                     <button class="btn btn-success btn-block action-insert" data-value="100" type="button">
                       Sicher
                     </button>
-                    <button class="btn btn-default btn-block action-insert" data-value="0" type="button">
+                    <button class="btn btn-secondary btn-block action-insert" data-value="0" type="button">
                       Kann nicht
                     </button>
-                    <button class="btn btn-default btn-block action-insert" data-value="70" type="button">
+                    <button class="btn btn-secondary btn-block action-insert" data-value="70" type="button">
                       Vielleicht
                     </button>
                     <small>
@@ -283,7 +283,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-default" data-dismiss="modal" aria-label="Close">Abbrechen</button>
+          <button class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Abbrechen</button>
         </div>
       </div>
     </div>
@@ -309,7 +309,7 @@
     <div class="btn-group participant-state" role="group">
       <button aria-expanded="false" class="btn btn-{{colorState this.state}} btn-block dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
         <span class="fa {{iconState}} fa-fw"></span>
-        <span class="hidden-xs">
+        <span class="d-none d-sm-inline">
           {{textState this.state}}
         </span>
         <span class="fa fa-caret-down"></span>
@@ -337,7 +337,7 @@
     {{else}}
     <div class="bg-{{colorState this.state}} participant-state" style="padding:6px 12px;display:inline-block">
       <span class="fa {{iconState}} fa-fw"></span>
-      <span class="hidden-xs">{{textState this.state}}</span>
+      <span class="d-none d-sm-inline">{{textState this.state}}</span>
     </div>
     {{/unless}}
     <span style="padding:6px 12px;">
@@ -376,31 +376,31 @@
         </div>
         <div class="modal-body row">
           <fieldset>
-            <div class="col-xs-6">
+            <div class="col-6">
               {{> afQuickField name='name'}}
             </div>
-            <div class="col-xs-6">
+            <div class="col-6">
               {{#unless team._id}}
                 {{> afQuickField name='teamType' }}
               {{else}}
                 {{> afQuickField name='teamType' readOnly=true}}
               {{/unless}}
             </div>
-            <div class="col-xs-6">
+            <div class="col-6">
               {{> afQuickField name='maxPlayers'}}
             </div>
-            <div class="col-xs-6">
+            <div class="col-6">
               {{> afQuickField name='minFemale'}}
             </div>
-            <div class="col-xs-6">
+            <div class="col-6">
               {{> afQuickField name='state' defaultValue='geplant'}}
             </div>
-            <div class="col-xs-6">
+            <div class="col-6">
               {{> afQuickField name='division' options=tournamentDivisions}}
             </div>
           </fieldset>
         </div>
-        <div class="modal-footer hidden-xs">
+        <div class="modal-footer d-none d-sm-block">
           <button class="btn btn-primary" type="submit">
             {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
           </button>
@@ -436,12 +436,12 @@
 
 <template name="teamReport">
   <div class="team-report">
-    <div class="panel panel-default">
-      <div class="panel-heading tournament-heading">
+    <div class="card">
+      <div class="card-header tournament-heading">
         {{#unless noChangeRights}}
-          <span class="visible-xs-inline pull-right">
+          <span class="d-inline d-sm-none pull-right">
             <div class="dropdown">
-              <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+              <button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -482,8 +482,8 @@
               </ul>
             </div>
           </span>
-          <span class="hidden-xs">
-          <button class="btn btn-default action-historic-view pull-right">
+          <span class="d-none d-sm-inline">
+          <button class="btn btn-secondary action-historic-view pull-right">
             <span class="fa fa-line-chart"></span> Historie
           </button>
           {{#if teamRemovable}}
@@ -492,15 +492,15 @@
             </button>
           {{/if}}
           {{#unless myTeamState}}
-            <button class="btn btn-default action-add-me pull-right" >Mich eintragen</button>
+            <button class="btn btn-secondary action-add-me pull-right" >Mich eintragen</button>
           {{else}} 
-            <button class="btn btn-default action-remove-me pull-right" >Mich austragen</button>
+            <button class="btn btn-secondary action-remove-me pull-right" >Mich austragen</button>
           {{/unless}}
           
           {{#if equals this.state "dabei"}}
-            <button class="btn btn-default action-remove-team pull-right" >Auf nicht angetreten setzen</button>
+            <button class="btn btn-secondary action-remove-team pull-right" >Auf nicht angetreten setzen</button>
           {{else}} 
-            <button class="btn btn-default action-add-team pull-right" >Auf angetreten setzen</button>
+            <button class="btn btn-secondary action-add-team pull-right" >Auf angetreten setzen</button>
           {{/if}}
           </span>
         {{/unless}}
@@ -535,47 +535,47 @@
         </div>
       {{/if}}
       {{#if equals this.state "dabei"}}
-      <div class="panel-body">
+      <div class="card-body">
         <div class="row">                    
-          <div class="image {{#if image}}pointer action-show-team-image{{/if}} col-xs-12 col-sm-4 col-md-3 col-lg-2" 
+          <div class="image {{#if image}}pointer action-show-team-image{{/if}} col-12 col-sm-4 col-md-3 col-lg-2" 
             style="background-image:url('{{#if image}}{{imageUrl image 160}}{{else}}/placeholder/team.svg{{/if}}'); text-center">
-            <button class="btn btn-default btn-sm action-team-image">
+            <button class="btn btn-secondary btn-sm action-team-image">
               <span class="fa fa-edit"></span>
             </button>
           </div>
           {{#unless noChangeRights}}
-          <div class="col-xs-12 col-sm-4 col-md-3 form-horizontal">
+          <div class="col-12 col-sm-4 col-md-3 form-horizontal">
             <div class="form-group"> 
-              <label class="col-xs-6 control-label">Platz</label>
-              <div  class="col-xs-6">
+              <label class="col-6 col-form-label">Platz</label>
+              <div  class="col-6">
                 <input class="form-control" name="results.placement" size="3" type="number" value="{{results.placement}}">
               </div>
             </div>
             <div class="form-group"> 
-              <label class="col-xs-6 control-label">Spirit</label>
-              <div  class="col-xs-6">
+              <label class="col-6 col-form-label">Spirit</label>
+              <div  class="col-6">
                 <input class="form-control" name="results.spirit" size="3" type="number" value="{{results.spirit}}">
               </div>
             </div>
             <div class="form-group"> 
-              <label class="col-xs-6 control-label">Beerrace</label>
-              <div  class="col-xs-6">
+              <label class="col-6 col-form-label">Beerrace</label>
+              <div  class="col-6">
                 <input class="form-control" name="results.beerrace" size="3" type="number" value="{{results.beerrace}}">
               </div>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-4 col-md-6 col-lg-7">
+          <div class="col-12 col-sm-4 col-md-6 col-lg-7">
             <label>Kommentar</label>
             <textarea class="form-control" name="results.comment">{{results.comment}}</textarea>
           </div>
           {{else}} 
-          <div class="col-xs-12 col-sm-4 col-md-3"> 
+          <div class="col-12 col-sm-4 col-md-3"> 
             Platz: {{#with results.placement}}{{this}}{{else}}?{{/with}}
             {{#with results.spirit}}<br/> Spirit: {{this}}{{/with}}
             {{#with results.beerrace}}<br/> Beerace: {{this}}{{/with}}
           </div>
           {{#if results.comment}}
-            <div class="col-xs-12 col-sm-4 col-md-6 col-lg-7">
+            <div class="col-12 col-sm-4 col-md-6 col-lg-7">
               Kommentar:
               <small>{{results.comment}}</small> 
             </div> 

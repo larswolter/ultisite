@@ -23,10 +23,10 @@
                 {{else}}
                     <div class="form-group {{validity}}" title="{{this.name}}">
                         {{#unless or noLabel (equals autoform.type "hidden")}}
-                            <label class="control-label">{{this.label}}</label>
+                            <label class="col-form-label">{{this.label}}</label>
                         {{/unless}}
                         {{>afFieldInput this}}
-                        <span class="help-block">{{validityText}}</span>
+                        <span class="form-text">{{validityText}}</span>
                     </div>
                 {{/if}}
             {{/if}}
@@ -40,7 +40,7 @@
             <input name="{{name}}" type="hidden" value="{{getFieldValue}}"/>
         {{else}}
             {{#if readOnly}}
-                <div class="form-control-static">{{getFieldValue}}</div>
+                <div class="form-control-plaintext">{{getFieldValue}}</div>
             {{else}}
                 {{#if autoform.options}}
                     {{#if autoform.multi}}
@@ -71,7 +71,7 @@
                         <div class="input-group">
                           <input name="{{name}}" class="form-control" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
                           <span class="input-group-btn">
-                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <span class="fa fa-calendar"></span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
@@ -91,7 +91,7 @@
 <template name="afObjectField">
     <div class="form-group">
         {{#unless noLabel}}
-            <label class="control-label">{{this.label}}</label>
+            <label class="col-form-label">{{this.label}}</label>
         {{/unless}}
         {{#each fields}}
             {{>afQuickField this}}
@@ -101,7 +101,7 @@
 <template name="afArrayField">
     <div class="form-group">
         {{#unless noLabel}}
-            <label class="control-label">{{this.label}}</label>
+            <label class="col-form-label">{{this.label}}</label>
         {{/unless}}
         <div class="list-group">
             {{#each elements}}

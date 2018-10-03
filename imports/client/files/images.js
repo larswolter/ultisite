@@ -1,5 +1,5 @@
 import './images.html';
-import './images.less';
+import './images.scss';
 
 Template.imageViewer.onCreated(function () {
     this.imageStatus = new ReactiveVar();

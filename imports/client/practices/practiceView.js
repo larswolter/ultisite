@@ -1,5 +1,5 @@
 import './practiceView.html';
-import './practice.less';
+import './practice.scss';
 
 const mapImageUrl = new ReactiveVar();
 

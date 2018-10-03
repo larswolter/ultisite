@@ -2,7 +2,7 @@
     {{#with imageFile}}
     <div class="container-fluid image-viewer">
         <div class="row">
-            <div class="col-xs-12 col-sm-8 start-content">
+            <div class="col-12 col-sm-8 start-content">
                 <img class="big-image {{#if imageLoadStatus}}not-available{{/if}}" src="{{imageUrl this._id 800}}">
                 {{#with imageLoadStatus}}
                     <div class="text-center text-mute">
@@ -20,14 +20,14 @@
                 </a>
                 {{/if}}
             </div>
-            <div class="col-xs-12 col-sm-4 start-content">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
+            <div class="col-12 col-sm-4 start-content">
+                <div class="card">
+                    <div class="card-header">
                         <h5>
                             {{name}}
                         </h5>
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body">
                         <div>
                             <a href="{{imageUrl this._id}}" target="_blank">
                                 <span class="fa fa-download"></span> Runterladen

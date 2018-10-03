@@ -2,9 +2,9 @@
     <div class="container-fluid">
         {{#if currentUser}} 
             <div class="row">
-                <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-xs-12 start-content">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
+                <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-12 start-content">
+                    <div class="card">
+                        <div class="card-header">
                             <strong>Aktuelles</strong>
                             {{#each startPageTemplates}}
                                 {{#unless equals @index 0}}
@@ -24,19 +24,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
+                <div class="col-lg-4 col-md-5 col-sm-6 col-12 start-content">
                     {{>eventList}}
                 </div>
             </div>
         {{else}}
             <div class="row">
-                <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-xs-12 start-content">
+                <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-12 start-content">
                     {{#with settings}} 
                         {{>wikipage pageName=this.wikiStart}} 
                     {{/with}}
                     {{>blogsStart}}
                 </div>
-                <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 start-content">
+                <div class="col-lg-4 col-md-5 col-sm-6 col-12 start-content">
                     {{#if practicesAvailable}}
                         {{>practices}}
                     {{/if}}
@@ -57,8 +57,8 @@
 </template>
 
 <template name="eventList">
-    <div class="panel panel-default">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header">
             <a href="/tournaments" class="pull-right">
                 Turniere
             </a>

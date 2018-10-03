@@ -21,42 +21,42 @@
                     </div>
                     <div class="modal-body">
                         <fieldset class="row">
-                            <div class="col-xs-12">
+                            <div class="col-12">
                                 <span class="fa fa-info-circle fa-lg fa-fw"></span>
                                 Nach dem Eintragen des Turniers muss
                                 noch ein Team hinzugefügt werden, 
                                 damit sich Spieler eintragen können.
                             </div>
-                            <div class="col-xs-7">
+                            <div class="col-7">
                                 {{> afQuickField name='name'}}
                             </div>
-                            <div class="col-xs-5">
+                            <div class="col-5">
                                 {{> afQuickField name='category' }}
                             </div>
-                            <div class="col-xs-8">
+                            <div class="col-8">
                                 {{> afQuickField name='date' data-date-format='DD.MM.YYYY' data-date-language='de-DE'}}
                             </div>
-                            <div class="col-xs-4">
+                            <div class="col-4">
                                 {{> afQuickField name='numDays'}}
                             </div>
-                            <div class="col-xs-12">
+                            <div class="col-12">
                                 {{> afQuickField name='address' template="ultisiteAddress"}}
                             </div>
-                            <div class="col-xs-12">
+                            <div class="col-12">
                                 {{> afQuickField name='surfaces' type='select-checkbox-inline'}}
                             </div>
-                            <div class="col-xs-12">
+                            <div class="col-12">
                                 {{> afQuickField name='divisions' type='select-checkbox-inline'}}
                             </div>
-                            <div class="col-xs-6">
+                            <div class="col-6">
                                 {{> afQuickField name='tournamentDirector'}}
                             </div>
-                            <div class="col-xs-6">
+                            <div class="col-6">
                                 {{> afQuickField name='website'}}
                             </div>
                         </fieldset>
                     </div>
-                    <div class="modal-footer hidden-xs">
+                    <div class="modal-footer d-none d-sm-block">
                         <button type="submit" class="btn btn-primary">Speichern</button>
                     </div>
                 {{/autoForm}}
@@ -69,16 +69,16 @@
 
 <template name="tournament">
     {{#with tournament}}
-        <div class="panel panel-default">
-            <div class="panel-heading tournament-heading">
+        <div class="card">
+            <div class="card-header tournament-heading">
                 {{#if currentUser}}
-                <div class="hidden-xs hidden-sm pull-right">
+                <div class="d-none d-sm-block d-sm-none pull-right">
                     <div>
                         <button class="btn btn-{{#if teamObjects}}default{{else}}primary{{/if}} action-add-team" title="Team anlegen" type="button">
                             <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
                             <span class=""> Team anlegen</span>
                         </button>
-                        <button class="btn btn-default action-edit-tournament" title="Turnier editieren" type="button">
+                        <button class="btn btn-secondary action-edit-tournament" title="Turnier editieren" type="button">
                             <span class="fa fa-edit"></span><span class=""> editieren</span>
                         </button>
                         {{#unless teamObjects.length}}
@@ -88,9 +88,9 @@
                         {{/unless}}
                     </div>
                 </div>
-                <div class="btn-group visible-xs visible-sm pull-right text-right">
+                <div class="btn-group d-block d-md-none pull-right text-right">
                     <div class="dropdown">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -125,9 +125,9 @@
                     {{category}}
                 </span>
             </div>
-            <div class="panel-body {{#unless tournamentBodyVisible}}compressed{{/unless}}" id="turnierBody">
+            <div class="card-body {{#unless tournamentBodyVisible}}compressed{{/unless}}" id="turnierBody">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2 info-area">
+                    <div class="col-12 col-sm-4 col-md-3 col-lg-2 info-area">
                         <div class="tournament-value">
                             <span class="fa fa-clock-o fa-fw"></span>
                             {{#if equals numDays 1}}Ein Tag{{else}}{{numDays}} Tage{{/if}}
@@ -184,7 +184,7 @@
                             </div>
                         {{/if}}
                     </div>
-                    <div class="{{#unless tournamentBodyVisible}}hidden-xs{{/unless}} col-xs-12 col-sm-8 col-md-9 col-lg-10">
+                    <div class="{{#unless tournamentBodyVisible}}d-none d-sm-block{{/unless}} col-12 col-sm-8 col-md-9 col-lg-10">
                         {{#if or tournamentBodyVisible noDescription}}
                             <span class="fa fa-info fa-fw"></span>
                             Informationen zum Turnier <span class="badge">{{description.length}}</span>
@@ -222,8 +222,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12">
-                    <button class="btn btn-default btn-block btn-xs toggle-tournament-body" type="button" >
+                <div class="col-12">
+                    <button class="btn btn-secondary btn-block btn-xs toggle-tournament-body" type="button" >
                         {{#if tournamentBodyVisible}}
                         <span class="fa fa-caret-up"></span><span class="fa fa-caret-up"></span><span class="fa fa-caret-up"></span>
                         {{else}}
@@ -246,18 +246,18 @@
         </div>
         {{#if over}}
             {{>fileBrowser inline=true}}
-            <div class="panel panel-default">
-                <div class="panel-heading element-relative">
+            <div class="card">
+                <div class="card-header element-relative">
                     {{#if currentUser}}
                         <div class="right-aligned-buttons">
-                            <button class="btn btn-default action-add-report" title="Bericht anlegen">
-                                <span class="fa fa-plus"></span> <span class="hidden-xs">Bericht anlegen</span>
+                            <button class="btn btn-secondary action-add-report" title="Bericht anlegen">
+                                <span class="fa fa-plus"></span> <span class="d-none d-sm-block">Bericht anlegen</span>
                             </button>
                         </div>
                     {{/if}}
                     <strong>Turnierberichte</strong> <span class="badge">{{reports.length}}</span>
                 </div>
-                <div class="panel-body tournament-reports">
+                <div class="card-body tournament-reports">
                     {{#each reports}}
                     <blockquote>
                         <p>
@@ -285,11 +285,11 @@
         {{else}}
             {{#if currentUser}}
                 {{#if teamObjects.length}}
-                    <button class="visible-xs visible-sm btn btn-primary btn-floating action-participate" title="Mitspielen" type="button">
+                    <button class="d-block d-md-none btn btn-primary btn-floating action-participate" title="Mitspielen" type="button">
                         <span class="fa fa-plus fa-lg"></span>
                     </button>
                 {{else}}            
-                    <button class="visible-xs visible-sm btn btn-default btn-floating action-add-team" title="Team anlegen" type="button">
+                    <button class="d-block d-md-none btn btn-secondary btn-floating action-add-team" title="Team anlegen" type="button">
                         <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
                     </button>
                 {{/if}}

@@ -13,7 +13,7 @@
                             <span class="input-group-addon tweet-type">Sprich</span>
                             <input type="text" class="form-control tweet-content" autofocus maxlength="160" />
                             <span class="input-group-btn">
-                                <button type="submit" class="btn btn-default send-tweet"><span class="fa fa-send"></span></button>
+                                <button type="submit" class="btn btn-secondary send-tweet"><span class="fa fa-send"></span></button>
                             </span>
                         </div>
                     </form>
@@ -22,9 +22,9 @@
         </div>
     </div>
     <div class="btn-group btn-group-justified">
-        <a href="#" class="btn btn-default btn-say"><span class="fa fa-comment"></span><span class="hidden-xs"> Sag auch was!</span></a>
+        <a href="#" class="btn btn-secondary btn-say"><span class="fa fa-comment"></span><span class="d-none d-sm-inline"> Sag auch was!</span></a>
         {{#unless viewAll}}
-            <a href="#" class="btn btn-default btn-all-tweets"><span class="fa fa-tasks"></span><span class="hidden-xs"> Zeige Alle</span></a>
+            <a href="#" class="btn btn-secondary btn-all-tweets"><span class="fa fa-tasks"></span><span class="d-none d-sm-inline"> Zeige Alle</span></a>
         {{/unless}}
     </div>
     {{#each tweets}}

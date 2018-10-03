@@ -3,7 +3,7 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 
 import './team.js';
 import './tournament.js';
-import './tournament.less';
+import './tournament.scss';
 import './tournamentList.html';
 
 const months = new Meteor.Collection(null);

@@ -1,0 +1,19 @@
+.map-container {
+    position: relative;
+    min-height: 180px;
+    .map {
+        position: absolute;
+        top:0px;
+        left:0px;
+        right:0px;
+        bottom:0px;
+    }
+    .ol-control.custom {
+        position: absolute;
+        top: 8px;
+        right:8px;
+    }
+    .popover-content {
+        min-width: 250px;
+    }
+}

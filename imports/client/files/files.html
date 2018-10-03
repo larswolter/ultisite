@@ -18,11 +18,11 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active">
                             {{#if equals activePane "search"}}
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
+                                <div class="card">
+                                    <div class="card-header">
                                         Suche nach Dateien
                                     </div>
-                                    <div class="panel-body">
+                                    <div class="card-body">
                                         {{>searchField class="form-control" searchType="Images,Documents" onResultClick=dialogSelection inlineResults=true}}
                                     </div>
                                 </div>
@@ -42,22 +42,22 @@
         {{#with curFolder}}
         <div class="{{#unless ../inline}}row{{/unless}}">
             {{#unless ../inline}}
-                <div class="col-sm-4 col-xs-12 start-content">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
+                <div class="col-sm-4 col-12 start-content">
+                    <div class="card">
+                        <div class="card-header">
                             Verzeichnisse
                         </div>
-                        <div class="panel-body">
+                        <div class="card-body">
                             {{>folderTreeItem rootFolder}}
                         </div>
                     </div>
                 </div>
             {{/unless}}
-            <div class="{{#unless ../inline}}col-sm-8 col-xs-12 start-content{{/unless}}">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
+            <div class="{{#unless ../inline}}col-sm-8 col-12 start-content{{/unless}}">
+                <div class="card">
+                    <div class="card-header">
                         <div class="row">
-                            <div class="col-xs-8 btn-height-text">
+                            <div class="col-8 btn-height-text">
                                 {{#if ../inline}}
                                     Dokumente und Bilder
                                 {{else}}
@@ -65,21 +65,21 @@
                                     {{this.name}}
                                 {{/if}}
                             </div>
-                            <div class="col-xs-4 text-right">
-                                <button class="btn btn-default toggle-gallery-view">
+                            <div class="col-4 text-right">
+                                <button class="btn btn-secondary toggle-gallery-view">
                                     <span class="fa fa-{{#if galleryView}}list{{else}}th{{/if}}"></span>
                                     <span class="visible-lg-inline">
                                         {{#if galleryView}}Liste{{else}}Symbole{{/if}}
                                     </span>
                                 </button>
-                                <button class="btn btn-default btn-new-folder">
+                                <button class="btn btn-secondary btn-new-folder">
                                     <span class="fa fa-folder-o"></span>
                                     <span class="fa fa-plus"></span>
                                     <span class="visible-lg-inline">Neuer Ordner</span>                                    
                                 </button>
                             </div>
                         {{#if readme}}
-                            <div class="col-xs-12">
+                            <div class="col-12">
                                 {{#markdown}}{{{readme}}}{{/markdown}}
                             </div>
                         {{/if}}
@@ -93,7 +93,7 @@
                                 {{>fileBrowserList}}
                             {{/if}}
                         {{else}}
-                            <div class="panel-body">
+                            <div class="card-body">
                                 {{>Loading}}
                             </div>
                         {{/if}}                    
@@ -113,7 +113,7 @@
         {{#with parentFolder}}
             <div class="list-group-item">
                 <div class="row">
-                    <div class="col-xs-12">
+                    <div class="col-12">
                         <span class="fa fa-folder-o"></span>
                         <a class="folder-link" href="{{pathFor route='files' _id=this._id}}">..</a>
                     </div>
@@ -123,7 +123,7 @@
         {{#each folders}}
         <div class="list-group-item">
             <div class="row">
-                <div class="col-sm-11 col-xs-10">
+                <div class="col-sm-11 col-10">
                     <span class="fa fa-{{#if isParent}}level-up fa-flip-horizontal{{else}}folder-o{{/if}}"></span>
                     {{#if rename}}
                         <input value="{{name}}" data-id="{{_id}}" class="folder-name">
@@ -131,11 +131,11 @@
                         <a class="folder-link" href="{{pathFor route='files' _id=_id}}">{{name}}</a>
                     {{/if}}
                 </div>
-                <div class="col-sm-1 col-xs-2">
+                <div class="col-sm-1 col-2">
                     {{#unless isParent}}
                     <div class="btn-group pull-right" role="group">
                         <button type="button"
-                                class="btn btn-default btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                                class="btn btn-secondary btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
@@ -167,7 +167,7 @@
 <template name="fileBrowserItem">
         <div class="list-group-item">
             <div class="row file-browser-item">
-                <div class="col-sm-6 col-xs-12" >
+                <div class="col-sm-6 col-12" >
                     {{#if progress}}
                         <span class="fa fa-spin fa-spinner fa-fw"></span>
                         {{progress}} % - {{name}}
@@ -189,19 +189,19 @@
                         {{/if}}
                     {{/if}}
                 </div>
-                <div class="col-sm-3 col-xs-6">
+                <div class="col-sm-3 col-6">
                 {{formatDateTime created}}
                 </div>
-                <div class="col-sm-2 col-xs-4">
+                <div class="col-sm-2 col-4">
                 {{formatFileSize size}}
                 </div>
-                <div class="col-sm-1 col-xs-2">
+                <div class="col-sm-1 col-2">
                     {{#if needsSelect}}
-                        <button class="btn btn-default btn-sm select-file" title="auswählen"><span class="fa fa-check"></span></button>
+                        <button class="btn btn-secondary btn-sm select-file" title="auswählen"><span class="fa fa-check"></span></button>
                     {{else}}
                     <div class="btn-group pull-right" role="group">
                       <button type="button"
-                              class="btn btn-default btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                              class="btn btn-secondary btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
                          <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" role="menu">
@@ -263,40 +263,40 @@
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-xs-12 col-sm-6" style="background-image:url('{{url 800}}');background-size:contain;font-size:14em">
+                            <div class="col-12 col-sm-6" style="background-image:url('{{url 800}}');background-size:contain;font-size:14em">
                                 {{#if url 32}}
                                 &nbsp;
                                 {{else}}
                                 <span class="fa {{icon}}"></span>
                                 {{/if}}
                             </div>
-                            <div class="col-xs-12 col-sm-6 form">
+                            <div class="col-12 col-sm-6 form">
                                 <div class="form-group">
                                     <label>Typ</label>
-                                    <div class="form-control-static">{{type}}</div>
+                                    <div class="form-control-plaintext">{{type}}</div>
                                 </div>
                                 <div class="form-group">
                                     <label>Größe</label>
-                                    <div class="form-control-static">{{formatFileSize size}}</div>
+                                    <div class="form-control-plaintext">{{formatFileSize size}}</div>
                                 </div>
                                 <div class="form-group">
                                     <label>Geändert am</label>
-                                    <div class="form-control-static">{{formatDateTime created}} </div>
+                                    <div class="form-control-plaintext">{{formatDateTime created}} </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Erstellt von</label>
-                                    <div class="form-control-static">{{getAlias creator}}</div>
+                                    <div class="form-control-plaintext">{{getAlias creator}}</div>
                                 </div>
                                 <div class="form-group">
                                     <label>Tags</label>
-                                    <div class="form-control-static">{{#each tags}} {{this}} {{/each}}</div>
+                                    <div class="form-control-plaintext">{{#each tags}} {{this}} {{/each}}</div>
                                 </div>
                                 <div class="form-group">
                                     <label>Club</label>
-                                    <div class="form-control-static">{{club}}</div>
+                                    <div class="form-control-plaintext">{{club}}</div>
                                 </div>
                             </div>
-                            <div class="col-xs-12">
+                            <div class="col-12">
                                 <label>Assoziert mit</label>
                                 {{#each assozierteElemente}}
                                     <div>{{typ}}:<a href="{{link}}">{{text}}</a></div>

@@ -1,6 +1,6 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
 import './admin.html';
-import './admin.less';
+import './admin.scss';
 import '../files/files.js';
 
 Template.adminPanel.onCreated(function () {

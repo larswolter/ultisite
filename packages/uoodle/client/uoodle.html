@@ -24,9 +24,9 @@
             <a href="/uoodle">Zur Umfragenübersicht</a>
             {{> uoodleDetails}}
         {{else}}
-        <div class="panel panel-default">
-            <div class="panel-heading element-relative">
-                <button class=" hidden-xs hidden-sm btn btn-default right-aligned-buttons action-add-uoodle">
+        <div class="card">
+            <div class="card-header element-relative">
+                <button class=" d-none d-md-block btn btn-secondary right-aligned-buttons action-add-uoodle">
                     <span class="fa fa-plus"></span>
                     Hinzufügen
                 </button>
@@ -46,7 +46,7 @@
                 {{>Loading}}
             {{/if}}
         </div>
-        <button class="visible-xs visible-sm btn btn-primary btn-floating action-add-uoodle" 
+        <button class="d-block d-md-none btn btn-primary btn-floating action-add-uoodle" 
             title="Umfrage anlegen" type="button">
             <span class="fa fa-plus fa-lg"></span>
         </button>
@@ -68,7 +68,7 @@
                 <span ><span class="fa fa-close"></span></span>
             </button>
             {{#unless participants}}
-                <button class="btn btn-default action-edit">
+                <button class="btn btn-secondary action-edit">
                     <span ><span class="fa fa-edit"></span></span>
                 </button>
             {{/unless}}
@@ -130,9 +130,9 @@
                     {{#each participantOptions}}
                         <td class={{css}}>
                             {{#if and (equals .. currentUser._id) isOpen}}
-                                <button class="btn btn-default btn-xs action-choose" data-value='1'>Ja</button>
-                                <button class="btn btn-default btn-xs action-choose" data-value='0'>Evtl.</button>
-                                <button class="btn btn-default btn-xs action-choose" data-value='-1'>Nein</button>
+                                <button class="btn btn-secondary btn-xs action-choose" data-value='1'>Ja</button>
+                                <button class="btn btn-secondary btn-xs action-choose" data-value='0'>Evtl.</button>
+                                <button class="btn btn-secondary btn-xs action-choose" data-value='-1'>Nein</button>
                             {{else}}
                                 {{text}}
                             {{/if}}
@@ -146,9 +146,9 @@
                         <th>{{getAlias currentUser}}</th>
                         {{#each options}}
                             <td>
-                                <button class="btn btn-default btn-xs action-choose" data-value='1'>Ja</button>
-                                <button class="btn btn-default btn-xs action-choose" data-value='0'>Evtl.</button>
-                                <button class="btn btn-default btn-xs action-choose" data-value='-1'>Nein</button>
+                                <button class="btn btn-secondary btn-xs action-choose" data-value='1'>Ja</button>
+                                <button class="btn btn-secondary btn-xs action-choose" data-value='0'>Evtl.</button>
+                                <button class="btn btn-secondary btn-xs action-choose" data-value='-1'>Nein</button>
                             </td>
                         {{/each}}
                     </tr>
@@ -178,7 +178,7 @@
                         {{/autoForm}}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
                         <button type="submit" class="btn btn-primary">Speichern</button>
                     </div>
                 </div>

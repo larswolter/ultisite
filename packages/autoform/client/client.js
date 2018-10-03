@@ -1,5 +1,5 @@
 import './forms.js';
-import './forms.less';
+import './forms.scss';
 import SimpleSchema from 'simpl-schema';
 
 console.log('configuring simple schema');

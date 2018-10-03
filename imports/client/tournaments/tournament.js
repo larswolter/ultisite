@@ -1,5 +1,5 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
-import './tournament.less';
+import './tournament.scss';
 import './tournament.html';
 import './team.js';
 import '../forms/address.js';

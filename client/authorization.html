@@ -26,7 +26,7 @@
                         {{#if meteorStatus.connected}}
 
                             {{#unless loggingIn}}
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
                                 <button type="submit" class="btn btn-primary {{#unless meteorStatus.connected}}disabled{{/unless}}" id="loginButton">Anmelden</button>
                                 <br/>
                                 <button type="button" class="btn btn-link btn-password-reset" >Passwort vergessen</button>
@@ -115,7 +115,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
                             <button type="submit" class="btn btn-primary" id="setPassword">Passwort Ändern</button>
                         </div>
                     </div>

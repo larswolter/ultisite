@@ -3,19 +3,19 @@
         {{#if settings.showPracticeCalendar}}
         {{>practiceCalendar}}
         {{/if}}
-        <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-xs-12">
+        <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-12">
             {{>wikipage pageName=settings.wikiPractice}}
         </div>
-        <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+        <div class="col-lg-4 col-md-5 col-sm-6 col-12">
+            <div class="card">
+                <div class="card-header">
                     <div class="row">
-                        <div class="col-xs-8 btn-height-text">
+                        <div class="col-8 btn-height-text">
                         <strong>Trainingszeiten</strong>
                         </div>
                         {{#if currentUser}}
-                        <div class="col-xs-4">
-                            <button class="btn btn-default pull-right action-new"><i class="fa fa-plus"></i></button>
+                        <div class="col-4">
+                            <button class="btn btn-secondary pull-right action-new"><i class="fa fa-plus"></i></button>
                         </div>
                         {{/if}}
 
@@ -47,50 +47,50 @@
                 {{#autoForm schema=practiceSchema doc=this id="practiceDialogForm"}}
                     <div class="modal-body">
                       <fieldset class="row">
-                        <div class="col-xs-6">
+                        <div class="col-6">
                             {{> afQuickField name='hostingTeam'}}
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-6">
                             {{> afQuickField name='weekday' }}
                         </div>
-                        <div class="col-xs-12 col-sm-3">
+                        <div class="col-12 col-sm-3">
                             {{> afQuickField name='start' data-date-format='DD.MM.YYYY' data-date-language='de-DE'}}
                         </div>
-                        <div class="col-xs-12 col-sm-3">
+                        <div class="col-12 col-sm-3">
                             {{> afQuickField name='end' data-date-format='DD.MM.YYYY' data-date-language='de-DE'}}
                         </div>
-                        <div class="col-xs-6 col-sm-3">
+                        <div class="col-6 col-sm-3">
                             {{> afQuickField name='startTime'}}
                         </div>
-                        <div class="col-xs-6 col-sm-3">
+                        <div class="col-6 col-sm-3">
                             {{> afQuickField name='duration' }}
                         </div>
-                        <div class="col-xs-12">
+                        <div class="col-12">
                             {{> afQuickField name='address' template="ultisiteAddress"}}
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             {{> afQuickField name='contact' }}
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             {{> afQuickField name='contactPhone' }}
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-4">
                             {{> afQuickField name='website' }}
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-6">
                             {{> afQuickField name='trainer' }}
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-6">
                             {{> afQuickField name='skillLevel' }}
                         </div>
-                        <div class="col-xs-12">
+                        <div class="col-12">
                             {{> afQuickField name='description' }}
                         </div>
-                        <div class="col-xs-12">
+                        <div class="col-12">
                             <label>Kartenausschnitt</label>
                             {{#if mapImage}}
                                 <div class="practice-map-image" style="background-image:url('{{mapImage}}')">
-                                    <button class="btn btn-default action-clear-image">
+                                    <button class="btn btn-secondary action-clear-image">
                                         <span class="fa fa-trash"></span>
                                     </button>
                                 </div>
@@ -105,7 +105,7 @@
                       </fieldset>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">Abbrechen</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Abbrechen</button>
                       <button type="submit" class="btn btn-primary">Speichern</button>
                     </div>
                 {{/autoForm}}
@@ -118,7 +118,7 @@
 
 
 <template name="practiceSmall">
-    <div class="btn btn-default btn-sm mini-practice" data-id="{{_id}}">
+    <div class="btn btn-secondary btn-sm mini-practice" data-id="{{_id}}">
         <strong>{{practiceTime}}</strong>
         <br/> {{hostingTeam}}
     </div>
@@ -175,7 +175,7 @@
     <div class="modal fade" id="practice-dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <button type="button" class="btn btn-default pull-right" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-secondary pull-right" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 {{#with selPractice}}

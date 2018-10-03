@@ -1,10 +1,10 @@
 <template name="ultisiteAddress">
     <label {{bsFieldLabelAtts}}>{{afFieldLabelText name=this.name}}</label>
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+        <div class="col-12 col-sm-6 col-md-5 col-lg-4">
             <div class="form-horizontal">
                 <div class="form-group {{#if afFieldIsInvalid name='address.country'}}has-error{{/if}}" data-required="true">
-                    <label class="control-label col-sm-3">{{afFieldLabelText name="address.country"}}</label>
+                    <label class="col-form-label col-sm-3">{{afFieldLabelText name="address.country"}}</label>
                     <div class="col-sm-9 dropdown-country dropdown">
                         <div class="input-group" data-toggle="dropdown">
                             <input value="Deutschland" class="form-control address-country-search" autocomplete="off" />
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="form-group {{#if afFieldIsInvalid name='address.city'}}has-error{{/if}}" data-required="true">
-                    <label class="control-label col-sm-3">{{afFieldLabelText name="address.city"}}</label>
+                    <label class="col-form-label col-sm-3">{{afFieldLabelText name="address.city"}}</label>
                     <div class="col-sm-9 dropdown-city dropdown">
                         <div class="input-group" data-toggle="dropdown">
                             {{> afFieldInput name="address.city" autocomplete="off"}}
@@ -40,13 +40,13 @@
                     </div>
                 </div>
                 <div class="form-group {{#if afFieldIsInvalid name='address.postcode'}}has-error{{/if}}" data-required="false">
-                    <label class="control-label col-sm-3">{{afFieldLabelText name="address.postcode"}}</label>
+                    <label class="col-form-label col-sm-3">{{afFieldLabelText name="address.postcode"}}</label>
                     <div class="col-sm-4">
                     {{> afFieldInput name="address.postcode" size="5" class="form-control" }}
                     </div>
                 </div>
                 <div class="form-group {{#if afFieldIsInvalid name='address.street'}}has-error{{/if}}" data-required="false">
-                    <label class="control-label col-sm-3">{{afFieldLabelText name="address.street"}}</label>
+                    <label class="col-form-label col-sm-3">{{afFieldLabelText name="address.street"}}</label>
                     <div class="col-sm-9 dropdown-street dropdown">
                         <div class="input-group" data-toggle="dropdown">
                             {{> afFieldInput name="address.street" class="form-control address-street" autocomplete="off"}}
@@ -66,11 +66,11 @@
                 
             </div>
         </div>
-        <div class="col-xs-12 col-sm-6 col-md-7 col-lg-8">
+        <div class="col-12 col-sm-6 col-md-7 col-lg-8">
             {{#with currentCoords}}
                 {{>ultisiteMap geocoords=currentCoords mapClick=mapClickCallback zoom=currentZoom marker=currentCoords}}
             {{/with}}
         </div>
     </div>
-    <span class="help-block">{{{afFieldMessage name="address.country"}}}</span>
+    <span class="form-text">{{{afFieldMessage name="address.country"}}}</span>
 </template>

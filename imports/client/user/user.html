@@ -26,14 +26,14 @@
         {{/if}}
         <div class="user-display {{#if isEditable}}opt-is-editable{{/if}}">
             <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+                <div class="col-12 col-sm-6 col-md-5 col-lg-4">
                     <div class="thumbnail" style="background-image:url('{{#if profile.avatar}}{{imageUrl profile.avatar 800}}{{else}}/placeholder/player.svg{{/if}}')">
                         <h4>{{username}}</h4>
-                        <button class="btn btn-default btn-xs btn-edit-image" type="button">
+                        <button class="btn btn-secondary btn-xs btn-edit-image" type="button">
                             <span class="fa fa-edit"></span>
                         </button>
                     </div>
-                    <div class="panel panel-default">
+                    <div class="card">
                         <ul class="list-group user-base">
                             <li class="list-group-item">
                                 <small>Nutzername</small>
@@ -43,13 +43,13 @@
                     </div>
                 </div>
                 {{#if isAdmin}}
-                    <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <button class="btn btn-default action-remove-user">
+                    <div class="col-12 col-sm-6 col-md-5 col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <button class="btn btn-secondary action-remove-user">
                                     Löschen
                                 </button>
-                                <button class="btn btn-default action-block-user">
+                                <button class="btn btn-secondary action-block-user">
                                     {{#if isDisabled}}
                                         Entsperren
                                     {{else}}
@@ -60,10 +60,10 @@
                         </div>
                     </div>
                 {{/if}}
-                <div class="col-xs-12 col-sm-6 col-md-7 col-lg-4">
-                    <div class="panel panel-default">
+                <div class="col-12 col-sm-6 col-md-7 col-lg-4">
+                    <div class="card">
                         <!-- Default panel contents -->
-                        <div class="panel-heading">Allgemeine Infos</div>
+                        <div class="card-header">Allgemeine Infos</div>
                         <ul class="list-group user-base">
                             <li class="list-group-item">
                                 <small>Vorname</small>
@@ -77,7 +77,7 @@
                             {{#if equals _id currentUser}}
                             <li class="list-group-item">
                                 <small>Passwort</small>
-                                <button class="btn btn-default btn-block" data-toggle="modal" data-target="#passwordChange">Passwort Ändern</button>
+                                <button class="btn btn-secondary btn-block" data-toggle="modal" data-target="#passwordChange">Passwort Ändern</button>
                             </li>
                             {{/if}}
                             {{#each emails}}
@@ -86,7 +86,7 @@
                                 <span class="fa fa-check text-success" title="Verifiziert"></span> {{else}}
                                 <span class="fa fa-exclamation-triangle text-danger" title="Nicht verifiziert"></span> {{/if}}
                                 {{#if isAdmin}}
-                                    <button class="btn btn-default pull-right action-edit-email">
+                                    <button class="btn btn-secondary pull-right action-edit-email">
                                         <span class="fa fa-edit"></span>
                                     </button>                                
                                 {{/if}}
@@ -114,22 +114,22 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Kontakt</div>
+                <div class="col-12 col-sm-6 col-md-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-header">Kontakt</div>
                         <ul class="list-group user-contacts">
                             {{#each contactDetails}}
                             <li class="list-group-item">
                                 {{#if isEditable}}
                                 <div class="pull-right">
-                                    <button class="btn btn-default btn-xs btn-remove" data-index="{{index}}">
+                                    <button class="btn btn-secondary btn-xs btn-remove" data-index="{{index}}">
                                         <span class="fa fa-close"></span>
                                     </button>
                                 </div>
                                 {{/if}} {{#if type}}
                                 <small>{{type}}</small> {{else}}
                                 <div class="btn-group type-selector" role="group">
-                                    <button aria-expanded="false" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" data-value="{{type}}" type="button">
+                                    <button aria-expanded="false" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-value="{{type}}" type="button">
                                         Typ wählen...
                                         <span class="caret"></span>
                                     </button>
@@ -166,7 +166,7 @@
                             </li>
                             {{/each}} {{#if isEditable}}
                             <li class="list-group-item">
-                                <button class="btn btn-default btn-add-contact">
+                                <button class="btn btn-secondary btn-add-contact">
                                     <span class="fa fa-plus"></span>
                                 </button>
                             </li>
@@ -174,16 +174,16 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Verein</div>
+                <div class="col-12 col-sm-6 col-md-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-header">Verein</div>
                         <ul class="list-group user-base">
                             <li class="list-group-item">
                                 <small>Mitgliedsstatus</small>
                                 <br/> 
                                 {{#if isInRole "club,admin"}}
                                 <div class="btn-group type-selector" role="group">
-                                    <button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+                                    <button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">
                                         {{club.state}}
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
@@ -230,9 +230,9 @@
             </div>
             <div class="row">
                 {{#if isEditable}}
-                <div class="col-xs-12 col-sm-5 col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Webseite</div>
+                <div class="col-12 col-sm-5 col-md-6">
+                    <div class="card">
+                        <div class="card-header">Webseite</div>
                         <ul class="list-group">
                             <li class="list-group-item">
                                 <small>TäglicheE-Mail</small>
@@ -266,15 +266,15 @@
                             <li class="list-group-item">
                                 <small>Desktop Benachrichtigungen</small>
                                 <br /> {{#if equals notificationsStatus 'unsupported'}} Benachrichtigungen werden nicht unterstützt {{else}} {{#if equals notificationsStatus 'granted'}} Werden angezeigt {{/if}}
-                                <button class="btn btn-default action-check-notification-permissions">Ändern</button>
+                                <button class="btn btn-secondary action-check-notification-permissions">Ändern</button>
                                 {{/if}}
                             </li>
                             <li class="list-group-item">
                                 <small>Rollen</small> {{#each userRoles}}
                                 <div class="row">
-                                    <div class="col-xs-6">{{this.name}}</div>
+                                    <div class="col-6">{{this.name}}</div>
                                     {{#if isInRole 'admin'}} 
-                                    <div class="col-xs-6">
+                                    <div class="col-6">
                                         {{#if this.active}}
                                         <button class="btn btn-link action-remove-role pull-right">
                                             <span class="fa fa-close text-danger fa-fw"></span> entfernen
@@ -293,9 +293,9 @@
                     </div>
                 </div>
                 {{/if}}
-                <div class="col-xs-12 col-sm-7 col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Statistiken
+                <div class="col-12 col-sm-7 col-md-6">
+                    <div class="card">
+                        <div class="card-header">Statistiken
                         </div>
                         <ul class="list-group">
                             <li class="list-group-item">
@@ -395,22 +395,22 @@
                         {{/unless}}
                     {{/if}}
                     <fieldset class="row">
-                        <div class="col-xs-6">
+                        <div class="col-6">
                             {{> afQuickField name='alias'}} 
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-6">
                             {{> afQuickField name='sex'}} 
                         </div>
-                        <div class="col-xs-12">
+                        <div class="col-12">
                             {{> afQuickField name='email' type='email'}} 
                         </div>
-                        <div class="col-xs-12 col-sm-6">
+                        <div class="col-12 col-sm-6">
                             {{> afQuickField name='name'}} 
                         </div>
-                        <div class="col-xs-12 col-sm-6">
+                        <div class="col-12 col-sm-6">
                             {{> afQuickField name='surname'}} 
                         </div>
-                        <div class="col-xs-12">
+                        <div class="col-12">
                         {{#unless setupNeeded}}
 
                             {{#if equals settings.siteRegistration "password"}} 
@@ -432,7 +432,7 @@
                 </div>
                 <div class="modal-footer">
                     {{#unless setupNeeded}}
-                        <button aria-label="Close" class="btn btn-default" data-dismiss="modal" type="button">
+                        <button aria-label="Close" class="btn btn-secondary" data-dismiss="modal" type="button">
                             Abbrechen
                         </button>
                     {{/unless}}

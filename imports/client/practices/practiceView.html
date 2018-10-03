@@ -1,6 +1,6 @@
 <template name="practices">
-    <div class="panel panel-default">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header">
             <a href="{{pathFor route='practices'}}">
                 <strong>Trainingszeiten</strong>
             </a>
@@ -18,7 +18,7 @@
     <div class="list-group-item">
         <div class="caption">
             {{#if currentUser}}
-                <button class="btn btn-default pull-right action-edit">
+                <button class="btn btn-secondary pull-right action-edit">
                     <span class="fa fa-edit"></span>
                 </button>
             {{/if}}

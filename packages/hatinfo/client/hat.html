@@ -1,13 +1,13 @@
 <template name="hatInfos">
     <div class="hat-info row">
-        <div class="col-xs-12 col-md-6 col-lg-4">
+        <div class="col-12 col-md-6 col-lg-4">
             {{#with settings.hatWikipage}} 
                 {{>wikipage pageName=this}} 
             {{/with}}
         </div>
-        <div class="col-xs-12 col-md-6 col-lg-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+        <div class="col-12 col-md-6 col-lg-8">
+            <div class="card">
+                <div class="card-header">
                     {{#if isInRole "admin,hatAdmin"}}
                     <button class="visible-md visible-lg btn btn-primary pull-right action-participate" title="Anmelden" type="button" >
                         <span class="fa fa-plus"></span> Eintragen
@@ -25,10 +25,10 @@
                         {{/if}}
                     </h4>
                     {{#if isInRole "admin,hatAdmin"}}
-                        <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-default pull-right" title="Export" type="button" >
+                        <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-secondary pull-right" title="Export" type="button" >
                             <span class="fa fa-download"></span> Exportieren
                         </a>
-                        <a href="mailto:no-reply@hallunken.de?bcc={{emails}}" class="btn btn-default pull-right" title="Export" type="button" >
+                        <a href="mailto:no-reply@hallunken.de?bcc={{emails}}" class="btn btn-secondary pull-right" title="Export" type="button" >
                             <span class="fa fa-envelope"></span> Mail an alle
                         </a>
                         <form class="form-inline">
@@ -67,10 +67,10 @@
                 {{/if}}
             </div>
             {{#unless activeFilter}}
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header">
                     {{#if isInRole "admin,hatAdmin"}}
-                    <a href="mailto:no-reply@hallunken.de?bcc={{emailsParticipate}}" class="btn btn-default pull-right" title="Export" type="button" >
+                    <a href="mailto:no-reply@hallunken.de?bcc={{emailsParticipate}}" class="btn btn-secondary pull-right" title="Export" type="button" >
                         <span class="fa fa-envelope"></span> Mail an Spieler
                     </a>
                     {{/if}}
@@ -93,10 +93,10 @@
                     {{/each}}
                 </ul>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header">
                     {{#if isInRole "admin,hatAdmin"}}
-                    <a href="mailto:no-reply@hallunken.de?bcc={{emailsWaiting}}" class="btn btn-default pull-right" title="Export" type="button" >
+                    <a href="mailto:no-reply@hallunken.de?bcc={{emailsWaiting}}" class="btn btn-secondary pull-right" title="Export" type="button" >
                         <span class="fa fa-envelope"></span> Mail an Wartende
                     </a>
                     {{/if}}
@@ -121,7 +121,7 @@
             </div>
             {{/unless}}
         </div>
-        <button class="visible-xs visible-sm btn btn-primary btn-floating action-participate" title="Eintragen" type="button" >
+        <button class="d-block d-md-none btn btn-primary btn-floating action-participate" title="Eintragen" type="button" >
             <span class="fa fa-plus fa-lg"></span>
         </button>
     </div>
@@ -130,20 +130,20 @@
 <template name="hatParticipant">
     <a class="list-group-item {{#if activeEntry}}selected{{/if}}">
         <div class="row">
-            <strong class="col-xs-6 col-sm-8 col-md-9 {{#if isInRole "admin,hatAdmin"}}participant-entry{{/if}}">
+            <strong class="col-6 col-sm-8 col-md-9 {{#if isInRole "admin,hatAdmin"}}participant-entry{{/if}}">
                 <span class="fa fa-envelope-o {{#if confirmed}}text-success{{else}}text-muted{{/if}}"></span>
                 <span class="fa fa-money {{#if hasPayed}}text-success{{else}}text-muted{{/if}}"></span>
                 
                 {{name}}
                 <small> aus {{city}} - {{hometeam}}</small>
             </strong>
-            <div class="col-xs-6 col-sm-4 col-md-3">
+            <div class="col-6 col-sm-4 col-md-3">
                 <div class="progress text-center">
                     <div class="progress-bar progress-bar-info" role="progressbar" style="width:{{strengthPercent}}%">{{strength}}</div>
                 </div>
             </div>
             {{#if activeEntry}}
-            <div class="col-xs-12 col-sm-6">
+            <div class="col-12 col-sm-6">
                 <a href="mailto:{{this.email}}">{{this.email}}</a><br/>
                 Eingetragen: {{formatDateTime this.createdAt}}<br/>
                 Geändert: {{formatDateTime this.modifiedAt}}<br/>
@@ -163,8 +163,8 @@
                     Bezahlt: {{#if hasPayed}}{{formatDateTime payed}}{{else}}Nein{{/if}}<br/>
                 {{/if}}
             </div>
-            <div class="col-xs-12 col-sm-6 text-right participant-buttons">
-                <button class="btn btn-default action-participate" title="Ändern" type="button" >
+            <div class="col-12 col-sm-6 text-right participant-buttons">
+                <button class="btn btn-secondary action-participate" title="Ändern" type="button" >
                     <span class="fa fa-edit"></span> Editieren
                 </button>
                 <button class="btn btn-danger action-remove" title="Austragen">
@@ -187,7 +187,7 @@
 
 <template name="hatInfoSettings">
     <div class="dropdown col-sm-2 wiki-association">
-        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
             HatInfo: {{wikiPageName settings.hatWikipage}}
             <span class="fa fa-caret-down"></span>
         </button>
@@ -209,7 +209,7 @@
         <input name="hatName" class="form-control" value="{{settings.hatName}}" placeholder="Turniername" title="Turniername">
     </div>
     <div class="dropdown col-sm-3 wiki-association">
-        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
             Sortierung: {{settings.hatSort}}
             <span class="fa fa-caret-down"></span>
         </button>
@@ -260,7 +260,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">{{#if existing._id}}Ändern{{else}}Eintragen{{/if}}</button>
-                    <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-default">Abbrechen</button>
+                    <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-secondary">Abbrechen</button>
                 </div>
                 {{/autoForm}}
             </div>
@@ -283,7 +283,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" aria-label="Ok" class="btn btn-default">Ok</button>
+                    <button type="button" data-dismiss="modal" aria-label="Ok" class="btn btn-secondary">Ok</button>
                 </div>
             </div>
         </div>
@@ -307,7 +307,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" aria-label="Ok" class="btn btn-default">Ok</button>
+                    <button type="button" data-dismiss="modal" aria-label="Ok" class="btn btn-secondary">Ok</button>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import './fileUpload.js';
 import './fileGallery.html';
 import './files.html';
-import './files.less';
+import './files.scss';
 
 if (!HTMLCanvasElement.prototype.toBlob) {
   Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {

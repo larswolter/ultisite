@@ -3,7 +3,7 @@ import { FlowRouter } from 'meteor/kadira:flow-router';
 import { Roles } from 'meteor/alanning:roles';
 import { moment } from 'meteor/momentjs:moment';
 
-import './user.less';
+import './user.scss';
 import './user.html';
 import './userlist.html';
 

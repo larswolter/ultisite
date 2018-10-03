@@ -1,4 +1,4 @@
-import './user.less';
+import './user.scss';
 import './userlist.html';
 
 const usersOverview = new Meteor.Collection("usersOverview");

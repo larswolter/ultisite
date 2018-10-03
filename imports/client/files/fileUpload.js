@@ -1,5 +1,5 @@
 import blueimp from 'blueimp-load-image';
-import './fileUpload.less';
+import './fileUpload.scss';
 import './fileUpload.html';
 
 

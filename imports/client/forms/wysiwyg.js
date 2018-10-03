@@ -1,6 +1,6 @@
 import { ReactiveVar } from 'meteor/reactive-var';
 
-import './wysiwyg.less';
+import './wysiwyg.scss';
 import './wysiwyg.html';
 
 const htmlEncode = function (string) {

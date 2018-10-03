@@ -2,7 +2,7 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
 import '../forms/address.js';
 import '../files/files.js';
-import './practice.less';
+import './practice.scss';
 import './practice.html';
 
 let mapImageFile;

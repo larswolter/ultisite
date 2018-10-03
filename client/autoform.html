@@ -1,22 +1,22 @@
 <template name="afArrayField_ultisite">
-  <div class="panel panel-default ultisite-array-field">    
-    <div class="panel-heading">
+  <div class="card ultisite-array-field">    
+    <div class="card-header">
         {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
-          <button type="button" class="btn btn-default autoform-add-item pull-right" data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}"><span class="fa fa-plus"></span></button>
+          <button type="button" class="btn btn-secondary autoform-add-item pull-right" data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}"><span class="fa fa-plus"></span></button>
         {{/if}}
 
         {{afFieldLabelText name=this.atts.name}}
     </div>
     {{#if afFieldIsInvalid name=this.atts.name}}
-    <div class="panel-body has-error">
-      <span class="help-block">{{{afFieldMessage name=this.atts.name}}}</span>
+    <div class="card-body has-error">
+      <span class="form-text">{{{afFieldMessage name=this.atts.name}}}</span>
     </div>
     {{/if}}
     <div class="list-group">
       {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
-      <div class="list-group-item autoform-array-item {{#if ../atts.multicol}}col-xs-12 col-sm-6 col-md-4 col-lg-3{{/if}}">
+      <div class="list-group-item autoform-array-item {{#if ../atts.multicol}}col-12 col-sm-6 col-md-4 col-lg-3{{/if}}">
             {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
-            <button type="button" class="btn btn-default autoform-remove-item">
+            <button type="button" class="btn btn-secondary autoform-remove-item">
                 <span class="fa fa-close"></span>
             </button>
             {{/if}}
@@ -33,11 +33,11 @@
           <h3 >{{this}}</h3>
         {{/with}}
           {{#if afFieldIsInvalid name=this.name}}
-          <span class="help-block">{{{afFieldMessage name=this.name}}}</span>
+          <span class="form-text">{{{afFieldMessage name=this.name}}}</span>
           {{/if}}
           <div class="row">
             {{#each afFieldNames name=this.name}}
-              <div class="col-xs-12 {{#unless ../multicol}}col-sm-6 col-lg-4{{/unless}}">
+              <div class="col-12 {{#unless ../multicol}}col-sm-6 col-lg-4{{/unless}}">
                 {{> afQuickField name=this.name}}
               </div>
             {{/each}}            

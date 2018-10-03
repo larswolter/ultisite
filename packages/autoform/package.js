@@ -19,7 +19,7 @@ Package.onUse(function (api) {
     'underscore',
     'check',
   ]);
-  api.use(['less',
+  api.use(['fourseven:scss',
     'standard-minifiers',
     'mobile-experience',
     'blaze-html-templates',

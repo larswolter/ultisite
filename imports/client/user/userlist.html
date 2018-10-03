@@ -1,49 +1,49 @@
 <template name="userList">
 	{{#if currentUser}}
-		<div class="panel panel-default user-list">
-			<div class="panel-heading">
-				<button class="btn btn-default action-create-user" style="margin-left:5px;margin-top:5px;">
+		<div class="card user-list">
+			<div class="card-header">
+				<button class="btn btn-secondary action-create-user" style="margin-left:5px;margin-top:5px;">
                 <span class="fa fa-plus"></span>
                 <span class="fa fa-user"></span>
-                <span class="hidden-xs"> Neuen Nutzer anlegen</span>
+                <span class="d-none d-sm-inline"> Neuen Nutzer anlegen</span>
             </button>
 				<div class="pull-right">
-					<button type="button" class="btn btn-default action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
+					<button type="button" class="btn btn-secondary action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
                     <span class="fa fa-chevron-left"></span>
                 </button>
-					<button type="button" class="btn btn-default disabled">
+					<button type="button" class="btn btn-secondary disabled">
                     Seite {{paginationPos}} / {{totalPages}}
                 </button>
-					<button type="button" class="btn btn-default action-more-users {{#if equals paginationPos totalPages}}disabled{{/if}}">
+					<button type="button" class="btn btn-secondary action-more-users {{#if equals paginationPos totalPages}}disabled{{/if}}">
                     <span class="fa fa-chevron-right"></span>
                 </button>
 				</div>
-				<div class="hidden-xs user-list-item">
+				<div class="d-none d-sm-block user-list-item">
 					<div class="row user-list-item h5">
-						<div class="col-xs-12 col-sm-1">
+						<div class="col-12 col-sm-1">
 							Bild
 							<span class="fa fa-sort" data-sort="profile.avatar"></span>
 						</div>
-						<div class="col-xs-12 col-sm-2">
+						<div class="col-12 col-sm-2">
 							Name
 							<span class="fa fa-sort-desc" data-sort="username"></span>
 						</div>
-						<div class="col-xs-6 col-sm-2">
+						<div class="col-6 col-sm-2">
 							Vorname
 							<span class="fa fa-sort" data-sort="profile.name"></span>
 						</div>
-						<div class="col-xs-6 col-sm-2">
+						<div class="col-6 col-sm-2">
 							Nachname
 							<span class="fa fa-sort" data-sort="profile.surname"></span>
 						</div>
-						<div class="col-xs-6 col-sm-2">
+						<div class="col-6 col-sm-2">
 							Geburtstag
 							<span class="fa fa-sort" data-sort="profile.birthday"></span>
 						</div>
-						<div class="col-xs-6 col-sm-1">
+						<div class="col-6 col-sm-1">
 							Aktionen
 						</div>
-						<div class="col-xs-6 col-sm-2">
+						<div class="col-6 col-sm-2">
 							Verein
 							<span class="fa fa-sort" data-sort="club.state"></span>
 						</div>
@@ -63,20 +63,20 @@
 			{{else}}
 				{{> Loading}}
 			{{/if}}
-			<div class="panel-footer">
-				<button class="btn btn-default action-create-user" style="margin-left:5px;margin-top:5px;">
+			<div class="card-footer">
+				<button class="btn btn-secondary action-create-user" style="margin-left:5px;margin-top:5px;">
                 <span class="fa fa-plus"></span>
                 <span class="fa fa-user"></span>
-                <span class="hidden-xs"> Neuen Nutzer anlegen</span>
+                <span class="d-none d-sm-inline"> Neuen Nutzer anlegen</span>
             </button>
 				<div class="pull-right">
-					<button type="button" class="btn btn-default action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
+					<button type="button" class="btn btn-secondary action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
                     <span class="fa fa-chevron-left"></span>
                 </button>
-					<button type="button" class="btn btn-default disabled">
+					<button type="button" class="btn btn-secondary disabled">
                     Seite {{paginationPos}} / {{totalPages}}
                 </button>
-					<button type="button" class="btn btn-default action-more-users {{#if equals paginationPos totalPages}}disabled{{/if}}">
+					<button type="button" class="btn btn-secondary action-more-users {{#if equals paginationPos totalPages}}disabled{{/if}}">
                     <span class="fa fa-chevron-right"></span>
                 </button>
 				</div>
@@ -87,32 +87,32 @@
 
 <template name="userItem">
 	<div class="row">
-		<div class="col-xs-3 col-sm-1">
+		<div class="col-3 col-sm-1">
 			{{#if profile.avatar}}
 				<img src="{{imageUrl profile.avatar 160}}">
 			{{else}}
 				<img src="/placeholder/player.svg">
 			{{/if}}
 		</div>
-		<div class="col-xs-7 visible-xs">
+		<div class="col-7 d-block d-sm-none">
 			<h5>{{getAlias this}}
 				{{#if profile.sex}}<small>{{profile.sex}}</small>{{/if}}
 			</h5>
 			{{profile.name}} {{profile.surname}} - {{formatDate profile.birthday}} {{club.state}}
 		</div>
-		<div class="hidden-xs col-sm-2">
+		<div class="d-none d-sm-block col-sm-2">
 			{{getAlias this}}
 		</div>
-		<div class="hidden-xs col-sm-2">
+		<div class="d-none d-sm-block col-sm-2">
 			{{profile.name}}
 		</div>
-		<div class="hidden-xs col-sm-2">
+		<div class="d-none d-sm-block col-sm-2">
 			{{profile.surname}}
 		</div>
-		<div class="hidden-xs col-sm-2">
+		<div class="d-none d-sm-block col-sm-2">
 			{{formatDate profile.birthday}}
 		</div>
-		<div class="col-xs-2 col-sm-1">
+		<div class="col-2 col-sm-1">
 			{{#each emails}}
 				<a href="mailto:{{this.address}}" class="btn btn-link"><span class="fa fa-envelope"></span></a>
 			{{/each}}
@@ -122,10 +122,10 @@
 				{{/if}}
 			{{/each}}
 		</div>
-		<div class="hidden-xs col-sm-2">
+		<div class="d-none d-sm-block col-sm-2">
 			{{#if isInRole "club,admin"}}
 				<div class="btn-group type-selector" role="group">
-					<button aria-expanded="false" class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">
+					<button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">
 					{{#if club.state}}{{club.state}}{{else}}Unbekannt{{/if}}
                 </button>
 					<ul class="dropdown-menu" role="menu">
@@ -134,7 +134,7 @@
 						{{/each}}
 					</ul>
 				</div>
-				<button class="btn btn-default action-debit">
+				<button class="btn btn-secondary action-debit">
 					<span class="{{#if profile.debit}}text-danger{{else}}text-success{{/if}}"><span class="fa fa-eur"></span> {{profile.debit}}</span>
 				</button>
 

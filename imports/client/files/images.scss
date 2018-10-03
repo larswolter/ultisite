@@ -1,0 +1,68 @@
+@import "{}/client/lib/custom.bootstrap.import.scss";
+
+.image-viewer {
+    .col-sm-8.start-content {
+        text-align: center;
+        @include media-breakpoint-down(xs) {
+            margin:-15px;
+            margin-bottom:0px;
+            width:auto;
+        }
+    }
+    img.big-image {
+        max-width:100%;
+        height:auto;
+        transition: all 200ms;
+        opacity: 1;
+    }
+    img.big-image.not-available {
+        opacity: 0;
+    }
+    .start-content {
+        position: relative;
+        min-height: 300px;
+        transition: all 200ms;
+    }
+    a.image-control {
+        font-size:30px;
+        position: absolute;
+        top:0px;
+        width:50px;
+        height:100%;
+        color:white;
+        text-shadow: 0px 0px 2px black;
+        opacity: 0.4;
+        transition: opacity 250ms;
+        span {
+            position: absolute;
+            z-index: 5;
+            display: inline-block;
+            top:50%;
+            margin-top:-15px;
+        }
+    }
+    a.image-control:hover {
+        opacity: 0.8;
+    }
+    a.image-control.next {
+        span {
+            left:10px;
+        }
+        background-image:linear-gradient(to right, transparent ,rgba(0,0,0,0.5));
+        background-image:-moz-linear-gradient(to right, transparent ,rgba(0,0,0,0.5));
+        background-image:-webkit-linear-gradient(to right, transparent ,rgba(0,0,0,0.5));
+        right:0px;
+    }
+    a.image-control.prev {
+        span {
+            right:10px;
+        }
+        background-image:linear-gradient(to left, transparent ,rgba(0,0,0,0.5));
+        background-image:-moz-linear-gradient(to left, transparent ,rgba(0,0,0,0.5));
+        background-image:-webkit-linear-gradient(to left, transparent ,rgba(0,0,0,0.5));
+        left:0px;
+    }
+    .thumbnail {
+        margin:0px;
+    }
+}
