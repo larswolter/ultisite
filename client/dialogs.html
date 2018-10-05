@@ -6,33 +6,33 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span class="fa fa-close"></span>
             </button>
-          <h4 class="modal-title">Suche</h4>
+          <h5 class="modal-title">Suche</h5>
         </div>
         <div class="modal-body">
             {{#if meteorStatus.connected}}
             <div>
                 <div class="btn-group">
-                <button type="button" class="btn btn-secondary btn-mit-teams {{#if isActive "Users"}}checked{{/if}}" data-target="Users">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Users"}}checked{{/if}}" data-target="Users">
                     <span class="fa fa-fw {{#if isActive "Users"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Nutzer
                 </button>
-                <button type="button" class="btn btn-secondary btn-mit-teams {{#if isActive "Tournaments"}}checked{{/if}}" data-target="Tournaments">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Tournaments"}}checked{{/if}}" data-target="Tournaments">
                     <span class="fa fa-fw {{#if isActive "Tournaments"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Turniere
                 </button>
-                <button type="button" class="btn btn-secondary btn-mit-teams {{#if isActive "WikiPages"}}checked{{/if}}" data-target="WikiPages">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "WikiPages"}}checked{{/if}}" data-target="WikiPages">
                     <span class="fa fa-fw {{#if isActive "WikiPages"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Wikiseiten
                 </button>
-                <button type="button" class="btn btn-secondary btn-mit-teams {{#if isActive "Blogs"}}checked{{/if}}" data-target="Blogs">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Blogs"}}checked{{/if}}" data-target="Blogs">
                     <span class="fa fa-fw {{#if isActive "Blogs"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Artikel
                 </button>
-                <button type="button" class="btn btn-secondary btn-mit-teams {{#if isActive "Images"}}checked{{/if}}" data-target="Images">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Images"}}checked{{/if}}" data-target="Images">
                     <span class="fa fa-fw {{#if isActive "Images"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Bilder
                 </button>
-                <button type="button" class="btn btn-secondary btn-mit-teams {{#if isActive "Documents"}}checked{{/if}}" data-target="Documents">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Documents"}}checked{{/if}}" data-target="Documents">
                     <span class="fa fa-fw {{#if isActive "Documents"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Dokumente
                 </button>
@@ -62,16 +62,16 @@
                   <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
                       <span class="fa fa-close"></span>
                   </button>
-                  <h4 class="modal-title">Bestätigung</h4>
+                  <h5 class="modal-title">Bestätigung</h5>
               </div>
               <div class="modal-body">
                   {{options.text}}
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                  <button type="button" class="btn btn-light" data-dismiss="modal">
                       Abbrechen
                   </button>
-                  <button type="button" class="btn btn-secondary action-confirm">
+                  <button type="button" class="btn btn-light action-confirm">
                       Bestätigen
                   </button>
               </div>
@@ -90,16 +90,16 @@
                       <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
                           <span class="fa fa-close"></span>
                       </button>
-                  <h4 class="modal-title">{{#if header}}{{header}}{{else}}Text eingeben{{/if}}</h4>
+                  <h5 class="modal-title">{{#if header}}{{header}}{{else}}Text eingeben{{/if}}</h5>
                   </div>
                   <div class="modal-body">
                       <input type="text" class="form-control text-input" value="{{text}}" autofocus />
                   </div>
                   <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                      <button type="button" class="btn btn-light" data-dismiss="modal">
                           Abbrechen
                       </button>
-                      <button type="submit" class="btn btn-secondary send-text">
+                      <button type="submit" class="btn btn-light send-text">
                           Übernehmen
                       </button>
                   </div>
@@ -119,7 +119,7 @@
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span class="fa fa-close"></span>
                   </button>
-                  <h4 class="modal-title">{{#with this.header}}{{this}}{{else}}Text eingeben{{/with}}</h4>
+                  <h5 class="modal-title">{{#with this.header}}{{this}}{{else}}Text eingeben{{/with}}</h5>
               </div>
               <div class="">
                   {{#if wysiwygLoaded}}
@@ -129,7 +129,7 @@
                   {{/if}}
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                  <button type="button" class="btn btn-light" data-dismiss="modal">
                       Abbrechen
                   </button>
                   <button type="button" class="btn btn-primary action-save">

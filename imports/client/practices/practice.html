@@ -3,7 +3,7 @@
         {{#if settings.showPracticeCalendar}}
         {{>practiceCalendar}}
         {{/if}}
-        <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-12">
+        <div class="offset-lg-1 col-lg-6 col-md-7 col-sm-6 col-12">
             {{>wikipage pageName=settings.wikiPractice}}
         </div>
         <div class="col-lg-4 col-md-5 col-sm-6 col-12">
@@ -15,7 +15,7 @@
                         </div>
                         {{#if currentUser}}
                         <div class="col-4">
-                            <button class="btn btn-secondary pull-right action-new"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-light pull-right action-new"><i class="fa fa-plus"></i></button>
                         </div>
                         {{/if}}
 
@@ -40,9 +40,9 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span class="fa fa-close"></span>
                     </button>
-                    <h4 class="modal-title">
+                    <h5 class="modal-title">
                         Training {{#if this._id}}bearbeiten{{else}}anlegen{{/if}}
-                    </h4>
+                    </h5>
                 </div>
                 {{#autoForm schema=practiceSchema doc=this id="practiceDialogForm"}}
                     <div class="modal-body">
@@ -90,7 +90,7 @@
                             <label>Kartenausschnitt</label>
                             {{#if mapImage}}
                                 <div class="practice-map-image" style="background-image:url('{{mapImage}}')">
-                                    <button class="btn btn-secondary action-clear-image">
+                                    <button class="btn btn-light action-clear-image">
                                         <span class="fa fa-trash"></span>
                                     </button>
                                 </div>
@@ -105,7 +105,7 @@
                       </fieldset>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Abbrechen</button>
+                      <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">Abbrechen</button>
                       <button type="submit" class="btn btn-primary">Speichern</button>
                     </div>
                 {{/autoForm}}
@@ -118,7 +118,7 @@
 
 
 <template name="practiceSmall">
-    <div class="btn btn-secondary btn-sm mini-practice" data-id="{{_id}}">
+    <div class="btn btn-light btn-sm mini-practice" data-id="{{_id}}">
         <strong>{{practiceTime}}</strong>
         <br/> {{hostingTeam}}
     </div>
@@ -175,7 +175,7 @@
     <div class="modal fade" id="practice-dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <button type="button" class="btn btn-secondary pull-right" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-light pull-right" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 {{#with selPractice}}

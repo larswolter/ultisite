@@ -4,20 +4,20 @@
 
 <template name="tournamentUpdate">
     {{#if currentUser}}
-    <div class="modal fade" id="tournamentUpdateDialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                {{#autoForm schema=tournamentSchema collection="UltiSite.Tournaments" doc=this.tournament id="tournamentUpdateForm" type=this.type}}
+    {{#autoForm schema=tournamentSchema collection="UltiSite.Tournaments" doc=this.tournament id="tournamentUpdateForm" type=this.type}}
+        <div class="modal fade" id="tournamentUpdateDialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
                     <div class="modal-header">
+                        {{#if equals type "update"}}
+                            <h5 class="modal-title" id="myModalLabel">Turnierdaten editieren</h5>
+                        {{else}}
+                            <h5 class="modal-title" id="myModalLabel">Turnier eintragen</h5>
+                        {{/if}}
                         <button type="submit" class="confirm">Speichern</button>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span class="fa fa-close"></span>
                         </button>
-                        {{#if equals type "update"}}
-                            <h4 class="modal-title" id="myModalLabel">Turnierdaten editieren</h4>
-                        {{else}}
-                            <h4 class="modal-title" id="myModalLabel">Turnier eintragen</h4>
-                        {{/if}}
                     </div>
                     <div class="modal-body">
                         <fieldset class="row">
@@ -59,10 +59,10 @@
                     <div class="modal-footer d-none d-sm-block">
                         <button type="submit" class="btn btn-primary">Speichern</button>
                     </div>
-                {{/autoForm}}
+                </div>
             </div>
         </div>
-    </div>
+    {{/autoForm}}
     {{/if}}
 </template>
 
@@ -78,7 +78,7 @@
                             <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
                             <span class=""> Team anlegen</span>
                         </button>
-                        <button class="btn btn-secondary action-edit-tournament" title="Turnier editieren" type="button">
+                        <button class="btn btn-light action-edit-tournament" title="Turnier editieren" type="button">
                             <span class="fa fa-edit"></span><span class=""> editieren</span>
                         </button>
                         {{#unless teamObjects.length}}
@@ -90,7 +90,7 @@
                 </div>
                 <div class="btn-group d-block d-md-none pull-right text-right">
                     <div class="dropdown">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -223,7 +223,7 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    <button class="btn btn-secondary btn-block btn-xs toggle-tournament-body" type="button" >
+                    <button class="btn btn-light btn-block btn-xs toggle-tournament-body" type="button" >
                         {{#if tournamentBodyVisible}}
                         <span class="fa fa-caret-up"></span><span class="fa fa-caret-up"></span><span class="fa fa-caret-up"></span>
                         {{else}}
@@ -233,24 +233,26 @@
                 </div>
             </div>
         </div>
+        {{#if over}}
         <div class="container-fluid">
             <div class="row">
                 {{#each teamObjects}}
-                    {{#if over}}
                         {{>teamReport}}
-                    {{else}}
-                        {{>team}}
-                    {{/if}}
                 {{/each}}
             </div>
         </div>
+        {{else}}
+            {{#each teamObjects}}
+                {{>team}}
+            {{/each}}
+        {{/if}}
         {{#if over}}
             {{>fileBrowser inline=true}}
             <div class="card">
                 <div class="card-header element-relative">
                     {{#if currentUser}}
                         <div class="right-aligned-buttons">
-                            <button class="btn btn-secondary action-add-report" title="Bericht anlegen">
+                            <button class="btn btn-light action-add-report" title="Bericht anlegen">
                                 <span class="fa fa-plus"></span> <span class="d-none d-sm-block">Bericht anlegen</span>
                             </button>
                         </div>
@@ -289,7 +291,7 @@
                         <span class="fa fa-plus fa-lg"></span>
                     </button>
                 {{else}}            
-                    <button class="d-block d-md-none btn btn-secondary btn-floating action-add-team" title="Team anlegen" type="button">
+                    <button class="d-block d-md-none btn btn-light btn-floating action-add-team" title="Team anlegen" type="button">
                         <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
                     </button>
                 {{/if}}

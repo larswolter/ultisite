@@ -3,13 +3,13 @@
     {{#each uoodles}}
         <li class="list-group-item no-overflow">
             <div class="blog-preview">
-                <h4 class="blog-title">
+                <h5 class="blog-title">
                     <a href={{pathFor route='uoodle' _id=_id}} >Umfrage: {{name}}</a>
                     <br />
                     <small>
                         Von {{ownerName}} bis zum {{formatDate validUntil}} 
                     </small>
-                </h4>
+                </h5>
                 <div class="blog-container">
                 {{description}}
                 </div>
@@ -26,7 +26,7 @@
         {{else}}
         <div class="card">
             <div class="card-header element-relative">
-                <button class=" d-none d-md-block btn btn-secondary right-aligned-buttons action-add-uoodle">
+                <button class=" d-none d-md-block btn btn-light right-aligned-buttons action-add-uoodle">
                     <span class="fa fa-plus"></span>
                     Hinzufügen
                 </button>
@@ -68,16 +68,16 @@
                 <span ><span class="fa fa-close"></span></span>
             </button>
             {{#unless participants}}
-                <button class="btn btn-secondary action-edit">
+                <button class="btn btn-light action-edit">
                     <span ><span class="fa fa-edit"></span></span>
                 </button>
             {{/unless}}
         {{/if}}
     </div>
-    <h4>
+    <h5>
         <a href="#" class="action-open-uoodle">{{name}}</a><br/>
         <small>Angelegt von {{ownerName}}</small>
-    </h4>
+    </h5>
     <small>{{description}}</small>
 </template>
 
@@ -130,9 +130,9 @@
                     {{#each participantOptions}}
                         <td class={{css}}>
                             {{#if and (equals .. currentUser._id) isOpen}}
-                                <button class="btn btn-secondary btn-xs action-choose" data-value='1'>Ja</button>
-                                <button class="btn btn-secondary btn-xs action-choose" data-value='0'>Evtl.</button>
-                                <button class="btn btn-secondary btn-xs action-choose" data-value='-1'>Nein</button>
+                                <button class="btn btn-light btn-xs action-choose" data-value='1'>Ja</button>
+                                <button class="btn btn-light btn-xs action-choose" data-value='0'>Evtl.</button>
+                                <button class="btn btn-light btn-xs action-choose" data-value='-1'>Nein</button>
                             {{else}}
                                 {{text}}
                             {{/if}}
@@ -146,9 +146,9 @@
                         <th>{{getAlias currentUser}}</th>
                         {{#each options}}
                             <td>
-                                <button class="btn btn-secondary btn-xs action-choose" data-value='1'>Ja</button>
-                                <button class="btn btn-secondary btn-xs action-choose" data-value='0'>Evtl.</button>
-                                <button class="btn btn-secondary btn-xs action-choose" data-value='-1'>Nein</button>
+                                <button class="btn btn-light btn-xs action-choose" data-value='1'>Ja</button>
+                                <button class="btn btn-light btn-xs action-choose" data-value='0'>Evtl.</button>
+                                <button class="btn btn-light btn-xs action-choose" data-value='-1'>Nein</button>
                             </td>
                         {{/each}}
                     </tr>
@@ -167,9 +167,9 @@
                         <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                             <span class="fa fa-close"></span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel">
+                        <h5 class="modal-title" id="myModalLabel">
                             Neuen Uoodle Anlegen
-                        </h4>
+                        </h5>
                     </div>
                     <div class="modal-body">
                         {{#autoForm schema=uoodleSchema collection=uoodleCollection doc=current type=autoFormType id="uoodleAddForm" buttonContent=false}}
@@ -178,7 +178,7 @@
                         {{/autoForm}}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
                         <button type="submit" class="btn btn-primary">Speichern</button>
                     </div>
                 </div>

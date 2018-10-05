@@ -4,7 +4,7 @@
       {{#if isMyTeam}}
       <div class="btn-group d-block d-md-none">
         <div class="dropdown pull-right">
-          <button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">
+          <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-toggle="dropdown" type="button">
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -40,24 +40,24 @@
         <div>
           {{#if currentUser}}
           <div class="btn-group">
-            <button class="btn {{#if iamParticipating}}btn-secondary{{else}}btn-primary{{/if}} action-participate" >
+            <button class="btn {{#if iamParticipating}}btn-light{{else}}btn-primary{{/if}} action-participate" >
               <span class="fa fa-plus"></span> Mitspielen
             </button>
           </div>
           {{/if}} 
           {{#if participantMails}}
-            <a class="btn btn-secondary" href="mailto:{{participantMails}}">
+            <a class="btn btn-light" href="mailto:{{participantMails}}">
               <span class="fa fa-send"></span>
               Mail an das Team
             </a>
           {{/if}}
           {{#if isResponsible}}
-          <button class="btn btn-secondary action-edit-team">
+          <button class="btn btn-light action-edit-team">
             <span class="fa fa-edit"></span> Editieren
           </button>
           {{/if}}
           {{#if isMyTeam}}
-          <button class="btn btn-secondary action-historic-view">
+          <button class="btn btn-light action-historic-view">
             <span class="fa fa-line-chart"></span> Historie
           </button>
           {{/if}}
@@ -195,10 +195,10 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
+          <h5>Für ein Team eintragen</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span class="fa fa-close"></span>
           </button>
-          <h4>Für ein Team eintragen</h4>
         </div>
         <div class="modal-body">
           <form class="" id="participantInsertForm">
@@ -261,10 +261,10 @@
                     <button class="btn btn-success btn-block action-insert" data-value="100" type="button">
                       Sicher
                     </button>
-                    <button class="btn btn-secondary btn-block action-insert" data-value="0" type="button">
+                    <button class="btn btn-light btn-block action-insert" data-value="0" type="button">
                       Kann nicht
                     </button>
-                    <button class="btn btn-secondary btn-block action-insert" data-value="70" type="button">
+                    <button class="btn btn-light btn-block action-insert" data-value="70" type="button">
                       Vielleicht
                     </button>
                     <small>
@@ -283,7 +283,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Abbrechen</button>
+          <button class="btn btn-light" data-dismiss="modal" aria-label="Close">Abbrechen</button>
         </div>
       </div>
     </div>
@@ -364,7 +364,7 @@
           <button aria-label="Close" class="close" data-dismiss="modal" type="button">
             <span class="fa fa-close"></span>
           </button>
-          <h4 class="modal-title" id="myModalLabel">
+          <h5 class="modal-title" id="myModalLabel">
               {{#if team._id}}
                 Team
                 {{team.name}}
@@ -372,7 +372,7 @@
               {{else}}
                 Neues Team anlegen
               {{/if}}
-            </h4>
+            </h5>
         </div>
         <div class="modal-body row">
           <fieldset>
@@ -415,10 +415,10 @@
 <template name="teamCountBar">
   <div class="progress team-player-state text-center">
     {{#if teamCount}}
-      <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{teamCount.percentFull}}%">{{teamCount.full}}</div>
-      <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{teamCount.percentHalf}}%">{{teamCount.half}}</div>
-      <div class="progress-bar progress-bar-disabled" role="progressbar" style="width:{{teamCount.percentRest}}%">{{teamCount.rest}}</div>
-      <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{teamCount.percentOver}}%" title="zu Viele">{{teamCount.over}}</div>
+      <div class="progress-bar bg-success" role="progressbar" style="width:{{teamCount.percentFull}}%">{{teamCount.full}}</div>
+      <div class="progress-bar bg-warning" role="progressbar" style="width:{{teamCount.percentHalf}}%">{{teamCount.half}}</div>
+      <div class="progress-bar bg-disabled" role="progressbar" style="width:{{teamCount.percentRest}}%">{{teamCount.rest}}</div>
+      <div class="progress-bar bg-danger" role="progressbar" style="width:{{teamCount.percentOver}}%" title="zu Viele">{{teamCount.over}}</div>
       {{teamCount.spots}} 
     {{else}}
       {{maxPlayers}}
@@ -427,7 +427,7 @@
   {{!-- 
   {{#if minFemale}}
     <div class="progress team-player-state text-center">
-      <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{teamCount.percentFemales}}%">{{teamCount.females}}</div>
+      <div class="progress-bar bg-success" role="progressbar" style="width:{{teamCount.percentFemales}}%">{{teamCount.females}}</div>
       {{teamCount.missingFemales}}
     </div>
   {{/if}}
@@ -441,7 +441,7 @@
         {{#unless noChangeRights}}
           <span class="d-inline d-sm-none pull-right">
             <div class="dropdown">
-              <button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">
+              <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-toggle="dropdown" type="button">
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
@@ -483,7 +483,7 @@
             </div>
           </span>
           <span class="d-none d-sm-inline">
-          <button class="btn btn-secondary action-historic-view pull-right">
+          <button class="btn btn-light action-historic-view pull-right">
             <span class="fa fa-line-chart"></span> Historie
           </button>
           {{#if teamRemovable}}
@@ -492,19 +492,19 @@
             </button>
           {{/if}}
           {{#unless myTeamState}}
-            <button class="btn btn-secondary action-add-me pull-right" >Mich eintragen</button>
+            <button class="btn btn-light action-add-me pull-right" >Mich eintragen</button>
           {{else}} 
-            <button class="btn btn-secondary action-remove-me pull-right" >Mich austragen</button>
+            <button class="btn btn-light action-remove-me pull-right" >Mich austragen</button>
           {{/unless}}
           
           {{#if equals this.state "dabei"}}
-            <button class="btn btn-secondary action-remove-team pull-right" >Auf nicht angetreten setzen</button>
+            <button class="btn btn-light action-remove-team pull-right" >Auf nicht angetreten setzen</button>
           {{else}} 
-            <button class="btn btn-secondary action-add-team pull-right" >Auf angetreten setzen</button>
+            <button class="btn btn-light action-add-team pull-right" >Auf angetreten setzen</button>
           {{/if}}
           </span>
         {{/unless}}
-        <h4>
+        <h5>
           {{name}}
           {{#unless equals this.state "dabei"}}
           <small>sind nicht angetreten</small>
@@ -512,7 +512,7 @@
           {{#if myTeamState}}
             <span class="fa fa-user text-success" title="{{myTeamState}}"></span>
           {{/if}}
-        </h4>
+        </h5>
       </div>
 
       {{#if currentUser}} 
@@ -539,7 +539,7 @@
         <div class="row">                    
           <div class="image {{#if image}}pointer action-show-team-image{{/if}} col-12 col-sm-4 col-md-3 col-lg-2" 
             style="background-image:url('{{#if image}}{{imageUrl image 160}}{{else}}/placeholder/team.svg{{/if}}'); text-center">
-            <button class="btn btn-secondary btn-sm action-team-image">
+            <button class="btn btn-light btn-sm action-team-image">
               <span class="fa fa-edit"></span>
             </button>
           </div>
@@ -597,7 +597,7 @@
           <button aria-label="Close" class="close" data-dismiss="modal" type="button">
             <span class="fa fa-close"></span>
           </button>
-          <h4 class="modal-title">Historische Ansicht</h4>
+          <h5 class="modal-title">Historische Ansicht</h5>
         </div>
         <div class="modal-body">
           <div class='line'>

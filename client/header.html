@@ -114,13 +114,13 @@
 
 		{{#if currentUser}}
 			<div class="list-group link-list">
-				<a href="{{pathFor route='user' _id=currentUser._id }}" class="list-group-item-action {{#if isActive}}active{{/if}}">
+				<a href="{{pathFor route='user' _id=currentUser._id }}" class="list-group-item list-group-item-action {{#if isActive}}active{{/if}}">
 						Einstellungen
 				</a>
-				<a href="#" class="list-group-item-action action-logout">
+				<a href="#" class="list-group-item list-group-item-action action-logout">
 						Abmelden
 				</a>
-				<a href="#" class="list-group-item-action toggle-user-menu sublinks">
+				<a href="#" class="list-group-item list-group-item-action toggle-user-menu sublinks">
 					<span class="fa fa-arrow-left"></span>
 				</a>
 			</div>
@@ -129,56 +129,56 @@
 			{{#each settings.objectHeaderLinks.links}}
 				{{#if showMenuEntry}}
 					{{#if this.submenu}}
-						<a href="#" class="list-group-item-action sublinks {{#if isActive}}active{{/if}}">
+						<a href="#" class="list-group-item list-group-item-action sublinks {{#if isActive}}active{{/if}}">
                         {{this.text}} <span class="caret"></span>
                     </a>
 						<div class="submenu" role="menu" style="display:none">
 							{{#each this.subLinks}}
-								<a href="{{this.target}}" class="list-group-item-action">
+								<a href="{{this.target}}" class="list-group-item list-group-item-action">
                                 {{this.text}}
                             </a>
 							{{/each}}
 						</div>
 					{{else}}
-						<a href="{{this.target}}" class="list-group-item-action {{#if isActive}}active{{/if}}">
+						<a href="{{this.target}}" class="list-group-item list-group-item-action {{#if isActive}}active{{/if}}">
                         {{this.text}}
                     </a>
 					{{/if}}
 				{{/if}}
 			{{/each}}
-			<a href="{{pathFor route='help'}}" class="list-group-item-action bg-{{this.style}}">
+			<a href="{{pathFor route='help'}}" class="list-group-item list-group-item-action bg-{{this.style}}">
 				<span class="fa fa-question-circle fa-fw"></span> Hilfe
 			</a>
 			{{#if currentUser}}
-				<a href="{{pathFor route='user' _id=currentUser._id}}" class="list-group-item-action bg-{{this.style}}">
+				<a href="{{pathFor route='user' _id=currentUser._id}}" class="list-group-item list-group-item-action bg-{{this.style}}">
 					<span class="fa fa-user fa-fw"></span> Einstellungen
 				</a>
-				<a href="#" class="list-group-item-action bg-{{this.style}} action-logout">
+				<a href="#" class="list-group-item list-group-item-action bg-{{this.style}} action-logout">
 					<span class="fa fa-sign-out fa-fw"></span> Abmelden
 				</a>
-				<a href="#" class="list-group-item-action bg-{{this.style}} action-offline-fetch">
+				<a href="#" class="list-group-item list-group-item-action bg-{{this.style}} action-offline-fetch">
 					<span class="fa fa-download fa-fw"></span> Aktualisieren
 				</a>
 			{{/if}}
 			{{#if isAdmin}}
-				<a href="{{pathFor route='admin'}}" class="list-group-item-action bg-{{this.style}}">
+				<a href="{{pathFor route='admin'}}" class="list-group-item list-group-item-action bg-{{this.style}}">
 					<span class="fa fa-cog fa-fw"></span> Administration
 					{{#with AdminNotifications}}
 						<span class="badge">{{this.count}}</span>
 					{{/with}}
 				</a>
 			{{/if}}
-			<a class="list-group-item-action" href="https://github.com/larswolter/ultisite">
+			<a class="list-group-item list-group-item-action" href="https://github.com/larswolter/ultisite">
 				<span class="fa fa-github fa-fw"></span>  
 				Quellen und Feedback
 			</a>	
 			{{#if settings.wikiDatenschutz}}
-				<a class="list-group-item-action" href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">
+				<a class="list-group-item list-group-item-action" href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">
 					<span class="fa fa-info-circle fa-fw"></span> Datenschutz
 				</a>
 			{{/if}}
 			{{#if settings.wikiImpressum}}
-				<a class="list-group-item-action" href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">
+				<a class="list-group-item list-group-item-action" href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">
 					<span class="fa fa-info-circle fa-fw"></span> Impressum
 				</a>
 			{{/if}}

@@ -6,7 +6,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span class="fa fa-close"></span>
                     </button>
-                    <h4 class="modal-title">Bild / Dokument wählen</h4>
+                    <h5 class="modal-title">Bild / Dokument wählen</h5>
                 </div>
                 <div class="modal-body">
                     <ul class="nav nav-tabs" role="tablist">
@@ -66,13 +66,13 @@
                                 {{/if}}
                             </div>
                             <div class="col-4 text-right">
-                                <button class="btn btn-secondary toggle-gallery-view">
+                                <button class="btn btn-light toggle-gallery-view">
                                     <span class="fa fa-{{#if galleryView}}list{{else}}th{{/if}}"></span>
                                     <span class="visible-lg-inline">
                                         {{#if galleryView}}Liste{{else}}Symbole{{/if}}
                                     </span>
                                 </button>
-                                <button class="btn btn-secondary btn-new-folder">
+                                <button class="btn btn-light btn-new-folder">
                                     <span class="fa fa-folder-o"></span>
                                     <span class="fa fa-plus"></span>
                                     <span class="visible-lg-inline">Neuer Ordner</span>                                    
@@ -135,7 +135,7 @@
                     {{#unless isParent}}
                     <div class="btn-group pull-right" role="group">
                         <button type="button"
-                                class="btn btn-secondary btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                                class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
@@ -197,11 +197,11 @@
                 </div>
                 <div class="col-sm-1 col-2">
                     {{#if needsSelect}}
-                        <button class="btn btn-secondary btn-sm select-file" title="auswählen"><span class="fa fa-check"></span></button>
+                        <button class="btn btn-light btn-sm select-file" title="auswählen"><span class="fa fa-check"></span></button>
                     {{else}}
                     <div class="btn-group pull-right" role="group">
                       <button type="button"
-                              class="btn btn-secondary btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                              class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
                          <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" role="menu">
@@ -256,9 +256,9 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span class="fa fa-close"></span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">
+                    <h5 class="modal-title" id="myModalLabel">
                         {{name}}
-                    </h4>
+                    </h5>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">

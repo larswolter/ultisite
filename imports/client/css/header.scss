@@ -2,7 +2,11 @@
 
 
 .navbar.navbar-light.navbar-fixed-top {
-  display: fixed;
+  position: fixed;
+  top:0px;
+  z-index: 100;
+    padding:0px;
+    padding-bottom:2px;
   margin-bottom: 0px;
   width:100vw;
   min-height: auto;
@@ -83,6 +87,7 @@
     position: fixed;
     bottom: 0px;
     width: 100%;
+    z-index: 100;
     margin-bottom: 0px;
 }
 .network-status {

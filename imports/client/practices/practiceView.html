@@ -18,18 +18,18 @@
     <div class="list-group-item">
         <div class="caption">
             {{#if currentUser}}
-                <button class="btn btn-secondary pull-right action-edit">
+                <button class="btn btn-light pull-right action-edit">
                     <span class="fa fa-edit"></span>
                 </button>
             {{/if}}
-            <h4>
+            <h5>
                 {{#unless hideHostingTeam}}
                     {{hostingTeam}}
                 {{/unless}} 
                 {{weekdayText}} {{startTime}} für {{formatedDuration}}
                 <br />
                 <small>{{skillLevel}}</small>
-            </h4>
+            </h5>
         </div>
         {{#if planned}}
             <div class="caption">

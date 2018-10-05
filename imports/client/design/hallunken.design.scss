@@ -20,7 +20,9 @@ body {
     hr {
         border-color: darken($hallunkenBeige,20%);    
     }
-
+    .list-group-item list-group-item-action {
+        color: rgb(27, 63, 45);
+    }
 
     .navbar-light, .navbar.navbar-light.navbar-fixed-top {
         background-color: $hallunkenGreen;
@@ -72,7 +74,7 @@ body {
     .sidebar {
         background-color: $hallunkenGreen;
         color: $hallunkenOrange;
-        a, a.active,.list-group-item,.list-group-item.active {
+        a, a.active,.list-group-item list-group-item-action,.list-group-item list-group-item-action.active,.list-group-item,.list-group-item.active {
             background-color: transparent;
             border:0px;
             border-radius: 0px;

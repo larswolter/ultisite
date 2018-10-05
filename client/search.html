@@ -2,7 +2,7 @@
 	<div class="form-group {{#unless inlineResults}}dropdown{{/unless}}" 
   style="">
 		{{#if equals type "button"}}
-		  <button class="btn btn-secondary" data-toggle="dropdown">
+		  <button class="btn btn-light" data-toggle="dropdown">
         <span class="{{#if icon}}{{icon}}{{else}}fa fa-search{{/if}}"></span> {{buttonText}}
       </button>
 		{{else}}
@@ -18,7 +18,7 @@
 			{{/if}}
 			{{#each fileSearchResults }}
 			{{#if ../inlineResults}}
-				<a href="#" class="list-group-item-action">
+				<a href="#" class="list-group-item list-group-item-action">
 					{{#if name}}
 						{{#if isImage}}
 							<img src="{{imageUrl id '80x60'}}" title="{{name}}"/> {{name}}

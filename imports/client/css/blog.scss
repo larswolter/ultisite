@@ -1,9 +1,4 @@
 @import "{}/client/lib/custom.bootstrap.import.scss";
-.blog-title {
-    font-size: 1.5em;
-    margin-bottom: 0.7em;
-    margin-top: 1em;
-}
 
 .blog-image {
     width: 320px;
@@ -38,9 +33,6 @@
         position: relative;
         padding-bottom: 5px;
         margin-bottom: 0px;
-        .blog-title {
-            font-size: 1.25em;
-        }
     }
 }
 
@@ -95,10 +87,6 @@
     }
     .panel {
         .blog-preview {
-            h4.blog-title {
-                font-size:1em;
-                margin-top:0px;
-            }
             .blog-container {
                 overflow:hidden;
                 text-overflow: ellipsis;

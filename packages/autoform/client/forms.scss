@@ -1,3 +1,7 @@
+@import '{}/node_modules/bootstrap/scss/_functions.scss';
+@import '{}/node_modules/bootstrap/scss/_variables.scss';
+@import '{}/node_modules/bootstrap/scss/_mixins.scss';
+
 .ultisite-autoform {
     .autoform-checkbox {
         cursor: pointer;
@@ -44,5 +48,6 @@
     }
     .has-error .form-text {
         max-height: 4em;
+        color: $danger;
     }
 }

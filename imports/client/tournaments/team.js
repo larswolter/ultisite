@@ -574,7 +574,7 @@ Template.teamHistoricView.helpers({
       const startOffset = start.diff(entryDate, 'minutes');
       last = moment(block.until).clone();
       return {
-        stateClass: ` ${block.state < 10 ? 'progress-bar-muted' : block.state < 70 ? 'progress-bar-danger' : block.state < 100 ? 'progress-bar-warning' : 'progress-bar-success'}`,
+        stateClass: ` ${block.state < 10 ? 'bg-muted' : block.state < 70 ? 'bg-danger' : block.state < 100 ? 'bg-warning' : 'bg-success'}`,
         width: width * diff,
         offset: startOffset * diff,
       };
@@ -582,7 +582,7 @@ Template.teamHistoricView.helpers({
     const width = last.diff(ende, 'minutes');
     const offset = start.diff(last, 'minutes');
     results.push({
-      stateClass: ` ${this.state < 10 ? 'progress-bar-muted' : this.state < 70 ? 'progress-bar-danger' : this.state < 100 ? 'progress-bar-warning' : 'progress-bar-success'}`,
+      stateClass: ` ${this.state < 10 ? 'bg-muted' : this.state < 70 ? 'bg-danger' : this.state < 100 ? 'bg-warning' : 'bg-success'}`,
       width: width * diff,
       offset: offset * diff,
     });

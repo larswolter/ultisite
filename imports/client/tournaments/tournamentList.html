@@ -34,7 +34,7 @@
                         {{#each plannedTournaments}} 
                             {{header}}
                             <div class="card">
-                                <div class="list-group">
+                                <div class="list-group list-group-flush">
                                 {{#each elements}}
                                     {{#if hasPast}}
                                         {{>pastTournamentListItem}}
@@ -56,7 +56,7 @@
                                 <strong>Gespielte Turniere</strong> 
                                 {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Team gespielt hat"}}
                             </div>
-                            <div class="list-group">
+                            <div class="list-group list-group-flush">
                                 {{#each playedTournaments}} 
                                     {{>pastTournamentListItem}} 
                                 {{else}} 
@@ -68,7 +68,7 @@
                 {{/if}} 
             {{/if}} 
             {{#if currentUser}}
-            <button class="btn btn-secondary btn-floating action-add-tournament" title="Turnier anlegen" type="button">
+            <button class="btn btn-light btn-floating action-add-tournament" title="Turnier anlegen" type="button">
                 <span class="fa fa-plus fa-lg"></span>
             </button>
             {{/if}}
@@ -93,7 +93,7 @@
 <template name="tournamentFilter">
     <div class="tournament-filter">
         <div class="btn-group">
-            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.surface "Alle"}}
                     Untergrund
                 {{else}}
@@ -109,7 +109,7 @@
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.division "Alle"}}
                 Klasse
                 {{else}}
@@ -125,7 +125,7 @@
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.category "Alle"}}
                 Typ
                 {{else}}
@@ -141,7 +141,7 @@
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if filter.year}}{{filter.year}}{{else}}Kommende{{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
@@ -153,7 +153,7 @@
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-secondary btn-mit-teams {{#if filter.withTeams}}checked{{/if}}" data-target="withTeams">
+            <button type="button" class="btn btn-light btn-mit-teams {{#if filter.withTeams}}checked{{/if}}" data-target="withTeams">
                 <span class="fa {{#if filter.withTeams}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                 Mit Teams
             </button>
@@ -163,7 +163,7 @@
 
 
 <template name="detailedTournamentListItem">
-    <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item tournament-list-item" title="{{name}}">
+    <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item list-group-item-action tournament-list-item" title="{{name}}">
         <div class="row">
             <div class="col-12 cutoff-text">
                 <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none pull-right"/>
@@ -201,7 +201,7 @@
 
 <template name="pastTournamentListItem">
     {{#if teamNames}}
-    <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item tournament-list-item" title="{{name}}">
+    <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item list-group-item-action tournament-list-item" title="{{name}}">
         <div class="row">
             <div class="col-12">
                 <span class="badge pull-right" title="Anzahl Berichte">{{reports.length}}</span> 
@@ -223,7 +223,7 @@
 
 
 <template name="tournamentListItem">
-    <a href='{{pathFor "tournament" _id=this._id}}' data-id="{{this._id}}" class="list-group-item tournament-list-item">
+    <a href='{{pathFor "tournament" _id=this._id}}' data-id="{{this._id}}" class="list-group-item list-group-item-action tournament-list-item">
         <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none"/>
         <div class="row">
             <div class="col-2 col-sm-1 {{dateState}}">

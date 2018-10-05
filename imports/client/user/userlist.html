@@ -2,19 +2,19 @@
 	{{#if currentUser}}
 		<div class="card user-list">
 			<div class="card-header">
-				<button class="btn btn-secondary action-create-user" style="margin-left:5px;margin-top:5px;">
+				<button class="btn btn-light action-create-user" style="margin-left:5px;margin-top:5px;">
                 <span class="fa fa-plus"></span>
                 <span class="fa fa-user"></span>
                 <span class="d-none d-sm-inline"> Neuen Nutzer anlegen</span>
             </button>
 				<div class="pull-right">
-					<button type="button" class="btn btn-secondary action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
+					<button type="button" class="btn btn-light action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
                     <span class="fa fa-chevron-left"></span>
                 </button>
-					<button type="button" class="btn btn-secondary disabled">
+					<button type="button" class="btn btn-light disabled">
                     Seite {{paginationPos}} / {{totalPages}}
                 </button>
-					<button type="button" class="btn btn-secondary action-more-users {{#if equals paginationPos totalPages}}disabled{{/if}}">
+					<button type="button" class="btn btn-light action-more-users {{#if equals paginationPos totalPages}}disabled{{/if}}">
                     <span class="fa fa-chevron-right"></span>
                 </button>
 				</div>
@@ -64,19 +64,19 @@
 				{{> Loading}}
 			{{/if}}
 			<div class="card-footer">
-				<button class="btn btn-secondary action-create-user" style="margin-left:5px;margin-top:5px;">
+				<button class="btn btn-light action-create-user" style="margin-left:5px;margin-top:5px;">
                 <span class="fa fa-plus"></span>
                 <span class="fa fa-user"></span>
                 <span class="d-none d-sm-inline"> Neuen Nutzer anlegen</span>
             </button>
 				<div class="pull-right">
-					<button type="button" class="btn btn-secondary action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
+					<button type="button" class="btn btn-light action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
                     <span class="fa fa-chevron-left"></span>
                 </button>
-					<button type="button" class="btn btn-secondary disabled">
+					<button type="button" class="btn btn-light disabled">
                     Seite {{paginationPos}} / {{totalPages}}
                 </button>
-					<button type="button" class="btn btn-secondary action-more-users {{#if equals paginationPos totalPages}}disabled{{/if}}">
+					<button type="button" class="btn btn-light action-more-users {{#if equals paginationPos totalPages}}disabled{{/if}}">
                     <span class="fa fa-chevron-right"></span>
                 </button>
 				</div>
@@ -125,7 +125,7 @@
 		<div class="d-none d-sm-block col-sm-2">
 			{{#if isInRole "club,admin"}}
 				<div class="btn-group type-selector" role="group">
-					<button aria-expanded="false" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" type="button">
+					<button aria-expanded="false" class="btn btn-light dropdown-toggle" data-toggle="dropdown" type="button">
 					{{#if club.state}}{{club.state}}{{else}}Unbekannt{{/if}}
                 </button>
 					<ul class="dropdown-menu" role="menu">
@@ -134,7 +134,7 @@
 						{{/each}}
 					</ul>
 				</div>
-				<button class="btn btn-secondary action-debit">
+				<button class="btn btn-light action-debit">
 					<span class="{{#if profile.debit}}text-danger{{else}}text-success{{/if}}"><span class="fa fa-eur"></span> {{profile.debit}}</span>
 				</button>
 

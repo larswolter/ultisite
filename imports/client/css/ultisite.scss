@@ -1,9 +1,14 @@
 /* CSS declarations go here */
 @import '{}/node_modules/bootstrap/scss/bootstrap.scss';
-@import '../imports/client/fontawesome/font-awesome.scss';
-@import "css/hallunken.design.scss";
+@import '../fontawesome/font-awesome.scss';
+@import '../design/hallunken.design.scss';
+@import 'blog.scss';
+@import 'header.scss';
+@import 'map.scss';
+@import 'search.scss';
+@import 'start.scss';
+@import 'wikipage.scss';
 
-$progress-bar-muted-bg: $gray-300;
 
 .base-layout {
     position: relative;
@@ -20,6 +25,9 @@ $progress-bar-muted-bg: $gray-300;
 
 blockquote {
     font-size:1em;
+}
+label {
+    font-weight: bold;
 }
 .pointer {
     cursor: pointer;    
@@ -156,7 +164,7 @@ blockquote {
     }
     .list-group:after {
         clear:both;
-        content: " ";
+        content: ' ';
         display: table;
     }
 
@@ -211,7 +219,7 @@ blockquote {
     }
 }
 
-.progress-bar-muted {
+.bg-muted {
     background-color: $gray-300;
 }
 
@@ -280,14 +288,14 @@ blockquote {
         background-color: white;
         top: 0px;
         button.close {
-          float:left;
-          margin-top: 0px;
-          margin-right: 15px;
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          margin: 0px;
           opacity: 1.0;
-          padding: 6px 6px; 
         }
         .modal-title {
-            padding: 6px 20px; 
+            padding: 0px 1rem 0px 2rem; 
         }
       }
     }

@@ -44,16 +44,16 @@
 			<div role="tabpanel" class="tab-pane active" id="article">
 				<div class="page-heading">
 					<div class="">
-						<h4 class="d-block d-sm-none">
+						<h5 class="d-block d-sm-none">
 							{{name}}
-						</h4>
+						</h5>
 					</div>
 					{{#if showHistory}}
 					<div class="list-group">
 						{{#each histories}}
 							<div class="list-group-item {{#if equals wikiEntry.contentId _id}}active{{/if}}">
 								Von:{{authorName}}, vom:{{formatDateTime date}}
-								<button class="btn btn-secondary action-select-version {{#if equals wikiEntry.contentId _id}}disabled{{/if}}">
+								<button class="btn btn-light action-select-version {{#if equals wikiEntry.contentId _id}}disabled{{/if}}">
 									anzeigen
 								</button>
 							</div>
@@ -63,7 +63,7 @@
 					{{#if showDiscussions}}
 						<div class="list-group">
 							<div class="list-group-item">
-								<button class="btn btn-secondary action-add-discussion">
+								<button class="btn btn-light action-add-discussion">
 									{{#if discussions.length}}
 										Diskussionsbeitrag hinzufügen
 									{{else}}
@@ -86,14 +86,14 @@
 					{{/if}}
 					{{#if editMode}}
 						{{#unless canEdit}}
-							<h4>
+							<h5>
 								<span class="fa fa-exclamation-triangle text-danger"></span> Diese Seite wird gerade von {{wikiEntry.lockedName}}
 								bearbeitet
-							</h4>
+							</h5>
 						{{else}}
 							{{>ultisiteWysiwyg value=wikiEntry.content source=wikiEntry}}
 							<div class="text-right">
-								<button class="btn btn-secondary action-cancel">Abbrechen</button>
+								<button class="btn btn-light action-cancel">Abbrechen</button>
 								<button class="btn btn-primary action-save">Übernehmen</button>
 							</div>
 						{{/unless}}
@@ -107,7 +107,7 @@
 						{{{content}}}
 					</div>
 				{{else}}
-					<h4><span class="fa fa-exclamation-triangle"></span> Seite nicht gefunden</h4>
+					<h5><span class="fa fa-exclamation-triangle"></span> Seite nicht gefunden</h5>
 				{{/with}}
 			{{else}}
 				{{>Loading}}
@@ -118,7 +118,7 @@
 
 <template name="wikipageOverview">
 	{{#if currentUser}}
-		<h4>Alle Wikiseiten</h4>
+		<h5>Alle Wikiseiten</h5>
 		{{#each wikiPages}}
 			<div title="{{name}}">
 				<a href="{{pathFor route='wikipage' _id=_id}}">{{name}}</a>
@@ -129,7 +129,7 @@
 				{{/if}}
 			</div>
 		{{/each}}
-		<h4>Neue Wikiseite anlegen</h4>
+		<h5>Neue Wikiseite anlegen</h5>
 		<form class="" id="new-wikipage">
 			<div class="form-group">
 				<div class="form-inline">

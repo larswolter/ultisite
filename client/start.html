@@ -2,7 +2,7 @@
     <div class="container-fluid">
         {{#if currentUser}} 
             <div class="row">
-                <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-12 start-content">
+                <div class="offset-lg-1 col-lg-6 col-md-7 col-sm-6 col-12 start-content">
                     <div class="card">
                         <div class="card-header">
                             <strong>Aktuelles</strong>
@@ -30,7 +30,7 @@
             </div>
         {{else}}
             <div class="row">
-                <div class="col-lg-offset-1 col-lg-6 col-md-7 col-sm-6 col-12 start-content">
+                <div class="offset-lg-1 col-lg-6 col-md-7 col-sm-6 col-12 start-content">
                     {{#with settings}} 
                         {{>wikipage pageName=this.wikiStart}} 
                     {{/with}}
@@ -99,7 +99,7 @@
         </a>
     </h5>
     {{#each detail}}
-        <p class="list-group-item-text small cutoff-text">
+        <div class="list-group-item-text small cutoff-text">
             {{formatDateRelative time}} - {{#if alias}}<i>{{alias}}</i>: {{/if}} {{text}}
             {{#if images}}
                 <br />
@@ -109,7 +109,7 @@
                     </a>
                 {{/each}}
             {{/if}}
-        </p>
+        </div>
     {{/each}}
     </div>
 </template>

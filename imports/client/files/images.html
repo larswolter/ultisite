@@ -34,9 +34,9 @@
                             </a>                
                         </div>
                         <div>
-                            <h4>
+                            <h5>
                                 Hängt zusammen mit
-                            </h4>
+                            </h5>
                             {{#each associated}}
                                 {{#unless equals this.type "user"}}
                                     <a href="{{link}}">{{this.name}}</a>
@@ -45,9 +45,9 @@
                             <br/>
                         </div>
                         <div>
-                            <h4>
+                            <h5>
                                 {{settings.multiplePlayers}} auf dem Bild
-                            </h4>
+                            </h5>
                             {{#each associated}}
                                 {{#if equals this.type "user"}}
                                     <a href="{{link}}">{{this.name}}</a><button data-id="{{_id}}" class="btn btn-link remove-associated" style="padding:3px 3px"><span class="fa fa-close"></span></button>
@@ -62,9 +62,9 @@
                         </div>
                         {{#if exif}}
                         <div>
-                            <h4>
+                            <h5>
                                 Weitere Bildinformationen
-                            </h4>
+                            </h5>
                             
                         </div>
                         {{/if}}
