@@ -7,6 +7,11 @@ UltiSite.Tournaments.before.update(function (userId, doc, fieldNames, modifier, 
   modifier.$set.lastChange = new Date();
 });
 
+UltiSite.Tournaments.before.insert(function (userId, doc) {
+  doc.lastChange = new Date();
+  doc.participants = [];
+});
+
 UltiSite.getTeam = function (id) {
   return UltiSite.Tournaments.findOne({ 'teams._id': id }).teams[id];
 };
