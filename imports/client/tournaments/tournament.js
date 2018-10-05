@@ -292,7 +292,7 @@ Template.tournament.helpers({
     let address = {};
     if (t.contactDetails) {
       t.contactDetails.forEach(function (elem) {
-        if (elem.type == 'email') { address = elem; }
+        if (elem.type === 'email') { address = elem; }
       });
     }
     return address;
@@ -302,7 +302,7 @@ Template.tournament.helpers({
 
     return teams.map((team) => {
       return _.extend({
-        participants: this.participants.filter(p => p.team === team._id),
+        participants: (this.participants || []).filter(p => p.team === team._id),
         stateColor: UltiSite.stateColor(team.state),
       }, team);
     });
