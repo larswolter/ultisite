@@ -7,6 +7,11 @@ UltiSite.Tournaments.before.update(function (userId, doc, fieldNames, modifier, 
   modifier.$set.lastChange = new Date();
 });
 
+UltiSite.Tournaments.before.insert(function (userId, doc) {
+  doc.lastChange = new Date();
+  doc.participants = [];
+});
+
 UltiSite.getTeam = function (id) {
   return UltiSite.Tournaments.findOne({ 'teams._id': id }).teams[id];
 };
@@ -20,6 +25,7 @@ UltiSite.getTournamentsStates = function (userId) {
     tournament.participants.filter(p => p.user === userId).forEach((part) => {
       const team = _.find(tournament.teams, t => t._id === part.team);
       teams.push({
+        url: FlowRouter.url('tournament', { _id: tournament._id }),
         name: tournament.name,
         date: moment(tournament.date).format('DD.MM.'),
         city: tournament.address && tournament.address.city,
