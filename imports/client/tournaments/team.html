@@ -8,18 +8,18 @@
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu dropdown-menu-right" role="menu">
-            <li>
+            <li class="dropdown-item">
               <a class="action-edit-team" href="#">
                 <span class="fa fa-edit"></span> editieren
               </a>
             </li>
-            <li>
+            <li class="dropdown-item">
               <a class="action-historic-view" href="#">
                 <span class="fa fa-line-chart"></span> Historie
               </a>
             </li>
             {{#if participantMails}}
-              <li>
+              <li class="dropdown-item">
                 <a href="mailto:{{participantMails}}">
                   <span class="fa fa-send"></span>
                   Mail an das Team
@@ -27,7 +27,7 @@
               </li>
             {{/if}}
             {{#if teamRemovable}}
-            <li>
+            <li class="dropdown-item">
               <a class="team-remove text-danger" title="Team löschen">
                 <span class="fa fa-trash"></span> löschen
               </a>
@@ -81,19 +81,19 @@
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-              <li>
+              <li class="dropdown-item">
                 <a class="action-set-state" data-state="geplant" href="#">Geplant</a>
               </li>
-              <li>
+              <li class="dropdown-item">
                 <a class="bg-warning action-set-state" data-state="angemeldet" href="#">Angemeldet</a>
               </li>
-              <li>
+              <li class="dropdown-item">
                 <a class="bg-success action-set-state" data-state="dabei" href="#">Bestätigt</a>
               </li>
-              <li>
+              <li class="dropdown-item">
                 <a class="bg-danger action-set-state" data-state="auf Warteliste" href="#">auf Warteliste</a>
               </li>
-              <li>
+              <li class="dropdown-item">
                 <a class="bg-danger action-set-state" data-state="abgesagt" href="#">Abgesagt</a>
               </li>
             </ul>
@@ -315,20 +315,20 @@
         <span class="fa fa-caret-down"></span>
       </button>
       <ul class="dropdown-menu" role="menu">
-        <li class="action-participate" data-participation='30'>
+        <li  class="dropdown-item action-participate" data-participation='30'>
           <a href="#">Interesse</a>
         </li>
-        <li>
+        <li class="dropdown-item">
           <a class="bg-warning action-participate" href="#" data-participation='70'>Vielleicht</a>
         </li>
-        <li>
+        <li class="dropdown-item">
           <a class="bg-success action-participate" href="#" data-participation='100'>Sicher</a>
         </li>
-        <li>
+        <li class="dropdown-item">
           <a class="text-muted action-participate" href="#" data-participation='0'>Kann nicht</a>
         </li>
         {{#if isAdmin}}
-          <li>
+          <li class="dropdown-item">
             <a class="action-remove" href="#">Austragen</a>
           </li>
         {{/if}}
@@ -446,13 +446,13 @@
               </button>
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
                 {{#if teamRemovable}}
-                <li>
+                <li class="dropdown-item">
                   <a href="#" class="action-delete-team">
                     <span class="fa fa-trash fa-fw"></span> löschen
                   </a>
                 </li>
                 {{/if}}
-                <li>
+                <li class="dropdown-item">
                 {{#unless myTeamState}}
                   <a href="#" class="action-add-me">
                     <span class="fa fa-sign-in fa-fw"></span> Mich eintragen
@@ -463,7 +463,7 @@
                   </a>
                 {{/unless}}
                 </li>
-                <li>
+                <li class="dropdown-item">
                 {{#if equals this.state "dabei"}}
                   <a href="#" class="action-remove-team">
                     <span class="fa fa-users fa-fw text-muted"></span> Auf nicht angetreten setzen
@@ -474,7 +474,7 @@
                   </a>
                 {{/if}}
                 </li>
-                <li>
+                <li class="dropdown-item">
                   <a href="#" class="action-historic-view">
                     <span class="fa fa-line-chart"></span> Historie
                   </a>

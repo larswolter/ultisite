@@ -11,12 +11,12 @@
             <span class="fa fa-paint-brush" style="{{#if state.color}}color:{{state.color}}{{/if}}"></span>
           </button>
           <ul class="dropdown-menu colors">
-            <li><a href="#" class="forecolor" data-color="black"><span class="fa fa-square" style="color:black"></span></a></li>
-            <li><a href="#" class="forecolor" data-color="gray"><span class="fa fa-square" style="color:gray"></span></a></li>
-            <li><a href="#" class="forecolor" data-color="red"><span class="fa fa-square" style="color:red"></span></a></li>
-            <li><a href="#" class="forecolor" data-color="green"><span class="fa fa-square" style="color:green"></span></a></li>
-            <li><a href="#" class="forecolor" data-color="blue"><span class="fa fa-square" style="color:blue"></span></a></li>
-            <li><a href="#" class="forecolor" data-color="orange"><span class="fa fa-square" style="color:orange"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="forecolor" data-color="black"><span class="fa fa-square" style="color:black"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="forecolor" data-color="gray"><span class="fa fa-square" style="color:gray"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="forecolor" data-color="red"><span class="fa fa-square" style="color:red"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="forecolor" data-color="green"><span class="fa fa-square" style="color:green"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="forecolor" data-color="blue"><span class="fa fa-square" style="color:blue"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="forecolor" data-color="orange"><span class="fa fa-square" style="color:orange"></span></a></li>
           </ul>
         </div>
       </div>
@@ -26,11 +26,11 @@
             <span class="fa fa-header"></span>{{state.heading}} 
           </button>
           <ul class="dropdown-menu headings">
-            <li><a href="#" class="p">Textblock</a></li>
-            <li><a href="#" class="h1">1. Überschrift</a></li>
-            <li><a href="#" class="h2">2. Überschrift</a></li>
-            <li><a href="#" class="h3">3. Überschrift</a></li>
-            <li><a href="#" class="h4">4. Überschrift</a></li>
+             <li class="dropdown-item"><a href="#" class="p">Textblock</a></li>
+             <li class="dropdown-item"><a href="#" class="h1">1. Überschrift</a></li>
+             <li class="dropdown-item"><a href="#" class="h2">2. Überschrift</a></li>
+             <li class="dropdown-item"><a href="#" class="h3">3. Überschrift</a></li>
+             <li class="dropdown-item"><a href="#" class="h4">4. Überschrift</a></li>
           </ul>
         </div>
         <div class="btn-group" role="group" aria-label="...">
@@ -38,10 +38,10 @@
             <span class="fa fa-align-{{state.align}}"></span> 
           </button>
           <ul class="dropdown-menu alignment">
-            <li><a href="#" class="left"><span class="fa fa-align-left"></span></a></li>
-            <li><a href="#" class="right"><span class="fa fa-align-right"></span></a></li>
-            <li><a href="#" class="center"><span class="fa fa-align-center"></span></a></li>
-            <li><a href="#" class="justify"><span class="fa fa-align-justify"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="left"><span class="fa fa-align-left"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="right"><span class="fa fa-align-right"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="center"><span class="fa fa-align-center"></span></a></li>
+             <li class="dropdown-item"><a href="#" class="justify"><span class="fa fa-align-justify"></span></a></li>
           </ul>
         </div>
       {{/unless}}

@@ -101,10 +101,10 @@
                 {{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a data-target="surface" href="#">Alle</a></li>
-                <li class="divider"></li>
+                <li class="dropdown-item"><a data-target="surface" href="#">Alle</a></li>
+                <li class="dropdown-divider"></li>
                 {{#each settings.arraySurfaces}}
-                <li><a data-target="surface" href="#">{{this}}</a></li>
+                <li class="dropdown-item"><a data-target="surface" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
@@ -117,10 +117,10 @@
                 {{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a data-target="division" href="#">Alle</a></li>
-                <li class="divider"></li>
+                <li class="dropdown-item"><a data-target="division" href="#">Alle</a></li>
+                <li class="dropdown-divider"></li>
                 {{#each settings.arrayDivisions}}
-                <li><a data-target="division" href="#">{{this}}</a></li>
+                <li class="dropdown-item"><a data-target="division" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
@@ -133,10 +133,10 @@
                 {{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a data-target="category" href="#">Alle</a></li>
-                <li class="divider"></li>
+                <li class="dropdown-item"><a data-target="category" href="#">Alle</a></li>
+                <li class="dropdown-divider"></li>
                 {{#each settings.arrayCategorys}}
-                <li><a data-target="category" href="#">{{this}}</a></li>
+                <li class="dropdown-item"><a data-target="category" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
@@ -145,10 +145,10 @@
                 {{#if filter.year}}{{filter.year}}{{else}}Kommende{{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a data-target="year" href="#">Kommende</a></li>
-                <li class="divider"></li>
+                <li class="dropdown-item"><a data-target="year" href="#">Kommende</a></li>
+                <li class="dropdown-divider"></li>
                 {{#each tournamentYears}}
-                <li><a data-target="year" href="#">{{this}}</a></li>
+                <li class="dropdown-item"><a data-target="year" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>

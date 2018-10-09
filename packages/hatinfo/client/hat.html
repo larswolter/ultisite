@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header">
                     {{#if isInRole "admin,hatAdmin"}}
-                    <button class="visible-md visible-lg btn btn-primary pull-right action-participate" title="Anmelden" type="button" >
+                    <button class="d-none d-md-block d-lg-block btn btn-primary pull-right action-participate" title="Anmelden" type="button" >
                         <span class="fa fa-plus"></span> Eintragen
                     </button>
                     {{/if}}
@@ -60,7 +60,7 @@
                         {{>hatParticipant}}
                     </ul>
                     {{else}}
-                    <button class="visible-md visible-lg btn btn-primary btn-block action-participate" title="Anmelden" type="button" >
+                    <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button" >
                         <span class="fa fa-plus"></span> Eintragen
                     </button>
                     {{/with}}
@@ -193,7 +193,7 @@
         </button>
         <ul class="dropdown-menu" role="menu">
             {{#each wikiPages}}
-            <li role="presentation">
+            <li class="dropdown-item" role="presentation">
                 <a href="#" role="menuitem" data-name="hatWikipage" data-id="{{_id}}">{{name}}</a>
             </li>
             {{/each}}
@@ -214,13 +214,13 @@
             <span class="fa fa-caret-down"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li role="presentation">
+            <li class="dropdown-item" role="presentation">
                 <a href="#" role="menuitem" data-name="hatSort" data-id="createdAt">createdAt</a>
             </li>
-            <li role="presentation">
+            <li class="dropdown-item" role="presentation">
                 <a href="#" role="menuitem" data-name="hatSort" data-id="payed">payed</a>
             </li>
-            <li role="presentation">
+            <li class="dropdown-item" role="presentation">
                 <a href="#" role="menuitem" data-name="hatSort" data-id="modifiedAt">modifiedAt</a>
             </li>
         </ul>

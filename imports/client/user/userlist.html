@@ -19,7 +19,7 @@
                 </button>
 				</div>
 				<div class="d-none d-sm-block user-list-item">
-					<div class="row user-list-item h5">
+					<div class="row user-list-item">
 						<div class="col-12 col-sm-1">
 							Bild
 							<span class="fa fa-sort" data-sort="profile.avatar"></span>
@@ -130,7 +130,7 @@
                 </button>
 					<ul class="dropdown-menu" role="menu">
 						{{#each settings.arrayClubStates}}
-							<li><a href="#" class="action-club-state" data-value="{{this}}">{{this}}</a></li>
+							<li class="dropdown-item"><a href="#" class="action-club-state" data-value="{{this}}">{{this}}</a></li>
 						{{/each}}
 					</ul>
 				</div>

@@ -11,8 +11,8 @@
                          <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
-                        <li><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
+                        <li class="dropdown-item"><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
+                        <li class="dropdown-item"><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
                       </ul>
                     </div>                    
                     <div class="icon-image action-open-folder">
@@ -53,11 +53,11 @@
              <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="{{file.url}}" target="_blank"><span class="fa fa-download"></span> runterladen</a></li>
-            <li><a href="#" class="edit-file"><span class="fa fa-edit"></span> bearbeiten</a></li>
-            <li><a href="#" class="remove-file"><span class="fa fa-close"></span> löschen</a></li>
+            <li class="dropdown-item"><a href="{{file.url}}" target="_blank"><span class="fa fa-download"></span> runterladen</a></li>
+            <li class="dropdown-item"><a href="#" class="edit-file"><span class="fa fa-edit"></span> bearbeiten</a></li>
+            <li class="dropdown-item"><a href="#" class="remove-file"><span class="fa fa-close"></span> löschen</a></li>
               {{#each fileActions}}
-              <li><a href="#" class="custom-action" > {{text}}</a></li>
+              <li class="dropdown-item"><a href="#" class="custom-action" > {{text}}</a></li>
               {{/each}}
           </ul>
         </div>

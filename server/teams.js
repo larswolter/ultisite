@@ -48,7 +48,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
-    UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: { 'teams.$.remarks': remarks } });
+    UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: { 'teams.$.remarks': remark } });
   },
   teamUpdateImage(teamId, image) {
     check(teamId, String);
@@ -81,7 +81,9 @@ Meteor.methods({
       throw new Meteor.Error('access-denied');
     }
     const upd = {};
-    Object.keys(teamData).forEach(key => upd['teams.$.' + key] = teamData[key]);
+    Object.keys(teamData).forEach((key) => {
+      upd['teams.$.' + key] = teamData[key];
+    });
     UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: upd });
   },
   teamUpdateState(teamId, state) {

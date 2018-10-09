@@ -3,7 +3,8 @@ $hallunkenOrange: rgb(255, 133, 48);
 $hallunkenOrangeDark: rgb(255, 90, 48);
 $hallunkenBeige: rgb(221, 221, 187);
 body {
-    background-color: $hallunkenBeige;    
+    background-color: $hallunkenBeige;   
+    font-size: 14px; 
 }
 
 @keyframes fullSiteAnimation {

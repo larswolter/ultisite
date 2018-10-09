@@ -16,22 +16,22 @@
 							</button>
 							<ul class="dropdown-menu dropdown-menu-right wikipage-nav" role="menu">
 								<li class="dropdown-header">{{name}}</li>
-								<li role="presentation" class="{{#unless showEditStuff}}active{{/unless}}">
+								<li role="presentation" class="dropdown-item {{#unless showEditStuff}}active{{/unless}}">
 									<a href="#" aria-controls="">Artikel</a></li>
-								<li role="presentation" class="{{#if showDiscussions}}active{{/if}}">
+								<li role="presentation" class="dropdown-item {{#if showDiscussions}}active{{/if}}">
 									<a href="#" aria-controls="discussion">Diskussion ({{discussions.length}})</a>
 								</li>
-								<li role="presentation" class="{{#if showEdit}}active{{/if}}">
+								<li role="presentation" class="dropdown-item {{#if showEdit}}active{{/if}}">
 									<a href="#" aria-controls="edit">Bearbeiten</a>
 								</li>
-								<li role="presentation" class="{{#if showHistory}}active{{/if}}">
+								<li role="presentation" class="dropdown-item {{#if showHistory}}active{{/if}}">
 									<a href="#" aria-controls="history">Historie ({{histories.length}})</a>
 								</li>
-								<li role="presentation">
+								<li role="presentation" class="dropdown-item">
 									<a href="#" aria-controls="docs">Dokumente</a>
 								</li>
-								<li class="divider"></li>
-								<li role="presentation">
+								<li class="dropdown-divider"></li>
+								<li role="presentation" class="dropdown-item">
 									<a href="/wikipage">Seitenübersicht</a>
 								</li>
 							</ul>

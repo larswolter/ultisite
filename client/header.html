@@ -81,10 +81,9 @@
 					<ul class="dropdown-menu" role="menu">
 						{{#each this.submenu}}
 							{{#if this.target}}
-								<li><a href="{{this.target}}">{{this.text}}</a></li>
+								<li class="dropdown-item"><a href="{{this.target}}">{{this.text}}</a></li>
 							{{else}}
-								<li>
-									<hr/>
+								<li class="dropdown-divider">
 								</li>
 							{{/if}}
 						{{/each}}
@@ -193,24 +192,24 @@
 			<li class="dropdown-header">
 				{{currentUser.username}} ({{currentUser.profile.name}} {{currentUser.profile.surname}})
 			</li>
-			<li role="presentation">
+			<li  class="dropdown-item" role="presentation">
 				<a class="goto-user-profile" role="menuitem" tabindex="-1" href="{{pathFor route='user' _id=currentUser._id }}">
 					<span class="fa fa-user fa-fw"></span> Einstellungen
 				</a>
 			</li>
-			<li role="presentation">
+			<li class="dropdown-item" role="presentation">
 				<a class="action-logout" role="menuitem" tabindex="-1" href="#">
 					<span class="fa fa-sign-out fa-fw"></span> Abmelden
 				</a>
 			</li>
-			<li role="separator" class="divider"></li>
-			<li role="presentation">
+			<li role="separator" class="dropdown-divider"></li>
+			<li class="dropdown-item" role="presentation">
 				<a class="action-offline-fetch" role="menuitem" tabindex="-1" href="#">
 					<span class="fa fa-download fa-fw"></span> Aktualisieren
 				</a>
 			</li>
 			{{#if isAdmin}}
-				<li role="presentation">
+				<li class="dropdown-item" role="presentation">
 					<a href="{{pathFor route='admin'}}">
 					{{#with AdminNotifications}}
 					<span class="badge pull-right">{{this.count}}</span>

@@ -57,25 +57,25 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-8 btn-height-text">
+                            <div class="col-8 col-lg-6 btn-height-text">
                                 {{#if ../inline}}
                                     Dokumente und Bilder
                                 {{else}}
-                                    <span class="visible-lg-inline">Dateien in</span>
+                                    <span class="d-none visible-xl-inline">Dateien in</span>
                                     {{this.name}}
                                 {{/if}}
                             </div>
-                            <div class="col-4 text-right">
+                            <div class="col-4 col-lg-6 text-right">
                                 <button class="btn btn-light toggle-gallery-view">
                                     <span class="fa fa-{{#if galleryView}}list{{else}}th{{/if}}"></span>
-                                    <span class="visible-lg-inline">
+                                    <span class="d-none d-lg-inline">
                                         {{#if galleryView}}Liste{{else}}Symbole{{/if}}
                                     </span>
                                 </button>
                                 <button class="btn btn-light btn-new-folder">
                                     <span class="fa fa-folder-o"></span>
                                     <span class="fa fa-plus"></span>
-                                    <span class="visible-lg-inline">Neuer Ordner</span>                                    
+                                    <span class="d-none d-lg-inline">Neuer Ordner</span>                                    
                                 </button>
                             </div>
                         {{#if readme}}
@@ -139,8 +139,8 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                        <li><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
-                        <li><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
+                        <li class="dropdown-item"><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
+                        <li class="dropdown-item"><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
                         </ul>
                     </div>
                     {{/unless}}
@@ -204,18 +204,18 @@
                               class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
                          <span class="caret"></span>
                       </button>
-                      <ul class="dropdown-menu" role="menu">
+                      <ul class="dropdown-menu dropdown-menu-right" role="menu">
                         <li class="dropdown-header">Von {{getAlias creator}}</li>
-                        <li class="divide" role="separator"></li>
-                        <li><a href="{{url}}" target="_top"><span class="fa fa-download"></span> runterladen</a></li>
+                        <li class="dropdown-divider" role="separator"></li>
+                        <li class="dropdown-item"><a href="{{url}}" target="_top"><span class="fa fa-download"></span> runterladen</a></li>
                         {{#if isAdmin}}
-                        <li><a href="{{url}}&base64=1" target="_top"><span class="fa fa-download"></span> runterladen old</a></li>
+                        <li class="dropdown-item"><a href="{{url}}&base64=1" target="_top"><span class="fa fa-download"></span> runterladen old</a></li>
                         {{/if}}
                         {{!--
                         <li><a href="#" class="edit-file"><span class="fa fa-edit"></span> bearbeiten</a></li>
                         --}}
                         {{#if or isAdmin (equals userId creator)}}
-                            <li><a href="#" class="remove-file"><span class="fa fa-close"></span> löschen</a></li>
+                            <li class="dropdown-item"><a href="#" class="remove-file"><span class="fa fa-close"></span> löschen</a></li>
                         {{/if}}   
                       </ul>
                     </div>

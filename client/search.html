@@ -10,7 +10,7 @@
 		{{/if}}
 		<ul class="{{#unless inlineResults}}dropdown-menu {{#unless leftMenu}}dropdown-menu-right{{/unless}}{{else}}list-group{{/unless}}" role="menu">
 			{{#if equals type "button"}}
-				<li role="presentation">
+				<li class="dropdown-item" role="presentation">
 					<div class="input-group">
 						<input autofocus="autofocus" type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
 					</div>
@@ -33,7 +33,7 @@
 					{{/if}}
 				</a>
 			{{else}}
-				<li role="presentation">
+				<li class="dropdown-item" role="presentation">
 					{{#if name}}
 						<a href="{{link}}" title="{{name}}">
                             {{#if isImage}}
