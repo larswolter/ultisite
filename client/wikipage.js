@@ -22,7 +22,7 @@ Template.wikipage.onCreated(function () {
       if (this.activeTab.get() === 'history') {
         Meteor.subscribe('ContentVersion', this.contentVersion.get());
       }
-      this.subscribe('WikiPage', FlowRouter.getParam('_id'));
+      FlowRouter.getParam('_id') && this.subscribe('WikiPage', FlowRouter.getParam('_id'));
     });
   }
   this.autorun(() => {
@@ -63,17 +63,17 @@ Template.wikipage.onCreated(function () {
         _id: this.activePage.get()._id,
       }, {
         $set: {
-          locked: Meteor.userId(),
-          lockedName: Meteor.user().username,
-        },
+            locked: Meteor.userId(),
+            lockedName: Meteor.user().username,
+          },
       });
     } else {
       UltiSite.WikiPages.update({
         _id: this.activePage.get()._id,
       }, {
         $unset: {
-          locked: 0,
-        },
+            locked: 0,
+          },
       });
     }
   });
@@ -120,15 +120,15 @@ Template.wikipage.events({
       _id: t.activePage.get()._id,
     }, {
       $set: {
-        editor: Meteor.userId(),
-        content: newContent,
-        lastChange: new Date(),
-      },
+          editor: Meteor.userId(),
+          content: newContent,
+          lastChange: new Date(),
+        },
     }, UltiSite.userFeedbackFunction('Inhalt speichern', null, function () {
-      Meteor.call('storeContentVersion', t.activePage.get()._id, newContent);
-      console.log('saved wikipage content');
-      t.activeTab.set(undefined);
-    }));
+        Meteor.call('storeContentVersion', t.activePage.get()._id, newContent);
+        console.log('saved wikipage content');
+        t.activeTab.set(undefined);
+      }));
   },
 
 });
