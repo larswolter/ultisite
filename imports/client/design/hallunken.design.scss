@@ -24,6 +24,10 @@ body {
     .list-group-item list-group-item-action {
         color: rgb(27, 63, 45);
     }
+    .dropdown-menu,
+    .dropdown-menu > .dropdown-item > a {
+        color: black;
+    }
 
     .navbar-light, .navbar.navbar-light.navbar-fixed-top {
         background-color: $hallunkenGreen;
@@ -44,10 +48,6 @@ body {
         a:active {
             color: $hallunkenOrangeDark;
         }
-        .dropdown-menu,
-        .dropdown-menu a {
-            color: black;
-        }
         .navbar-brand {
             color: $hallunkenOrange;
             font-weight: bold;
@@ -67,6 +67,9 @@ body {
         .navbar-nav > li > a:focus,
         .navbar-nav > li > a:active {
             color: $hallunkenOrangeDark;
+        }
+        .dropdown-menu > .dropdown-item > a {
+            color: black;
         }
     }
     .navbar-light.navbar-footer {

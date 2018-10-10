@@ -8,20 +8,19 @@
 			</div>
 		{{/unless}}
 
-		<div class="row">
-			<div class="col-2 d-block d-sm-none">
-				<a href="#" class="action-toggle-sidebar">
+			<div class="header-group col-2 d-block d-sm-none">
+				<a href="#" class="header-link action-toggle-sidebar">
 					<span class="{{#if AdminNotifications.count}}text-info{{/if}} fa fa-bars fa-lg"></span>
 					<span class="sr-only">Toggle navigation</span>
 				</a>				
 			</div>
-			<div class="d-none d-sm-block col-sm-9 col-md-9 col-lg-10">
+			<div class="header-group d-none d-sm-block col-sm-9 col-md-9 col-lg-10">
 				{{>navLinks}}
 			</div>
-			<div class="col-8 d-block d-sm-none">
+			<div class="header-group col-8 d-block d-sm-none">
 				{{#with sitePageHeader}}
 					{{#if this.link}}
-						<a href="{{this.link}}">
+						<a class="header-link" href="{{this.link}}">
 							{{#if this.back}}
 								{{this.back}}
 							{{else}}
@@ -30,43 +29,42 @@
 						</a>
 						{{#if this.name}}
 							&nbsp;&nbsp;
-							<a href="#">
+							<a href="#" class="header-link">
 								{{this.name}}
 							</a>
 						{{/if}}
 					{{else}}
-							<a href="#">{{this.name}}</a>
+							<a href="#" class="header-link">{{this.name}}</a>
 					{{/if}}
 				{{/with}}
 			</div>
 
-			<div class="col-2 col-sm-3 col-md-3 col-lg-2 text-right">
+			<div class="header-group col-2 col-sm-3 col-md-3 col-lg-2 text-right">
 				{{#if currentUser}}
-					<a href="#" class="action-search {{#if equals routeName 'search'}}active{{/if}}">
+					<a href="#" class="header-link action-search {{#if equals routeName 'search'}}active{{/if}}">
 						<span class="fa fa-search fa-lg"></span>
 					</a>
-					<a href="{{pathFor route='help'}}" class="d-none d-sm-inline {{#if equals routeName 'help'}}active{{/if}}">
+					<a href="{{pathFor route='help'}}" class="header-link d-none d-sm-inline {{#if equals routeName 'help'}}active{{/if}}">
 						<span class="fa fa-question-circle fa-lg"></span>
 					</a>
 					<span class="d-none d-sm-inline dropdown">
-						<a href="#" class="text-default dropdown-toggle"
+						<a href="#" class="header-link text-default dropdown-toggle"
 							data-toggle="dropdown" aria-expanded="true">
 							<span class="fa fa-user fa-lg"></span>
 						</a>
 						{{>userHeader}}
 					</span>
 				{{else}}
-					<a href="#" title="Anmelden" class="btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
+					<a href="#" title="Anmelden" class="header-link btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
 						<span class="fa fa-sign-in fa-lg fa-fw"></span> <span class="d-none d-sm-inline">Anmelden</span>
 					</a>
 				{{/if}}					
 				{{#if isAdmin}}
-					<a href="{{pathFor route='admin'}}" class="d-none d-sm-inline {{#if equals routeName 'admin'}}active{{/if}}">
+					<a href="{{pathFor route='admin'}}" class="header-link d-none d-sm-inline {{#if equals routeName 'admin'}}active{{/if}}">
 						<span class="fa fa-cog fa-lg"></span>
 					</a>
 				{{/if}}
 			</div>
-		</div>
 	</nav>
 </template>
 
@@ -75,7 +73,7 @@
 		{{#if showMenuEntry}}
 			{{#if this.submenu}}
 				<span class="dropdown">
-					<a href="#" class="dropdown-toggle {{../liClass}} {{#if isActive}}active{{/if}}" data-toggle="dropdown" role="button" aria-expanded="false">
+					<a href="#" class="header-link dropdown-toggle {{../liClass}} {{#if isActive}}active{{/if}}" data-toggle="dropdown" role="button" aria-expanded="false">
                         {{this.text}} <span class="caret"></span>
                     </a>
 					<ul class="dropdown-menu" role="menu">
@@ -90,7 +88,7 @@
 					</ul>
 				</span>
 			{{else}}
-				<a class="{{../liClass}} {{#if isActive}}active{{/if}}" href="{{this.target}}">{{this.text}}</a>
+				<a class="{{../liClass}} header-link {{#if isActive}}active{{/if}}" href="{{this.target}}">{{this.text}}</a>
 			{{/if}}
 		{{/if}}
 	{{/each}}
@@ -214,7 +212,7 @@
 					{{#with AdminNotifications}}
 					<span class="badge pull-right">{{this.count}}</span>
 					{{/with}}
-					<span class="fa fa-cog"></span> Admin
+					<span class="fa fa-cog fa-fw"></span> Admin
 				</a>
 				</li>
 			{{/if}}
@@ -229,13 +227,13 @@
 
 <template name="footer">
 	<div class="pull-right">
-	{{#if settings.wikiImpressum}}
-			<a href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">Impressum</a>
-	{{/if}}
-	&nbsp;&nbsp;
-	{{#if settings.wikiDatenschutz}}
-			<a href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">Datenschutz</a>
-	{{/if}}
+		{{#if settings.wikiImpressum}}
+				<a href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">Impressum</a>
+		{{/if}}
+		&nbsp;&nbsp;
+		{{#if settings.wikiDatenschutz}}
+				<a href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">Datenschutz</a>
+		{{/if}}
 	</div>
-	<span class="fa fa-github"></span>  <a href="https://github.com/larswolter/ultisite" target="github">Quellen und Feedback</a>	
+	<a href="https://github.com/larswolter/ultisite" target="github"><span class="fa fa-github"></span> Quellen und Feedback</a>	
 </template>

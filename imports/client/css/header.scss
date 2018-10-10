@@ -10,26 +10,24 @@
   margin-bottom: 0px;
   width:100vw;
   min-height: auto;
-  >.row {
     margin:0px; 
-    >div {
+    >div.header-group {
       height: 40px;
       padding: 10px 15px;
       white-space: nowrap;
-      a {
+      .header-link {
         text-decoration: none;
         padding: 10px 10px;
       }
       @include media-breakpoint-up(sm) {
-        a {
+        .header-link {
           margin-bottom: 2px;
         }
-        a.active {
+        .header-link.active {
           margin-bottom: 0px;
           border-bottom: 3px solid $hallunkenOrange;
         }
       }
-    } 
     >div.d-block d-sm-none {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -119,11 +117,6 @@
 
 @include media-breakpoint-down(xs) {
 
-    .dropdown-menu {
-        > li > a {
-            padding: 8px 20px;
-        }
-    }
     .navbar-nav {
         li {
             float:left;
