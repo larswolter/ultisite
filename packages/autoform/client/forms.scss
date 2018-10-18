@@ -46,7 +46,7 @@
         max-height:0px;
         overflow:hidden;
     }
-    .has-error .form-text {
+    .is-invalid .form-text {
         max-height: 4em;
         color: $danger;
     }

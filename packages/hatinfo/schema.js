@@ -58,6 +58,11 @@ Meteor.startup(function () {
           },
         },
       },
+      years: {
+        type: Number,
+        label: 'Spieljahre',
+        optional: false,
+      },
       createdAt: {
         type: Date,
         label: 'Eingetragen',

@@ -62,7 +62,14 @@ Template.autoForm.events({
     try {
       const ctx = form.schema.newContext();
       if (!ctx.validate(doc)) {
-        console.log('Validation Error', ctx.invalidKeys());
+        const errors = {};
+        ctx.validationErrors().forEach((e) => { errors[e.name] = e.type; });
+        AutoForm.content.update(form.formId, {
+          $set: {
+            errors,
+          },
+        });
+        console.log('Validation Error', ctx.validationErrors());
         return false;
       }
       if (form.collection && (form.type === 'insert')) {
@@ -140,13 +147,13 @@ const helpers = {
     const form = this.form || AutoForm.formData();
     if (!form) { return ''; }
     const errors = (AutoForm.content.findOne(form.formId) || {}).errors;
-    if (errors && errors[Template.instance().data.name]) { return 'has-error'; }
+    if (errors && errors[Template.instance().data.name]) { return 'is-invalid'; }
     const content = (AutoForm.content.findOne(form.formId) || {}).doc;
     if (!content) { return ''; }
     const ctx = form.schema.newContext();
     const valid = ctx.validate(form.schema.clean(content, { getAutoValues: false }), { keys: [Template.instance().data.name] });
-    if (valid) { return 'has-success'; }
-    return 'has-error';
+    if (valid) { return 'is-valid'; }
+    return 'is-invalid';
   },
   isDate() {
     const form = this.form || AutoForm.formData();
@@ -275,7 +282,7 @@ Template.afFieldInput.events({
     }
     return AutoForm.content.update(form.formId, { $pull: value });
   },
-  'keyup input, change input, change textarea, change select': function (evt, tmpl) {
+  'change input, change textarea, change select': function (evt, tmpl) {
     evt.preventDefault();
     if (!this.name) { return; }
     const form = AutoForm.formData();

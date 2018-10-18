@@ -4,7 +4,7 @@ import fs from 'fs';
 
 UltiSite.renderMailTemplate = function (layout, source, context) {
   const compiled = handlebars.compile(layout);
-  handlebars.registerPartial('content', source);
+  source && handlebars.registerPartial('content', source);
 
   return compiled(context);
 };

@@ -116,10 +116,10 @@
           <div class="modal-content">
               {{#with options}}
               <div class="modal-header">
+                  <h5 class="modal-title">{{#with this.header}}{{this}}{{else}}Text eingeben{{/with}}</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span class="fa fa-close"></span>
                   </button>
-                  <h5 class="modal-title">{{#with this.header}}{{this}}{{else}}Text eingeben{{/with}}</h5>
               </div>
               <div class="">
                   {{#if wysiwygLoaded}}

@@ -50,12 +50,12 @@
                         </div>
                     </div>
                     <form class="form-horizontal direct-admin">
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Zuordnung der <a href="/wikipage">Wikiseiten</a></label>
                             <div class="dropdown col-sm-2 wiki-association">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
                                     <small>Start:</small><br /> {{wikiPageName settings.wikiStart}}
-                                    <span class="fa fa-caret-down"></span>
+                                    
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     {{#each wikiPages}}
@@ -68,7 +68,7 @@
                             <div class="dropdown col-sm-2 wiki-association">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
                                     <small>Trainings:</small><br /> {{wikiPageName settings.wikiPractice}}
-                                    <span class="fa fa-caret-down"></span>
+                                    
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     {{#each wikiPages}}
@@ -81,7 +81,7 @@
                             <div class="dropdown col-sm-2 wiki-association">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
                                     <small>Impressum:</small><br /> {{wikiPageName settings.wikiImpressum}}
-                                    <span class="fa fa-caret-down"></span>
+                                    
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     {{#each wikiPages}}
@@ -94,7 +94,7 @@
                             <div class="dropdown col-sm-2 wiki-association">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
                                     <small>Datenschutz:</small><br /> {{wikiPageName settings.wikiDatenschutz}}
-                                    <span class="fa fa-caret-down"></span>
+                                    
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     {{#each wikiPages}}
@@ -107,7 +107,7 @@
                             <div class="dropdown col-sm-2 wiki-association">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
                                     <small>Hilfe:</small><br /> {{wikiPageName settings.wikiHelp}}
-                                    <span class="fa fa-caret-down"></span>
+                                    
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     {{#each wikiPages}}
@@ -118,12 +118,12 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Design</label>
                             <div class="dropdown col-sm-2 wiki-association">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
                                     {{settings.design}}
-                                    <span class="fa fa-caret-down"></span>
+                                    
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     {{#each designs}}
@@ -143,7 +143,7 @@
                                 <input name="themeColor" type="color" class="form-control" value="{{settings.themeColor}}" placeholder="Primärfarbe" title="Primärfarbe">                            
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Bilder</label>
                             {{#each imageProperties}}
                             <div class="col-sm-2">
@@ -154,7 +154,7 @@
                             </div>
                             {{/each}}
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Optionen</label>
                             <div class="col-sm-10">
                                 <label class="radio-inline">
@@ -163,7 +163,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Registrierung</label>
                             <div class="col-sm-8">
                                 <label class="radio-inline">
@@ -183,7 +183,7 @@
                                 <input name="sitePassword" class="form-control" value="" placeholder="Registrierungspasswort" title="Registrierungspasswort">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">E-Mail</label>
                             <div class="col-sm-2">
                                 <input name="emailServer" class="form-control" value="{{settings.emailServer}}" placeholder="smtp://mail.server.de" title="SMTP Server">
@@ -203,7 +203,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Bezeichner</label>
                             <div class="col-sm-3">
                                 <input name="siteTitle" class="form-control" value="{{settings.siteTitle}}" placeholder="Seitentitel" title="Seitentitel">
@@ -221,31 +221,31 @@
                                 <input name="multiplePlayers" class="form-control" value="{{settings.multiplePlayers}}" placeholder="Mehrere Spieler" title="Mehrere Spieler">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Divisionen</label>
                             <div class="col-sm-10">
                                 <input name="arrayDivisions" class="form-control" value="{{settings.arrayDivisions}}" placeholder="a,b,c" >
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Kategorien</label>
                             <div class="col-sm-10">
                                 <input name="arrayCategorys" class="form-control" value="{{settings.arrayCategorys}}" placeholder="a,b,c" >
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Untergründe</label>
                             <div class="col-sm-10">
                                 <input name="arraySurfaces" class="form-control" value="{{settings.arraySurfaces}}" placeholder="a,b,c" >
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Vereinsstatii</label>
                             <div class="col-sm-10">
                                 <input name="arrayClubStates" class="form-control" value="{{settings.arrayClubStates}}" placeholder="a,b,c" >
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Mailinglisten</label>
                             <div class="col-sm-10">
                                 {{#each settings.mailingListConfigs}}
@@ -271,11 +271,9 @@
                             </div>
                         </div>
                         {{#each additionalAdminPageTemplates}}
-                        <div class="form-group">
+                        <div class="form-group row">
                             <label class="col-sm-2 col-form-label">{{this.name}}</label>
-                            <div class="col-sm-10">
-                                {{>Template.dynamic template=this.template}}
-                            </div>
+                            {{>Template.dynamic template=this.template}}
                         </div>
                         {{/each}}
                     </form>

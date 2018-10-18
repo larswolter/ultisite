@@ -21,12 +21,12 @@
                 {{#if isArray}}
                     {{>afArrayField this}}
                 {{else}}
-                    <div class="form-group {{validity}}" title="{{this.name}}">
+                    <div class="form-group" title="{{this.name}}">
                         {{#unless or noLabel (equals autoform.type "hidden")}}
                             <label class="col-form-label">{{this.label}}</label>
                         {{/unless}}
                         {{>afFieldInput this}}
-                        <span class="form-text">{{validityText}}</span>
+                        <span class="invalid-feedback">{{validityText}}</span>
                     </div>
                 {{/if}}
             {{/if}}
@@ -44,7 +44,7 @@
             {{else}}
                 {{#if autoform.options}}
                     {{#if autoform.multi}}
-                        <div>
+                        <div class="{{validity}}">
                             {{#each opt in autoform.options}}
                                 <span class="autoform-checkbox multi" data-value="{{opt.value}}" > 
                                     <span class="fa fa-{{#if isChecked opt.value}}check-{{/if}}square-o fa-fw"></span>
@@ -53,7 +53,7 @@
                             {{/each}}
                         </div>
                     {{else}}
-                        <select class="form-control">
+                        <select class="form-control {{validity}}">
                         <option value="" >
                             {{#if autoform.firstOption}}
                                 {{autoform.firstOption}}
@@ -69,7 +69,7 @@
                 {{else}}
                     {{#if isDate}}
                         <div class="input-group">
-                          <input name="{{name}}" class="form-control" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
+                          <input name="{{name}}" class="form-control {{validity}}" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
                           <span class="input-group-btn">
                             <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <span class="fa fa-calendar"></span>
@@ -80,7 +80,7 @@
                             </span>
                         </div>
                     {{else}}
-                        <input name="{{name}}" type="{{type}}" class="form-control" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
+                        <input name="{{name}}" type="{{type}}" class="form-control {{validity}}" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
                     {{/if}}
                 {{/if}}
             {{/if}}

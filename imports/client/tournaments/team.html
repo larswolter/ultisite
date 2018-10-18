@@ -358,24 +358,24 @@
       <div class="modal-content">
         {{#autoForm schema=teamSchema tournamentId=this.tournamentId doc=team id="teamUpdateForm" type="normal"}}
         <div class="modal-header">
+          <h5 class="modal-title" id="myModalLabel">
+            {{#if team._id}}
+              Team
+              {{team.name}}
+              editieren
+            {{else}}
+              Neues Team anlegen
+            {{/if}}
+          </h5>
           <button class="confirm" type="submit">
             {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
           </button>
           <button aria-label="Close" class="close" data-dismiss="modal" type="button">
             <span class="fa fa-close"></span>
           </button>
-          <h5 class="modal-title" id="myModalLabel">
-              {{#if team._id}}
-                Team
-                {{team.name}}
-                editieren
-              {{else}}
-                Neues Team anlegen
-              {{/if}}
-            </h5>
         </div>
-        <div class="modal-body row">
-          <fieldset>
+        <div class="modal-body">
+          <div class="row">
             <div class="col-6">
               {{> afQuickField name='name'}}
             </div>
@@ -398,9 +398,9 @@
             <div class="col-6">
               {{> afQuickField name='division' options=tournamentDivisions}}
             </div>
-          </fieldset>
+          </div>
         </div>
-        <div class="modal-footer d-none d-sm-block">
+        <div class="modal-footer d-none d-sm-flex">
           <button class="btn btn-primary" type="submit">
             {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
           </button>

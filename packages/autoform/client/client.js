@@ -49,6 +49,11 @@ const AutoForm = {
     }
     return value;
   },
+  getFieldValueNonReactive(fieldName, form) {
+    return Tracker.autorun(() => {
+      return this.getFieldValue(fieldName, form);
+    });
+  },
   getFieldValue(fieldName, form) {
     if (!fieldName) { return; }
     form = AutoForm.formData(form);

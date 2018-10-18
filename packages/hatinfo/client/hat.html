@@ -133,9 +133,12 @@
             <strong class="col-6 col-sm-8 col-md-9 {{#if isInRole "admin,hatAdmin"}}participant-entry{{/if}}">
                 <span class="fa fa-envelope-o {{#if confirmed}}text-success{{else}}text-muted{{/if}}"></span>
                 <span class="fa fa-money {{#if hasPayed}}text-success{{else}}text-muted{{/if}}"></span>
-                
-                {{name}}
-                <small> aus {{city}} - {{hometeam}}</small>
+                {{#if this.name}}
+                    {{name}}
+                    <small> aus {{city}} - {{hometeam}}</small>
+                {{else}}
+                    Irgendjemand
+                {{/if}}
             </strong>
             <div class="col-6 col-sm-4 col-md-3">
                 <div class="progress text-center">
@@ -189,7 +192,7 @@
     <div class="dropdown col-sm-2 wiki-association">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
             HatInfo: {{wikiPageName settings.hatWikipage}}
-            <span class="fa fa-caret-down"></span>
+            
         </button>
         <ul class="dropdown-menu" role="menu">
             {{#each wikiPages}}
@@ -211,7 +214,7 @@
     <div class="dropdown col-sm-3 wiki-association">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
             Sortierung: {{settings.hatSort}}
-            <span class="fa fa-caret-down"></span>
+            
         </button>
         <ul class="dropdown-menu" role="menu">
             <li class="dropdown-item" role="presentation">

@@ -29,10 +29,13 @@ Meteor.methods({
       throw new Meteor.Error('Teilnehmer mit dieser E-Mail exisitiert schon!');
     }
     UltiSite.HatInfo.HatParticipants.insert(participant);
+    const template = Assets.getText('private/confirm.html');
     UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
-      `Hallo ${participant.name}, \n\n bitte öffne den folgenden Link, um deine Anmeldung beim HitHat zu bestätigen.\n\n${
-      Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`)
-      }\n\nViele Grüße\n${UltiSite.settings().teamname}`);
+      UltiSite.renderMailTemplate(template, null, {
+        participant,
+        team: UltiSite.settings().teamname,
+        url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
+      }));
     return 'inserted';
   },
   hatResendMail(accessKey) {
@@ -41,10 +44,13 @@ Meteor.methods({
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
     const participant = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
+    const template = Assets.getText('private/confirm.html');
     UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
-      `Hallo ${participant.name}, \n\n bitte öffne den folgenden Link, um deine Anmeldung beim HitHat zu bestätigen.\n\n${
-      Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`)
-      }\n\nViele Grüße\n${UltiSite.settings().teamname}`);
+      UltiSite.renderMailTemplate(template, null, {
+        participant,
+        team: UltiSite.settings().teamname,
+        url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
+      }));
   },
   hatParticipationPayed(accessKey) {
     check(accessKey, String);
