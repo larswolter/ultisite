@@ -84,7 +84,7 @@
     }
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
     .tournament-filter-offset {
         margin-top: 50px;
     }

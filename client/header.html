@@ -2,22 +2,22 @@
 	{{#if preHeader}} {{>Template.dynamic template=preHeader }} {{/if}}
 	<nav class="navbar navbar-light navbar-fixed-top">
 		{{#unless screenSizeMobile}}
-			<div class="title-image d-none d-sm-block" style="height:{{settings.titleImageHeight}}px">
+			<div class="title-image d-none d-md-block" style="height:{{settings.titleImageHeight}}px">
 				<div style="background-image:url('{{imageUrl settings.imageTitleImage}}')"> </div>
 				<img src="{{imageUrl settings.imageLogo}}" />
 			</div>
 		{{/unless}}
 
-			<div class="header-group col-2 d-block d-sm-none">
+			<div class="header-group col-2 d-block d-md-none">
 				<a href="#" class="header-link action-toggle-sidebar">
 					<span class="{{#if AdminNotifications.count}}text-info{{/if}} fa fa-bars fa-lg"></span>
 					<span class="sr-only">Toggle navigation</span>
 				</a>				
 			</div>
-			<div class="header-group d-none d-sm-block col-sm-9 col-md-9 col-lg-10">
+			<div class="header-group d-none d-md-block col-md-9 col-lg-10">
 				{{>navLinks}}
 			</div>
-			<div class="header-group col-8 d-block d-sm-none">
+			<div class="header-group col-8 d-block d-md-none">
 				{{#with sitePageHeader}}
 					{{#if this.link}}
 						<a class="header-link" href="{{this.link}}">
@@ -39,15 +39,15 @@
 				{{/with}}
 			</div>
 
-			<div class="header-group col-2 col-sm-3 col-md-3 col-lg-2 text-right">
+			<div class="header-group col-2 col-md-3 col-lg-2 text-right">
 				{{#if currentUser}}
 					<a href="#" class="header-link action-search {{#if equals routeName 'search'}}active{{/if}}">
 						<span class="fa fa-search fa-lg"></span>
 					</a>
-					<a href="{{pathFor route='help'}}" class="header-link d-none d-sm-inline {{#if equals routeName 'help'}}active{{/if}}">
+					<a href="{{pathFor route='help'}}" class="header-link d-none d-md-inline {{#if equals routeName 'help'}}active{{/if}}">
 						<span class="fa fa-question-circle fa-lg"></span>
 					</a>
-					<span class="d-none d-sm-inline dropdown">
+					<span class="d-none d-md-inline dropdown">
 						<a href="#" class="header-link text-default dropdown-toggle"
 							data-toggle="dropdown" aria-expanded="true">
 							<span class="fa fa-user fa-lg"></span>
@@ -56,11 +56,11 @@
 					</span>
 				{{else}}
 					<a href="#" title="Anmelden" class="header-link btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
-						<span class="fa fa-sign-in fa-lg fa-fw"></span> <span class="d-none d-sm-inline">Anmelden</span>
+						<span class="fa fa-sign-in fa-lg fa-fw"></span> <span class="d-none d-md-inline">Anmelden</span>
 					</a>
 				{{/if}}					
 				{{#if isAdmin}}
-					<a href="{{pathFor route='admin'}}" class="header-link d-none d-sm-inline {{#if equals routeName 'admin'}}active{{/if}}">
+					<a href="{{pathFor route='admin'}}" class="header-link d-none d-md-inline {{#if equals routeName 'admin'}}active{{/if}}">
 						<span class="fa fa-cog fa-lg"></span>
 					</a>
 				{{/if}}

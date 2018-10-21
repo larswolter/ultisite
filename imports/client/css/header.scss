@@ -115,7 +115,7 @@
     }
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
 
     .navbar-nav {
         li {

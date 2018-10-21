@@ -1,7 +1,7 @@
 <template name="tournamentList">
     <div>
         <div class="row tournament-filter-offset">
-            <div class="col-12 d-block d-sm-none tournament-tabs navbar-light">
+            <div class="col-12 d-block d-md-none tournament-tabs navbar-light">
                 {{#if currentUser}}
                     <a href="#" class="{{#if showPlanned}}active{{/if}}" data-target="planned" role="tab">Geplant</a>
                     <a href="#" class="{{#if showPlayed}}active{{/if}}" data-target="played" role="tab">Gespielt</a> 
@@ -9,12 +9,12 @@
             </div>
             {{#if currentUser}} 
                 {{#if showPlanned}}
-                    <div class="col-12 col-sm-8 col-md-7">
+                    <div class="col-12 col-md-7">
                         <div class="card">
                             <div class="card-header">
                                 <button class="btn btn-link pull-right action-toggle-filter" type="button">
                                     <span class="fa fa-filter"></span> 
-                                    <span class="d-none d-sm-inline">
+                                    <span class="d-none d-md-inline">
                                         Filter 
                                         {{#if showFilter}}
                                             ausblenden
@@ -50,9 +50,9 @@
                     </div>
                 {{/if}} 
                 {{#if showPlayed}}
-                    <div class="col-12 col-sm-4 col-md-5">
+                    <div class="col-12 col-md-5">
                         <div class="card">
-                            <div class="card-header d-none d-sm-block">
+                            <div class="card-header d-none d-md-block">
                                 <strong>Gespielte Turniere</strong> 
                                 {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Team gespielt hat"}}
                             </div>

@@ -13,7 +13,7 @@
 
 
 <template name="Loading">
-	<div class="text-center text-muted" style="margin:25px;">
+	<div class="text-center text-muted" style="padding:25px;">
 		{{#if meteorStatus.connected}}
 			<span class="fa fa-spinner fa-spin fa-3x"></span>
 			<h2>
@@ -34,7 +34,7 @@
 </template>
 
 <template name="Empty">
-	<div class="text-center text-muted" style="margin:25px;">
+	<div class="text-center text-muted" style="padding:25px;">
 		{{#if icon}}
 			<span class="fa fa-{{icon}} fa-3x"></span>
 		{{else}}
@@ -46,7 +46,7 @@
 	</div>
 </template>
 <template name="EmptySmall">
-	<div class="text-center text-muted" style="margin:15px;">
+	<div class="text-center text-muted" style="padding:15px;">
 		<span class="fa fa-list"></span>
 		{{#if text}}{{text}}{{else}}Keine Einträge vorhanden{{/if}}
 	</div>
