@@ -1,4 +1,7 @@
 .hat-info {
+    .card {
+        margin-bottom: 10px;
+    }
     .participant-entry {
         cursor: pointer;
     }
@@ -6,10 +9,6 @@
         opacity:0.5;
     }
     .list-group-item {
-        height: 42px;
-        @media (max-width:765px) {
-            height: 60px;
-        }
         overflow:hidden;
         transition: all 400ms;
         .progress.text-center {

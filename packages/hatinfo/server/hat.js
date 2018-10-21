@@ -1,8 +1,11 @@
+import { moment } from 'meteor/momentjs:moment';
 import { check } from 'meteor/check';
 import { Random } from 'meteor/random';
 import { Roles } from 'meteor/alanning:roles';
 
 Meteor.startup(function () {
+  UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
+
   if (!_.find(Roles.getAllRoles().fetch(), r => r.name === 'hatAdmin')) {
     Roles.createRole('hatAdmin');
   }
@@ -13,9 +16,27 @@ Meteor.startup(function () {
 Meteor.methods({
   hatConfirmParticipant(accessKey) {
     check(accessKey, String);
-    UltiSite.HatInfo.HatParticipants.update({ accessKey }, { $set: { confirmed: true } });
+    const part = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
+    if (part.allowPublic) {
+      UltiSite.HatInfo.HatParticipants.update({ accessKey }, {
+        $set: {
+          confirmed: true,
+          public: {
+            name: part.name,
+            city: part.city,
+            hometeam: part.hometeam,
+          },
+        },
+      });
+    } else {
+      UltiSite.HatInfo.HatParticipants.update({ accessKey }, {
+        $set: { confirmed: true },
+      });
+    }
   },
   hatParticipate(p) {
+    check(p, Object);
+
     const participant = _.clone(p);
     participant.createdAt = new Date();
     participant.modifiedAt = new Date();
@@ -66,22 +87,36 @@ Meteor.methods({
     return 'payed';
   },
   hatUpdateParticipation(participant) {
+    check(participant, Object);
+    check(participant.accessKey, String);
     const part = UltiSite.HatInfo.HatParticipants.findOne({ accessKey: participant.accessKey });
     if (!part) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
+    if (!Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+      participant = _.pick(participant, 'name', 'city', 'hometeam', 'strength', 'years', 'allowPublic');
+    }
     participant.modifiedAt = new Date();
 
-    if (Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
-      UltiSite.HatInfo.HatParticipants.update(part._id, { $set: participant });
+    if (participant.allowPublic && part.confirmed) {
+      UltiSite.HatInfo.HatParticipants.update(part._id, {
+        $set: {
+          ...participant,
+          public: {
+            ..._.pick(participant, 'name', 'city', 'hometeam'),
+          },
+        },
+      });
     } else {
       UltiSite.HatInfo.HatParticipants.update(part._id, {
-        $set: _.pick(participant, 'name', 'city', 'hometeam', 'strength', 'modifiedAt'),
+        $set: participant,
+        $unset: { public: 1 },
       });
     }
     return 'updated';
   },
   hatRemoveParticipation(accessKey) {
+    check(accessKey, String);
     const part = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
     if (!part) { throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt'); }
     UltiSite.HatInfo.HatParticipants.remove(part._id);
@@ -91,7 +126,9 @@ Meteor.methods({
 
 Meteor.publish('hatParticipants', function (limit, search) {
   const sort = {};
-  if (UltiSite.settings().hatSort) { sort[UltiSite.settings().hatSort] = 1; }
+  if (UltiSite.settings().hatSort) {
+    sort[UltiSite.settings().hatSort] = 1;
+  }
   sort.createdAt = 1;
   const filter = {
     hatId: UltiSite.settings().hatId || undefined,
@@ -110,10 +147,9 @@ Meteor.publish('hatParticipants', function (limit, search) {
   return UltiSite.HatInfo.HatParticipants.find(filter, {
     sort,
     fields: {
-      name: 1,
       strength: 1,
-      city: 1,
-      hometeam: 1,
+      years: 1,
+      public: 1,
       createdAt: 1,
       confirmed: 1,
       payed: 1,
@@ -121,6 +157,7 @@ Meteor.publish('hatParticipants', function (limit, search) {
   });
 });
 Meteor.publish('hatParticipant', function (accessKey) {
+  check(accessKey, String);
   return UltiSite.HatInfo.HatParticipants.find({ accessKey });
 });
 

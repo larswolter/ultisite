@@ -63,6 +63,11 @@ Meteor.startup(function () {
         label: 'Spieljahre',
         optional: false,
       },
+      allowPublic: {
+        type: Boolean,
+        label: 'Mein Name, Stadt und Heimatteam sollen allen gezeigt werden',
+        optional: false,
+      },
       createdAt: {
         type: Date,
         label: 'Eingetragen',
