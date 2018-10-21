@@ -160,6 +160,11 @@ const helpers = {
     if (form.schema.getQuickTypeForKey(this.name) === 'date') return true;
     return false;
   },
+  isBoolean() {
+    const form = this.form || AutoForm.formData();
+    if (form.schema.getQuickTypeForKey(this.name) === 'boolean') return true;
+    return false;
+  },
   isChecked(option) {
     const form = this.form || AutoForm.formData();
     if (!form) { return; }
@@ -171,6 +176,12 @@ const helpers = {
       if (option && Array.isArray(value)) { return _.contains(value, option); }
       return !!value;
     }
+  },
+  hasNoLabel() {
+    const form = this.form || AutoForm.formData();
+    return this.noLabel ||
+      (form.schema.getQuickTypeForKey(this.name) === 'boolean') ||
+      (this.autoform.type === 'hidden');
   },
   getFieldValue() {
     const form = this.form || AutoForm.formData();
@@ -281,6 +292,16 @@ Template.afFieldInput.events({
       return AutoForm.content.update(form.formId, { $addToSet: value });
     }
     return AutoForm.content.update(form.formId, { $pull: value });
+  },
+  'click .autoform-checkbox.boolean': function (evt, tmpl) {
+    evt.preventDefault();
+    const form = AutoForm.formData();
+    if (!this.name) { return; }
+    if (!form) { return; }
+    const value = {};
+    value[`doc.${AutoForm.arrayCheck(this.name)}`] = !AutoForm.getFieldValue(this.name);
+    console.log('click boolean:', form, value);
+    debUpdateValue(form.formId, value);
   },
   'change input, change textarea, change select': function (evt, tmpl) {
     evt.preventDefault();

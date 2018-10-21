@@ -57,7 +57,7 @@ const AutoForm = {
   getFieldValue(fieldName, form) {
     if (!fieldName) { return; }
     form = AutoForm.formData(form);
-    const content = (AutoForm.content.findOne(form && form.formId) || {}).doc;
+    const content = (AutoForm.content.findOne(form && form.formId || {}) || {}).doc;
     if (content) {
       let value = content;
       this.arrayCheck(fieldName).split('.').forEach((x) => { value = value && value[x]; });
