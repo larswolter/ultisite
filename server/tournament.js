@@ -191,7 +191,7 @@ Meteor.methods({
 
 Meteor.startup(function () {
   UltiSite.teamDrawings = function () {
-    UltiSite.Tournament.find({
+    UltiSite.Tournaments.find({
       date: {
         $gte: moment().startOf('day').toDate(),
       },
