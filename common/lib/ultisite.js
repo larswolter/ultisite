@@ -187,7 +187,7 @@ _.extend(UltiSite, {
           if (elem.type === 'team') {
             elem = _.extend({
               link: FlowRouter.path('tournament', {
-                _id: elem.tournamentId,
+                _id: (UltiSite.Tournaments.findOne({ 'team._id': elem._id }) || elem)._id,
               }),
             }, elem);
           } else if (elem.type === 'folder') {

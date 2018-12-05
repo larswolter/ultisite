@@ -291,9 +291,9 @@ Meteor.methods({
       if (err) { throw err; }
 
       Meteor.call('addEvent', {
-        type: 'team',
+        type: 'tournament',
         userId: this.userId,
-        _id: teamId,
+        _id: tournament._id,
         text: (this.userId === user._id ? '' : `${user.username}: `) +
           UltiSite.textState(params.state) + (params.comment ? ` und sagt: ${params.comment}` : ''),
       });
