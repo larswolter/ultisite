@@ -99,10 +99,10 @@ const userHelper = {
       target: this._id,
       type: 'playedTournaments',
     }, {
-        sort: {
+      sort: {
           'data.date': -1,
         },
-      }) || {
+    }) || {
         data: [],
       }).data;
     data.forEach(function (elem) {
@@ -204,16 +204,16 @@ Template.user.events({
       Meteor.users.update({
         _id: FlowRouter.getParam('_id'),
       }, {
-          $set: modifier,
-        });
+        $set: modifier,
+      });
 
       Meteor.users.update({
         _id: FlowRouter.getParam('_id'),
       }, {
-          $pull: {
+        $pull: {
             'profile.contactDetails': null,
           },
-        });
+      });
     });
   },
   'click .user-contacts .type-selector a': function (e, t) {
@@ -223,21 +223,21 @@ Template.user.events({
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $set: modifier,
-      }, UltiSite.userFeedbackFunction('Kontaktinfo speichern'));
+      $set: modifier,
+    }, UltiSite.userFeedbackFunction('Kontaktinfo speichern'));
   },
   'click .user-contacts .btn-add-contact': function (e, t) {
     e.preventDefault();
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $push: {
+      $push: {
           'profile.contactDetails': {
             type: '',
             detail: '',
           },
         },
-      });
+    });
   },
   'click .action-remove-role': function (evt) {
     evt.preventDefault();
@@ -278,8 +278,8 @@ Template.user.events({
     Meteor.users.update({
       _id: userId,
     }, {
-        $set: modifier,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
+      $set: modifier,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
         if (name === 'username') {
           Meteor.call('correctParticipants', userId);
         }
@@ -297,8 +297,8 @@ Template.user.events({
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $set: toSet,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode));
+      $set: toSet,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode));
   },
   'change .user-base .opt-editable-field,.user-base .radio-select': function (e, t) {
     const value = t.$(e.currentTarget).val();
@@ -311,8 +311,8 @@ Template.user.events({
     Meteor.users.update({
       _id: userId,
     }, {
-        $set: toSet,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
+      $set: toSet,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
         if (name === 'profile.sex') {
           Meteor.call('correctParticipants', userId);
         }
@@ -330,17 +330,8 @@ Template.user.events({
   },
 });
 
+
 Template.userCreateDialog.onCreated(function () {
-  const self = this;
-  self.setupNeeded = new ReactiveVar(false);
-  Meteor.call('setupNeeded', function (err, res) {
-    if (res) {
-      self.setupNeeded.set(true);
-    }
-  });
-  this.autorun(function () {
-    if (self.setupNeeded.get()) { UltiSite.showModal('userCreateDialog'); }
-  });
 });
 Template.userCreateDialog.events({
   'click button[type="submit"]': function (evt) {
@@ -349,7 +340,7 @@ Template.userCreateDialog.events({
 
 Template.userCreateDialog.helpers({
   setupNeeded() {
-    return Template.instance().setupNeeded.get();
+    return Template.instance().data && Template.instance().data.setupNeeded;
   },
   userSchema() {
     if (Meteor.userId() || (UltiSite.settings().siteRegistration !== 'password')) { return UltiSite.schemas.user.get(); }

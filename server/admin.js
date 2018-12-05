@@ -1,6 +1,6 @@
 /* global __meteor_runtime_config__ */
 
-UltiSite.Settings = new Meteor.Collection("Settings");
+UltiSite.Settings = new Meteor.Collection('Settings');
 
 function syncSettings() {
   _.extend(Meteor.settings, UltiSite.Settings.findOne() || {});
@@ -14,19 +14,25 @@ function syncSettings() {
     }
   });
   __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (UltiSite.Folders.findOne({
-    name: "/",
+    name: '/',
   }) || {})._id;
   WebAppInternals.generateBoilerplate();
   console.log('synced settings');
   return __meteor_runtime_config__.PUBLIC_SETTINGS;
 }
 Meteor.startup(function () {
+  if (!UltiSite.Settings.findOne()) {
+    UltiSite.Settings.insert({});
+  }
   syncSettings();
 });
 
 Meteor.methods({
   updateSettings(modifier) {
-    if (!UltiSite.isAdmin(this.userId)) { throw new Meteor.error('access-denied', 'Zugriff nur für Admins'); }
+    if (!UltiSite.isAdmin(this.userId)) {
+      throw new Meteor.error('access-denied', 'Zugriff nur für Admins');
+    }
+    console.log('updating settings', modifier);
     UltiSite.Settings.update({}, modifier);
     return syncSettings();
   },
@@ -34,37 +40,37 @@ Meteor.methods({
     Meteor.call('cleanDatabases');
     Meteor.call('createDatabases');
     Accounts.setPassword(Meteor.users.findOne({
-      'emails.address': "lars@larswolter.de",
-    })._id, "blubs");
+      'emails.address': 'lars@larswolter.de',
+    })._id, 'blubs');
   },
   queryCollectionStatus() {
     return [
       {
-        name: "Settings",
+        name: 'Settings',
         count: UltiSite.Settings.find().count(),
       },
       {
-        name: "Users",
+        name: 'Users',
         count: Meteor.users.find().count(),
       },
       {
-        name: "Tournaments",
+        name: 'Tournaments',
         count: UltiSite.Tournaments.find().count(),
       },
       {
-        name: "Files",
+        name: 'Files',
         count: UltiSite.Images.find().count() + UltiSite.Documents.find().count(),
       },
       {
-        name: "Practices",
+        name: 'Practices',
         count: UltiSite.Practices.find().count(),
       },
       {
-        name: "Events",
+        name: 'Events',
         count: UltiSite.Events.find().count(),
       },
       {
-        name: "WikiPages",
+        name: 'WikiPages',
         count: UltiSite.WikiPages.find().count(),
       },
     ];

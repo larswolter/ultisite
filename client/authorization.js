@@ -1,50 +1,60 @@
+
+Meteor.startup(function () {
+  Meteor.call('setupNeeded', function (err, res) {
+    if (res) {
+      console.log('checked, setup needed:', res);
+      UltiSite.showModal('userCreateDialog', { setupNeeded: true }, { dynamicImport: '/imports/client/user/user.js' });
+    }
+  });
+});
+
 Template.loginDialog.events({
-  'shown.bs.modal #loginDialog'(e, t) {
+  'shown.bs.modal #loginDialog': function(e, t) {
     Tracker.afterFlush(function () {
-      t.$("#loginEmail").focus();
+      t.$('#loginEmail').focus();
     });
   },
-  'submit #loginDialogForm'(event, template) {
+  'submit #loginDialogForm': function(event, template) {
     event.preventDefault();
-    Meteor.loginWithPassword(template.find("#loginEmail").value, template.find("#loginPassword").value, function (err) {
+    Meteor.loginWithPassword(template.find('#loginEmail').value, template.find('#loginPassword').value, function (err) {
       if (err) {
-        UltiSite.State.set("loginMessage", {
+        UltiSite.State.set('loginMessage', {
           type: 'danger',
           msg: `Anmelden fehlgeschlagen:${err}`,
         });
       } else {
-        UltiSite.State.set("loginMessage", undefined);
+        UltiSite.State.set('loginMessage', undefined);
         Tracker.afterFlush(function () {
           $('#loginDialog').modal('hide');
         });
       }
     });
   },
-  'click .btn-register'(e) {
+  'click .btn-register': function(e) {
     e.preventDefault();
     $('#loginDialog').one('hidden.bs.modal', function () {
       UltiSite.showModal('userCreateDialog', {}, { dynamicImport: '/imports/client/user/user.js' });
     });
     $('#loginDialog').modal('hide');
   },
-  'click .btn-password-reset'(event, template) {
-    if (template.find("#loginEmail").value.length < 3) {
-      UltiSite.State.set("loginMessage", {
+  'click .btn-password-reset': function(event, template) {
+    if (template.find('#loginEmail').value.length < 3) {
+      UltiSite.State.set('loginMessage', {
         type: 'danger',
         msg: 'Gib deine E-Mail Adresse ein, um dein Passwort zurückzusetzen:',
       });
       return;
     }
-    if (!confirm("Wenn sie Ok klicken, wird eine E-Mail an ihre E-Mail Adresse geschickt, mit einem Link um ein neues Passwort zu setzen")) { return; }
-    Meteor.call("passwordReset", template.find("#loginEmail").value);
+    if (!confirm('Wenn sie Ok klicken, wird eine E-Mail an ihre E-Mail Adresse geschickt, mit einem Link um ein neues Passwort zu setzen')) { return; }
+    Meteor.call('passwordReset', template.find('#loginEmail').value);
     $('#loginDialog').modal('hide');
-    UltiSite.State.set("loginMessage", undefined);
+    UltiSite.State.set('loginMessage', undefined);
   },
 });
 
 Template.loginDialog.helpers({
   message() {
-    return UltiSite.State.get("loginMessage");
+    return UltiSite.State.get('loginMessage');
   },
   loggingIn() {
     return Meteor.loggingIn();
@@ -52,47 +62,47 @@ Template.loginDialog.helpers({
 });
 
 Accounts.onResetPasswordLink(function (token) {
-  UltiSite.State.set("passwordResetToken", { token, type: 'reset' });
+  UltiSite.State.set('passwordResetToken', { token, type: 'reset' });
 });
 
 Accounts.onEnrollmentLink(function (token) {
-  UltiSite.State.set("passwordResetToken", { token, type: 'enroll' });
+  UltiSite.State.set('passwordResetToken', { token, type: 'enroll' });
 });
 
 Template.passwordResetDialog.rendered = function () {
-  if (UltiSite.State.get("passwordResetToken")) { $('#passwordReset').modal('show'); }
+  if (UltiSite.State.get('passwordResetToken')) { $('#passwordReset').modal('show'); }
 };
 
 Template.passwordResetDialog.helpers({
   passwordReset() {
-    return UltiSite.State.get("passwordResetToken");
+    return UltiSite.State.get('passwordResetToken');
   },
 });
 
 Template.passwordResetDialog.events({
-  'submit form'(event, template) {
+  'submit form': function(event, template) {
     event.preventDefault();
-    console.log(`resetting password:${template.find("#token").value}`);
+    console.log(`resetting password:${template.find('#token').value}`);
     const password = template.find('#password').value;
-    const token = template.find("#token").value;
-    Accounts.resetPassword(token, password, UltiSite.userFeedbackFunction("Bestätigung der E-Mail Adresse", null, function () {
-      UltiSite.State.set("passwordResetToken", undefined);
+    const token = template.find('#token').value;
+    Accounts.resetPassword(token, password, UltiSite.userFeedbackFunction('Bestätigung der E-Mail Adresse', null, function () {
+      UltiSite.State.set('passwordResetToken', undefined);
       $('#passwordReset').modal('hide');
     }));
   },
-  'click .close'() {
-    UltiSite.State.set("passwordResetToken", undefined);
+  'click .close': function() {
+    UltiSite.State.set('passwordResetToken', undefined);
   },
 });
 
 Template.passwordChangeDialog.events({
-  'submit form'(event, template) {
+  'submit form': function(event, template) {
     event.preventDefault();
     const oldPassword = template.find('#oldPassword').value;
     const newPassword = template.find('#newPassword').value;
     const newPassword2 = template.find('#newPassword2').value;
-    if (newPassword2 !== newPassword) { UltiSite.notify("Passwörter stimmen nicht überein!", "error"); } else {
-      Accounts.changePassword(oldPassword, newPassword, UltiSite.userFeedbackFunction("Neues Passwort setzen", $('#oldPassword'), function () {
+    if (newPassword2 !== newPassword) { UltiSite.notify('Passwörter stimmen nicht überein!', 'error'); } else {
+      Accounts.changePassword(oldPassword, newPassword, UltiSite.userFeedbackFunction('Neues Passwort setzen', $('#oldPassword'), function () {
         $('#passwordChange').modal('hide');
       }));
     }
