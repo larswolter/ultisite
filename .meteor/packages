@@ -13,7 +13,6 @@ reactive-var@1.0.11
 deps@1.0.12
 http@1.4.1
 markdown@1.0.12
-percolate:synced-cron
 meteor-base@1.4.0
 mobile-experience@1.0.5
 mongo@1.6.0

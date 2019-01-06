@@ -1,6 +1,6 @@
 import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/kadira:flow-router';
-import { SyncedCron } from 'meteor/percolate:synced-cron';
+import { CronJob } from 'cron';
 
 Accounts.onLogin(function (attempt) {
   if (attempt.user) {
@@ -41,33 +41,27 @@ Meteor.startup(function () {
     });
   };
 
-  SyncedCron.add({
-    name: 'Daily E-mail digest',
-    schedule(parser) {
-      // parser is a later.parse object
-      return parser.text('at 15:09');
-    },
-    job() {
-      let result = 0;
-      console.log('sending digests');
-      const eventList = UltiSite.getEvents();
-      Meteor.users.find().forEach(function (user) {
-        if (UltiSite.sendEventDigest(user, eventList)) {
-          result += 1;
-        }
-      });
-      return eventList.length + ' Digest events send to ' + result + ' users';
-    },
-  });
+  const job = new CronJob('0 9 15 * * *', Meteor.bindEnvironment(() => {
+    let result = 0;
+    console.log('sending digests');
+    const eventList = UltiSite.getEvents();
+    Meteor.users.find().forEach(function (user) {
+      if (UltiSite.sendEventDigest(user, eventList)) {
+        result += 1;
+      }
+    });
+    console.log(eventList.length + ' Digest events send to ' + result + ' users');
+  }), null, false, 'Europe/Berlin');
+
   if (Meteor.absoluteUrl('').indexOf('localhost') === -1) {
-    SyncedCron.start();
+    job.start();
   }
 });
 
 
 UltiSite.sendEventDigest = function (user, eventList, force = false) {
   if (!force && (eventList.length === 0)) { return false; }
-  if (!force && (user.settings.noDigestMail)) { return false; }
+  if (!force && (user.settings && user.settings.noDigestMail)) { return false; }
   const template = Assets.getText('mail-templates/events.html');
   const layout = Assets.getText('mail-templates/layout.html');
   const tournaments = UltiSite.getTournamentsStates(user._id);
@@ -100,11 +94,11 @@ UltiSite.addEvent = function (info) {
   UltiSite.LastChanges.upsert({
     type: info.type,
   }, {
-      $set: {
+    $set: {
         type: info.type,
         date: new Date(),
       },
-    });
+  });
   info.alias = info.userId && UltiSite.getAlias(info.userId);
   if (info.type === 'files' && info.images) {
     const ev = UltiSite.Events.findOne({
@@ -125,7 +119,8 @@ UltiSite.addEvent = function (info) {
   }
   const event = { lastChange: new Date() };
   if (info.type === 'team' || info.type === 'tournament') {
-    event.groupBy = (info.type === 'team' ? UltiSite.getTeam(info._id || info.group).tournamentId : info._id);
+    const team = UltiSite.getTeam(info._id || info.group);
+    event.groupBy = team ? team.tournamentId : info._id;
     const tourney = UltiSite.Tournaments.findOne(event.groupBy);
     event.route = 'tournament';
     event.name = tourney.name;

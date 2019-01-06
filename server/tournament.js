@@ -1,6 +1,6 @@
 import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/kadira:flow-router';
-import { SyncedCron } from 'meteor/percolate:synced-cron';
+import { CronJob } from 'cron';
 
 UltiSite.Tournaments.before.update(function (userId, doc, fieldNames, modifier, options) {
   modifier.$set = modifier.$set || {};
@@ -13,7 +13,8 @@ UltiSite.Tournaments.before.insert(function (userId, doc) {
 });
 
 UltiSite.getTeam = function (id) {
-  return UltiSite.Tournaments.findOne({ 'teams._id': id }).teams[id];
+  const tournament = UltiSite.Tournaments.findOne({ 'teams._id': id });
+  return tournament && tournament.teams[id];
 };
 
 UltiSite.getTournamentsStates = function (userId) {
@@ -74,8 +75,8 @@ Meteor.methods({
         { 'participants.user': this.userId },
       ],
     }, {
-      limit: 5, fields: { _id: 1 },
-    }).map(function (t) {
+        limit: 5, fields: { _id: 1 },
+      }).map(function (t) {
         return t._id;
       }));
     return ids;
@@ -128,11 +129,11 @@ Meteor.methods({
       _id: id,
       'description._id': infoId,
     }, {
-      $set: {
+        $set: {
           lastChange: new Date(),
           'description.$.content': content,
         },
-    });
+      });
   },
   tournamentUpdateReport(id, infoId, content) {
     check(id, String);
@@ -142,11 +143,11 @@ Meteor.methods({
       _id: id,
       'reports._id': infoId,
     }, {
-      $set: {
+        $set: {
           lastChange: new Date(),
           'reports.$.content': content,
         },
-    });
+      });
   },
   tournamentAddReport(id, report) {
     check(id, String);
@@ -154,16 +155,16 @@ Meteor.methods({
     UltiSite.Tournaments.update({
       _id: id,
     }, {
-      $set: {
+        $set: {
           lastChange: new Date(),
         },
-      $push: {
+        $push: {
           reports: {
             $each: [report],
             $position: 0,
           },
         },
-    });
+      });
   },
   tournamentCoordinates() {
     return UltiSite.Tournaments.find({
@@ -180,12 +181,12 @@ Meteor.methods({
         $gte: new Date(),
       },
     }, {
-      fields: {
+        fields: {
           'address.geocoords': 1,
           name: 1,
           date: 1,
         },
-    }).fetch();
+      }).fetch();
   },
 });
 
@@ -246,12 +247,6 @@ Meteor.startup(function () {
     });
   };
 
-  SyncedCron.add({
-    name: 'Team drawing',
-    schedule(parser) {
-      // parser is a later.parse object
-      return parser.text('at 03:17');
-    },
-    job: UltiSite.teamDrawings,
-  });
+  const job = new CronJob('0 17 3 * * *', Meteor.bindEnvironment(UltiSite.teamDrawings), null, false, 'Europe/Berlin');
+  job.start();
 });
