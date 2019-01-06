@@ -3,11 +3,11 @@ const handleStuff = function () {
   UltiSite.Folders.upsert({
     name: '/',
   }, {
-      $set: {
+    $set: {
         name: '/',
         associated: [],
       },
-    });
+  });
 
   if (!Meteor.isAppTest) {
     // Read countries
@@ -126,7 +126,7 @@ Meteor.methods({
     });
   },
   recreateCitiesCountries() {
-    if (!UltiSite.isAdmin()) {
+    if (!UltiSite.isAdmin(this.userId)) {
       return;
     }
     handleStuff();

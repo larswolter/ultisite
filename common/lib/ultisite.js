@@ -234,7 +234,7 @@ _.extend(UltiSite, {
   },
 
   userByAlias(alias, con) {
-    return Meteor.users.findOne({
+    return alias && Meteor.users.findOne({
       username: alias,
     });
   },
