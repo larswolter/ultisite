@@ -22,7 +22,7 @@ UltiSite.getTournamentsStates = function (userId) {
   UltiSite.Tournaments.find({
     date: { $gte: new Date() },
     participants: { $elemMatch: { user: userId, state: { $gt: 50 } } },
-  }).forEach((tournament) => {
+  }), { sort: { date: 1 } }.forEach((tournament) => {
     tournament.participants.filter(p => p.user === userId).forEach((part) => {
       const team = _.find(tournament.teams, t => t._id === part.team);
       teams.push({
