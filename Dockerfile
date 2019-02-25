@@ -1,6 +1,6 @@
 FROM node:8.11 as builder
 RUN apt-get update && apt-get install -y curl git python build-essential
-RUN curl https://install.meteor.com/?release=1.8.0.1 | sh
+RUN curl https://install.meteor.com/?release=1.8.0.2 | sh
 
 # Base image done, pulling sources for build
 ENV METEOR_ALLOW_SUPERUSER 1
@@ -9,7 +9,7 @@ RUN mkdir appsrc
 COPY . /build/appsrc
 
 # Building meteor application
-RUN cd appsrc && meteor npm install --production
+RUN cd appsrc && meteor npm install --production && npm audit fix --only=prod
 RUN cd appsrc && meteor build --directory ../bundle
 
 # final stage for running the container, only needs node
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y curl git python build-essential
 RUN mkdir /app
 COPY --from=builder /build/bundle /app
 WORKDIR /app/bundle
-RUN cd programs/server && npm install --production
+RUN cd programs/server && npm install --production && npm audit fix --only=prod
 EXPOSE 8080
 
 ENTRYPOINT [ "node", "main.js" ]
