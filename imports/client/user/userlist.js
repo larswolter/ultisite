@@ -5,6 +5,7 @@ import './userlist.html';
 
 const usersOverview = new Meteor.Collection('usersOverview');
 const paginationEntries = 20;
+UltiSite.usersOverview = usersOverview;
 
 Template.userList.onCreated(function () {
   this.users = new ReactiveVar([]);
@@ -76,6 +77,16 @@ Template.userList.helpers({
   },
 });
 
+Template.userItem.helpers({
+  currentDFV() {
+    return this.club && this.club.dfv && this.club.dfv.includes(moment().year());
+  },
+  lastDFV() {
+    const res = (this.club && this.club.dfv && this.club.dfv.length && this.club.dfv.sort().reverse()[0]) || 'nie';
+    return res;
+  },
+});
+
 Template.userItem.events({
   'click .action-club-state': function (evt, tmpl) {
     evt.preventDefault();
@@ -84,31 +95,31 @@ Template.userItem.events({
       Meteor.users.update({
         _id: tmpl.data._id,
       }, {
-        $unset: { 'club.state': 1 },
-      }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
+          $unset: { 'club.state': 1 },
+        }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
     } else {
       Meteor.users.update({
         _id: tmpl.data._id,
       }, {
-        $set: { 'club.state': 'Mitglied' },
-      }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
+          $set: { 'club.state': 'Mitglied' },
+        }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
     }
   },
   'click .action-club-dfv': function (evt, tmpl) {
     evt.preventDefault();
 
-    if (tmpl.data.club && tmpl.data.club.dfv) {
+    if (tmpl.data.club && tmpl.data.club.dfv.includes(moment().year())) {
       Meteor.users.update({
         _id: tmpl.data._id,
       }, {
-        $pull: { 'club.dfv': moment().year() },
-      }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
+          $pull: { 'club.dfv': moment().year() },
+        }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
     } else {
       Meteor.users.update({
         _id: tmpl.data._id,
       }, {
-        $addToSet: { 'club.dfv': moment().year() },
-      }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
+          $addToSet: { 'club.dfv': moment().year() },
+        }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
     }
   },
   'click .action-debit': function (evt, tmpl) {

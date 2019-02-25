@@ -8,7 +8,7 @@ import './user.html';
 import './userlist.html';
 
 Meteor.startup(function () {
-  Meteor.subscribe('UserDetails');
+  Meteor.subscribe('UserDetails', Meteor.userId());
 });
 
 const userHelper = {
@@ -17,12 +17,6 @@ const userHelper = {
   },
   currentYear() {
     return moment().format('YYYY');
-  },
-  currentDFV() {
-    return this.club.dfv && this.club.dfv.includes(moment().year());
-  },
-  lastDFV() {
-    return (this.club.dfv && this.club.dfv.sort().reverse()[0]) || 'nie';
   },
   getAlias() {
     return this.username;
@@ -108,10 +102,10 @@ const userHelper = {
       target: this._id,
       type: 'playedTournaments',
     }, {
-        sort: {
+      sort: {
           'data.date': -1,
         },
-      }) || {
+    }) || {
         data: [],
       }).data;
     data.forEach(function (elem) {
@@ -145,7 +139,6 @@ const userHelper = {
 };
 Template.userdisplay.helpers(userHelper);
 Template.user.helpers(userHelper);
-Template.userItem.helpers(userHelper);
 
 Template.user.onCreated(function () {
   this.autorun(() => {
@@ -213,16 +206,16 @@ Template.user.events({
       Meteor.users.update({
         _id: FlowRouter.getParam('_id'),
       }, {
-          $set: modifier,
-        });
+        $set: modifier,
+      });
 
       Meteor.users.update({
         _id: FlowRouter.getParam('_id'),
       }, {
-          $pull: {
+        $pull: {
             'profile.contactDetails': null,
           },
-        });
+      });
     });
   },
   'click .user-contacts .type-selector a': function (e, t) {
@@ -232,21 +225,21 @@ Template.user.events({
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $set: modifier,
-      }, UltiSite.userFeedbackFunction('Kontaktinfo speichern'));
+      $set: modifier,
+    }, UltiSite.userFeedbackFunction('Kontaktinfo speichern'));
   },
   'click .user-contacts .btn-add-contact': function (e, t) {
     e.preventDefault();
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $push: {
+      $push: {
           'profile.contactDetails': {
             type: '',
             detail: '',
           },
         },
-      });
+    });
   },
   'click .action-remove-role': function (evt) {
     evt.preventDefault();
@@ -287,8 +280,8 @@ Template.user.events({
     Meteor.users.update({
       _id: userId,
     }, {
-        $set: modifier,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
+      $set: modifier,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
         if (name === 'username') {
           Meteor.call('correctParticipants', userId);
         }
@@ -306,8 +299,8 @@ Template.user.events({
     Meteor.users.update({
       _id: FlowRouter.getParam('_id'),
     }, {
-        $set: toSet,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode));
+      $set: toSet,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode));
   },
   'change .dfv-select': function (evt, tmpl) {
     evt.preventDefault();
@@ -340,8 +333,8 @@ Template.user.events({
     Meteor.users.update({
       _id: userId,
     }, {
-        $set: toSet,
-      }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
+      $set: toSet,
+    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
         if (name === 'profile.sex') {
           Meteor.call('correctParticipants', userId);
         }
