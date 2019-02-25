@@ -1,362 +1,377 @@
 <body>
-	{{>debitIndicator}}
+    {{>debitIndicator}}
 </body>
 <template name="debitIndicator">
-	{{#if currentUser.profile.debit}}
-		<div class="debit-indicator">
-			{{currentUser.profile.debit}} <span class="fa fa-eur"></span> Schulden beim Verein
-		</div>
-	{{/if}}
+    {{#if currentUser.profile.debit}}
+        <div class="debit-indicator">
+            {{currentUser.profile.debit}} <span class="fa fa-eur"></span> Schulden beim Verein
+        </div>
+    {{/if}}
 </template>
 
 <template name="userdisplay">
     {{#if currentUser}}
-        <span class="fa {{sexIcon}} fa-fw {{#if status.online}}text-success{{/if}}"></span> 
-        &nbsp; {{getAlias this}} 
-    {{else}} 
-        {{getAlias this}} 
-    {{/if}} 
+        <span class="fa {{sexIcon}} fa-fw {{#if status.online}}text-success{{/if}}"></span>
+        &nbsp; {{getAlias this}}
+    {{else}}
+        {{getAlias this}}
+    {{/if}}
 </template>
 
 <template name="user">
     {{#if currentUser}}
-    {{#with user}}
-        {{#if isEditable}} 
-            {{>passwordChangeDialog}}
-        {{/if}}
-        <div class="user-display {{#if isEditable}}opt-is-editable{{/if}}">
-            <div class="row">
-                <div class="col-12 col-sm-6 col-md-5 col-lg-4">
-                    <div class="thumbnail" style="background-image:url('{{#if profile.avatar}}{{imageUrl profile.avatar 800}}{{else}}/placeholder/player.svg{{/if}}')">
-                        <h5>{{username}}</h5>
-                        <button class="btn btn-light btn-xs btn-edit-image" type="button">
-                            <span class="fa fa-edit"></span>
-                        </button>
-                    </div>
-                    <div class="card">
-                        <ul class="list-group user-base">
-                            <li class="list-group-item">
-                                <small>Nutzername</small>
-                                <input readonly={{not isEditable}} class="opt-editable-field" name="username" type="text" value="{{username}}">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                {{#if isAdmin}}
+        {{#with user}}
+            {{#if isEditable}}
+                {{>passwordChangeDialog}}
+            {{/if}}
+            <div class="user-display {{#if isEditable}}opt-is-editable{{/if}}">
+                <div class="row">
                     <div class="col-12 col-sm-6 col-md-5 col-lg-4">
+                        <div class="thumbnail" style="background-image:url('{{#if profile.avatar}}{{imageUrl profile.avatar 800}}{{else}}/placeholder/player.svg{{/if}}')">
+                            <h5>{{username}}</h5>
+                            <button class="btn btn-light btn-xs btn-edit-image" type="button">
+                                <span class="fa fa-edit"></span>
+                            </button>
+                        </div>
                         <div class="card">
-                            <div class="card-body">
-                                <button class="btn btn-light action-remove-user">
-                                    Löschen
-                                </button>
-                                <button class="btn btn-light action-block-user">
-                                    {{#if isDisabled}}
-                                        Entsperren
-                                    {{else}}
-                                        Sperren
-                                    {{/if}}
-                                </button>
+                            <ul class="list-group user-base">
+                                <li class="list-group-item">
+                                    <small>Nutzername</small>
+                                    <input readonly={{not isEditable}} class="opt-editable-field" name="username" type="text" value="{{username}}">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {{#if isAdmin}}
+                        <div class="col-12 col-sm-6 col-md-5 col-lg-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <button class="btn btn-light action-remove-user">
+                                        Löschen
+                                    </button>
+                                    <button class="btn btn-light action-block-user">
+                                        {{#if isDisabled}}
+                                            Entsperren
+                                        {{else}}
+                                            Sperren
+                                        {{/if}}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {{/if}}
-                <div class="col-12 col-sm-6 col-md-7 col-lg-4">
-                    <div class="card">
-                        <!-- Default panel contents -->
-                        <div class="card-header">Allgemeine Infos</div>
-                        <ul class="list-group user-base">
-                            <li class="list-group-item">
-                                <small>Vorname</small>
-                                <input readonly={{not isEditable}} class="opt-editable-field" name="profile.name" type="text" value="{{profile.name}}">
-                            </li>
-                            <li class="list-group-item">
-                                <small>Nachname</small>
-                                <input readonly={{not isEditable}} class="opt-editable-field" name="profile.surname" type="text" value="{{profile.surname}}">
+                    {{/if}}
+                    <div class="col-12 col-sm-6 col-md-7 col-lg-4">
+                        <div class="card">
+                            <!-- Default panel contents -->
+                            <div class="card-header">Allgemeine Infos</div>
+                            <ul class="list-group user-base">
+                                <li class="list-group-item">
+                                    <small>Vorname</small>
+                                    <input readonly={{not isEditable}} class="opt-editable-field" name="profile.name" type="text" value="{{profile.name}}">
+                                </li>
+                                <li class="list-group-item">
+                                    <small>Nachname</small>
+                                    <input readonly={{not isEditable}} class="opt-editable-field" name="profile.surname" type="text" value="{{profile.surname}}">
 
-                            </li>
-                            {{#if equals _id currentUser}}
-                            <li class="list-group-item">
-                                <small>Passwort</small>
-                                <button class="btn btn-light btn-block" data-toggle="modal" data-target="#passwordChange">Passwort Ändern</button>
-                            </li>
-                            {{/if}}
-                            {{#each emails}}
-                            <li class="list-group-item">
-                                <small>E-Mail Adresse</small> {{#if this.verified}}
-                                <span class="fa fa-check text-success" title="Verifiziert"></span> {{else}}
-                                <span class="fa fa-exclamation-triangle text-danger" title="Nicht verifiziert"></span> {{/if}}
-                                {{#if isAdmin}}
-                                    <button class="btn btn-light pull-right action-edit-email">
-                                        <span class="fa fa-edit"></span>
-                                    </button>                                
+                                </li>
+                                {{#if equals _id currentUser}}
+                                    <li class="list-group-item">
+                                        <small>Passwort</small>
+                                        <button class="btn btn-light btn-block" data-toggle="modal" data-target="#passwordChange">Passwort Ändern</button>
+                                    </li>
                                 {{/if}}
-                                <input readonly="readonly" class="opt-editable-field" name="email" type="text" value="{{this.address}}">
-                            </li>
-                            {{/each}}
-                            <li class="list-group-item">
-                                <small>Geschlecht</small>
-                                <br/>
-                                {{#if isEditable}}
-                                <input type="radio" class="radio-select" name="profile.sex" value="M" checked={{equals profile.sex "M"}}> Männlich
-                                <input type="radio" class="radio-select" name="profile.sex" value="W" checked={{equals profile.sex "W"}}> Weiblich
-                                {{else}}
-                                    {{#if equals profile.sex "W"}}
-                                        Weiblich
-                                    {{else}}
-                                        Männlich
-                                    {{/if}}
-                                {{/if}}
-                            </li>
-                            <li class="list-group-item">
-                                <small>Geburtstag</small>
-                                <input readonly={{not isEditable}} class="opt-editable-field" name="profile.birthday" type="date" value="{{formatDateInput profile.birthday}}">
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                    <div class="card">
-                        <div class="card-header">Kontakt</div>
-                        <ul class="list-group user-contacts">
-                            {{#each contactDetails}}
-                            <li class="list-group-item">
-                                {{#if isEditable}}
-                                <div class="pull-right">
-                                    <button class="btn btn-light btn-xs btn-remove" data-index="{{index}}">
-                                        <span class="fa fa-close"></span>
-                                    </button>
-                                </div>
-                                {{/if}} {{#if type}}
-                                <small>{{type}}</small> {{else}}
-                                <div class="btn-group type-selector" role="group">
-                                    <button aria-expanded="false" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown" data-value="{{type}}" type="button">
-                                        Typ wählen...
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li class="dropdown-item">
-                                            <a data-index="{{index}}" href="#">Tel. Mobil</a>
-                                        </li>
-                                        <li class="dropdown-item">
-                                            <a data-index="{{index}}" href="#">Tel. Privat</a>
-                                        </li>
-                                        <li class="dropdown-item">
-                                            <a data-index="{{index}}" href="#">Tel. Arbeit</a>
-                                        </li>
-                                        <li class="dropdown-item">
-                                            <a data-index="{{index}}" href="#">E-Mail</a>
-                                        </li>
-                                        <li class="dropdown-item">
-                                            <a data-index="{{index}}" href="#">Konto (IBAN)</a>
-                                        </li>
-                                        <li class="dropdown-item">
-                                            <a data-index="{{index}}" href="#">Twitter</a>
-                                        </li>
-                                        <li class="dropdown-item">
-                                            <a data-index="{{index}}" href="#">Adresse</a>
-                                        </li>
-                                        <li class="dropdown-item">
-                                            <a data-index="{{index}}" href="#">Webseite</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                {{/if}} {{#if equals type "Adresse"}}
-                                <input readonly={{not isEditable}} class="opt-editable-field" data-index="{{index}}" data-type="{{type}}" name="" placeholder="Straße, 12345, Stadt" type="text" value="{{detail.street}},{{detail.postcode}},{{detail.city}}"> {{else}}
-                                <input readonly={{not isEditable}} class="opt-editable-field" data-index="{{index}}" data-type="{{type}}" name="" placeholder="..." type="text" value="{{detail}}"> {{/if}}
-                            </li>
-                            {{/each}} {{#if isEditable}}
-                            <li class="list-group-item">
-                                <button class="btn btn-light btn-add-contact">
-                                    <span class="fa fa-plus"></span>
-                                </button>
-                            </li>
-                            {{/if}}
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                    <div class="card">
-                        <div class="card-header">Verein</div>
-                        <ul class="list-group user-base">
-                            <li class="list-group-item">
-                                <small>Mitgliedsstatus</small>
-                                <br/> 
-                                {{#if isInRole "club,admin"}}
-                                <div class="btn-group type-selector" role="group">
-                                    <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-toggle="dropdown" type="button">
-                                        {{club.state}}
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-                                        {{#each settings.arrayClubStates}}
-                                        <li class="dropdown-item"><a href="#" class="dropdown-select-item" data-value="{{this}}" data-name="club.state">{{this}}</a></li>
-                                        {{/each}}
-                                    </ul>
-                                </div>
-                                {{else}} 
-                                    {{club.state}} 
-                                {{/if}}
-                            </li>
-                            <li class="list-group-item">
-                                <small>Passive Mitgliedschaft</small>
-                                <br/>
-                                {{#if isInRole "club,admin"}}
-                                    <input readonly={{not isEditable}} type="radio" class="radio-select" data-type="boolean" name="club.passive" value="1" checked={{club.passive}}> Ja
-                                    <input readonly={{not isEditable}} type="radio" class="radio-select" data-type="boolean" name="club.passive" value="" checked={{not club.passive}}> Nein
-                                {{else}} 
-                                    {{#if club.passive}}
-                                        Ja
-                                    {{else}}
-                                        Nein
-                                    {{/if}} 
-                                {{/if}}
-                            </li>
-                            <li class="list-group-item">
-                                <small>Beim DFV gemeldet</small>
-                                <br/>
-                                {{#if isInRole "club,admin"}}
-                                    <input readonly={{not isEditable}} type="radio" class="radio-select" data-type="boolean" name="club.dfv" value="1" checked={{club.dfv}}> Ja
-                                    <input readonly={{not isEditable}} type="radio" class="radio-select" data-type="boolean" name="club.dfv" value="" checked={{not club.dfv}}> Nein
-                                {{else}} 
-                                    {{#if club.dfv}} 
-                                        Ja
-                                    {{else}}
-                                        Nein
-                                    {{/if}} 
-                                {{/if}}
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                {{#if isEditable}}
-                <div class="col-12 col-sm-5 col-md-6">
-                    <div class="card">
-                        <div class="card-header">Webseite</div>
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <small>TäglicheE-Mail</small>
-                                <br />
-                                <button class="btn btn-link action-digest">
-                                    <span class="fa fa-fw fa-{{#unless this.settings.noDigestMail}}check-{{/unless}}square-o"></span> Ja
-                                </button>
-                                <button class="btn btn-link action-no-digest">
-                                    <span class="fa fa-fw fa-{{#if this.settings.noDigestMail}}check-{{/if}}square-o"></span> Nein
-                                </button>
-                            </li>
-                            <li class="list-group-item">
-                                <small>Sofortige E-Mail Benachrichtigungen</small>
-                                <br /> 
-                                <table class="table">
-                                    <thead><tr><th></th><th>Aktiv</th></tr></thead>
-                                    <tbody>
-                                        {{#each emailNotificationTypes}}
-                                        <tr>
-                                            <td>{{this.name}}</td>
-                                            <td>
-                                            <button class="btn btn-link action-immediate">
-                                                <span class="fa fa-fw fa-{{#if isMailType 'immediate'}}check-{{/if}}square-o"></span>
+                                {{#each emails}}
+                                    <li class="list-group-item">
+                                        <small>E-Mail Adresse</small> {{#if this.verified}}
+                                            <span class="fa fa-check text-success" title="Verifiziert"></span>
+                                        {{else}}
+                                            <span class="fa fa-exclamation-triangle text-danger" title="Nicht verifiziert"></span> {{/if}}
+                                        {{#if isAdmin}}
+                                            <button class="btn btn-light pull-right action-edit-email">
+                                                <span class="fa fa-edit"></span>
                                             </button>
-                                            </td>
-                                        </tr>
-                                        {{/each}}
-                                    </tbody>
-                                </table>
-                            </li>
-                            <li class="list-group-item">
-                                <small>Desktop Benachrichtigungen</small>
-                                <br /> {{#if equals notificationsStatus 'unsupported'}} Benachrichtigungen werden nicht unterstützt {{else}} {{#if equals notificationsStatus 'granted'}} Werden angezeigt {{/if}}
-                                <button class="btn btn-light action-check-notification-permissions">Ändern</button>
-                                {{/if}}
-                            </li>
-                            <li class="list-group-item">
-                                <small>Rollen</small> {{#each userRoles}}
-                                <div class="row">
-                                    <div class="col-6">{{this.name}}</div>
-                                    {{#if isInRole 'admin'}} 
-                                    <div class="col-6">
-                                        {{#if this.active}}
-                                        <button class="btn btn-link action-remove-role pull-right">
-                                            <span class="fa fa-close text-danger fa-fw"></span> entfernen
-                                        </button>
-                                        {{else}}
-                                        <button class="btn btn-link action-add-role pull-right">
-                                            <span class="fa fa-plus fa-fw text-success"></span> zuweisen
-                                        </button>
-                                        {{/if}} 
-                                    </div>
-                                    {{/if}}
-                                </div>
+                                        {{/if}}
+                                        <input readonly="readonly" class="opt-editable-field" name="email" type="text" value="{{this.address}}">
+                                    </li>
                                 {{/each}}
-                            </li>
-                        </ul>
+                                <li class="list-group-item">
+                                    <small>Geschlecht</small>
+                                    <br />
+                                    {{#if isEditable}}
+                                        <input type="radio" class="radio-select" name="profile.sex" value="M" checked={{equals profile.sex "M"}}> Männlich
+                                        <input type="radio" class="radio-select" name="profile.sex" value="W" checked={{equals profile.sex "W"}}> Weiblich
+                                    {{else}}
+                                        {{#if equals profile.sex "W"}}
+                                            Weiblich
+                                        {{else}}
+                                            Männlich
+                                        {{/if}}
+                                    {{/if}}
+                                </li>
+                                <li class="list-group-item">
+                                    <small>Geburtstag</small>
+                                    <input readonly={{not isEditable}} class="opt-editable-field" name="profile.birthday" type="date" value="{{formatDateInput profile.birthday}}">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-4">
+                        <div class="card">
+                            <div class="card-header">Kontakt</div>
+                            <ul class="list-group user-contacts">
+                                {{#each contactDetails}}
+                                    <li class="list-group-item">
+                                        {{#if isEditable}}
+                                            <div class="pull-right">
+                                                <button class="btn btn-light btn-xs btn-remove" data-index="{{index}}">
+                                                    <span class="fa fa-close"></span>
+                                                </button>
+                                            </div>
+                                        {{/if}} {{#if type}}
+                                            <small>{{type}}</small>
+                                        {{else}}
+                                            <div class="btn-group type-selector" role="group">
+                                                <button aria-expanded="false" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown" data-value="{{type}}" type="button">
+                                                    Typ wählen...
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li class="dropdown-item">
+                                                        <a data-index="{{index}}" href="#">Tel. Mobil</a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a data-index="{{index}}" href="#">Tel. Privat</a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a data-index="{{index}}" href="#">Tel. Arbeit</a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a data-index="{{index}}" href="#">E-Mail</a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a data-index="{{index}}" href="#">Konto (IBAN)</a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a data-index="{{index}}" href="#">Twitter</a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a data-index="{{index}}" href="#">Adresse</a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a data-index="{{index}}" href="#">Webseite</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        {{/if}} {{#if equals type "Adresse"}}
+                                            <input readonly={{not isEditable}} class="opt-editable-field" data-index="{{index}}" data-type="{{type}}" name="" placeholder="Straße, 12345, Stadt" type="text" value="{{detail.street}},{{detail.postcode}},{{detail.city}}">
+                                        {{else}}
+                                            <input readonly={{not isEditable}} class="opt-editable-field" data-index="{{index}}" data-type="{{type}}" name="" placeholder="..." type="text" value="{{detail}}"> {{/if}}
+                                    </li>
+                                {{/each}} {{#if isEditable}}
+                                    <li class="list-group-item">
+                                        <button class="btn btn-light btn-add-contact">
+                                            <span class="fa fa-plus"></span>
+                                        </button>
+                                    </li>
+                                {{/if}}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-6 col-lg-4">
+                        <div class="card">
+                            <div class="card-header">Verein</div>
+                            <ul class="list-group user-base">
+                                <li class="list-group-item">
+                                    <small>Mitgliedsstatus</small>
+                                    <br />
+                                    {{#if isInRole "club,admin"}}
+                                        <div class="btn-group type-selector" role="group">
+                                            <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-toggle="dropdown" type="button">
+                                                {{club.state}}
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                {{#each settings.arrayClubStates}}
+                                                    <li class="dropdown-item"><a href="#" class="dropdown-select-item" data-value="{{this}}" data-name="club.state">{{this}}</a></li>
+                                                {{/each}}
+                                            </ul>
+                                        </div>
+                                    {{else}}
+                                        {{club.state}}
+                                    {{/if}}
+                                </li>
+                                <li class="list-group-item">
+                                    <small>Passive Mitgliedschaft</small>
+                                    <br />
+                                    {{#if isInRole "club,admin"}}
+                                        <input readonly={{not isEditable}} type="radio" class="radio-select" data-type="boolean" name="club.passive" value="1" checked={{club.passive}}> Ja
+                                        <input readonly={{not isEditable}} type="radio" class="radio-select" data-type="boolean" name="club.passive" value="" checked={{not club.passive}}> Nein
+                                    {{else}}
+                                        {{#if club.passive}}
+                                            Ja
+                                        {{else}}
+                                            Nein
+                                        {{/if}}
+                                    {{/if}}
+                                </li>
+                                <li class="list-group-item">
+                                    <small>Beim DFV gemeldet</small>
+                                    <br />
+                                    {{#if isInRole "club,admin"}}
+                                        {{#each club.dfv.sort.reverse}}
+                                            {{this}}
+                                        {{else}}
+                                            Nein
+                                        {{/each}}
+                                        <br /><br />
+                                        Aktuelles Jahr
+                                        <input readonly={{not isEditable}} type="radio" class="dfv-select" value="1" checked={{currentDFV}}> Ja
+                                        <input readonly={{not isEditable}} type="radio" class="dfv-select" value="" checked={{not currentDFV}}> Nein
+                                    {{else}}
+                                        {{#each club.dfv.sort.reverse}}
+                                            {{this}}
+                                        {{else}}
+                                            Nein
+                                        {{/each}}
+                                    {{/if}}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                {{/if}}
-                <div class="col-12 col-sm-7 col-md-6">
-                    <div class="card">
-                        <div class="card-header">Statistiken
-                        </div>
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <small>Auf Bildern</small>
-                                <div class="image-array">
-                                    {{#each imagesWithUser}}
-                                    <a href="{{pathFor route='image' _id=this._id associated=../_id}}" style="background-image:url('{{imageUrl _id 160}}')"></a>
-                                    {{/each}}
-                                </div>
-                            </li>
-                            <li class="list-group-item">
-                                <small>Top-10 Mitspieler</small>
-                                {{#each top10Players}}
-                                    <div class="">
-                                        {{count}} mal mit 
-                                        {{#if equals userId username}}
-                                            {{username}}
-                                        {{else}}
-                                            <a href="{{pathFor route='user' _id=userId}}">{{username}}</a>
+                <div class="row">
+                    {{#if isEditable}}
+                        <div class="col-12 col-sm-5 col-md-6">
+                            <div class="card">
+                                <div class="card-header">Webseite</div>
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <small>TäglicheE-Mail</small>
+                                        <br />
+                                        <button class="btn btn-link action-digest">
+                                            <span class="fa fa-fw fa-{{#unless this.settings.noDigestMail}}check-{{/unless}}square-o"></span> Ja
+                                        </button>
+                                        <button class="btn btn-link action-no-digest">
+                                            <span class="fa fa-fw fa-{{#if this.settings.noDigestMail}}check-{{/if}}square-o"></span> Nein
+                                        </button>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <small>Sofortige E-Mail Benachrichtigungen</small>
+                                        <br />
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Aktiv</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{#each emailNotificationTypes}}
+                                                    <tr>
+                                                        <td>{{this.name}}</td>
+                                                        <td>
+                                                            <button class="btn btn-link action-immediate">
+                                                                <span class="fa fa-fw fa-{{#if isMailType 'immediate'}}check-{{/if}}square-o"></span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                {{/each}}
+                                            </tbody>
+                                        </table>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <small>Desktop Benachrichtigungen</small>
+                                        <br /> {{#if equals notificationsStatus 'unsupported'}} Benachrichtigungen werden nicht unterstützt {{else}} {{#if equals notificationsStatus 'granted'}} Werden angezeigt {{/if}}
+                                            <button class="btn btn-light action-check-notification-permissions">Ändern</button>
                                         {{/if}}
-                                        
-                                    </div>
-                                {{/each}}
-                            </li>
-                            <li class="list-group-item">
-                                <small>Geplante Turniere</small> 
-                                {{#each plannedTournaments}}
-                                    <div class="{{#if this.unsure}}text-muted{{/if}}">
-                                        <a href="{{pathFor route='tournament' _id=tournamentId}}">{{name}}</a> {{formatDate date}} im Team {{teamname}}
-                                    </div>
-                                {{/each}}
-                            </li>
-                            <li class="list-group-item">
-                                <small>Gespielte Turniere ({{playedTournamentYears.count}}/<span class="text-muted">{{playedTournamentYears.total}}</span>)</small> 
-                                <a href="/_myTournaments.xlsx?token={{currentUser.profile.downloadToken}}" target="_blank">
-                                    <span class="fa fa-download"></span>
-                                </a>
-                                {{#each playedTournamentYears.years}}
-                                    <div>{{y}} ({{t.length}})</div>
-                                    {{#each t}}
-                                        {{#unless this.unsure}}
-                                            <div class="{{#if this.unsure}}text-muted{{/if}}">
-                                                {{#if teamImage}}
-                                                    <a href="{{pathFor route='image' _id=teamImage associated=tournamentId}}">
-                                                        <img src="{{imageUrl teamImage 32}}" />
-                                                    </a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <small>Rollen</small> {{#each userRoles}}
+                                            <div class="row">
+                                                <div class="col-6">{{this.name}}</div>
+                                                {{#if isInRole 'admin'}}
+                                                    <div class="col-6">
+                                                        {{#if this.active}}
+                                                            <button class="btn btn-link action-remove-role pull-right">
+                                                                <span class="fa fa-close text-danger fa-fw"></span> entfernen
+                                                            </button>
+                                                        {{else}}
+                                                            <button class="btn btn-link action-add-role pull-right">
+                                                                <span class="fa fa-plus fa-fw text-success"></span> zuweisen
+                                                            </button>
+                                                        {{/if}}
+                                                    </div>
                                                 {{/if}}
-                                                <a href="{{pathFor route='tournament' _id=tournamentId}}">{{name}}</a> {{formatDate date}} im Team {{teamname}}
                                             </div>
-                                        {{/unless}}
-                                    {{/each}} 
-                                {{/each}}
-                            </li>
-                        </ul>
+                                        {{/each}}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    {{/if}}
+                    <div class="col-12 col-sm-7 col-md-6">
+                        <div class="card">
+                            <div class="card-header">Statistiken
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <small>Auf Bildern</small>
+                                    <div class="image-array">
+                                        {{#each imagesWithUser}}
+                                            <a href="{{pathFor route='image' _id=this._id associated=../_id}}" style="background-image:url('{{imageUrl _id 160}}')"></a>
+                                        {{/each}}
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <small>Top-10 Mitspieler</small>
+                                    {{#each top10Players}}
+                                        <div class="">
+                                            {{count}} mal mit
+                                            {{#if equals userId username}}
+                                                {{username}}
+                                            {{else}}
+                                                <a href="{{pathFor route='user' _id=userId}}">{{username}}</a>
+                                            {{/if}}
+
+                                        </div>
+                                    {{/each}}
+                                </li>
+                                <li class="list-group-item">
+                                    <small>Geplante Turniere</small>
+                                    {{#each plannedTournaments}}
+                                        <div class="{{#if this.unsure}}text-muted{{/if}}">
+                                            <a href="{{pathFor route='tournament' _id=tournamentId}}">{{name}}</a> {{formatDate date}} im Team {{teamname}}
+                                        </div>
+                                    {{/each}}
+                                </li>
+                                <li class="list-group-item">
+                                    <small>Gespielte Turniere ({{playedTournamentYears.count}}/<span class="text-muted">{{playedTournamentYears.total}}</span>)</small>
+                                    <a href="/_myTournaments.xlsx?token={{currentUser.profile.downloadToken}}" target="_blank">
+                                        <span class="fa fa-download"></span>
+                                    </a>
+                                    {{#each playedTournamentYears.years}}
+                                        <div>{{y}} ({{t.length}})</div>
+                                        {{#each t}}
+                                            {{#unless this.unsure}}
+                                                <div class="{{#if this.unsure}}text-muted{{/if}}">
+                                                    {{#if teamImage}}
+                                                        <a href="{{pathFor route='image' _id=teamImage associated=tournamentId}}">
+                                                            <img src="{{imageUrl teamImage 32}}" />
+                                                        </a>
+                                                    {{/if}}
+                                                    <a href="{{pathFor route='tournament' _id=tournamentId}}">{{name}}</a> {{formatDate date}} im Team {{teamname}}
+                                                </div>
+                                            {{/unless}}
+                                        {{/each}}
+                                    {{/each}}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
     {{else}}
         {{>Loading}}
-    {{/with}}
+        {{/with}}
     {{/if}}
 </template>
 
@@ -365,84 +380,83 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 {{#autoForm schema=userSchema id="userAddForm" validation="submit" type="method" meteormethod="addUser"}}
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        {{#if currentUser}}
-                            Neuen Nutzer anlegen
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {{#if currentUser}}
+                                Neuen Nutzer anlegen
                             {{else}}
-                            Registrieren beim Team
-                            {{settings.teamname}}
-                        {{/if}}
-                    </h5>
-                    {{#unless setupNeeded}}
-                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
-                        <span class="fa fa-close"></span>
-                    </button>
-                    {{/unless}}
-                </div>
-                <div class="modal-body">
-                    {{#if setupNeeded}}
-                        <p>
-                            Noch keine Nutzer im System, bitte registrieren sie den Admin Account. Das Passwort lautet: 'blubs'. 
-                            Bitte ändern sie dieses so schnell wie möglich.
-                        </p>
-                    {{else}}
-                        {{#unless currentUser}}
-                        <p>
-                            Die Registrierung auf dieser Seite ist nur möglich, wenn einem das Registrierungspasswort bekannt ist. Dies erhält man bspw. im Training, oder wenn man eine der
-                            <a href="{{pathFor route='users'}}">Kontaktpersonen</a> anschreibt.
-                        </p>
-                        {{/unless}}
-                    {{/if}}
-                    <fieldset class="row">
-                        <div class="col-6">
-                            {{> afQuickField name='alias'}} 
-                        </div>
-                        <div class="col-6">
-                            {{> afQuickField name='sex'}} 
-                        </div>
-                        <div class="col-12">
-                            {{> afQuickField name='email' type='email'}} 
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            {{> afQuickField name='name'}} 
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            {{> afQuickField name='surname'}} 
-                        </div>
-                        <div class="col-12">
-                        {{#unless setupNeeded}}
-
-                            {{#if equals settings.siteRegistration "password"}} 
-                                {{#unless currentUser}}
-                                    {{> afQuickField name='sitePassword' label="Registrierungspasswort"}} 
-                                {{/unless}}
-                            {{else}}
-                            <p>
-                                Der Zugang zur Webseite muss noch durch einen Administrator bestätigt werden.
-                            </p>
+                                Registrieren beim Team
+                                {{settings.teamname}}
                             {{/if}}
-                            <p>
-                                Nach dem Absenden dieser Anfrage wird eine E-Mail an die eingegebene Adresse verschickt. 
-                                Um die Gültigkeit dieser sicherzustellen, müssen sie den Link darin öffnen.
-                            </p>
+                        </h5>
+                        {{#unless setupNeeded}}
+                            <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                                <span class="fa fa-close"></span>
+                            </button>
                         {{/unless}}
-                        </div>
-                    </fieldset>
-                </div>
-                <div class="modal-footer">
-                    {{#unless setupNeeded}}
-                        <button aria-label="Close" class="btn btn-light" data-dismiss="modal" type="button">
-                            Abbrechen
+                    </div>
+                    <div class="modal-body">
+                        {{#if setupNeeded}}
+                            <p>
+                                Noch keine Nutzer im System, bitte registrieren sie den Admin Account. Das Passwort lautet: 'blubs'.
+                                Bitte ändern sie dieses so schnell wie möglich.
+                            </p>
+                        {{else}}
+                            {{#unless currentUser}}
+                                <p>
+                                    Die Registrierung auf dieser Seite ist nur möglich, wenn einem das Registrierungspasswort bekannt ist. Dies erhält man bspw. im Training, oder wenn man eine der
+                                    <a href="{{pathFor route='users'}}">Kontaktpersonen</a> anschreibt.
+                                </p>
+                            {{/unless}}
+                        {{/if}}
+                        <fieldset class="row">
+                            <div class="col-6">
+                                {{> afQuickField name='alias'}}
+                            </div>
+                            <div class="col-6">
+                                {{> afQuickField name='sex'}}
+                            </div>
+                            <div class="col-12">
+                                {{> afQuickField name='email' type='email'}}
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                {{> afQuickField name='name'}}
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                {{> afQuickField name='surname'}}
+                            </div>
+                            <div class="col-12">
+                                {{#unless setupNeeded}}
+
+                                    {{#if equals settings.siteRegistration "password"}}
+                                        {{#unless currentUser}}
+                                            {{> afQuickField name='sitePassword' label="Registrierungspasswort"}}
+                                        {{/unless}}
+                                    {{else}}
+                                        <p>
+                                            Der Zugang zur Webseite muss noch durch einen Administrator bestätigt werden.
+                                        </p>
+                                    {{/if}}
+                                    <p>
+                                        Nach dem Absenden dieser Anfrage wird eine E-Mail an die eingegebene Adresse verschickt.
+                                        Um die Gültigkeit dieser sicherzustellen, müssen sie den Link darin öffnen.
+                                    </p>
+                                {{/unless}}
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        {{#unless setupNeeded}}
+                            <button aria-label="Close" class="btn btn-light" data-dismiss="modal" type="button">
+                                Abbrechen
+                            </button>
+                        {{/unless}}
+                        <button class="btn btn-primary" type="submit">
+                            {{#if currentUser}} Anlegen {{else}} Registrieren {{/if}}
                         </button>
-                    {{/unless}}
-                    <button class="btn btn-primary" type="submit">
-                        {{#if currentUser}} Anlegen {{else}} Registrieren {{/if}}
-                    </button>
-                </div>
+                    </div>
                 {{/autoForm}}
             </div>
         </div>
     </div>
 </template>
-

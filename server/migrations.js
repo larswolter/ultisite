@@ -36,5 +36,14 @@ Meteor.startup(function () {
       },
     });
   });
+  Meteor.users.find({ 'club.dfv': { $exists: true } }).forEach((u) => {
+    if (!Array.isArray(u.club.dfv)) {
+      if (u.club.dfv) {
+        Meteor.users.update(u._id, { $set: { 'club.dfv': [2018] } });
+      } else {
+        Meteor.users.update(u._id, { $set: { 'club.dfv': [] } })
+      }
+    }
+  });
   console.log('migrations finished');
 });

@@ -128,7 +128,11 @@ Meteor.startup(function () {
       }
     });
   }), null, false, 'Europe/Berlin');
-  job.start();
+  if (!Meteor.absoluteUrl().match(/localhost/)) {
+    job.start();
+  } else {
+    console.log('no mail watcher because of localhost');
+  }
 });
 
 const fetchPart = function (imap, blogId, uid, part) {

@@ -7,6 +7,7 @@ Accounts.onLogin(function (attempt) {
 });
 
 Meteor.publish('usersOverview', function (options) {
+  check(options, Object);
   if (this.userId) {
     const fields = {};
     fields.club = 1;

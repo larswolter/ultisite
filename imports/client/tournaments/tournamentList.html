@@ -4,26 +4,26 @@
             <div class="col-12 d-block d-md-none tournament-tabs navbar-light">
                 {{#if currentUser}}
                     <a href="#" class="{{#if showPlanned}}active{{/if}}" data-target="planned" role="tab">Geplant</a>
-                    <a href="#" class="{{#if showPlayed}}active{{/if}}" data-target="played" role="tab">Gespielt</a> 
+                    <a href="#" class="{{#if showPlayed}}active{{/if}}" data-target="played" role="tab">Gespielt</a>
                 {{/if}}
             </div>
-            {{#if currentUser}} 
+            {{#if currentUser}}
                 {{#if showPlanned}}
                     <div class="col-12 col-md-7">
                         <div class="card">
                             <div class="card-header">
                                 <button class="btn btn-link pull-right action-toggle-filter" type="button">
-                                    <span class="fa fa-filter"></span> 
+                                    <span class="fa fa-filter"></span>
                                     <span class="d-none d-md-inline">
-                                        Filter 
+                                        Filter
                                         {{#if showFilter}}
                                             ausblenden
                                         {{else}}
                                             einblenden
                                         {{/if}}
-                                        </span>                            
+                                    </span>
                                 </button>
-                                <strong class="btn-height-text">{{filterAsText}}</strong> 
+                                <strong class="btn-height-text">{{filterAsText}}</strong>
                             </div>
                             <div class="card-body {{#if showFilter}}active{{/if}} filter-container">
                                 {{#if showFilter}}
@@ -31,46 +31,48 @@
                                 {{/if}}
                             </div>
                         </div>
-                        {{#each plannedTournaments}} 
+                        {{#each plannedTournaments}}
                             {{header}}
                             <div class="card">
                                 <div class="list-group list-group-flush">
-                                {{#each elements}}
-                                    {{#if hasPast}}
-                                        {{>pastTournamentListItem}}
-                                    {{else}} 
-                                        {{>detailedTournamentListItem}} 
-                                    {{/if}}
-                                {{/each}}
+                                    {{#each elements}}
+                                        {{#if hasPast}}
+                                            {{>pastTournamentListItem}}
+                                        {{else}}
+                                            {{>detailedTournamentListItem}}
+                                        {{/if}}
+                                    {{/each}}
                                 </div>
                             </div>
-                        {{else}} 
-                            {{>EmptySmall}} 
+                        {{else}}
+                            {{>EmptySmall}}
                         {{/each}}
                     </div>
-                {{/if}} 
+                {{/if}}
                 {{#if showPlayed}}
                     <div class="col-12 col-md-5">
                         <div class="card">
                             <div class="card-header d-none d-md-block">
-                                <strong>Gespielte Turniere</strong> 
+                                <strong>Gespielte Turniere</strong>
                                 {{> helpIcon text="Hier sind alle Turniere aufgelistet, bei denen ein Team gespielt hat"}}
                             </div>
                             <div class="list-group list-group-flush">
-                                {{#each playedTournaments}} 
-                                    {{>pastTournamentListItem}} 
-                                {{else}} 
-                                    {{>EmptySmall}} 
+                                {{#each playedTournaments}}
+                                    {{>pastTournamentListItem}}
+                                {{else}}
+                                    {{>EmptySmall}}
                                 {{/each}}
                             </div>
                         </div>
                     </div>
-                {{/if}} 
-            {{/if}} 
+                {{/if}}
+            {{else}}
+                <h4>Du must angemeldet sein, um Turniere anzuschauen</h4>
+            {{/if}}
             {{#if currentUser}}
-            <button class="btn btn-light btn-floating action-add-tournament" title="Turnier anlegen" type="button">
-                <span class="fa fa-plus fa-lg"></span>
-            </button>
+                <button class="btn btn-light btn-floating action-add-tournament" title="Turnier anlegen" type="button">
+                    <span class="fa fa-plus fa-lg"></span>
+                </button>
             {{/if}}
         </div>
     </div>
@@ -78,13 +80,13 @@
 
 <template name="tournamentMap">
     <div class="tournament-map">
-        
-        
+
+
         <div class='popup'>
             {{#each popupInfos}}
-            <div>
-                {{formatDate date}} - <a href="{{pathFor 'tournament' _id=this._id}}">{{name}}</a>
-            </div>
+                <div>
+                    {{formatDate date}} - <a href="{{pathFor 'tournament' _id=this._id}}">{{name}}</a>
+                </div>
             {{/each}}
         </div>
     </div>
@@ -104,14 +106,14 @@
                 <li class="dropdown-item"><a data-target="surface" href="#">Alle</a></li>
                 <li class="dropdown-divider"></li>
                 {{#each settings.arraySurfaces}}
-                <li class="dropdown-item"><a data-target="surface" href="#">{{this}}</a></li>
+                    <li class="dropdown-item"><a data-target="surface" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
         <div class="btn-group">
             <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.division "Alle"}}
-                Klasse
+                    Klasse
                 {{else}}
                     {{filter.division}}
                 {{/if}}
@@ -120,14 +122,14 @@
                 <li class="dropdown-item"><a data-target="division" href="#">Alle</a></li>
                 <li class="dropdown-divider"></li>
                 {{#each settings.arrayDivisions}}
-                <li class="dropdown-item"><a data-target="division" href="#">{{this}}</a></li>
+                    <li class="dropdown-item"><a data-target="division" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
         <div class="btn-group">
             <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.category "Alle"}}
-                Typ
+                    Typ
                 {{else}}
                     {{filter.category}}
                 {{/if}}
@@ -136,7 +138,7 @@
                 <li class="dropdown-item"><a data-target="category" href="#">Alle</a></li>
                 <li class="dropdown-divider"></li>
                 {{#each settings.arrayCategorys}}
-                <li class="dropdown-item"><a data-target="category" href="#">{{this}}</a></li>
+                    <li class="dropdown-item"><a data-target="category" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
@@ -148,7 +150,7 @@
                 <li class="dropdown-item"><a data-target="year" href="#">Kommende</a></li>
                 <li class="dropdown-divider"></li>
                 {{#each tournamentYears}}
-                <li class="dropdown-item"><a data-target="year" href="#">{{this}}</a></li>
+                    <li class="dropdown-item"><a data-target="year" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
@@ -166,75 +168,74 @@
     <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item list-group-item-action tournament-list-item" title="{{name}}">
         <div class="row">
             <div class="col-12 cutoff-text">
-                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none pull-right"/>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none pull-right" />
                 {{dayOfDate date}}. <strong>{{name}}</strong> in {{address.city}}
-                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-none d-sm-block"/>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-none d-sm-block" />
             </div>
         </div>
         {{#each teaminfo}}
-        <div class="row">
-            <div class="col-8 cutoff-text">
-                {{#with myTeamState}}
-                <div class="pull-right">
-                    <span class="fa fa-user text-{{colorState this.state}}" title="{{this.state}}"></span>
+            <div class="row">
+                <div class="col-8 cutoff-text">
+                    {{#with myTeamState}}
+                        <div class="pull-right">
+                            <span class="fa fa-user text-{{colorState this.state}}" title="{{this.state}}"></span>
+                        </div>
+                    {{/with}}
+                    <span class="fa fa-{{divisionIcon}} fa-fw"></span>
+                    <span class="">{{name}}</span> -
+                    <small class="text-{{stateColor}}">
+                        {{state}}
+                        {{#if equals stateColor "danger"}}
+                            <span class="fa fa-exclamation-triangle"></span>
+                        {{/if}}
+                        {{#if equals stateColor "success"}}
+                            <span class="fa fa-check-circle"></span>
+                        {{/if}}
+                    </small>
                 </div>
-                {{/with}}
-                <span class="fa fa-{{divisionIcon}} fa-fw"></span> 
-                <span class="">{{name}}</span> - 
-                <small class="text-{{stateColor}}">
-                    {{state}}
-                    {{#if equals stateColor "danger"}}
-                    <span class="fa fa-exclamation-triangle"></span>
-                    {{/if}} 
-                    {{#if equals stateColor "success"}}
-                    <span class="fa fa-check-circle"></span>
-                    {{/if}} 
-                </small>
+                <div class="col-4">
+                    {{#if gte teamCount.spots 10}} Spieler gesucht! {{else}} {{>teamCountBar this}} {{/if}}
+                </div>
             </div>
-            <div class="col-4">
-                {{#if gte teamCount.spots 10}} Spieler gesucht! {{else}} {{>teamCountBar this}} {{/if}}
-            </div>
-        </div>
         {{/each}}
     </a>
 </template>
 
 <template name="pastTournamentListItem">
     {{#if teamNames}}
-    <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item list-group-item-action tournament-list-item" title="{{name}}">
-        <div class="row">
-            <div class="col-12">
-                <span class="badge pull-right" title="Anzahl Berichte">{{reports.length}}</span> 
-                {{#each teamImages}}
-                    <div class="detail-team-image d-sm-none pull-left" 
-                        style="background-image:url('{{imageUrl this '160x160'}}');">
-                    </div>
-                {{/each}}
-                <strong>{{name}}</strong><br />
-                {{teamNames}} beim Turnier 
-                <span class="cutoff-text">am {{formatDate date}}</span>
-                <span class="cutoff-text">in {{address.city}} 
-                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" /></span>
+        <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item list-group-item-action tournament-list-item" title="{{name}}">
+            <div class="row">
+                <div class="col-12">
+                    <span class="badge pull-right" title="Anzahl Berichte">{{reports.length}}</span>
+                    {{#each teamImages}}
+                        <div class="detail-team-image d-sm-none pull-left" style="background-image:url('{{imageUrl this '160x160'}}');">
+                        </div>
+                    {{/each}}
+                    <strong>{{name}}</strong><br />
+                    {{teamNames}} beim Turnier
+                    <span class="cutoff-text">am {{formatDate date}}</span>
+                    <span class="cutoff-text">in {{address.city}}
+                        <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" /></span>
+                </div>
             </div>
-        </div>
-    </a>
+        </a>
     {{/if}}
 </template>
 
 
 <template name="tournamentListItem">
     <a href='{{pathFor "tournament" _id=this._id}}' data-id="{{this._id}}" class="list-group-item list-group-item-action tournament-list-item">
-        <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none"/>
+        <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none" />
         <div class="row">
             <div class="col-2 col-sm-1 {{dateState}}">
                 {{dayOfDate date}}.{{monthOfDate date}}.
             </div>
             <div class="col-10 col-sm-6">
-                <strong>{{name}}</strong> 
+                <strong>{{name}}</strong>
                 {{#if address.city}}
                     <span class="d-none d-sm-inline">in {{address.city}}</span>
                 {{/if}}
-                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-none d-sm-block"/>
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-none d-sm-block" />
             </div>
             <div class="col-12 col-sm-5">
                 {{#if address.city}}
@@ -243,12 +244,12 @@
                 {{/if}}
                 {{#each tags}}
                     {{#if icon}}
-                    <span class="fa fa-{{this.icon}}"></span>
-                    {{/if}}    
+                        <span class="fa fa-{{this.icon}}"></span>
+                    {{/if}}
                     {{#if img}}
-                    <img src="{{img}}" style="" />
-                    {{/if}}    
-                    <span class="xs-hidden small">{{this.text}}</span> 
+                        <img src="{{img}}" style="" />
+                    {{/if}}
+                    <span class="xs-hidden small">{{this.text}}</span>
                 {{/each}}
                 {{#if teams.length}}
                     <span class="fa fa-group"></span> <span class="xs-hidden small">Mit Team</span>

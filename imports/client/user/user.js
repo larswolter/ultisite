@@ -8,12 +8,15 @@ import './user.html';
 import './userlist.html';
 
 Meteor.startup(function () {
-  Meteor.subscribe('UserDetails');
+  Meteor.subscribe('UserDetails', Meteor.userId());
 });
 
 const userHelper = {
   user() {
     return Meteor.users.findOne(FlowRouter.getParam('_id'));
+  },
+  currentYear() {
+    return moment().format('YYYY');
   },
   getAlias() {
     return this.username;
@@ -136,7 +139,6 @@ const userHelper = {
 };
 Template.userdisplay.helpers(userHelper);
 Template.user.helpers(userHelper);
-Template.userItem.helpers(userHelper);
 
 Template.user.onCreated(function () {
   this.autorun(() => {
@@ -300,12 +302,32 @@ Template.user.events({
       $set: toSet,
     }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode));
   },
+  'change .dfv-select': function (evt, tmpl) {
+    evt.preventDefault();
+    const value = tmpl.$(evt.currentTarget).val();
+    const userId = FlowRouter.getParam('_id');
+    const update = {};
+    if (value) {
+      update.$addToSet = { 'club.dfv': moment().year() };
+    } else {
+      update.$pull = { 'club.dfv': moment().year() };
+    }
+    Meteor.users.update({
+      _id: userId,
+    }, update, UltiSite.userFeedbackFunction('Wert speichern', evt.currentTarget.parentNode));
+  },
   'change .user-base .opt-editable-field,.user-base .radio-select': function (e, t) {
     const value = t.$(e.currentTarget).val();
     const name = $(e.currentTarget).attr('name');
     const type = $(e.currentTarget).attr('data-type');
     const toSet = {};
-    if (type && (type === 'boolean')) { toSet[name] = !!value; } else if (type && (type === 'number')) { toSet[name] = Number(value); } else if (type && (type === 'date')) { toSet[name] = moment(value, 'DD.MM.YYYY'); } else { toSet[name] = value; }
+    if (type && (type === 'boolean')) {
+      toSet[name] = !!value;
+    } else if (type && (type === 'number')) {
+      toSet[name] = Number(value);
+    } else if (type && (type === 'date')) {
+      toSet[name] = moment(value, 'DD.MM.YYYY');
+    } else { toSet[name] = value; }
     const userId = FlowRouter.getParam('_id');
 
     Meteor.users.update({

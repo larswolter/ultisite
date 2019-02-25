@@ -1,8 +1,11 @@
+import { moment } from 'meteor/momentjs:moment';
+
 import './user.scss';
 import './userlist.html';
 
-const usersOverview = new Meteor.Collection("usersOverview");
+const usersOverview = new Meteor.Collection('usersOverview');
 const paginationEntries = 20;
+UltiSite.usersOverview = usersOverview;
 
 Template.userList.onCreated(function () {
   this.users = new ReactiveVar([]);
@@ -13,7 +16,7 @@ Template.userList.onCreated(function () {
   self.pagination = new ReactiveVar(0);
   self.totalUsers = new ReactiveVar(0);
   self.autorun(() => {
-    self.subscribe("usersOverview", {
+    self.subscribe('usersOverview', {
       sort: self.sortOpts.get(),
       skip: self.pagination.get(),
       limit: paginationEntries,
@@ -25,78 +28,110 @@ Template.userList.onCreated(function () {
 });
 
 Template.userList.events({
-  'click .action-create-user' (e, t) {
-    e.preventDefault();
+  'click .action-create-user': function (evt, tmpl) {
+    evt.preventDefault();
     UltiSite.showModal('userCreateDialog', {}, { dynamicImport: '/imports/client/user/user.js' });
   },
-  'click .action-more-users' (e, t) {
-    e.preventDefault();
-    t.pagination.set(t.pagination.get() + paginationEntries);
+  'click .action-more-users': function (evt, tmpl) {
+    evt.preventDefault();
+    tmpl.pagination.set(tmpl.pagination.get() + paginationEntries);
     $(window).scrollTop();
   },
-  'click .action-less-users' (e, t) {
-    e.preventDefault();
-    t.pagination.set(Math.max(0, t.pagination.get() - paginationEntries));
+  'click .action-less-users': function (evt, tmpl) {
+    evt.preventDefault();
+    tmpl.pagination.set(Math.max(0, tmpl.pagination.get() - paginationEntries));
     $(window).scrollTop();
   },
-  'click .h5 .fa-sort' (e, t) {
-    t.$('.h5 .fa').removeClass().addClass('fa fa-sort');
-    t.$(e.currentTarget).removeClass('fa-sort');
-    t.$(e.currentTarget).addClass('fa-sort-asc');
+  'click .h5 .fa-sort': function (evt, tmpl) {
+    tmpl.$('.h5 .fa').removeClass().addClass('fa fa-sort');
+    tmpl.$(evt.currentTarget).removeClass('fa-sort');
+    tmpl.$(evt.currentTarget).addClass('fa-sort-asc');
     const sort = {};
-    sort[t.$(e.currentTarget).attr('data-sort')] = -1;
-    t.sortOpts.set(sort);
+    sort[tmpl.$(evt.currentTarget).attr('data-sort')] = -1;
+    tmpl.sortOpts.set(sort);
   },
-  'click .h5 .fa-sort-asc' (e, t) {
-    t.$('.h5 .fa').removeClass().addClass('fa fa-sort');
-    t.$(e.currentTarget).removeClass('fa-sort');
-    t.$(e.currentTarget).addClass('fa-sort-desc');
+  'click .h5 .fa-sort-asc': function (evt, tmpl) {
+    tmpl.$('.h5 .fa').removeClass().addClass('fa fa-sort');
+    tmpl.$(evt.currentTarget).removeClass('fa-sort');
+    tmpl.$(evt.currentTarget).addClass('fa-sort-desc');
     const sort = {};
-    sort[t.$(e.currentTarget).attr('data-sort')] = 1;
-    t.sortOpts.set(sort);
+    sort[tmpl.$(evt.currentTarget).attr('data-sort')] = 1;
+    tmpl.sortOpts.set(sort);
   },
-  'click .h5 .fa-sort-desc' (e, t) {
-    t.$('.h5 .fa').removeClass().addClass('fa fa-sort');
+  'click .h5 .fa-sort-desc': function (evt, tmpl) {
+    tmpl.$('.h5 .fa').removeClass().addClass('fa fa-sort');
     const sort = {};
-    t.sortOpts.set(sort);
+    tmpl.sortOpts.set(sort);
   },
 });
 
 Template.userList.helpers({
-  totalPages () {
+  totalPages() {
     return Math.ceil(Template.instance().totalUsers.get() / paginationEntries);
   },
-  users () {
+  users() {
     return usersOverview.find();
   },
-  paginationPos () {
+  paginationPos() {
     return Math.floor(Template.instance().pagination.get() / paginationEntries) + 1;
   },
 });
 
-Template.userItem.events({
-  'click .action-club-state' (e, t) {
-    e.preventDefault();
-
-    const modifier = {};
-    modifier['club.state'] = t.$(e.currentTarget).attr('data-value');
-
-    Meteor.users.update({
-      _id: t.data._id,
-    }, {
-      $set: modifier,
-    }, UltiSite.userFeedbackFunction('Kontaktinfo speichern'));
+Template.userItem.helpers({
+  currentDFV() {
+    return this.club && this.club.dfv && this.club.dfv.includes(moment().year());
   },
-  'click .action-debit' (e, t) {
-    e.preventDefault();
-    UltiSite.getTextDialog({ text: this.profile.debit, header: "Schulden eingeben (0 = keine)" }, function (text) {
+  lastDFV() {
+    const res = (this.club && this.club.dfv && this.club.dfv.length && this.club.dfv.sort().reverse()[0]) || 'nie';
+    return res;
+  },
+});
+
+Template.userItem.events({
+  'click .action-club-state': function (evt, tmpl) {
+    evt.preventDefault();
+
+    if (tmpl.data.club && tmpl.data.club.state) {
+      Meteor.users.update({
+        _id: tmpl.data._id,
+      }, {
+          $unset: { 'club.state': 1 },
+        }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
+    } else {
+      Meteor.users.update({
+        _id: tmpl.data._id,
+      }, {
+          $set: { 'club.state': 'Mitglied' },
+        }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
+    }
+  },
+  'click .action-club-dfv': function (evt, tmpl) {
+    evt.preventDefault();
+
+    if (tmpl.data.club && tmpl.data.club.dfv.includes(moment().year())) {
+      Meteor.users.update({
+        _id: tmpl.data._id,
+      }, {
+          $pull: { 'club.dfv': moment().year() },
+        }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
+    } else {
+      Meteor.users.update({
+        _id: tmpl.data._id,
+      }, {
+          $addToSet: { 'club.dfv': moment().year() },
+        }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
+    }
+  },
+  'click .action-debit': function (evt, tmpl) {
+    evt.preventDefault();
+    UltiSite.getTextDialog({ text: this.profile.debit, header: 'Schulden eingeben (0 = keine)' }, function (text) {
       const debit = Number(text);
       if (debit > 0) {
-        Meteor.users.update(t.data._id, {
-   $set: { 'profile.debit': debit },
- }, UltiSite.userFeedbackFunction('Schulden speichern'));
+        Meteor.users.update(tmpl.data._id, {
+          $set: { 'profile.debit': debit },
+        }, UltiSite.userFeedbackFunction('Schulden speichern'));
       } else {
-        Meteor.users.update(t.data._id, {
+        Meteor.users.update(tmpl.data._id, {
           $unset: { 'profile.debit': 0 },
         }, UltiSite.userFeedbackFunction('Schulden entfernen'));
       }
