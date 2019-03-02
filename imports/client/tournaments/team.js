@@ -69,7 +69,7 @@ Template.team.onRendered(function () {
 Template.team.events({
   'click .action-historic-view': function (evt) {
     evt.preventDefault();
-    UltiSite.showModal('teamHistoricView', { teamId: this._id });
+    UltiSite.showModal('teamHistoricView', { team: this });
   },
   'click .action-participate': function (evt) {
     evt.preventDefault();
@@ -77,7 +77,8 @@ Template.team.events({
   },
   'click .action-edit-team': function (evt) {
     evt.preventDefault();
-    UltiSite.showModal('teamUpdate', { tournamentId: this.tournamentId, teamId: this._id });
+    const tournamentId = UltiSite.getTournamentByTeam(this._id)._id;
+    UltiSite.showModal('teamUpdate', { tournamentId, teamId: this._id });
   },
   'click .action-edit-remarks': function (evt, tmpl) {
     UltiSite.getHTMLTextDialog({ content: this.remarks, header: 'Anmerkungen zum Team bearbeiten' }, (text) => {
@@ -375,12 +376,9 @@ Template.teamUpdate.helpers({
     return UltiSite.schemas.team.get();
   },
   tournamentDivisions() {
-    if (Template.currentData().tournamentId) {
-      const tmpl = UltiSite.getTournament(Template.currentData().tournamentId);
-      console.log(tmpl);
-      return tmpl.divisions || [];
-    }
-    return [];
+    const tournament = UltiSite.getTournamentByTeam(Template.instance().data.teamId);
+    console.log(tournament);
+    return tournament.divisions || [];
   },
   team() {
     const team = UltiSite.getTeam(Template.instance().data.teamId);
@@ -388,18 +386,16 @@ Template.teamUpdate.helpers({
     let division;
     let maxPlayers = 12;
     let minFemale = 0;
-    if (Template.instance().data.tournamentId) {
-      const tmpl = UltiSite.getTournament(Template.instance().data.tournamentId);
-      if (tmpl && tmpl.divisions) {
-        division = tmpl.divisions[0];
-        if (_.contains(tmpl.divisions, 'Mixed')) { minFemale = 6; }
-        if (_.contains(tmpl.divisions, 'Soft Mixed')) { minFemale = 4; }
-        if (_.contains(tmpl.surfaces, 'Sand') || _.contains(tmpl.surfaces, 'Halle')) {
-          minFemale -= 1;
-          maxPlayers -= 2;
-        }
-        if (_.find(tmpl.divisions, d => d.indexOf('Damen') >= 0)) { minFemale = maxPlayers; }
+    const tmpl = UltiSite.getTournamentByTeam(Template.instance().data.teamId);
+    if (tmpl && tmpl.divisions) {
+      division = tmpl.divisions[0];
+      if (_.contains(tmpl.divisions, 'Mixed')) { minFemale = 6; }
+      if (_.contains(tmpl.divisions, 'Soft Mixed')) { minFemale = 4; }
+      if (_.contains(tmpl.surfaces, 'Sand') || _.contains(tmpl.surfaces, 'Halle')) {
+        minFemale -= 1;
+        maxPlayers -= 2;
       }
+      if (_.find(tmpl.divisions, d => d.indexOf('Damen') >= 0)) { minFemale = maxPlayers; }
     }
     return {
       name: UltiSite.settings().teamname,
@@ -448,15 +444,18 @@ Template.teamReport.events({
     };
     Meteor.call('participantRemove', params, tmpl.data._id, UltiSite.userFeedbackFunction('Mich entfernen', evt.currentTarget));
   },
-  'click .action-show-team-image': function () {
+  'click .action-show-team-image': function (evt) {
+    evt.preventDefault();
+    const tournament = UltiSite.getTournamentByTeam(this._id);
     FlowRouter.go('image', {
       _id: this.image,
-      associated: this.tournamentId,
+      associated: tournament._id,
     });
   },
-  'click .action-team-image': function () {
+  'click .action-team-image': function (evt) {
     const teamId = this._id;
-    UltiSite.fileBrowserShowDialog(this.tournamentId, function (file) {
+    const tournament = UltiSite.getTournamentByTeam(this._id);
+    UltiSite.fileBrowserShowDialog(tournament._id, function (file) {
       if (file) {
         UltiSite.Images.update(file._id, {
           $addToSet: {
@@ -521,18 +520,21 @@ Template.teamReport.helpers({
 
 Template.teamHistoricView.helpers({
   participants() {
-    return (UltiSite.getTeam(Template.instance().data.teamId) || {}).participants;
+    return Template.instance().data.team.participants;
   },
   marks() {
-    const team = UltiSite.getTeam(Template.instance().data.teamId);
+    const team = Template.instance().data.team;
     if (!team) { return []; }
     const earlyReg = _.sortBy(team.participants, 'entryDate');
-    const turnier = UltiSite.getTournament(team.tournamentId);
+    const turnier = UltiSite.getTournamentByTeam(team._id);
     let start = moment();
-    if (earlyReg.length > 0) { start = moment(earlyReg[0].entryDate); }
+    if (earlyReg.length > 0) {
+      start = moment(earlyReg[0].entryDate);
+    }
+
     const ende = moment(turnier.date);
     const drawing = moment(team.drawingDate);
-    const diff = 100.0 / start.diff(ende, 'minutes');
+    const diff = 100.0 / start.diff(ende, 'minutes') || 1;
     const marks = [{
       stateClass: 'mark-left',
       width: 25,
@@ -557,10 +559,10 @@ Template.teamHistoricView.helpers({
     return marks;
   },
   historicBlocks() {
-    const team = UltiSite.getTeam(Template.instance().data.teamId);
+    const team = Template.instance().data.team;
     if (!team) { return []; }
     const earlyReg = _.sortBy(team.participants, 'entryDate');
-    const turnier = UltiSite.getTournament(team.tournamentId);
+    const turnier = UltiSite.getTournamentByTeam(team._id);
     let start = moment();
     if (earlyReg.length > 0) {
       start = moment(earlyReg[0].entryDate);

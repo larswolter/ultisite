@@ -42,24 +42,24 @@ Template.userList.events({
     tmpl.pagination.set(Math.max(0, tmpl.pagination.get() - paginationEntries));
     $(window).scrollTop();
   },
-  'click .h5 .fa-sort': function (evt, tmpl) {
-    tmpl.$('.h5 .fa').removeClass().addClass('fa fa-sort');
+  'click .user-list-header .fa-sort': function (evt, tmpl) {
+    tmpl.$('.user-list-header .fa').removeClass().addClass('fa fa-sort');
     tmpl.$(evt.currentTarget).removeClass('fa-sort');
     tmpl.$(evt.currentTarget).addClass('fa-sort-asc');
     const sort = {};
     sort[tmpl.$(evt.currentTarget).attr('data-sort')] = -1;
     tmpl.sortOpts.set(sort);
   },
-  'click .h5 .fa-sort-asc': function (evt, tmpl) {
-    tmpl.$('.h5 .fa').removeClass().addClass('fa fa-sort');
+  'click .user-list-header .fa-sort-asc': function (evt, tmpl) {
+    tmpl.$('.user-list-header .fa').removeClass().addClass('fa fa-sort');
     tmpl.$(evt.currentTarget).removeClass('fa-sort');
     tmpl.$(evt.currentTarget).addClass('fa-sort-desc');
     const sort = {};
     sort[tmpl.$(evt.currentTarget).attr('data-sort')] = 1;
     tmpl.sortOpts.set(sort);
   },
-  'click .h5 .fa-sort-desc': function (evt, tmpl) {
-    tmpl.$('.h5 .fa').removeClass().addClass('fa fa-sort');
+  'click .user-list-header .fa-sort-desc': function (evt, tmpl) {
+    tmpl.$('.user-list-header .fa').removeClass().addClass('fa fa-sort');
     const sort = {};
     tmpl.sortOpts.set(sort);
   },
@@ -95,14 +95,14 @@ Template.userItem.events({
       Meteor.users.update({
         _id: tmpl.data._id,
       }, {
-          $unset: { 'club.state': 1 },
-        }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
+        $unset: { 'club.state': 1 },
+      }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
     } else {
       Meteor.users.update({
         _id: tmpl.data._id,
       }, {
-          $set: { 'club.state': 'Mitglied' },
-        }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
+        $set: { 'club.state': 'Mitglied' },
+      }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
     }
   },
   'click .action-club-dfv': function (evt, tmpl) {
@@ -112,14 +112,14 @@ Template.userItem.events({
       Meteor.users.update({
         _id: tmpl.data._id,
       }, {
-          $pull: { 'club.dfv': moment().year() },
-        }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
+        $pull: { 'club.dfv': moment().year() },
+      }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
     } else {
       Meteor.users.update({
         _id: tmpl.data._id,
       }, {
-          $addToSet: { 'club.dfv': moment().year() },
-        }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
+        $addToSet: { 'club.dfv': moment().year() },
+      }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
     }
   },
   'click .action-debit': function (evt, tmpl) {

@@ -119,12 +119,16 @@ UltiSite.addEvent = function (info) {
   }
   const event = { lastChange: new Date() };
   if (info.type === 'team' || info.type === 'tournament') {
-    const team = UltiSite.getTeam(info._id || info.group);
-    event.groupBy = team ? team.tournamentId : info._id;
-    const tourney = UltiSite.Tournaments.findOne(event.groupBy);
+    const tournament = UltiSite.Tournaments.findOne({
+      $or: [
+        { _id: info._id || info.group },
+        { 'teams._id': info._id || info.group },
+      ],
+    });
+    event.groupBy = tournament._id;
     event.route = 'tournament';
-    event.name = tourney.name;
-    event.additional = moment(tourney.date).format('DD.MM.YY') + ' in ' + tourney.address.city;
+    event.name = tournament.name;
+    event.additional = moment(tournament.date).format('DD.MM.YY') + ' in ' + tournament.address.city;
   } else if (info.type === 'wiki') {
     const page = UltiSite.WikiPages.findOne(info._id);
     event.groupBy = info._id;

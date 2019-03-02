@@ -91,7 +91,6 @@ Meteor.methods({
 
     console.log(`Adding Team ${teamData.name} to ${tournamentId}`);
     teamData.tournamentDate = tourney.date;
-    teamData.tournamentId = tournamentId;
 
     // set tournament defaults from type
     if (teamData.teamType.toLowerCase().indexOf('auslosung') > -1) {
