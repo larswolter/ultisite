@@ -22,7 +22,7 @@ UltiSite.getTournamentsStates = function (userId) {
   UltiSite.Tournaments.find({
     date: { $gte: new Date() },
     participants: { $elemMatch: { user: userId, state: { $gt: 50 } } },
-  }), { sort: { date: 1 } }.forEach((tournament) => {
+  }, { sort: { date: 1 } }).forEach((tournament) => {
     tournament.participants.filter(p => p.user === userId).forEach((part) => {
       const team = _.find(tournament.teams, t => t._id === part.team);
       teams.push({
@@ -250,3 +250,30 @@ Meteor.startup(function () {
   const job = new CronJob('0 17 3 * * *', Meteor.bindEnvironment(UltiSite.teamDrawings), null, false, 'Europe/Berlin');
   job.start();
 });
+00) { pos = 1000; }
+          UltiSite.Tournaments.update({ _id: tournament._id, 'participants.user': part.user }, {
+            $set: { 'participants.$.drawing': pos },
+          });
+          result[part.user.toCamelCase()] = pos;
+        });
+        UltiSite.Tournaments.update({ _id: tournament._id, 'teams._id': team._id }, {
+          $set: {
+            'teams.$.drawingResult': result,
+            lastChange: new Date(),
+          },
+        });
+        const drawnParticipants = UltiSite.participantList(team._id).map(p => p.username).join(', ');
+
+        console.log(`finished drawing:${drawnParticipants}`);
+        if (team.maxPlayers < partCount * 2) {
+          Meteor.call('addEvent', {
+            type: 'tournament',
+            _id: tournament._id,
+            text: `Auslosung bei ${team.name}:${drawnParticipants}`,
+          });
+        }
+      });
+    });
+  };
+
+  const job = new CronJob('0 17 3 * * *', Meteor.bindEnvironment(UltiSite.teamDrawings), null, false, 'Europe/Berlin'
