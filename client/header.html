@@ -8,63 +8,68 @@
 			</div>
 		{{/unless}}
 
-			<div class="header-group col-2 d-block d-md-none">
-				<a href="#" class="header-link action-toggle-sidebar">
-					<span class="{{#if AdminNotifications.count}}text-info{{/if}} fa fa-bars fa-lg"></span>
-					<span class="sr-only">Toggle navigation</span>
-				</a>				
-			</div>
-			<div class="header-group d-none d-md-block col-md-9 col-lg-10">
-				{{>navLinks}}
-			</div>
-			<div class="header-group col-8 d-block d-md-none">
-				{{#with sitePageHeader}}
-					{{#if this.link}}
-						<a class="header-link" href="{{this.link}}">
-							{{#if this.back}}
-								{{this.back}}
-							{{else}}
-								<span class="fa fa-angle-left fa-lg"></span>
-							{{/if}}
-						</a>
-						{{#if this.name}}
-							&nbsp;&nbsp;
-							<a href="#" class="header-link">
-								{{this.name}}
-							</a>
+		<div class="header-group col-2 d-block d-md-none">
+			<a href="#" class="header-link action-toggle-sidebar">
+				<span class="{{#if AdminNotifications.count}}text-info{{/if}} fa fa-bars fa-lg"></span>
+				<span class="sr-only">Toggle navigation</span>
+			</a>
+		</div>
+		<div class="header-group d-none d-md-block col-md-9 col-lg-10">
+			{{>navLinks}}
+		</div>
+		<div class="header-group col-8 d-block d-md-none">
+			{{#with sitePageHeader}}
+				{{#if this.link}}
+					<a class="header-link" href="{{this.link}}">
+						{{#if this.back}}
+							{{this.back}}
+						{{else}}
+							<span class="fa fa-angle-left fa-lg"></span>
 						{{/if}}
-					{{else}}
-							<a href="#" class="header-link">{{this.name}}</a>
-					{{/if}}
-				{{/with}}
-			</div>
-
-			<div class="header-group col-2 col-md-3 col-lg-2 text-right">
-				{{#if currentUser}}
-					<a href="#" class="header-link action-search {{#if equals routeName 'search'}}active{{/if}}">
-						<span class="fa fa-search fa-lg"></span>
 					</a>
-					<a href="{{pathFor route='help'}}" class="header-link d-none d-md-inline {{#if equals routeName 'help'}}active{{/if}}">
-						<span class="fa fa-question-circle fa-lg"></span>
-					</a>
-					<span class="d-none d-md-inline dropdown">
-						<a href="#" class="header-link text-default dropdown-toggle"
-							data-toggle="dropdown" aria-expanded="true">
-							<span class="fa fa-user fa-lg"></span>
+					{{#if this.name}}
+						&nbsp;&nbsp;
+						<a href="#" class="header-link">
+							{{this.name}}
 						</a>
-						{{>userHeader}}
-					</span>
+					{{/if}}
 				{{else}}
-					<a href="#" title="Anmelden" class="header-link btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
-						<span class="fa fa-sign-in fa-lg fa-fw"></span> <span class="d-none d-md-inline">Anmelden</span>
+					<a href="#" class="header-link">{{this.name}}</a>
+				{{/if}}
+			{{/with}}
+		</div>
+
+		<div class="header-group col-2 col-md-3 col-lg-2 text-right">
+			{{#if currentUser}}
+				<a href="#" class="header-link action-search {{#if equals routeName 'search'}}active{{/if}}">
+					<span class="fa fa-search fa-lg"></span>
+				</a>
+				<a href="{{pathFor route='help'}}" class="header-link d-none d-md-inline {{#if equals routeName 'help'}}active{{/if}}">
+					<span class="fa fa-question-circle fa-lg"></span>
+				</a>
+				<span class="d-none d-md-inline dropdown">
+					<a href="#" class="header-link text-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+						<span class="fa fa-user fa-lg"></span>
 					</a>
-				{{/if}}					
-				{{#if isAdmin}}
-					<a href="{{pathFor route='admin'}}" class="header-link d-none d-md-inline {{#if equals routeName 'admin'}}active{{/if}}">
-						<span class="fa fa-cog fa-lg"></span>
+					{{>userHeader}}
+				</span>
+			{{else}}
+				<a href="#" title="Anmelden" class="header-link btn-login-link {{#unless meteorStatus.connected}}disabled{{/unless}}">
+					<span class="fa fa-sign-in fa-lg fa-fw"></span> <span class="d-none d-md-inline">Anmelden</span>
+				</a>
+			{{/if}}
+			{{#if isAdmin}}
+				<a href="{{pathFor route='admin'}}" class="header-link d-none d-md-inline {{#if equals routeName 'admin'}}active{{/if}}">
+					<span class="fa fa-cog fa-lg"></span>
+				</a>
+			{{else}}
+				{{#if isInRole "admin"}}
+					<a href="#" class="header-link action-admin-mode d-none d-md-inline">
+						<span class="fa fa-user-secret fa-lg"></span>
 					</a>
 				{{/if}}
-			</div>
+			{{/if}}
+		</div>
 	</nav>
 </template>
 
@@ -74,8 +79,8 @@
 			{{#if this.submenu}}
 				<span class="dropdown">
 					<a href="#" class="header-link dropdown-toggle {{../liClass}} {{#if isActive}}active{{/if}}" data-toggle="dropdown" role="button" aria-expanded="false">
-                        {{this.text}} <span class="caret"></span>
-                    </a>
+						{{this.text}} <span class="caret"></span>
+					</a>
 					<ul class="dropdown-menu" role="menu">
 						{{#each this.submenu}}
 							{{#if this.target}}
@@ -103,8 +108,8 @@
 			{{#if currentUser}}
 				<div class="user-header">
 					<button class="btn btn-link" type="button">
-                        <small>{{currentUser.profile.name}} {{currentUser.profile.surname}} ({{currentUser.username}})</small>
-                    </button>
+						<small>{{currentUser.profile.name}} {{currentUser.profile.surname}} ({{currentUser.username}})</small>
+					</button>
 				</div>
 			{{/if}}
 		</div>
@@ -112,10 +117,10 @@
 		{{#if currentUser}}
 			<div class="list-group link-list">
 				<a href="{{pathFor route='user' _id=currentUser._id }}" class="list-group-item list-group-item-action {{#if isActive}}active{{/if}}">
-						Einstellungen
+					Einstellungen
 				</a>
 				<a href="#" class="list-group-item list-group-item-action action-logout">
-						Abmelden
+					Abmelden
 				</a>
 				<a href="#" class="list-group-item list-group-item-action toggle-user-menu sublinks">
 					<span class="fa fa-arrow-left"></span>
@@ -127,19 +132,19 @@
 				{{#if showMenuEntry}}
 					{{#if this.submenu}}
 						<a href="#" class="list-group-item list-group-item-action sublinks {{#if isActive}}active{{/if}}">
-                        {{this.text}} <span class="caret"></span>
-                    </a>
+							{{this.text}} <span class="caret"></span>
+						</a>
 						<div class="submenu" role="menu" style="display:none">
 							{{#each this.subLinks}}
 								<a href="{{this.target}}" class="list-group-item list-group-item-action">
-                                {{this.text}}
-                            </a>
+									{{this.text}}
+								</a>
 							{{/each}}
 						</div>
 					{{else}}
 						<a href="{{this.target}}" class="list-group-item list-group-item-action {{#if isActive}}active{{/if}}">
-                        {{this.text}}
-                    </a>
+							{{this.text}}
+						</a>
 					{{/if}}
 				{{/if}}
 			{{/each}}
@@ -166,9 +171,9 @@
 				</a>
 			{{/if}}
 			<a class="list-group-item list-group-item-action" href="https://github.com/larswolter/ultisite">
-				<span class="fa fa-github fa-fw"></span>  
+				<span class="fa fa-github fa-fw"></span>
 				Quellen und Feedback
-			</a>	
+			</a>
 			{{#if settings.wikiDatenschutz}}
 				<a class="list-group-item list-group-item-action" href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">
 					<span class="fa fa-info-circle fa-fw"></span> Datenschutz
@@ -190,7 +195,7 @@
 			<li class="dropdown-header">
 				{{currentUser.username}} ({{currentUser.profile.name}} {{currentUser.profile.surname}})
 			</li>
-			<li  class="dropdown-item" role="presentation">
+			<li class="dropdown-item" role="presentation">
 				<a class="goto-user-profile" role="menuitem" tabindex="-1" href="{{pathFor route='user' _id=currentUser._id }}">
 					<span class="fa fa-user fa-fw"></span> Einstellungen
 				</a>
@@ -209,11 +214,11 @@
 			{{#if isAdmin}}
 				<li class="dropdown-item" role="presentation">
 					<a href="{{pathFor route='admin'}}">
-					{{#with AdminNotifications}}
-					<span class="badge pull-right">{{this.count}}</span>
-					{{/with}}
-					<span class="fa fa-cog fa-fw"></span> Admin
-				</a>
+						{{#with AdminNotifications}}
+							<span class="badge pull-right">{{this.count}}</span>
+						{{/with}}
+						<span class="fa fa-cog fa-fw"></span> Admin
+					</a>
 				</li>
 			{{/if}}
 		</ul>
@@ -228,12 +233,12 @@
 <template name="footer">
 	<div class="pull-right">
 		{{#if settings.wikiImpressum}}
-				<a href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">Impressum</a>
+			<a href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">Impressum</a>
 		{{/if}}
 		&nbsp;&nbsp;
 		{{#if settings.wikiDatenschutz}}
-				<a href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">Datenschutz</a>
+			<a href="{{pathFor route='wikipage' _id=settings.wikiDatenschutz}}">Datenschutz</a>
 		{{/if}}
 	</div>
-	<a href="https://github.com/larswolter/ultisite" target="github"><span class="fa fa-github"></span> Quellen und Feedback</a>	
+	<a href="https://github.com/larswolter/ultisite" target="github"><span class="fa fa-github"></span> Quellen und Feedback</a>
 </template>

@@ -44,6 +44,10 @@ Template.header.events({
     e.preventDefault();
     $('#loginDialog').modal('show');
   },
+  'click .action-admin-mode': function (evt) {
+    evt.preventDefault();
+    Meteor.call('makeMeAdmin', UltiSite.userFeedbackFunction('Switching to Admin'));
+  },
   'click .action-logout': function (e) {
     e.preventDefault();
     Meteor.logout((err) => {

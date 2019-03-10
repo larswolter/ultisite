@@ -230,7 +230,8 @@ _.extend(UltiSite, {
   isAdmin(userid, con) {
     if (!userid && Meteor.isServer) { userid = this.userId; }
     if (!userid && Meteor.isClient) { userid = Meteor.userId(); }
-    return Roles.userIsInRole(userid, ['admin']);
+    const user = Meteor.users.findOne(userid);
+    return Roles.userIsInRole(userid, ['admin']) && user && user.activeAdmin;
   },
 
   userByAlias(alias, con) {

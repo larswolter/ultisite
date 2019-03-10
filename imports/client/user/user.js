@@ -25,7 +25,7 @@ const userHelper = {
     return this.profile ? this.profile.sex === 'W' ? 'fa-female' : 'fa-male' : 'fa-user';
   },
   isEditable() {
-    if (Roles.userIsInRole(Meteor.userId(), ['admin'])) { return true; }
+    if (UltiSite.isAdmin()) { return true; }
     if (Meteor.userId() === FlowRouter.getParam('_id')) { return true; }
     return false;
   },
