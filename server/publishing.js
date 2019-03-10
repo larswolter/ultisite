@@ -98,6 +98,7 @@ Meteor.startup(function () {
       _id: { $in: [userId, this.userId] },
     }, {
         fields: {
+          activeAdmin: 1,
           profile: 1,
           status: 1,
           settings: 1,
