@@ -143,15 +143,35 @@ Meteor.methods({
     return WebApp.clientPrograms;
   },
 });
+const swString = {};
 WebApp.connectHandlers.use('/sw.js', (req, response) => {
-  let sworker = Assets.getText('serviceWorker.js');
-  const arch = isModern(req) ? 'web.browser' : 'web.browser.legacy';
-  const clientHash = WebApp.clientPrograms[arch].version;
-  const urls = WebApp.clientPrograms[arch].manifest.filter(f => (f.type !== 'dynamic js') && (f.type !== 'json')).map(f => `${f.url}`);
-  urls.push('/');
-  sworker = sworker.replace(/CURRENT_CACHE_NAME/g, clientHash);
-  sworker = sworker.replace('\'FILES_TO_CACHE\'', JSON.stringify(urls, null, 2));
+  console.log('get sw for ', req.query.arch);
+  const renderSW = function (arch) {
+    if (!swString[arch]) {
+      const sworker = Assets.getText('serviceWorker.js');
+      const clientHash = WebApp.clientPrograms[arch].version;
+      const urls = WebApp.clientPrograms[arch].manifest.filter((f) => {
+        return f.url &&
+          (f.cacheable || f.path.match(/\.(?:png|woff2|gif|jpg|jpeg|svg)$/)) &&
+          (f.type !== 'dynamic js') &&
+          (f.path.indexOf('icons/countries') === -1) &&
+          (f.type !== 'json');
+      }).map((f) => {
+        return {
+          revision: f.hash,
+          url: f.url.split('?')[0],
+        };
+      });
+      urls.push({ url: '/', hash: clientHash });
+      urls.push('/dynamicAppIcon.png?size=192');
+      urls.push('/dynamicAppIcon.png?size=512');
+      console.log(`created service worker for ${arch} with ${urls.length} urls`);
+      swString[arch] = sworker.replace('\'FILES_TO_CACHE\'', JSON.stringify(urls, null, 2));
+    }
+    return swString[arch];
+  };
   response.setHeader('Content-Type', 'application/javascript; charset=utf-8');
   response.writeHead(200);
-  response.end(sworker);
+  response.end(renderSW(req.query.arch || 'web.browser'));
+  console.log('delivered service worker');
 });

@@ -78,7 +78,7 @@ Meteor.methods({
             if (!ref || ref.length === 0) {
               ref = [{ type: 'files', name: 'Bilder' }];
             }
-            Meteor.call("addEvent", {
+            Meteor.call('addEvent', {
               type: ref[0].type,
               _id: metadata.associated[0],
               text: 'Neues Bild hinzugefügt',
@@ -133,7 +133,7 @@ Meteor.methods({
             if (!ref || ref.length === 0) {
               ref = [{ type: 'files', name: 'Dokumente' }];
             }
-            Meteor.call("addEvent", {
+            Meteor.call('addEvent', {
               type: ref[0].type,
               _id: metadata.associated[0],
               text: 'Neues Dokument hinzugefügt',
@@ -175,8 +175,8 @@ Meteor.methods({
       }
     }
 
-    Meteor.call("addEvent", {
-      type: "files",
+    Meteor.call('addEvent', {
+      type: 'files',
       _id: file.associated[0],
       text: 'Datei entfernt',
       name: file.name,
@@ -191,10 +191,10 @@ Meteor.startup(function () {
   UltiSite.Folders.find().observeChanges({
       removed: function(id, doc) {
       }
-  });*/
+  }); */
 });
 
-WebApp.connectHandlers.use("/dynamicAppIcon", function (req, res, next) {
+WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res, next) {
   const query = Npm.require('url').parse(req.url, true).query;
   const icon = UltiSite.Images.findOne(UltiSite.settings().imageIcon);
   if (!icon) {

@@ -1,9 +1,10 @@
 const manifest = {
+  'start_url': Meteor.absoluteUrl('/'),
   'name': UltiSite.settings().siteTitle,
   'short_name': UltiSite.settings().siteTitle && UltiSite.settings().siteTitle.split(' ')[0],
   'icons': [36, 48, 72, 96, 128, 144, 192, 256, 384, 512].map((res) => {
     return {
-      src: '/dynamicAppIcon?size=' + res,
+      src: '/dynamicAppIcon.png?size=' + res,
       sizes: res + 'x' + res,
       type: 'image/png',
     };

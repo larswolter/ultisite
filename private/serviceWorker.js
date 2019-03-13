@@ -1,5 +1,54 @@
 /* eslint-env worker */
 
+importScripts('/workbox-v4.0.0/workbox-sw.js');
+
+workbox.setConfig({ modulePathPrefix: '/workbox-v4.0.0' });
+
+const { core } = workbox;
+
+workbox.precaching.precacheAndRoute(
+  'FILES_TO_CACHE',
+  {
+    ignoreURLParametersMatching: [/.*/],
+    directoryIndex: null,
+    cleanUrls: false,
+  }
+);
+
+workbox.routing.registerRoute(
+  /\.(?:png|gif|jpg|jpeg|svg)$/,
+  new workbox.strategies.CacheFirst({
+    cacheName: 'images',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxEntries: 60,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+      }),
+    ],
+  })
+);
+
+workbox.routing.registerRoute(
+  /\/dynamicAppIcon/,
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: 'images',
+  })
+);
+
+workbox.routing.registerRoute(
+  new RegExp('/sockjs/'),
+  new workbox.strategies.NetworkOnly()
+);
+
+addEventListener('message', (event) => {
+  console.log('got message', event.data);
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('doing skip waiting');
+    core.skipWaiting();
+  }
+});
+
+/*
 const CACHE_NAME = 'CURRENT_CACHE_NAME';
 
 self.addEventListener('install', function (event) {
@@ -46,3 +95,4 @@ self.addEventListener('activate', function (event) {
     })
   );
 });
+*/

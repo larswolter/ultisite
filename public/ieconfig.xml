@@ -2,9 +2,9 @@
 <browserconfig>
   <msapplication>
     <tile>
-      <square70x70logo src="http://localhost:3000/dynamicAppIcon?size=70&amp;type=png"/>
-      <square150x150logo src="http://localhost:3000/dynamicAppIcon?size=150&amp;type=jpg"/>
-      <square310x310logo src="http://localhost:3000/dynamicAppIcon?size=310&amp;type=jpg"/>
+      <square70x70logo src="http://localhost:3000/dynamicAppIcon.png?size=70&amp;type=png"/>
+      <square150x150logo src="http://localhost:3000/dynamicAppIcon.png?size=150&amp;type=jpg"/>
+      <square310x310logo src="http://localhost:3000/dynamicAppIcon.png?size=310&amp;type=jpg"/>
       <TileColor>#1c5f3c</TileColor>
     </tile>
     <notification>

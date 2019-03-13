@@ -254,51 +254,20 @@ Meteor.startup(function () {
   });
 });
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register(Meteor.absoluteUrl('sw.js')).then((registration) => {
-    UltiSite.serviceWorker = registration;
-  }).catch(error => console.log('Failed to register SW:', error));
-
-  try {
-    Reload._onMigrate(function (func, opts) {
-      if (!opts.immediateMigration) {
-        try {
-          window.caches.keys().then((keys) => {
-            keys.forEach((name) => {
-              window.caches.delete(name);
-            });
-          }).catch((err) => {
-            console.error('window.caches.delete', err);
-          });
-        } catch (_error) {
-          // We good here...
-        }
-
-        if (UltiSite.serviceWorker) {
-          try {
-            UltiSite.serviceWorker.unregister().catch((e) => {
-              console.warn('[SW UNREGISTER] [CATCH IN PROMISE] [ERROR:]', e);
-            });
-            UltiSite.serviceWorker = null;
-          } catch (e) {
-            console.warn('[SW UNREGISTER] [ERROR:]', e);
-          }
-        }
-
-        setTimeout(() => {
-          if (window.location.hash || window.location.href.endsWith('#')) {
-            window.location.reload();
-          } else {
-            window.location.replace(window.location.href);
-          }
-        }, 128);
-
-
-        return [false];
-      }
-      return [true];
+Meteor.startup(() => {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(
+      Meteor.absoluteUrl('sw.js?arch=web.browser' + (Meteor.isModern ?'': '.legacy'))).then((swReg) => {
+      console.log('registered service worker');
+      /* let canMigrate = false;
+      Reload._onMigrate((retry) => {
+        swReg.unregister().then(() => {
+          console.log('unregistered service worker');
+          canMigrate = true;
+          retry();
+        }).catch(err => console.log('unregistered service worker failed:', err));
+        return [canMigrate];
+      });*/
     });
-  } catch (e) {
-    // We're good here
   }
-}
+});
