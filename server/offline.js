@@ -62,18 +62,16 @@ Accounts.onLogout(function (attempt) {
 
 
 Meteor.publish('lastChangedElements', function (modifiedAfter) {
-  check(modifiedAfter, Match.Maybe(Date));
-
   if (!this.userId) return this.ready();
 
   return UltiSite.offlineCollections.map((col) => {
-    if (modifiedAfter) {
+    if (modifiedAfter && modifiedAfter[col.name]) {
       return UltiSite[col.name].find({
         ...col.filter(),
-        lastChange: { $gt: modifiedAfter },
-      });
+        lastChange: { $gt: modifiedAfter[col.name] },
+      }, col.options());
     } else {
-      return UltiSite[col.name].find(col.filter());
+      return UltiSite[col.name].find(col.filter(), col.options());
     }
   });
 });
@@ -145,9 +143,8 @@ Meteor.methods({
 });
 const swString = {};
 WebApp.connectHandlers.use('/sw.js', (req, response) => {
-  console.log('get sw for ', req.query.arch);
   const renderSW = function (arch) {
-    if (!swString[arch]) {
+    if (Meteor.isDevelopment || !swString[arch]) {
       const sworker = Assets.getText('serviceWorker.js');
       const clientHash = WebApp.clientPrograms[arch].version;
       const urls = WebApp.clientPrograms[arch].manifest.filter((f) => {
@@ -162,7 +159,6 @@ WebApp.connectHandlers.use('/sw.js', (req, response) => {
           url: f.url.split('?')[0],
         };
       });
-      urls.push({ url: '/', hash: clientHash });
       urls.push('/dynamicAppIcon.png?size=192');
       urls.push('/dynamicAppIcon.png?size=512');
       console.log(`created service worker for ${arch} with ${urls.length} urls`);
@@ -173,5 +169,4 @@ WebApp.connectHandlers.use('/sw.js', (req, response) => {
   response.setHeader('Content-Type', 'application/javascript; charset=utf-8');
   response.writeHead(200);
   response.end(renderSW(req.query.arch || 'web.browser'));
-  console.log('delivered service worker');
 });

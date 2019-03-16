@@ -50,30 +50,31 @@ Meteor.methods({
 });
 
 Meteor.startup(function () {
-  localForage.getItem('ultisiteOfflineLastSync').then((date) => {
+  localForage.getItem('ultisiteOfflineLastSync').then((data) => {
+    if (typeof data !== 'object') data = {};
     Tracker.autorun(() => {
       if (Meteor.userId()) {
-        UltiSite.lastOfflineSync = date || moment().subtract(10, 'years').toDate();
+        UltiSite.lastOfflineSync = data || {};
         console.log('subscribing', UltiSite.lastOfflineSync);
         Meteor.subscribe('lastChangedElements', UltiSite.lastOfflineSync, () => {
           Tracker.autorun(() => {
-            const startSync = new Date();
             UltiSite.offlineCollections.forEach((col) => {
               const elements = UltiSite[col.name].find({
                 ...col.filter(),
                 _offline: { $exists: false },
-                lastChange: { $gte: UltiSite.lastOfflineSync },
+                lastChange: { $gte: UltiSite.lastOfflineSync[col.name] || moment().subtract(1, 'year').toDate() },
               });
-              console.log('checking offline col', col.name, elements.count());
+
+              console.log('checking offline col', col.name, elements.count(), UltiSite[col.name].find().count());
               if (elements.count() > 0) {
                 console.log(`Storing ${elements.count()} elements of ${col.name}`);
                 localForage.setItem('ultisiteOffline' + col.name, {
                   data: UltiSite[col.name].find(col.filter()).fetch(),
                 });
+                UltiSite.lastOfflineSync[col.name] = new Date();
               }
             });
             console.log('Refreshing last sync time');
-            UltiSite.lastOfflineSync = startSync;
             localForage.setItem('ultisiteOfflineLastSync', UltiSite.lastOfflineSync);
           });
         });
@@ -257,17 +258,19 @@ Meteor.startup(function () {
 Meteor.startup(() => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(
-      Meteor.absoluteUrl('sw.js?arch=web.browser' + (Meteor.isModern ?'': '.legacy'))).then((swReg) => {
-      console.log('registered service worker');
-      /* let canMigrate = false;
-      Reload._onMigrate((retry) => {
-        swReg.unregister().then(() => {
-          console.log('unregistered service worker');
-          canMigrate = true;
-          retry();
-        }).catch(err => console.log('unregistered service worker failed:', err));
-        return [canMigrate];
-      });*/
-    });
+      Meteor.absoluteUrl('sw.js?arch=web.browser' + (Meteor.isModern ? '' : '.legacy'))).then((swReg) => {
+        console.log('registered service worker');
+        let canMigrate = false;
+        Reload._onMigrate((retry) => {
+          localForage.setItem('ultisiteOfflineLastSync', {});
+          !canMigrate && swReg.unregister().then(() => {
+            console.log('unregistered service worker, allow migration');
+            canMigrate = true;
+            retry();
+          }).catch(err => console.log('unregistered service worker failed:', err));
+          if (canMigrate) return [canMigrate];
+          return false;
+        });
+      });
   }
 });

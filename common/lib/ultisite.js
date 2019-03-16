@@ -7,7 +7,7 @@ UltiSite = {
     {
       name: 'Events',
       filter() {
-        return { 'details.time': { $gte: moment().subtract(1, 'month').toDate() } };
+        return {};
       },
       options() {
         return { limit: 30, sort: { 'detail.time': -1 } };
@@ -37,12 +37,18 @@ UltiSite = {
           },
         };
       },
+      options() {
+        return {};
+      }
     },
     {
       name: 'Practices',
       filter() {
         return {};
       },
+      options() {
+        return {};
+      }
     },
   ],
 };
