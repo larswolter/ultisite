@@ -159,6 +159,7 @@ WebApp.connectHandlers.use('/sw.js', (req, response) => {
           url: f.url.split('?')[0],
         };
       });
+
       urls.push('/dynamicAppIcon.png?size=192');
       urls.push('/dynamicAppIcon.png?size=512');
       console.log(`created service worker for ${arch} with ${urls.length} urls`);

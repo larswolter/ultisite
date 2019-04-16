@@ -133,6 +133,11 @@ Meteor.methods({
           'description.$.content': content,
         },
     });
+    Meteor.call('addEvent', {
+      type: 'tournament',
+      _id: id,
+      text: `Neue Infos zum Turnier: ${content.substr(0, 20)}`,
+    });
   },
   tournamentUpdateReport(id, infoId, content) {
     check(id, String);
@@ -163,6 +168,11 @@ Meteor.methods({
             $position: 0,
           },
         },
+    });
+    Meteor.call('addEvent', {
+      type: 'tournament',
+      _id: id,
+      text: 'Neuer Bericht zum Turnier',
     });
   },
   tournamentCoordinates() {
