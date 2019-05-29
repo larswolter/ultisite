@@ -28,9 +28,7 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
       }
       console.log('resizing image', scale);
       sharp(new Buffer(image.base64, 'base64'))
-        .resize(scale[0], scale[1])
-        .max()
-        .withoutEnlargement()
+        .resize(scale[0], scale[1], { fit: 'inside', withoutEnlargement: true })
         .toFormat('jpeg')
         .toBuffer()
         .then(Meteor.bindEnvironment((data) => {
