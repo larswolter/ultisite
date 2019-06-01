@@ -91,6 +91,7 @@ Template.blogPreview.events({
 
 Template.blogUpdate.onCreated(function () {
   const self = this;
+  import('/imports/client/files/files.js');
   this.wysiwygLoaded = new ReactiveVar(false);
   this.autorun((comp) => {
     if (!Meteor.user()) { return; }
@@ -162,7 +163,7 @@ Template.blogUpdate.events({
       UltiSite.Blogs.update({
         _id: id,
       }, {
-          $set: {
+        $set: {
             lastChange: new Date(),
 
             title,
@@ -171,7 +172,7 @@ Template.blogUpdate.events({
             preview,
             public: isPublic,
           },
-        }, function (err) {
+      }, function (err) {
           if (err) { console.log(err); } else {
             FlowRouter.go('blog', {
               _id: id,
