@@ -55,6 +55,5 @@ const uoodleSchema = new SimpleSchema({
     },
   },
 }, { tracker: Tracker });
-Meteor.startup(function () {
-  UltiSite.schemas.uoodle = new ReactiveVar(uoodleSchema);
-});
+
+export default uoodleSchema;
