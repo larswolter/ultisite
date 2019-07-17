@@ -32,7 +32,7 @@
     "imap": "^0.8.17",
     "jquery": "^3.4.1",
     "localforage": "^1.7.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.14",
     "meteor-node-stubs": "^0.4.1",
     "mongodb": "^2.2.36",
     "nodemailer": "^4.7.0",
