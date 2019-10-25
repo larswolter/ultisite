@@ -103,8 +103,8 @@ const userHelper = {
       type: 'playedTournaments',
     }, {
       sort: {
-          'data.date': -1,
-        },
+        'data.date': -1,
+      },
     }) || {
         data: [],
       }).data;
@@ -146,6 +146,7 @@ Template.user.onCreated(function () {
     if (!userId) {
       return;
     }
+    this.subscribe('UserRoles');
     this.subscribe('UserDetails', FlowRouter.getParam('_id'));
     this.subscribe('Statistics', FlowRouter.getParam('_id'));
     this.subscribe('Files', [FlowRouter.getParam('_id')]);
@@ -213,8 +214,8 @@ Template.user.events({
         _id: FlowRouter.getParam('_id'),
       }, {
         $pull: {
-            'profile.contactDetails': null,
-          },
+          'profile.contactDetails': null,
+        },
       });
     });
   },
@@ -234,11 +235,11 @@ Template.user.events({
       _id: FlowRouter.getParam('_id'),
     }, {
       $push: {
-          'profile.contactDetails': {
-            type: '',
-            detail: '',
-          },
+        'profile.contactDetails': {
+          type: '',
+          detail: '',
         },
+      },
     });
   },
   'click .action-remove-role': function (evt) {
@@ -282,10 +283,10 @@ Template.user.events({
     }, {
       $set: modifier,
     }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
-        if (name === 'username') {
-          Meteor.call('correctParticipants', userId);
-        }
-      }));
+      if (name === 'username') {
+        Meteor.call('correctParticipants', userId);
+      }
+    }));
   },
   'click .user-base .dropdown-select-item': function (e, t) {
     e.preventDefault();
@@ -335,10 +336,10 @@ Template.user.events({
     }, {
       $set: toSet,
     }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
-        if (name === 'profile.sex') {
-          Meteor.call('correctParticipants', userId);
-        }
-      }));
+      if (name === 'profile.sex') {
+        Meteor.call('correctParticipants', userId);
+      }
+    }));
   },
   'click .action-check-notification-permissions': function (e, t) {
     if (!('Notification' in window)) { console.log('This browser does not support desktop notification'); }

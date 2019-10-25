@@ -78,6 +78,11 @@ Meteor.startup(function () {
         label: 'Geändert',
         optional: true,
       },
+      confirmed: {
+        type: Boolean,
+        label: 'Die E-Mail wurde bestätigt',
+        optional: true,
+      },
       payed: {
         type: Date,
         label: 'Bezahlt',

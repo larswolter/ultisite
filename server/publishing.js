@@ -42,8 +42,10 @@ Meteor.startup(function () {
   Meteor.publish('Blog', function (_id) {
     return UltiSite.Blogs.find({ _id });
   });
-  Meteor.publish(null, function () {
-    if (UltiSite.isAdmin(this.userId)) { return Roles.getAllRoles(); }
+  Meteor.publish('UserRoles', function () {
+    if (UltiSite.isAdmin(this.userId)) {
+      return Roles.getAllRoles();
+    }
     this.ready();
   });
   Meteor.publish('LastChanges', function (types) {
@@ -97,26 +99,26 @@ Meteor.startup(function () {
     return Meteor.users.find({
       _id: { $in: [userId, this.userId] },
     }, {
-        fields: {
-          activeAdmin: 1,
-          profile: 1,
-          status: 1,
-          settings: 1,
-          club: 1,
-          username: 1,
-          roles: 1,
-          emails: 1,
-          connection: 1,
-        },
-      });
+      fields: {
+        activeAdmin: 1,
+        profile: 1,
+        status: 1,
+        settings: 1,
+        club: 1,
+        username: 1,
+        roles: 1,
+        emails: 1,
+        connection: 1,
+      },
+    });
   });
   Meteor.publish('Events', function () {
     if (!this.userId) { return undefined; }
     return UltiSite.Events.find({
     }, {
-        limit: 30,
-        sort: { 'detail.time': -1 },
-      });
+      limit: 30,
+      sort: { 'detail.time': -1 },
+    });
   });
   Meteor.publish('tournamentDetails', function (tournamentId) {
     check(tournamentId, String);

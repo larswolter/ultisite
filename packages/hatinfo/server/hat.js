@@ -4,7 +4,7 @@ import { Random } from 'meteor/random';
 import { Roles } from 'meteor/alanning:roles';
 
 Meteor.startup(function () {
-  UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+  UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
 
   if (!_.find(Roles.getAllRoles().fetch(), r => r.name === 'hatAdmin')) {
     Roles.createRole('hatAdmin');
@@ -22,7 +22,7 @@ Meteor.methods({
     UltiSite.HatInfo.HatParticipants.remove({});
 
     for (let i = 0; i < total; i += 1) {
-      const createdAt = moment().subtract((Math.random() * 10).toFixed() + 3, 'days');
+      const createdAt = moment().subtract(Math.floor(Math.random() * 10) + 3, 'days');
       UltiSite.HatInfo.HatParticipants.insert({
         createdAt: createdAt.toDate(),
         modifiedAt: createdAt.toDate(),
@@ -31,10 +31,11 @@ Meteor.methods({
         email: Random.id() + '@hallunken.de',
         city: 'Halle',
         hometeam: 'Hallunken',
-        payed: i < payed ? createdAt.add(Math.random() * 20, 'hours').toDate() : moment().add(10, 'years').toDate(),
+        payed: i < payed ? createdAt.clone().add(Math.random() * 20, 'hours').toDate() : moment().add(10, 'years').toDate(),
         accessKey: Random.id(34),
         hatId: UltiSite.settings().hatId,
       });
+      console.log(createdAt);
     }
   },
   hatConfirmParticipant(accessKey) {
@@ -85,13 +86,14 @@ Meteor.methods({
   },
   hatResendMail(accessKey) {
     check(accessKey, String);
-    if (!Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+    if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
     const participant = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
     const template = Assets.getText('private/confirm.html');
     UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
       UltiSite.renderMailTemplate(template, null, {
+        additionalInfos: UltiSite.settings().hatConfirmInfos,
         participant,
         team: UltiSite.settings().teamname,
         url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
@@ -103,7 +105,7 @@ Meteor.methods({
     if (!part) {
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
-    if (!Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+    if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
 
@@ -117,7 +119,7 @@ Meteor.methods({
     if (!part) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
-    if (!Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+    if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
       participant = _.pick(participant, 'name', 'city', 'hometeam', 'strength', 'years', 'allowPublic');
     }
     participant.modifiedAt = new Date();
@@ -164,7 +166,7 @@ Meteor.publish('hatParticipants', function (limit, search) {
           { email: new RegExp(search, 'i') }
       ];
   */
-  if (Roles.userIsInRole(this.userId, ['admin', 'hatAdmin'])) {
+  if (Roles.userIsInRole(this.userId, ['hatAdmin'])) {
     return UltiSite.HatInfo.HatParticipants.find(filter, { sort });
   }
 

@@ -2,27 +2,34 @@
     .card {
         margin-bottom: 10px;
     }
+
     .participant-entry {
         cursor: pointer;
     }
+
     .list-group-item-faded {
-        opacity:0.5;
+        opacity: 0.5;
     }
+
     .list-group-item {
-        overflow:hidden;
+        overflow: hidden;
         transition: all 400ms;
+
         .progress.text-center {
-            margin-bottom:0px;
+            margin-bottom: 0px;
         }
+
         .participant-buttons {
             padding-top: 10px;
         }
     }
+
     .list-group-item.selected {
-        height: 150px;
+        min-height: 150px;
+
         @media (max-width:765px) {
-            height: 210px;
+            min-height: 210px;
         }
     }
-        
+
 }

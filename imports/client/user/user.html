@@ -285,7 +285,8 @@
                                         {{/if}}
                                     </li>
                                     <li class="list-group-item">
-                                        <small>Rollen</small> {{#each userRoles}}
+                                        <small>Rollen</small>
+                                        {{#each userRoles}}
                                             <div class="row">
                                                 <div class="col-6">{{this.name}}</div>
                                                 {{#if isInRole 'admin'}}

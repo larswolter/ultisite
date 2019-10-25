@@ -8,7 +8,7 @@
         <div class="col-12 col-md-6 col-lg-8">
             <div class="card">
                 <div class="card-header">
-                    {{#if isInRole "admin,hatAdmin"}}
+                    {{#if isInRole "hatAdmin"}}
                         <button class="d-none d-md-block d-lg-block btn btn-primary pull-right action-participate" title="Anmelden" type="button">
                             <span class="fa fa-plus"></span> Eintragen
                         </button>
@@ -34,7 +34,7 @@
                         </div>
                     {{/if}}
 
-                    {{#if isInRole "admin,hatAdmin"}}
+                    {{#if isInRole "hatAdmin"}}
                         <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-light pull-right" title="Export" type="button">
                             <span class="fa fa-download"></span> Exportieren
                         </a>
@@ -49,37 +49,41 @@
                         </form>
                     {{/if}}
                 </div>
-                {{#if isInRole "admin,hatAdmin"}}
-                    {{#if activeFilter}}
-                        <ul class="list-group">
-                            {{#each allParticipants}}
-                                {{>hatParticipant}}
-                            {{else}}
+                {{#if Template.subscriptionsReady}}
+                    {{#if isInRole "hatAdmin"}}
+                        {{#if activeFilter}}
+                            <ul class="list-group">
+                                {{#each allParticipants}}
+                                    {{>hatParticipant}}
+                                {{else}}
+                                    <li class="list-group-item">
+                                        {{>EmptySmall text="Keine Teilnehmer gefunden"}}
+                                    </li>
+                                {{/each}}
+                            </ul>
+                        {{/if}}
+                    {{else}}
+                        {{#with activeEntry}}
+                            <ul class="list-group">
                                 <li class="list-group-item">
-                                    {{>EmptySmall text="Keine Teilnehmer gefunden"}}
+                                    Mein Eintrag
                                 </li>
-                            {{/each}}
-                        </ul>
+                                {{>hatParticipant}}
+                            </ul>
+                    {{else}}
+                        <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button">
+                            <span class="fa fa-plus"></span> Eintragen
+                        </button>
+                        {{/with}}
                     {{/if}}
                 {{else}}
-                    {{#with activeEntry}}
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                Mein Eintrag
-                            </li>
-                            {{>hatParticipant}}
-                        </ul>
-                {{else}}
-                    <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button">
-                        <span class="fa fa-plus"></span> Eintragen
-                    </button>
-                    {{/with}}
+                    {{>Loading}}
                 {{/if}}
             </div>
             {{#unless activeFilter}}
                 <div class="card">
                     <div class="card-header">
-                        {{#if isInRole "admin,hatAdmin"}}
+                        {{#if isInRole "hatAdmin"}}
                             <a href="mailto:no-reply@hallunken.de?bcc={{emailsParticipate}}" class="btn btn-light pull-right" title="Export" type="button">
                                 <span class="fa fa-envelope"></span> Mail an Spieler
                             </a>
@@ -100,7 +104,7 @@
                 </div>
                 <div class="card">
                     <div class="card-header">
-                        {{#if isInRole "admin,hatAdmin"}}
+                        {{#if isInRole "hatAdmin"}}
                             <a href="mailto:no-reply@hallunken.de?bcc={{emailsWaiting}}" class="btn btn-light pull-right" title="Export" type="button">
                                 <span class="fa fa-envelope"></span> Mail an Wartende
                             </a>
@@ -146,10 +150,10 @@
 <template name="hatParticipant">
     <a class="list-group-item {{#if activeEntry}}selected{{/if}}">
         <div class="row">
-            <strong class="col-6 col-sm-6 col-md-8 {{#if isInRole "admin,hatAdmin"}}participant-entry{{/if}}">
+            <strong class="col-6 col-sm-6 col-md-8 {{#if isInRole "hatAdmin"}}participant-entry{{/if}}">
                 <span class="fa fa-envelope-o {{#if confirmed}}text-success{{else}}text-muted{{/if}}"></span>
                 <span class="fa fa-money {{#if hasPayed}}text-success{{else}}text-muted{{/if}}"></span>
-                {{#if isInRole "admin,hatAdmin"}}
+                {{#if isInRole "hatAdmin"}}
                     <span class="fa fa-eye {{#if allowPublic}}text-success{{else}}text-muted{{/if}}"></span>
                 {{/if}}
                 {{#if this.name}}
@@ -180,14 +184,14 @@
                         Ja
                     {{else}}
                         Nein
-                        {{#if isInRole "admin,hatAdmin"}}
+                        {{#if isInRole "hatAdmin"}}
                             <button class="btn btn-link action-resend-mail" title="Mail zum bestätigen nochmal senden">
                                 <span class="fa fa-envelope"></span> Nochmal verschicken
                             </button>
                         {{/if}}
                     {{/if}}
                     <br />
-                    {{#if isInRole "admin,hatAdmin"}}
+                    {{#if isInRole "hatAdmin"}}
                         Bezahlt: {{#if hasPayed}}{{formatDateTime payed}}{{else}}Nein{{/if}}<br />
                     {{/if}}
                 </div>
@@ -198,7 +202,7 @@
                     <button class="btn btn-danger action-remove" title="Austragen">
                         <span class="fa fa-close"></span> Austragen
                     </button>
-                    {{#if isInRole "admin,hatAdmin"}}
+                    {{#if isInRole "hatAdmin"}}
                         {{#unless hasPayed}}
                             <button class="btn btn-success action-payed" title="Bezahlt">
                                 <span class="fa fa-eur"></span> Bezahlt
@@ -284,13 +288,13 @@
                         Die Daten werden automatisch nach 60 Tagen gelöscht, solltet ihr noch Fragen zum Datenschutz haben,
                         schreibt uns eine Mail an <a href="mailto:kontakt@hallunken.de">kontakt@hallunken.de</a>
                         <hr />
-                        {{#if isInRole "admin,hatAdmin"}}
+                        {{#if isInRole "hatAdmin"}}
                             {{> afQuickFields}}
                         {{else}}
                             {{#if existing._id}}
                                 {{> afQuickFields fields="name,city,hometeam,strength,years,allowPublic"}}
                                 <fieldset disabled>
-                                    {{> afQuickFields omitFields="name,city,hometeam,strength,years,allowPublic"}}
+                                    {{> afQuickFields fields="email"}}
                                 </fieldset>
                             {{else}}
                                 {{> afQuickFields fields="name,email,city,hometeam,strength,years,allowPublic" }}
