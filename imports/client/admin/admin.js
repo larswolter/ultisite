@@ -139,15 +139,14 @@ Template.adminPanel.events({
       UltiSite.fileBrowserHideDialog();
     });
   },
-  'change .direct-admin input': function (e, t) {
-    const settings = UltiSite.settings();
+  'change .direct-admin input, change .direct-admin textarea': function (e, t) {
     const name = t.$(e.currentTarget).attr('name');
     let value = t.$(e.currentTarget).val();
     if (name.indexOf('array') === 0) { value = value.split(','); }
     const val = {};
 
     val[name] = value;
-    console.log('Updating:', val);
+    console.log('Updating:', name, val);
     Meteor.call('updateSettings', {
       $set: val,
     }, handleUpdate);

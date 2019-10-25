@@ -74,6 +74,9 @@ Template.hatInfos.helpers({
     }
     return UltiSite.HatInfo.HatParticipants.find({}, { sort: hatSort() });
   },
+  spotsAvailable() {
+    return Math.max(0, UltiSite.settings().hatNumPlayers - UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }).count());
+  },
   activeFilter() {
     return !!Template.instance().filter.get();
   },

@@ -4,7 +4,7 @@ import { Random } from 'meteor/random';
 import { Roles } from 'meteor/alanning:roles';
 
 Meteor.startup(function () {
-  UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
+  UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
 
   if (!_.find(Roles.getAllRoles().fetch(), r => r.name === 'hatAdmin')) {
     Roles.createRole('hatAdmin');
@@ -14,6 +14,29 @@ Meteor.startup(function () {
   });
 });
 Meteor.methods({
+  createRandomData(total, payed, confirmed) {
+    check(total, Number);
+    check(payed, Number);
+    check(confirmed, Number);
+    if (!UltiSite.isAdmin(this.userId)) return;
+    UltiSite.HatInfo.HatParticipants.remove({});
+
+    for (let i = 0; i < total; i += 1) {
+      const createdAt = moment().subtract((Math.random() * 10).toFixed() + 3, 'days');
+      UltiSite.HatInfo.HatParticipants.insert({
+        createdAt: createdAt.toDate(),
+        modifiedAt: createdAt.toDate(),
+        confirmed: i < confirmed,
+        name: Random.id(),
+        email: Random.id() + '@hallunken.de',
+        city: 'Halle',
+        hometeam: 'Hallunken',
+        payed: i < payed ? createdAt.add(Math.random() * 20, 'hours').toDate() : moment().add(10, 'years').toDate(),
+        accessKey: Random.id(34),
+        hatId: UltiSite.settings().hatId,
+      });
+    }
+  },
   hatConfirmParticipant(accessKey) {
     check(accessKey, String);
     const part = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
@@ -53,6 +76,7 @@ Meteor.methods({
     const template = Assets.getText('private/confirm.html');
     UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
       UltiSite.renderMailTemplate(template, null, {
+        additionalInfos: UltiSite.settings().hatConfirmInfos,
         participant,
         team: UltiSite.settings().teamname,
         url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),

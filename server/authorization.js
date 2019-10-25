@@ -1,8 +1,9 @@
 Meteor.startup(function () {
   Accounts.validateLoginAttempt(function (attempt) {
     if (attempt.user) {
-      if ((UltiSite.settings().siteRegistration === 'admin') && attempt.user.profile.unverified) { 
-        throw new Meteor.Error('login-failed', 'The user is not verified by a Site Admin'); }
+      if ((UltiSite.settings().siteRegistration === 'admin') && attempt.user.profile.unverified) {
+        throw new Meteor.Error('login-failed', 'The user is not verified by a Site Admin');
+      }
     }
     return true;
   });
@@ -12,17 +13,16 @@ Meteor.startup(function () {
 Meteor.publish(null, function () {
   return this.userId && Meteor.users.find({ _id: this.userId }, { fields: { activeAdmin: 1 } });
 });
-const adminTimeouts = {};
+
+Accounts.onLogin(function (attempt) {
+  attempt.user && attempt.user._id && Meteor.users.update(attempt.user._id, { $unset: { activeAdmin: true } });
+});
+
 Meteor.methods({
   makeMeAdmin() {
     check(this.userId, String);
     if (Roles.userIsInRole(this.userId, ['admin'])) {
       Meteor.users.update(this.userId, { $set: { activeAdmin: true } });
-      adminTimeouts[this.userId] && Meteor.clearTimeout(adminTimeouts[this.userId]);
-      adminTimeouts[this.userId] = Meteor.setTimeout(() => {
-        Meteor.users.update(this.userId, { $unset: { activeAdmin: true } });
-        delete adminTimeouts[this.userId];
-      }, 10000);
     }
   },
   passwordReset(email) {
@@ -30,10 +30,10 @@ Meteor.methods({
     const user = Meteor.users.findOne({
       'emails.address': email,
     }, {
-        fields: {
-          _id: 1,
-        },
-      });
+      fields: {
+        _id: 1,
+      },
+    });
     if (user) {
       console.log('Sending mail to:', email);
       const token = createEmailVerificationToken(user._id, email);
@@ -50,21 +50,21 @@ Meteor.methods({
       Meteor.users.update({
         _id: userId,
       }, {
-          $set: {
-            'profile.verifiedBy': this.userId,
-          },
-          $unset: {
-            'profile.unverified': '',
-          },
-        }, function () {
-          const email = Meteor.users.findOne(userId).emails[0].address;
-          const token = createEmailVerificationToken(userId, email);
-          console.log('Created token:', token);
+        $set: {
+          'profile.verifiedBy': this.userId,
+        },
+        $unset: {
+          'profile.unverified': '',
+        },
+      }, function () {
+        const email = Meteor.users.findOne(userId).emails[0].address;
+        const token = createEmailVerificationToken(userId, email);
+        console.log('Created token:', token);
 
-          UltiSite.Mail.send([userId], 'E-Mail Verifizierung',
-            'Bitte klicke den Link: ' + UltiSite.hostname() + '/#/enroll-account/' + (token));
-          console.log('Sent email');
-        });
+        UltiSite.Mail.send([userId], 'E-Mail Verifizierung',
+          'Bitte klicke den Link: ' + UltiSite.hostname() + '/#/enroll-account/' + (token));
+        console.log('Sent email');
+      });
     } else {
       Meteor.users.remove({
         _id: userId,
@@ -90,10 +90,10 @@ Meteor.methods({
       let user = Meteor.users.findOne({
         'emails.address': userData.email,
       }, {
-          fields: {
-            _id: 1,
-          },
-        });
+        fields: {
+          _id: 1,
+        },
+      });
       if (user) { throw new Meteor.Error('duplicate-email', 'Ein Nutzer mit dieser E-Mail Adresse existiert bereits'); }
       const alias = {};
       user = Meteor.users.findOne({ username: { $regex: userData.alias, $options: 'i' } }, {

@@ -66,7 +66,7 @@ Meteor.startup(function () {
       allowPublic: {
         type: Boolean,
         label: 'Mein Name, Stadt und Heimatteam sollen allen gezeigt werden',
-        optional: false,
+        optional: true,
       },
       createdAt: {
         type: Date,

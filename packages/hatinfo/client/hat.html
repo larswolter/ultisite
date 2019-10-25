@@ -1,17 +1,17 @@
 <template name="hatInfos">
     <div class="hat-info row">
         <div class="col-12 col-md-6 col-lg-4">
-            {{#with settings.hatWikipage}} 
-                {{>wikipage pageName=this}} 
+            {{#with settings.hatWikipage}}
+                {{>wikipage pageName=this}}
             {{/with}}
         </div>
         <div class="col-12 col-md-6 col-lg-8">
             <div class="card">
                 <div class="card-header">
                     {{#if isInRole "admin,hatAdmin"}}
-                    <button class="d-none d-md-block d-lg-block btn btn-primary pull-right action-participate" title="Anmelden" type="button" >
-                        <span class="fa fa-plus"></span> Eintragen
-                    </button>
+                        <button class="d-none d-md-block d-lg-block btn btn-primary pull-right action-participate" title="Anmelden" type="button">
+                            <span class="fa fa-plus"></span> Eintragen
+                        </button>
                     {{/if}}
                     <h5>
                         Anmeldung fürs HitHat<br />
@@ -24,115 +24,120 @@
                             <small>Auf Warteliste: {{hatWaiting.count}}</small><br />
                         {{/if}}
                     </h5>
+                    {{#if spotsAvailable }}
+                        <div class="alert alert-success">
+                            Noch {{spotsAvailable}} freie Plätze!
+                        </div>
+                    {{else}}
+                        <div class="alert alert-danger">
+                            Keine freien Plätze mehr
+                        </div>
+                    {{/if}}
+
                     {{#if isInRole "admin,hatAdmin"}}
-                        <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-light pull-right" title="Export" type="button" >
+                        <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-light pull-right" title="Export" type="button">
                             <span class="fa fa-download"></span> Exportieren
                         </a>
-                        <a href="mailto:no-reply@hallunken.de?bcc={{emails}}" class="btn btn-light pull-right" title="Export" type="button" >
+                        <a href="mailto:no-reply@hallunken.de?bcc={{emails}}" class="btn btn-light pull-right" title="Export" type="button">
                             <span class="fa fa-envelope"></span> Mail an alle
                         </a>
                         <form class="form-inline">
                             <div class="form-group">
                                 <label for="participant-filter">Teilnehmer filtern</label>
                                 <input type="text" class="form-control participant-filter" id="participant-filter" placeholder="">
-                            </div>                        
+                            </div>
                         </form>
                     {{/if}}
                 </div>
                 {{#if isInRole "admin,hatAdmin"}}
                     {{#if activeFilter}}
-                    <ul class="list-group">
-                        {{#each allParticipants}}
-                            {{>hatParticipant}}
-                        {{else}}
-                        <li class="list-group-item">
-                            {{>EmptySmall text="Keine Teilnehmer gefunden"}}
-                        </li>
-                        {{/each}}
-                    </ul>
+                        <ul class="list-group">
+                            {{#each allParticipants}}
+                                {{>hatParticipant}}
+                            {{else}}
+                                <li class="list-group-item">
+                                    {{>EmptySmall text="Keine Teilnehmer gefunden"}}
+                                </li>
+                            {{/each}}
+                        </ul>
                     {{/if}}
                 {{else}}
                     {{#with activeEntry}}
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            Mein Eintrag
-                        </li>
-                        {{>hatParticipant}}
-                    </ul>
-                    {{else}}
-                    <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button" >
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                Mein Eintrag
+                            </li>
+                            {{>hatParticipant}}
+                        </ul>
+                {{else}}
+                    <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button">
                         <span class="fa fa-plus"></span> Eintragen
                     </button>
                     {{/with}}
                 {{/if}}
             </div>
             {{#unless activeFilter}}
-            <div class="card">
-                <div class="card-header">
-                    {{#if isInRole "admin,hatAdmin"}}
-                    <a href="mailto:no-reply@hallunken.de?bcc={{emailsParticipate}}" class="btn btn-light pull-right" title="Export" type="button" >
-                        <span class="fa fa-envelope"></span> Mail an Spieler
-                    </a>
-                    {{/if}}
-                    <h5>
-                        Spielerliste <span class="badge">{{hatParticipants.count}}</span>
+                <div class="card">
+                    <div class="card-header">
                         {{#if isInRole "admin,hatAdmin"}}
-                        <small>
-                            Bezahlt: {{payedParticipants}}
-                        </small>
+                            <a href="mailto:no-reply@hallunken.de?bcc={{emailsParticipate}}" class="btn btn-light pull-right" title="Export" type="button">
+                                <span class="fa fa-envelope"></span> Mail an Spieler
+                            </a>
                         {{/if}}
-                    </h5>
+                        <h5>
+                            Spielerliste <span class="badge">{{hatParticipants.count}}</span>
+                        </h5>
+                    </div>
+                    <ul class="list-group">
+                        {{#each hatParticipants}}
+                            {{>hatParticipant}}
+                        {{else}}
+                            <li class="list-group-item">
+                                {{>EmptySmall text="Keine Teilnehmer"}}
+                            </li>
+                        {{/each}}
+                    </ul>
                 </div>
-                <ul class="list-group">
-                    {{#each hatParticipants}}
-                        {{>hatParticipant}}
-                    {{else}}
-                    <li class="list-group-item">
-                        {{>EmptySmall text="Keine Teilnehmer"}}
-                    </li>
-                    {{/each}}
-                </ul>
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    {{#if isInRole "admin,hatAdmin"}}
-                    <a href="mailto:no-reply@hallunken.de?bcc={{emailsWaiting}}" class="btn btn-light pull-right" title="Export" type="button" >
-                        <span class="fa fa-envelope"></span> Mail an Wartende
-                    </a>
-                    {{/if}}
-                    <h5>
-                        Warteliste <span class="badge">{{hatWaiting.count}}</span>
-                    </h5>
+                <div class="card">
+                    <div class="card-header">
+                        {{#if isInRole "admin,hatAdmin"}}
+                            <a href="mailto:no-reply@hallunken.de?bcc={{emailsWaiting}}" class="btn btn-light pull-right" title="Export" type="button">
+                                <span class="fa fa-envelope"></span> Mail an Wartende
+                            </a>
+                        {{/if}}
+                        <h5>
+                            Warteliste <span class="badge">{{hatWaiting.count}}</span>
+                        </h5>
+                    </div>
+                    <ul class="list-group">
+                        {{#each hatWaiting}}
+                            {{>hatParticipant}}
+                        {{else}}
+                            <li class="list-group-item">
+                                {{>EmptySmall text="Leere Warteliste"}}
+                            </li>
+                        {{/each}}
+                    </ul>
                 </div>
-                <ul class="list-group">
-                    {{#each hatWaiting}}
-                        {{>hatParticipant}}
-                    {{else}}
-                    <li class="list-group-item">
-                        {{>EmptySmall text="Leere Warteliste"}}
-                    </li>
-                    {{/each}}
-                </ul>
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    <h5>
-                        Nicht bestätigt und nicht bezahlt <span class="badge">{{hatNotPaid.count}}</span>
-                    </h5>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>
+                            Nicht bestätigt oder nicht bezahlt <span class="badge">{{hatNotPaid.count}}</span>
+                        </h5>
+                    </div>
+                    <ul class="list-group">
+                        {{#each hatNotPaid}}
+                            {{>hatParticipant}}
+                        {{else}}
+                            <li class="list-group-item">
+                                {{>EmptySmall text="Leere Liste"}}
+                            </li>
+                        {{/each}}
+                    </ul>
                 </div>
-                <ul class="list-group">
-                    {{#each hatNotPaid}}
-                        {{>hatParticipant}}
-                    {{else}}
-                    <li class="list-group-item">
-                        {{>EmptySmall text="Leere Liste"}}
-                    </li>
-                    {{/each}}
-                </ul>
-            </div>
             {{/unless}}
         </div>
-        <button class="d-block d-md-none btn btn-primary btn-floating action-participate" title="Eintragen" type="button" >
+        <button class="d-block d-md-none btn btn-primary btn-floating action-participate" title="Eintragen" type="button">
             <span class="fa fa-plus fa-lg"></span>
         </button>
     </div>
@@ -163,65 +168,65 @@
                 <div class="progress text-center">
                     <div class="progress-bar bg-info" role="progressbar" style="width:{{strengthPercent}}%">{{strength}}</div>
                 </div>
-                <div >{{years}} Spieljahre</div>
+                <div>{{years}} Spieljahre</div>
             </div>
             {{#if activeEntry}}
-            <div class="col-12 col-sm-6">
-                <a href="mailto:{{this.email}}">{{this.email}}</a><br/>
-                Eingetragen: {{formatDateTime this.createdAt}}<br/>
-                Geändert: {{formatDateTime this.modifiedAt}}<br/>
-                E-Mail bestätigt: 
-                {{#if this.confirmed}}
-                    Ja
-                {{else}}
-                    Nein
-                    {{#if isInRole "admin,hatAdmin"}}
-                        <button class="btn btn-link action-resend-mail" title="Mail zum bestätigen nochmal senden">
-                            <span class="fa fa-envelope"></span> Nochmal verschicken
-                        </button>
+                <div class="col-12 col-sm-6">
+                    <a href="mailto:{{this.email}}">{{this.email}}</a><br />
+                    Eingetragen: {{formatDateTime this.createdAt}}<br />
+                    Geändert: {{formatDateTime this.modifiedAt}}<br />
+                    E-Mail bestätigt:
+                    {{#if this.confirmed}}
+                        Ja
+                    {{else}}
+                        Nein
+                        {{#if isInRole "admin,hatAdmin"}}
+                            <button class="btn btn-link action-resend-mail" title="Mail zum bestätigen nochmal senden">
+                                <span class="fa fa-envelope"></span> Nochmal verschicken
+                            </button>
+                        {{/if}}
                     {{/if}}
-                {{/if}}
-                <br/>
-                {{#if isInRole "admin,hatAdmin"}}
-                    Bezahlt: {{#if hasPayed}}{{formatDateTime payed}}{{else}}Nein{{/if}}<br/>
-                {{/if}}
-            </div>
-            <div class="col-12 col-sm-6 text-right participant-buttons">
-                <button class="btn btn-light action-participate" title="Ändern" type="button" >
-                    <span class="fa fa-edit"></span> Editieren
-                </button>
-                <button class="btn btn-danger action-remove" title="Austragen">
-                    <span class="fa fa-close"></span> Austragen
-                </button>
-                {{#if isInRole "admin,hatAdmin"}}
-                    {{#unless hasPayed}}
-                    <button class="btn btn-success action-payed" title="Bezahlt">
-                        <span class="fa fa-eur"></span> Bezahlt
+                    <br />
+                    {{#if isInRole "admin,hatAdmin"}}
+                        Bezahlt: {{#if hasPayed}}{{formatDateTime payed}}{{else}}Nein{{/if}}<br />
+                    {{/if}}
+                </div>
+                <div class="col-12 col-sm-6 text-right participant-buttons">
+                    <button class="btn btn-light action-participate" title="Ändern" type="button">
+                        <span class="fa fa-edit"></span> Editieren
                     </button>
-                    {{/unless}}
-                {{/if}}
-            </div>
+                    <button class="btn btn-danger action-remove" title="Austragen">
+                        <span class="fa fa-close"></span> Austragen
+                    </button>
+                    {{#if isInRole "admin,hatAdmin"}}
+                        {{#unless hasPayed}}
+                            <button class="btn btn-success action-payed" title="Bezahlt">
+                                <span class="fa fa-eur"></span> Bezahlt
+                            </button>
+                        {{/unless}}
+                    {{/if}}
+                </div>
             {{/if}}
 
         </div>
     </a>
-</template>    
+</template>
 
 
 <template name="hatInfoSettings">
     <div class="dropdown col-sm-2 wiki-association">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
             HatInfo: {{wikiPageName settings.hatWikipage}}
-            
+
         </button>
         <ul class="dropdown-menu" role="menu">
             {{#each wikiPages}}
-            <li class="dropdown-item" role="presentation">
-                <a href="#" role="menuitem" data-name="hatWikipage" data-id="{{_id}}">{{name}}</a>
-            </li>
+                <li class="dropdown-item" role="presentation">
+                    <a href="#" role="menuitem" data-name="hatWikipage" data-id="{{_id}}">{{name}}</a>
+                </li>
             {{/each}}
         </ul>
-    </div>    
+    </div>
     <div class="col-sm-1">
         <input name="hatNumPlayers" type="number" class="form-control" value="{{settings.hatNumPlayers}}" placeholder="Anzahl Spieler" title="Anzahl Spieler">
     </div>
@@ -234,7 +239,7 @@
     <div class="dropdown col-sm-3 wiki-association">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
             Sortierung: {{settings.hatSort}}
-            
+
         </button>
         <ul class="dropdown-menu" role="menu">
             <li class="dropdown-item" role="presentation">
@@ -247,7 +252,11 @@
                 <a href="#" role="menuitem" data-name="hatSort" data-id="modifiedAt">modifiedAt</a>
             </li>
         </ul>
-    </div>    
+    </div>
+    <div class="col-sm-12">
+        Weiterer Text für die E-Mail
+        <textarea name="hatConfirmInfos" class="form-control">{{settings.hatConfirmInfos}}</textarea>
+    </div>
 </template>
 
 <template name="hatParticipateDialog">
@@ -257,9 +266,9 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="myModalLabel">
                         {{#if existing._id}}
-                        Eintragung ändern
+                            Eintragung ändern
                         {{else}}
-                        Für das {{settings.hatName}} eintragen
+                            Für das {{settings.hatName}} eintragen
                         {{/if}}
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -267,31 +276,31 @@
                     </button>
                 </div>
                 {{#autoForm schema=schema doc=existing id="hatParticipantForm" meteormethod=method type="method"}}
-                <div class="modal-body">
-                    Die eingetragenen Daten stehen nur den Ausrichtern zur Verfügung, es sei den,
-                    das Häkchen bei der Ausnahme ist gesetzt.<br/>
-                    Stärke und Spieljahre sind notwendig, um die Teams zusammenzustellen, Stadt und Heimatteam, um eine
-                    Durchmischung zu ermöglichen. Die E-Mail Adresse wird benötigt, um mit euch Kontakt aufzunehmen.<br/>
-                    Die Daten werden automatisch nach 60 Tagen gelöscht, solltet ihr noch Fragen zum Datenschutz haben, 
-                    schreibt uns eine Mail an <a href="mailto:kontakt@hallunken.de">kontakt@hallunken.de</a>
-                    <hr/>
-                    {{#if isInRole "admin,hatAdmin"}}
-                        {{> afQuickFields}}
-                    {{else}}
-                        {{#if existing._id}}
-                            {{> afQuickFields fields="name,city,hometeam,strength,years,allowPublic"}}
-                            <fieldset disabled>
-                                {{> afQuickFields omitFields="name,city,hometeam,strength,years,allowPublic"}}
-                            </fieldset>
+                    <div class="modal-body">
+                        Die eingetragenen Daten stehen nur den Ausrichtern zur Verfügung, es sei den,
+                        das Häkchen bei der Ausnahme ist gesetzt.<br />
+                        Stärke und Spieljahre sind notwendig, um die Teams zusammenzustellen, Stadt und Heimatteam, um eine
+                        Durchmischung zu ermöglichen. Die E-Mail Adresse wird benötigt, um mit euch Kontakt aufzunehmen.<br />
+                        Die Daten werden automatisch nach 60 Tagen gelöscht, solltet ihr noch Fragen zum Datenschutz haben,
+                        schreibt uns eine Mail an <a href="mailto:kontakt@hallunken.de">kontakt@hallunken.de</a>
+                        <hr />
+                        {{#if isInRole "admin,hatAdmin"}}
+                            {{> afQuickFields}}
                         {{else}}
-                            {{> afQuickFields fields="name,email,city,hometeam,strength,years,allowPublic" }}
+                            {{#if existing._id}}
+                                {{> afQuickFields fields="name,city,hometeam,strength,years,allowPublic"}}
+                                <fieldset disabled>
+                                    {{> afQuickFields omitFields="name,city,hometeam,strength,years,allowPublic"}}
+                                </fieldset>
+                            {{else}}
+                                {{> afQuickFields fields="name,email,city,hometeam,strength,years,allowPublic" }}
+                            {{/if}}
                         {{/if}}
-                    {{/if}}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-light">Abbrechen</button>
-                    <button type="submit" class="btn btn-primary">{{#if existing._id}}Ändern{{else}}Eintragen{{/if}}</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-light">Abbrechen</button>
+                        <button type="submit" class="btn btn-primary">{{#if existing._id}}Ändern{{else}}Eintragen{{/if}}</button>
+                    </div>
                 {{/autoForm}}
             </div>
         </div>
@@ -309,7 +318,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-danger" role="alert">
-                    {{error}}
+                        {{error}}
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -331,9 +340,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-success" role="alert">
-                    <span class="fa fa-envelope-o fa-3x pull-left"></span>                    
-                    Um die Anmeldung abzuschließen, wird eine E-Mail an die angegebene Adresse geschickt.
-                    Du musst auf den Link klicken, der in der E-Mail enthalten ist, um die Anmeldung abzuschließen.
+                        <span class="fa fa-envelope-o fa-3x pull-left"></span>
+                        Um die Anmeldung abzuschließen, wird eine E-Mail an die angegebene Adresse geschickt.
+                        Du musst auf den Link klicken, der in der E-Mail enthalten ist, um die Anmeldung abzuschließen.
                     </div>
                 </div>
                 <div class="modal-footer">

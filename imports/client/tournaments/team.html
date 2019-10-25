@@ -112,14 +112,17 @@
           {{/if}}
           {{#if isMyTeam}}
             <br />
-            Verantwortlich:
             {{#if responsible}}
-              {{responsibleName}}
+              Verantwortlich: {{responsibleName}}
             {{else}}
-              Wird ausgelost
-              <button class="btn btn-primary btn-sm action-be-responsible">
-                Übernehmen
-              </button>
+              {{#if drawingDate}}
+                Verantwortlicher Wird ausgelost
+                <button class="btn btn-primary btn-sm action-be-responsible">
+                  Übernehmen
+                </button>
+              {{else}}
+                {{teamType}}
+              {{/if}}
             {{/if}}
           {{/if}}
           {{#if drawingDate}}

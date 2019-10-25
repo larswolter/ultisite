@@ -74,6 +74,10 @@ Template.userHeader.events({
     e.preventDefault();
     Meteor.reconnect();
   },
+  'click .action-admin-mode': function (evt) {
+    evt.preventDefault();
+    Meteor.call('makeMeAdmin', UltiSite.userFeedbackFunction('Switching to Admin'));
+  },
 });
 
 Template.header.helpers({
@@ -121,6 +125,10 @@ Template.sidebar.events({
   },
   'click a': function (e) {
     if (!$(e.currentTarget).hasClass('sublinks')) { UltiSite.toggleSidebar(false); }
+  },
+  'click .action-admin-mode': function (evt) {
+    evt.preventDefault();
+    Meteor.call('makeMeAdmin', UltiSite.userFeedbackFunction('Switching to Admin'));
   },
 });
 const linkHelper = {

@@ -107,9 +107,9 @@
 			<a class="sub-title-link" href="{{pathFor route='/'}}">{{settings.siteSubTitle}}</a>
 			{{#if currentUser}}
 				<div class="user-header">
-					<button class="btn btn-link" type="button">
+					<a href="{{pathFor route='user' _id=currentUser._id }}" class="user-link">
 						<small>{{currentUser.profile.name}} {{currentUser.profile.surname}} ({{currentUser.username}})</small>
-					</button>
+					</a>
 				</div>
 			{{/if}}
 		</div>
@@ -169,6 +169,12 @@
 						<span class="badge">{{this.count}}</span>
 					{{/with}}
 				</a>
+			{{else}}
+				{{#if isInRole "admin"}}
+					<a href="#" class="list-group-item list-group-item-action bg-{{this.style}} action-admin-mode">
+						<span class="fa fa-user-secret fa-lg"></span> Zum Admin
+					</a>
+				{{/if}}
 			{{/if}}
 			<a class="list-group-item list-group-item-action" href="https://github.com/larswolter/ultisite">
 				<span class="fa fa-github fa-fw"></span>
@@ -220,6 +226,14 @@
 						<span class="fa fa-cog fa-fw"></span> Admin
 					</a>
 				</li>
+			{{else}}
+				{{#if isInRole "admin"}}
+					<li class="dropdown-item" role="presentation">
+						<a href="#" class="action-admin-mode">
+							<span class="fa fa-user-secret fa-lg"></span> Zum Admin
+						</a>
+					</li>
+				{{/if}}
 			{{/if}}
 		</ul>
 	{{/if}}
