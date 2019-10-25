@@ -58,6 +58,6 @@
     "eslint-plugin-react": "^7.12.4",
     "jest": "^24.7.1",
     "less2sass": "^1.0.3",
-    "workbox-cli": "^4.2.0"
+    "workbox-cli": "^4.3.1"
   }
 }
