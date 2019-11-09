@@ -17,13 +17,14 @@ _.extend(UltiSite, {
     });
     // adjust list by drawing result
     if (team.drawingResult) {
-      participants = _.sortBy(_.sortBy(_.sortBy(tournament.participants.filter(p => p.team === teamId).map(x => x.drawing === null ? _.extend(x, { drawing: 1000 }) : x), 'safeStateDate'), p => (100 - p.state)), 'drawing');
+      participants = _.sortBy(_.sortBy(_.sortBy(tournament.participants.filter(p => p.team === teamId).map(x => (x.drawing === null ? _.extend(x, { drawing: 1000 }) : x)), 'safeStateDate'), p => (100 - p.state)), 'drawing');
     }
     const partUser = participants.map(function (participant, idx) {
       const user = Meteor.users.findOne(participant.user);
       const p = _.extend({
         teamId: team._id,
         visible: participant.state > 0 || Meteor.isClient && (
+          UltiSite.isAdmin() ||
           participant.user === Meteor.userId() ||
           participant.responsible === Meteor.userId()),
         iconState: participant.drawing === 0 ? 'fa fa-clock-o' :
