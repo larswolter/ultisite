@@ -21,8 +21,8 @@ Meteor.methods({
           created: -1,
         },
       }).fetch()), function (doc) {
-      return doc.created;
-    }).slice(0, 5).map(function (doc) {
+        return doc.created;
+      }).slice(0, 5).map(function (doc) {
         return doc._id;
       });
   },
@@ -69,7 +69,7 @@ Meteor.methods({
             throw err;
           }
           UltiSite.Images.update(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
-          fs.unlink(`${os.tmpdir()}/${imgId}.image.temp`);
+          fs.unlinkSync(`${os.tmpdir()}/${imgId}.image.temp`);
           console.log('finished image upload');
           if (meteorCall) {
             Meteor.call(meteorCall, UltiSite.Images.findOne(imgId));
@@ -114,7 +114,7 @@ Meteor.methods({
       }, Meteor.bindEnvironment(function (err, wstream) {
         if (err) {
           console.log(err);
-          fs.unlink(`${os.tmpdir()}/${docId}.doc.temp`);
+          fs.unlinkSync(`${os.tmpdir()}/${docId}.doc.temp`);
           throw err;
         }
         wstream.on('close', Meteor.bindEnvironment(function (fileObj) {
@@ -124,7 +124,7 @@ Meteor.methods({
             },
             $unset: { progress: 1 },
           });
-          fs.unlink(`${os.tmpdir()}/${docId}.doc.temp`);
+          fs.unlinkSync(`${os.tmpdir()}/${docId}.doc.temp`);
           console.log('finished file upload');
           if (meteorCall) {
             Meteor.call(meteorCall, UltiSite.Documents.findOne(docId));
