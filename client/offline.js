@@ -2,12 +2,8 @@ import localForage from 'localforage';
 import { Meteor } from 'meteor/meteor';
 import { Reload } from 'meteor/reload';
 import { moment } from 'meteor/momentjs:moment';
-import { onPrecacheFinished } from 'meteor/dynamic-import';
 import { Workbox, messageSW } from 'workbox-window';
 
-onPrecacheFinished((err) => {
-  console.log('Precaching of dynamic imports finished:', err || 'Ok');
-});
 Package.appcache = true;
 
 UltiSite.serviceWorker = null;
