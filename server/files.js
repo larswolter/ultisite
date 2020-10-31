@@ -20,11 +20,12 @@ Meteor.methods({
         sort: {
           created: -1,
         },
-      }).fetch()), function (doc) {
+      }).fetch()
+    ), function (doc) {
       return doc.created;
     }).slice(0, 5).map(function (doc) {
-        return doc._id;
-      });
+      return doc._id;
+    });
   },
   retrieveAbandonedFiles() {
     if (!this.userId) { return []; }
@@ -33,9 +34,10 @@ Meteor.methods({
     }).fetch().concat(
       UltiSite.Documents.find({
         associated: [],
-      }).fetch()).map(function (doc) {
-        return doc._id;
-      });
+      }).fetch()
+    ).map(function (doc) {
+      return doc._id;
+    });
   },
   fileUploadChunk(base64, metadata, lastPackage) {
     let meteorCall;
@@ -69,7 +71,7 @@ Meteor.methods({
             throw err;
           }
           UltiSite.Images.update(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
-          fs.unlink(`${os.tmpdir()}/${imgId}.image.temp`);
+          fs.unlinkSync(`${os.tmpdir()}/${imgId}.image.temp`);
           console.log('finished image upload');
           if (meteorCall) {
             Meteor.call(meteorCall, UltiSite.Images.findOne(imgId));
@@ -114,7 +116,7 @@ Meteor.methods({
       }, Meteor.bindEnvironment(function (err, wstream) {
         if (err) {
           console.log(err);
-          fs.unlink(`${os.tmpdir()}/${docId}.doc.temp`);
+          fs.unlinkSync(`${os.tmpdir()}/${docId}.doc.temp`);
           throw err;
         }
         wstream.on('close', Meteor.bindEnvironment(function (fileObj) {
@@ -124,7 +126,7 @@ Meteor.methods({
             },
             $unset: { progress: 1 },
           });
-          fs.unlink(`${os.tmpdir()}/${docId}.doc.temp`);
+          fs.unlinkSync(`${os.tmpdir()}/${docId}.doc.temp`);
           console.log('finished file upload');
           if (meteorCall) {
             Meteor.call(meteorCall, UltiSite.Documents.findOne(docId));
@@ -195,7 +197,7 @@ Meteor.startup(function () {
 });
 
 WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res, next) {
-  const query = Npm.require('url').parse(req.url, true).query;
+  const { query } = req;
   const icon = UltiSite.Images.findOne(UltiSite.settings().imageIcon);
   if (!icon) {
     res.writeHead(404);
@@ -205,8 +207,8 @@ WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res, next) {
 
   res.setHeader('Content-Type', icon.type);
   if (query.size) {
-    sharp(new Buffer(icon.base64, 'base64'))
-      .resize(Number(query.size))
+    sharp(Buffer.from(icon.base64, 'base64'))
+      .resize(Math.min(1024, Number(query.size)))
       .toBuffer()
       .then((data) => {
         res.writeHead(200);
@@ -216,7 +218,7 @@ WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res, next) {
         res.writeHead(500);
         res.end(JSON.stringify(err));
       });
-  } else { res.end(new Buffer(icon.base64, 'base64')); }
+  } else { res.end(Buffer.from(icon.base64, 'base64')); }
 });
 
 WebApp.connectHandlers.use('/_document', (req, resp) => {
