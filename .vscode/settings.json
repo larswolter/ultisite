@@ -33,6 +33,9 @@
       "editor.tabSize": 2,
     "files.associations": {
         "*.html": "handlebars"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
     }
 
 }
