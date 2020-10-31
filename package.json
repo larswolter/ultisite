@@ -34,7 +34,7 @@
     "jquery": "^3.5.0",
     "localforage": "^1.7.3",
     "lodash": "^4.17.19",
-    "meteor-node-stubs": "^1.0.0",
+    "meteor-node-stubs": "^1.0.1",
     "mongodb": "^3.5.5",
     "nodemailer": "^6.4.6",
     "popper.js": "^1.16.1",
@@ -43,6 +43,7 @@
     "sharp": "^0.25.2",
     "simpl-schema": "^1.5.7",
     "stream-to-buffer": "^0.1.0",
+    "workbox-window": "^5.1.4",
     "wysiwyg.js": "^1.0.0"
   },
   "devDependencies": {
@@ -59,6 +60,6 @@
     "eslint-plugin-react": "^7.19.0",
     "jest": "^25.3.0",
     "less2sass": "^1.0.3",
-    "workbox-cli": "^4.3.1"
+    "workbox-cli": "^5.1.3"
   }
 }
