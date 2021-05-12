@@ -36,7 +36,7 @@
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.0.1",
     "mongodb": "^3.5.5",
-    "nodemailer": "^6.4.6",
+    "nodemailer": "^6.4.16",
     "popper.js": "^1.16.1",
     "quoted-printable": "^1.0.0",
     "sanitize-html": "^2.3.2",
