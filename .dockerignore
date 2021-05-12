@@ -1,0 +1,5 @@
+.meteor/local
+.meteor/dev_bundle
+.github
+.git
+node_modules

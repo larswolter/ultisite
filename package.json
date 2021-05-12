@@ -34,7 +34,7 @@
     "jquery": "^3.5.0",
     "localforage": "^1.7.3",
     "lodash": "^4.17.21",
-    "meteor-node-stubs": "^1.0.1",
+    "meteor-node-stubs": "^1.0.3",
     "mongodb": "^3.5.5",
     "nodemailer": "^6.4.16",
     "popper.js": "^1.16.1",
