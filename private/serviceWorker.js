@@ -52,11 +52,12 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.setDefaultHandler(new workbox.strategies.NetworkOnly());
+workbox.routing.setDefaultHandler(new workbox.strategies.NetworkOnly(), 'POST');
 
 addEventListener('message', (event) => {
   console.log('got message', event.data, event.clientId);
   if (event.data && event.data.type === 'SKIP_WAITING') {
     console.log('doing skip waiting');
-    skipWaiting();
+    this.skipWaiting();
   }
 });

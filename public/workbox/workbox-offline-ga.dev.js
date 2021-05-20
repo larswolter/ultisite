@@ -3,7 +3,7 @@ this.workbox.googleAnalytics = (function (exports, BackgroundSyncPlugin_js, cach
     'use strict';
 
     try {
-      self['workbox:google-analytics:5.1.3'] && _();
+      self['workbox:google-analytics:6.1.5'] && _();
     } catch (e) {}
 
     /*
@@ -62,7 +62,7 @@ this.workbox.googleAnalytics = (function (exports, BackgroundSyncPlugin_js, cach
           try {
             // Measurement protocol requests can set their payload parameters in
             // either the URL query string (for GET requests) or the POST body.
-            const params = request.method === 'POST' ? new URLSearchParams((await request.clone().text())) : url.searchParams; // Calculate the qt param, accounting for the fact that an existing
+            const params = request.method === 'POST' ? new URLSearchParams(await request.clone().text()) : url.searchParams; // Calculate the qt param, accounting for the fact that an existing
             // qt param may be present and should be updated rather than replaced.
 
             const originalHitTime = timestamp - (Number(params.get('qt')) || 0);
@@ -95,13 +95,13 @@ this.workbox.googleAnalytics = (function (exports, BackgroundSyncPlugin_js, cach
             }));
 
             if ("dev" !== 'production') {
-              logger_js.logger.log(`Request for '${getFriendlyURL_js.getFriendlyURL(url.href)}'` + `has been replayed`);
+              logger_js.logger.log(`Request for '${getFriendlyURL_js.getFriendlyURL(url.href)}' ` + `has been replayed`);
             }
           } catch (err) {
             await queue.unshiftRequest(entry);
 
             {
-              logger_js.logger.log(`Request for '${getFriendlyURL_js.getFriendlyURL(url.href)}'` + `failed to replay, putting it back in the queue.`);
+              logger_js.logger.log(`Request for '${getFriendlyURL_js.getFriendlyURL(url.href)}' ` + `failed to replay, putting it back in the queue.`);
             }
 
             throw err;

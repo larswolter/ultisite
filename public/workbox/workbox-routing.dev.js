@@ -3,7 +3,7 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
     'use strict';
 
     try {
-      self['workbox:routing:5.1.3'] && _();
+      self['workbox:routing:6.1.5'] && _();
     } catch (e) {}
 
     /*
@@ -126,6 +126,16 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
         this.handler = normalizeHandler(handler);
         this.match = match;
         this.method = method;
+      }
+      /**
+       *
+       * @param {module:workbox-routing-handlerCallback} handler A callback
+       * function that returns a Promise resolving to a Response
+       */
+
+
+      setCatchHandler(handler) {
+        this.catchHandler = normalizeHandler(handler);
       }
 
     }
@@ -354,6 +364,7 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
        */
       constructor() {
         this._routes = new Map();
+        this._defaultHandlerMap = new Map();
       }
       /**
        * @return {Map<string, Array<module:workbox-routing.Route>>} routes A `Map` of HTTP
@@ -430,7 +441,8 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
 
               const request = new Request(...entry);
               return this.handleRequest({
-                request
+                request,
+                event
               }); // TODO(philipwalton): TypeScript errors without this typecast for
               // some reason (probably a bug). The real type here should work but
               // doesn't: `Array<Promise<Response> | undefined>`.
@@ -449,10 +461,9 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
        * appropriate Route's handler.
        *
        * @param {Object} options
-       * @param {Request} options.request The request to handle (this is usually
-       *     from a fetch event, but it does not have to be).
-       * @param {FetchEvent} [options.event] The event that triggered the request,
-       *     if applicable.
+       * @param {Request} options.request The request to handle.
+       * @param {ExtendableEvent} options.event The event that triggered the
+       *     request.
        * @return {Promise<Response>|undefined} A promise is returned if a
        *     registered route can handle the request. If there is no matching
        *     route and there's no `defaultHandler`, `undefined` is returned.
@@ -482,13 +493,15 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
           return;
         }
 
+        const sameOrigin = url.origin === location.origin;
         const {
           params,
           route
         } = this.findMatchingRoute({
-          url,
+          event,
           request,
-          event
+          sameOrigin,
+          url
         });
         let handler = route && route.handler;
         const debugMessages = [];
@@ -505,12 +518,14 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
         // fall back to defaultHandler if that's defined.
 
 
-        if (!handler && this._defaultHandler) {
+        const method = request.method;
+
+        if (!handler && this._defaultHandlerMap.has(method)) {
           {
-            debugMessages.push(`Failed to find a matching route. Falling ` + `back to the default handler.`);
+            debugMessages.push(`Failed to find a matching route. Falling ` + `back to the default handler for ${method}.`);
           }
 
-          handler = this._defaultHandler;
+          handler = this._defaultHandlerMap.get(method);
         }
 
         if (!handler) {
@@ -550,24 +565,54 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
           });
         } catch (err) {
           responsePromise = Promise.reject(err);
-        }
+        } // Get route's catch handler, if it exists
 
-        if (responsePromise instanceof Promise && this._catchHandler) {
-          responsePromise = responsePromise.catch(err => {
-            {
-              // Still include URL here as it will be async from the console group
-              // and may not make sense without the URL
-              logger_js.logger.groupCollapsed(`Error thrown when responding to: ` + ` ${getFriendlyURL_js.getFriendlyURL(url)}. Falling back to Catch Handler.`);
-              logger_js.logger.error(`Error thrown by:`, route);
-              logger_js.logger.error(err);
-              logger_js.logger.groupEnd();
+
+        const catchHandler = route && route.catchHandler;
+
+        if (responsePromise instanceof Promise && (this._catchHandler || catchHandler)) {
+          responsePromise = responsePromise.catch(async err => {
+            // If there's a route catch handler, process that first
+            if (catchHandler) {
+              {
+                // Still include URL here as it will be async from the console group
+                // and may not make sense without the URL
+                logger_js.logger.groupCollapsed(`Error thrown when responding to: ` + ` ${getFriendlyURL_js.getFriendlyURL(url)}. Falling back to route's Catch Handler.`);
+                logger_js.logger.error(`Error thrown by:`, route);
+                logger_js.logger.error(err);
+                logger_js.logger.groupEnd();
+              }
+
+              try {
+                return await catchHandler.handle({
+                  url,
+                  request,
+                  event,
+                  params
+                });
+              } catch (catchErr) {
+                err = catchErr;
+              }
             }
 
-            return this._catchHandler.handle({
-              url,
-              request,
-              event
-            });
+            if (this._catchHandler) {
+              {
+                // Still include URL here as it will be async from the console group
+                // and may not make sense without the URL
+                logger_js.logger.groupCollapsed(`Error thrown when responding to: ` + ` ${getFriendlyURL_js.getFriendlyURL(url)}. Falling back to global Catch Handler.`);
+                logger_js.logger.error(`Error thrown by:`, route);
+                logger_js.logger.error(err);
+                logger_js.logger.groupEnd();
+              }
+
+              return this._catchHandler.handle({
+                url,
+                request,
+                event
+              });
+            }
+
+            throw err;
           });
         }
 
@@ -580,8 +625,10 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
        *
        * @param {Object} options
        * @param {URL} options.url
+       * @param {boolean} options.sameOrigin The result of comparing `url.origin`
+       *     against the current origin.
        * @param {Request} options.request The request to match.
-       * @param {Event} [options.event] The corresponding event (unless N/A).
+       * @param {Event} options.event The corresponding event.
        * @return {Object} An object with `route` and `params` properties.
        *     They are populated if a matching route was found or `undefined`
        *     otherwise.
@@ -590,36 +637,31 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
 
       findMatchingRoute({
         url,
+        sameOrigin,
         request,
         event
       }) {
-        {
-          assert_js.assert.isInstance(url, URL, {
-            moduleName: 'workbox-routing',
-            className: 'Router',
-            funcName: 'findMatchingRoute',
-            paramName: 'options.url'
-          });
-          assert_js.assert.isInstance(request, Request, {
-            moduleName: 'workbox-routing',
-            className: 'Router',
-            funcName: 'findMatchingRoute',
-            paramName: 'options.request'
-          });
-        }
-
         const routes = this._routes.get(request.method) || [];
 
         for (const route of routes) {
           let params;
           const matchResult = route.match({
             url,
+            sameOrigin,
             request,
             event
           });
 
           if (matchResult) {
-            // See https://github.com/GoogleChrome/workbox/issues/2079
+            {
+              // Warn developers that using an async matchCallback is almost always
+              // not the right thing to do. 
+              if (matchResult instanceof Promise) {
+                logger_js.logger.warn(`While routing ${getFriendlyURL_js.getFriendlyURL(url)}, an async ` + `matchCallback function was used. Please convert the ` + `following route to use a synchronous matchCallback function:`, route);
+              }
+            } // See https://github.com/GoogleChrome/workbox/issues/2079
+
+
             params = matchResult;
 
             if (Array.isArray(matchResult) && matchResult.length === 0) {
@@ -650,16 +692,20 @@ this.workbox.routing = (function (exports, assert_js, logger_js, WorkboxError_js
        * Define a default `handler` that's called when no routes explicitly
        * match the incoming request.
        *
+       * Each HTTP method ('GET', 'POST', etc.) gets its own default handler.
+       *
        * Without a default handler, unmatched requests will go against the
        * network as if there were no service worker present.
        *
        * @param {module:workbox-routing~handlerCallback} handler A callback
        * function that returns a Promise resulting in a Response.
+       * @param {string} [method='GET'] The HTTP method to associate with this
+       * default handler. Each method has its own default.
        */
 
 
-      setDefaultHandler(handler) {
-        this._defaultHandler = normalizeHandler(handler);
+      setDefaultHandler(handler, method = defaultMethod) {
+        this._defaultHandlerMap.set(method, normalizeHandler(handler));
       }
       /**
        * If a Route throws an error while handling a request, this `handler`

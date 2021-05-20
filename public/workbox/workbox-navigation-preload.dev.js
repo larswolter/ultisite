@@ -3,7 +3,7 @@ this.workbox.navigationPreload = (function (exports, logger_js) {
     'use strict';
 
     try {
-      self['workbox:navigation-preload:5.1.3'] && _();
+      self['workbox:navigation-preload:6.1.5'] && _();
     } catch (e) {}
 
     /*

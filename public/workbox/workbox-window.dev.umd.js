@@ -1,11 +1,11 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = global || self, factory(global.workbox = {}));
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.workbox = {}));
 }(this, (function (exports) { 'use strict';
 
     try {
-      self['workbox:window:5.1.3'] && _();
+      self['workbox:window:6.1.5'] && _();
     } catch (e) {}
 
     /*
@@ -64,8 +64,50 @@
       subClass.__proto__ = superClass;
     }
 
+    function _unsupportedIterableToArray(o, minLen) {
+      if (!o) return;
+      if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+      var n = Object.prototype.toString.call(o).slice(8, -1);
+      if (n === "Object" && o.constructor) n = o.constructor.name;
+      if (n === "Map" || n === "Set") return Array.from(o);
+      if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+    }
+
+    function _arrayLikeToArray(arr, len) {
+      if (len == null || len > arr.length) len = arr.length;
+
+      for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+      return arr2;
+    }
+
+    function _createForOfIteratorHelperLoose(o, allowArrayLike) {
+      var it;
+
+      if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+        if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+          if (it) o = it;
+          var i = 0;
+          return function () {
+            if (i >= o.length) return {
+              done: true
+            };
+            return {
+              done: false,
+              value: o[i++]
+            };
+          };
+        }
+
+        throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+      }
+
+      it = o[Symbol.iterator]();
+      return it.next.bind(it);
+    }
+
     try {
-      self['workbox:core:5.1.3'] && _();
+      self['workbox:core:6.1.5'] && _();
     } catch (e) {}
 
     /*
@@ -120,7 +162,7 @@
       license that can be found in the LICENSE file or at
       https://opensource.org/licenses/MIT.
     */
-    var logger =  function () {
+    var logger = function () {
       // Don't overwrite this value if it's already set.
       // See https://github.com/GoogleChrome/workbox/pull/2284#issuecomment-560470923
       if (!('__WB_DISABLE_DEV_LOGS' in self)) {
@@ -247,19 +289,8 @@
 
         var listeners = this._getEventListenersByType(event.type);
 
-        for (var _iterator = listeners, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-          var _ref;
-
-          if (_isArray) {
-            if (_i >= _iterator.length) break;
-            _ref = _iterator[_i++];
-          } else {
-            _i = _iterator.next();
-            if (_i.done) break;
-            _ref = _i.value;
-          }
-
-          var listener = _ref;
+        for (var _iterator = _createForOfIteratorHelperLoose(listeners), _step; !(_step = _iterator()).done;) {
+          var listener = _step.value;
           listener(event);
         }
       }
@@ -358,7 +389,14 @@
       };
     }
 
-    var REGISTRATION_TIMEOUT_DURATION = 60000;
+    var REGISTRATION_TIMEOUT_DURATION = 60000; // The de facto standard message that a service worker should be listening for
+    // to trigger a call to skipWaiting().
+
+    function _empty() {}
+
+    var SKIP_WAITING_MESSAGE = {
+      type: 'SKIP_WAITING'
+    };
     /**
      * A class to aid in handling service worker registration, updates, and
      * reacting to service worker lifecycle events.
@@ -369,13 +407,14 @@
      * @fires [controlling]{@link module:workbox-window.Workbox#controlling}
      * @fires [activated]{@link module:workbox-window.Workbox#activated}
      * @fires [redundant]{@link module:workbox-window.Workbox#redundant}
-     * @fires [externalinstalled]{@link module:workbox-window.Workbox#externalinstalled}
-     * @fires [externalwaiting]{@link module:workbox-window.Workbox#externalwaiting}
-     * @fires [externalactivated]{@link module:workbox-window.Workbox#externalactivated}
      * @memberof module:workbox-window
      */
 
-    function _empty() {}
+    function _awaitIgnored(value, direct) {
+      if (!direct) {
+        return value && value.then ? value.then(_empty) : Promise.resolve();
+      }
+    }
 
     var Workbox = /*#__PURE__*/function (_WorkboxEventTarget) {
       _inheritsLoose(Workbox, _WorkboxEventTarget);
@@ -483,9 +522,9 @@
           var sw = originalEvent.target;
           var state = sw.state;
           var isExternal = sw === _this._externalSW;
-          var eventPrefix = isExternal ? 'external' : '';
           var eventProps = {
             sw: sw,
+            isExternal: isExternal,
             originalEvent: originalEvent
           };
 
@@ -493,7 +532,7 @@
             eventProps.isUpdate = true;
           }
 
-          _this.dispatchEvent(new WorkboxEvent(eventPrefix + state, eventProps));
+          _this.dispatchEvent(new WorkboxEvent(state, eventProps));
 
           if (state === 'installed') {
             // This timeout is used to ignore cases where the service worker calls
@@ -507,7 +546,7 @@
             _this._waitingTimeout = self.setTimeout(function () {
               // Ensure the SW is still waiting (it may now be redundant).
               if (state === 'installed' && registration.waiting === sw) {
-                _this.dispatchEvent(new WorkboxEvent(eventPrefix + 'waiting', eventProps));
+                _this.dispatchEvent(new WorkboxEvent('waiting', eventProps));
 
                 {
                   if (isExternal) {
@@ -569,14 +608,19 @@
 
         _this._onControllerChange = function (originalEvent) {
           var sw = _this._sw;
+          var isExternal = sw !== navigator.serviceWorker.controller; // Unconditionally dispatch the controlling event, with isExternal set
+          // to distinguish between controller changes due to the initial registration
+          // vs. an update-check or other tab's registration.
+          // See https://github.com/GoogleChrome/workbox/issues/2786
 
-          if (sw === navigator.serviceWorker.controller) {
-            _this.dispatchEvent(new WorkboxEvent('controlling', {
-              sw: sw,
-              originalEvent: originalEvent,
-              isUpdate: _this._isUpdate
-            }));
+          _this.dispatchEvent(new WorkboxEvent('controlling', {
+            isExternal: isExternal,
+            originalEvent: originalEvent,
+            sw: sw,
+            isUpdate: _this._isUpdate
+          }));
 
+          if (!isExternal) {
             {
               logger.log('Registered service worker now controlling this page.');
             }
@@ -794,15 +838,9 @@
        * @return {Promise<ServiceWorker>}
        */
       _proto.getSW = function getSW() {
-        try {
-          var _this7 = this;
-
-          // If `this._sw` is set, resolve with that as we want `getSW()` to
-          // return the correct (new) service worker if an update is found.
-          return _this7._sw !== undefined ? _this7._sw : _this7._swDeferred.promise;
-        } catch (e) {
-          return Promise.reject(e);
-        }
+        // If `this._sw` is set, resolve with that as we want `getSW()` to
+        // return the correct (new) service worker if an update is found.
+        return this._sw !== undefined ? Promise.resolve(this._sw) : this._swDeferred.promise;
       }
       /**
        * Sends the passed data object to the service worker registered by this
@@ -821,13 +859,27 @@
 
       _proto.messageSW = function messageSW$1(data) {
         try {
-          var _this9 = this;
+          var _this7 = this;
 
-          return _await(_this9.getSW(), function (sw) {
+          return _await(_this7.getSW(), function (sw) {
             return messageSW(sw, data);
           });
         } catch (e) {
           return Promise.reject(e);
+        }
+      }
+      /**
+       * Sends a `{type: 'SKIP_WAITING'}` message to the service worker that's
+       * currently in the `waiting` state associated with the current registration.
+       *
+       * If there is no current registration or no service worker is `waiting`,
+       * calling this will have no effect.
+       */
+      ;
+
+      _proto.messageSkipWaiting = function messageSkipWaiting() {
+        if (this._registration && this._registration.waiting) {
+          messageSW(this._registration.waiting, SKIP_WAITING_MESSAGE);
         }
       }
       /**
@@ -858,14 +910,14 @@
 
       _proto._registerScript = function _registerScript() {
         try {
-          var _this11 = this;
+          var _this9 = this;
 
           return _catch(function () {
-            return _await(navigator.serviceWorker.register(_this11._scriptURL, _this11._registerOptions), function (reg) {
+            return _await(navigator.serviceWorker.register(_this9._scriptURL, _this9._registerOptions), function (reg) {
               // Keep track of when registration happened, so it can be used in the
               // `this._onUpdateFound` heuristic. Also use the presence of this
               // property as a way to see if `.register()` has been called.
-              _this11._registrationTime = performance.now();
+              _this9._registrationTime = performance.now();
               return reg;
             });
           }, function (error) {
@@ -909,10 +961,14 @@
       return Workbox;
     }(WorkboxEventTarget);
 
-    function _awaitIgnored(value, direct) {
-      if (!direct) {
-        return value && value.then ? value.then(_empty) : Promise.resolve();
+    function _invoke(body, then) {
+      var result = body();
+
+      if (result && result.then) {
+        return result.then(then);
       }
+
+      return then(result);
     } // The jsdoc comments below outline the events this instance may dispatch:
     // -----------------------------------------------------------------------
 
@@ -945,6 +1001,8 @@
      *     event.
      * @property {boolean|undefined} isUpdate True if a service worker was already
      *     controlling when this `Workbox` instance called `register()`.
+     * @property {boolean|undefined} isExternal True if this event is associated
+     *     with an [external service worker]{@link https://developers.google.com/web/tools/workbox/modules/workbox-window#when_an_unexpected_version_of_the_service_worker_is_found}.
      * @property {string} type `installed`.
      * @property {Workbox} target The `Workbox` instance.
      */
@@ -968,6 +1026,8 @@
      *     to before `.register()` was called.
      * @property {boolean|undefined} isUpdate True if a service worker was already
      *     controlling when this `Workbox` instance called `register()`.
+     * @property {boolean|undefined} isExternal True if this event is associated
+     *     with an [external service worker]{@link https://developers.google.com/web/tools/workbox/modules/workbox-window#when_an_unexpected_version_of_the_service_worker_is_found}.
      * @property {boolean|undefined} wasWaitingBeforeRegister True if a service worker with
      *     a matching `scriptURL` was already waiting when this `Workbox`
      *     instance called `register()`.
@@ -991,6 +1051,8 @@
      *     event.
      * @property {boolean|undefined} isUpdate True if a service worker was already
      *     controlling when this service worker was registered.
+     * @property {boolean|undefined} isExternal True if this event is associated
+     *     with an [external service worker]{@link https://developers.google.com/web/tools/workbox/modules/workbox-window#when_an_unexpected_version_of_the_service_worker_is_found}.
      * @property {string} type `controlling`.
      * @property {Workbox} target The `Workbox` instance.
      */
@@ -1008,6 +1070,8 @@
      *     event.
      * @property {boolean|undefined} isUpdate True if a service worker was already
      *     controlling when this `Workbox` instance called `register()`.
+     * @property {boolean|undefined} isExternal True if this event is associated
+     *     with an [external service worker]{@link https://developers.google.com/web/tools/workbox/modules/workbox-window#when_an_unexpected_version_of_the_service_worker_is_found}.
      * @property {string} type `activated`.
      * @property {Workbox} target The `Workbox` instance.
      */
@@ -1029,58 +1093,6 @@
      * @property {Workbox} target The `Workbox` instance.
      */
 
-    /**
-     * The `externalinstalled` event is dispatched if the state of an
-     * [external service worker]{@link https://developers.google.com/web/tools/workbox/modules/workbox-window#when_an_unexpected_version_of_the_service_worker_is_found}
-     * changes to `installed`.
-     *
-     * @event module:workbox-window.Workbox#externalinstalled
-     * @type {WorkboxEvent}
-     * @property {ServiceWorker} sw The service worker instance.
-     * @property {Event} originalEvent The original [`statechange`]{@link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker/onstatechange}
-     *     event.
-     * @property {string} type `externalinstalled`.
-     * @property {Workbox} target The `Workbox` instance.
-     */
-
-    /**
-     * The `externalwaiting` event is dispatched if the state of an
-     * [external service worker]{@link https://developers.google.com/web/tools/workbox/modules/workbox-window#when_an_unexpected_version_of_the_service_worker_is_found}
-     * changes to `waiting`.
-     *
-     * @event module:workbox-window.Workbox#externalwaiting
-     * @type {WorkboxEvent}
-     * @property {ServiceWorker} sw The service worker instance.
-     * @property {Event} originalEvent The original [`statechange`]{@link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker/onstatechange}
-     *     event.
-     * @property {string} type `externalwaiting`.
-     * @property {Workbox} target The `Workbox` instance.
-     */
-
-    /**
-     * The `externalactivated` event is dispatched if the state of an
-     * [external service worker]{@link https://developers.google.com/web/tools/workbox/modules/workbox-window#when_an_unexpected_version_of_the_service_worker_is_found}
-     * changes to `activated`.
-     *
-     * @event module:workbox-window.Workbox#externalactivated
-     * @type {WorkboxEvent}
-     * @property {ServiceWorker} sw The service worker instance.
-     * @property {Event} originalEvent The original [`statechange`]{@link https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker/onstatechange}
-     *     event.
-     * @property {string} type `externalactivated`.
-     * @property {Workbox} target The `Workbox` instance.
-     */
-
-
-    function _invoke(body, then) {
-      var result = body();
-
-      if (result && result.then) {
-        return result.then(then);
-      }
-
-      return then(result);
-    }
 
     function _catch(body, recover) {
       try {

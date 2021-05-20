@@ -3,7 +3,7 @@ this.workbox.broadcastUpdate = (function (exports, assert_js, timeout_js, result
     'use strict';
 
     try {
-      self['workbox:broadcast-update:5.1.3'] && _();
+      self['workbox:broadcast-update:6.1.5'] && _();
     } catch (e) {}
 
     /*
@@ -106,7 +106,7 @@ this.workbox.broadcastUpdate = (function (exports, assert_js, timeout_js, result
        * Construct a BroadcastCacheUpdate instance with a specific `channelName` to
        * broadcast messages on
        *
-       * @param {Object} options
+       * @param {Object} [options]
        * @param {Array<string>} [options.headersToCheck=['content-length', 'etag', 'last-modified']]
        *     A list of headers that will be used to determine whether the responses
        *     differ.
@@ -148,7 +148,7 @@ this.workbox.broadcastUpdate = (function (exports, assert_js, timeout_js, result
        * @param {Request} options.request The request.
        * @param {string} options.cacheName Name of the cache the responses belong
        *     to. This is included in the broadcast message.
-       * @param {Event} [options.event] event An optional event that triggered
+       * @param {Event} options.event event The event that triggered
        *     this possible cache update.
        * @return {Promise} Resolves once the update is sent.
        */
@@ -247,7 +247,7 @@ this.workbox.broadcastUpdate = (function (exports, assert_js, timeout_js, result
        * calls its [`notifyIfUpdated()`]{@link module:workbox-broadcast-update.BroadcastCacheUpdate~notifyIfUpdated}
        * method whenever the plugin's `cacheDidUpdate` callback is invoked.
        *
-       * @param {Object} options
+       * @param {Object} [options]
        * @param {Array<string>} [options.headersToCheck=['content-length', 'etag', 'last-modified']]
        *     A list of headers that will be used to determine whether the responses
        *     differ.
@@ -267,7 +267,7 @@ this.workbox.broadcastUpdate = (function (exports, assert_js, timeout_js, result
          * @param {Response} [options.oldResponse] The previous cached value, if any.
          * @param {Response} options.newResponse The new value in the cache.
          * @param {Request} options.request The request that triggered the update.
-         * @param {Request} [options.event] The event that triggered the update.
+         * @param {Request} options.event The event that triggered the update.
          */
         this.cacheDidUpdate = async options => {
           dontWaitFor_js.dontWaitFor(this._broadcastUpdate.notifyIfUpdated(options));

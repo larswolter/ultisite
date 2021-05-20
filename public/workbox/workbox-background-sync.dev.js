@@ -3,7 +3,7 @@ this.workbox.backgroundSync = (function (exports, WorkboxError_js, logger_js, as
     'use strict';
 
     try {
-      self['workbox:background-sync:5.1.3'] && _();
+      self['workbox:background-sync:6.1.5'] && _();
     } catch (e) {}
 
     /*
@@ -655,13 +655,13 @@ this.workbox.backgroundSync = (function (exports, WorkboxError_js, logger_js, as
             await fetch(entry.request.clone());
 
             if ("dev" !== 'production') {
-              logger_js.logger.log(`Request for '${getFriendlyURL_js.getFriendlyURL(entry.request.url)}'` + `has been replayed in queue '${this._name}'`);
+              logger_js.logger.log(`Request for '${getFriendlyURL_js.getFriendlyURL(entry.request.url)}' ` + `has been replayed in queue '${this._name}'`);
             }
           } catch (error) {
             await this.unshiftRequest(entry);
 
             {
-              logger_js.logger.log(`Request for '${getFriendlyURL_js.getFriendlyURL(entry.request.url)}'` + `failed to replay, putting it back in queue '${this._name}'`);
+              logger_js.logger.log(`Request for '${getFriendlyURL_js.getFriendlyURL(entry.request.url)}' ` + `failed to replay, putting it back in queue '${this._name}'`);
             }
 
             throw new WorkboxError_js.WorkboxError('queue-replay-failed', {
@@ -706,7 +706,7 @@ this.workbox.backgroundSync = (function (exports, WorkboxError_js, logger_js, as
           self.addEventListener('sync', event => {
             if (event.tag === `${TAG_PREFIX}:${this._name}`) {
               {
-                logger_js.logger.log(`Background sync for tag '${event.tag}'` + `has been received`);
+                logger_js.logger.log(`Background sync for tag '${event.tag}' ` + `has been received`);
               }
 
               const syncComplete = async () => {

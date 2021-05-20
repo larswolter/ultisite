@@ -3,7 +3,7 @@ this.workbox.expiration = (function (exports, assert_js, dontWaitFor_js, logger_
     'use strict';
 
     try {
-      self['workbox:expiration:5.1.3'] && _();
+      self['workbox:expiration:6.1.5'] && _();
     } catch (e) {}
 
     /*
@@ -216,6 +216,8 @@ this.workbox.expiration = (function (exports, assert_js, dontWaitFor_js, logger_
        * Entries used the least will be removed as the maximum is reached.
        * @param {number} [config.maxAgeSeconds] The maximum age of an entry before
        * it's treated as stale and removed.
+       * @param {Object} [config.matchOptions] The [`CacheQueryOptions`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/delete#Parameters)
+       * that will be used when calling `delete()` on the cache.
        */
       constructor(cacheName, config = {}) {
         this._isRunning = false;
@@ -243,7 +245,7 @@ this.workbox.expiration = (function (exports, assert_js, dontWaitFor_js, logger_
               className: 'CacheExpiration',
               funcName: 'constructor',
               paramName: 'config.maxEntries'
-            }); // TODO: Assert is positive
+            });
           }
 
           if (config.maxAgeSeconds) {
@@ -252,12 +254,13 @@ this.workbox.expiration = (function (exports, assert_js, dontWaitFor_js, logger_
               className: 'CacheExpiration',
               funcName: 'constructor',
               paramName: 'config.maxAgeSeconds'
-            }); // TODO: Assert is positive
+            });
           }
         }
 
         this._maxEntries = config.maxEntries;
         this._maxAgeSeconds = config.maxAgeSeconds;
+        this._matchOptions = config.matchOptions;
         this._cacheName = cacheName;
         this._timestampModel = new CacheTimestampsModel(cacheName);
       }
@@ -279,7 +282,7 @@ this.workbox.expiration = (function (exports, assert_js, dontWaitFor_js, logger_
         const cache = await self.caches.open(this._cacheName);
 
         for (const url of urlsExpired) {
-          await cache.delete(url);
+          await cache.delete(url, this._matchOptions);
         }
 
         {
@@ -371,11 +374,16 @@ this.workbox.expiration = (function (exports, assert_js, dontWaitFor_js, logger_
       https://opensource.org/licenses/MIT.
     */
     /**
-     * This plugin can be used in the Workbox APIs to regularly enforce a
+     * This plugin can be used in a `workbox-strategy` to regularly enforce a
      * limit on the age and / or the number of cached requests.
      *
+     * It can only be used with `workbox-strategy` instances that have a
+     * [custom `cacheName` property set](/web/tools/workbox/guides/configure-workbox#custom_cache_names_in_strategies).
+     * In other words, it can't be used to expire entries in strategy that uses the
+     * default runtime cache name.
+     *
      * Whenever a cached request is used or updated, this plugin will look
-     * at the used Cache and remove any old or extra requests.
+     * at the associated cache and remove any old or extra requests.
      *
      * When using `maxAgeSeconds`, requests may be used *once* after expiring
      * because the expiration clean up will not have occurred until *after* the
@@ -396,6 +404,8 @@ this.workbox.expiration = (function (exports, assert_js, dontWaitFor_js, logger_
        * Entries used the least will be removed as the maximum is reached.
        * @param {number} [config.maxAgeSeconds] The maximum age of an entry before
        * it's treated as stale and removed.
+       * @param {Object} [config.matchOptions] The [`CacheQueryOptions`](https://developer.mozilla.org/en-US/docs/Web/API/Cache/delete#Parameters)
+       * that will be used when calling `delete()` on the cache.
        * @param {boolean} [config.purgeOnQuotaError] Whether to opt this cache in to
        * automatic deletion if the available storage quota has been exceeded.
        */
