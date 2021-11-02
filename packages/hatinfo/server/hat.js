@@ -6,7 +6,7 @@ import { Roles } from 'meteor/alanning:roles';
 Meteor.startup(function () {
   UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
 
-  if (!_.find(Roles.getAllRoles().fetch(), r => r.name === 'hatAdmin')) {
+  if (!_.find(Roles.getAllRoles().fetch(), (r) => r.name === 'hatAdmin')) {
     Roles.createRole('hatAdmin');
   }
   UltiSite.HatInfo.HatParticipants.find({ payed: { $exists: false } }).forEach((elem) => {
@@ -31,7 +31,13 @@ Meteor.methods({
         email: Random.id() + '@hallunken.de',
         city: 'Halle',
         hometeam: 'Hallunken',
-        payed: i < payed ? createdAt.clone().add(Math.random() * 20, 'hours').toDate() : moment().add(10, 'years').toDate(),
+        payed:
+          i < payed
+            ? createdAt
+                .clone()
+                .add(Math.random() * 20, 'hours')
+                .toDate()
+            : moment().add(10, 'years').toDate(),
         accessKey: Random.id(34),
         hatId: UltiSite.settings().hatId,
       });
@@ -42,20 +48,26 @@ Meteor.methods({
     check(accessKey, String);
     const part = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
     if (part.allowPublic) {
-      UltiSite.HatInfo.HatParticipants.update({ accessKey }, {
-        $set: {
-          confirmed: true,
-          public: {
-            name: part.name,
-            city: part.city,
-            hometeam: part.hometeam,
+      UltiSite.HatInfo.HatParticipants.update(
+        { accessKey },
+        {
+          $set: {
+            confirmed: true,
+            public: {
+              name: part.name,
+              city: part.city,
+              hometeam: part.hometeam,
+            },
           },
-        },
-      });
+        }
+      );
     } else {
-      UltiSite.HatInfo.HatParticipants.update({ accessKey }, {
-        $set: { confirmed: true },
-      });
+      UltiSite.HatInfo.HatParticipants.update(
+        { accessKey },
+        {
+          $set: { confirmed: true },
+        }
+      );
     }
   },
   hatParticipate(p) {
@@ -67,21 +79,26 @@ Meteor.methods({
     participant.payed = moment().add(10, 'years').toDate();
     participant.accessKey = Random.id(34);
     participant.hatId = UltiSite.settings().hatId;
-    if (UltiSite.HatInfo.HatParticipants.findOne({
-      email: participant.email,
-      hatId: participant.hatId,
-    })) {
+    if (
+      UltiSite.HatInfo.HatParticipants.findOne({
+        email: participant.email,
+        hatId: participant.hatId,
+      })
+    ) {
       throw new Meteor.Error('Teilnehmer mit dieser E-Mail exisitiert schon!');
     }
     UltiSite.HatInfo.HatParticipants.insert(participant);
     const template = Assets.getText('private/confirm.html');
-    UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
+    UltiSite.Mail.send(
+      [participant.email],
+      `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
       UltiSite.renderMailTemplate(template, null, {
         additionalInfos: UltiSite.settings().hatConfirmInfos,
         participant,
         team: UltiSite.settings().teamname,
         url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
-      }));
+      })
+    );
     return 'inserted';
   },
   hatResendMail(accessKey) {
@@ -91,13 +108,16 @@ Meteor.methods({
     }
     const participant = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
     const template = Assets.getText('private/confirm.html');
-    UltiSite.Mail.send([participant.email], `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
+    UltiSite.Mail.send(
+      [participant.email],
+      `Anmeldung beim ${UltiSite.settings().hatName} bestätigen`,
       UltiSite.renderMailTemplate(template, null, {
         additionalInfos: UltiSite.settings().hatConfirmInfos,
         participant,
         team: UltiSite.settings().teamname,
         url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
-      }));
+      })
+    );
   },
   hatParticipationPayed(accessKey) {
     check(accessKey, String);
@@ -109,7 +129,7 @@ Meteor.methods({
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
 
-    UltiSite.HatInfo.HatParticipants.update(part._id, { $set: { payed: new Date() } });
+    UltiSite.HatInfo.HatParticipants.update(part._id, { $set: { payed: moment().subtract(1, 'minute').toDate() } });
     return 'payed';
   },
   hatUpdateParticipation(participant) {
@@ -144,7 +164,9 @@ Meteor.methods({
   hatRemoveParticipation(accessKey) {
     check(accessKey, String);
     const part = UltiSite.HatInfo.HatParticipants.findOne({ accessKey });
-    if (!part) { throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt'); }
+    if (!part) {
+      throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
+    }
     UltiSite.HatInfo.HatParticipants.remove(part._id);
     return 'removed';
   },
@@ -188,7 +210,7 @@ Meteor.publish('hatParticipant', function (accessKey) {
 });
 
 WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
-  const query = Npm.require('url').parse(req.url, true).query;
+  const { query } = Npm.require('url').parse(req.url, true);
   const user = Meteor.users.findOne({ 'profile.downloadToken': query.downloadToken });
   if (!user) {
     res.writeHead(403);
@@ -199,7 +221,13 @@ WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
   let csv = `${_.without(UltiSite.HatInfo.schema._schemaKeys, 'accessKey').join(';')}\n\r`;
   csv += UltiSite.HatInfo.HatParticipants.find({
     hatId: UltiSite.settings().hatId || undefined,
-  }).map(p => _.without(UltiSite.HatInfo.schema._schemaKeys, 'accessKey').map(key => `"${String(p[key]).replace(/"/g, '\'')}"`).join(';')).join('\n\r');
+  })
+    .map((p) =>
+      _.without(UltiSite.HatInfo.schema._schemaKeys, 'accessKey')
+        .map((key) => `"${String(p[key]).replace(/"/g, "'")}"`)
+        .join(';')
+    )
+    .join('\n\r');
   res.writeHead(200, { 'content-type': 'text/csv', 'content-disposition': `attachment; filename="participants-${UltiSite.settings().hatName}.csv"` });
   res.end(`${csv}\n\r`);
 });

@@ -22,6 +22,16 @@
                             <small>Anmeldungen: {{allParticipants.count}}</small><br />
                             <small>Auf der Spielerliste: {{hatParticipants.count}}</small><br />
                             <small>Auf Warteliste: {{hatWaiting.count}}</small><br />
+                            {{#if isInRole "hatAdmin"}}
+                                <br/>Details (Bezahlt und bestätigt)<br/>
+                                {{#with stats}}
+                                <small>Nur getestet: {{this.tested}}</small><br />
+                                <small>ÜN Freitag: {{this.sleepFriday}}</small><br />
+                                <small>ÜN Samstag: {{this.sleepSaturday}}</small><br />
+                                <small>Frühstück Samstag: {{this.breakfastSaturday}}</small><br />
+                                <small>Frühstück Sonntag: {{this.breakfastSunday}}</small><br />
+                                {{/with}}
+                            {{/if}}
                         {{/if}}
                     </h5>
                     {{#if spotsAvailable }}
@@ -292,12 +302,12 @@
                             {{> afQuickFields}}
                         {{else}}
                             {{#if existing._id}}
-                                {{> afQuickFields fields="name,city,hometeam,strength,years,allowPublic"}}
+                                {{> afQuickFields fields="name,city,hometeam,strength,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday"}}
                                 <fieldset disabled>
                                     {{> afQuickFields fields="email"}}
                                 </fieldset>
                             {{else}}
-                                {{> afQuickFields fields="name,email,city,hometeam,strength,years,allowPublic" }}
+                                {{> afQuickFields fields="name,email,city,hometeam,strength,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday" }}
                             {{/if}}
                         {{/if}}
                     </div>

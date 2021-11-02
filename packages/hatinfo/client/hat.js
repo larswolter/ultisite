@@ -13,20 +13,21 @@ FlowRouter.route('/hat/:_id?/:confirmed?', {
 
 FlowRouter.route('/hat_confirm/:accessKey?', {
   name: 'hatinfoConfirm',
-  triggersEnter: [function (context, redirect) {
-    const accessKey = context.params.accessKey;
-    if (accessKey) {
-      Meteor.call('hatConfirmParticipant', accessKey);
-      activeEntry.set(accessKey);
-    }
-    redirect('/hat');
-  }],
+  triggersEnter: [
+    function (context, redirect) {
+      const { accessKey } = context.params;
+      if (accessKey) {
+        Meteor.call('hatConfirmParticipant', accessKey);
+        activeEntry.set(accessKey);
+      }
+      redirect('/hat');
+    },
+  ],
 });
 
 Meteor.startup(function () {
   UltiSite.registerAdminPageTemplate('hatInfoSettings', 'HAT Anmeldung');
 });
-
 
 Template.hatInfoSettings.helpers({
   wikiPages() {
@@ -36,7 +37,9 @@ Template.hatInfoSettings.helpers({
     let name = '';
     if (UltiSite.State.get('wikiPageNames')) {
       UltiSite.State.get('wikiPageNames').forEach(function (page) {
-        if (page._id == id) { name = page.name; }
+        if (page._id == id) {
+          name = page.name;
+        }
       });
     }
     return name;
@@ -65,12 +68,12 @@ function hatSort() {
 Template.hatInfos.helpers({
   allParticipants() {
     if (Template.instance().filter.get()) {
-      return UltiSite.HatInfo.HatParticipants.find({
-        $or: [
-          { name: new RegExp(Template.instance().filter.get(), 'i') },
-          { email: new RegExp(Template.instance().filter.get(), 'i') },
-        ],
-      }, { sort: hatSort() });
+      return UltiSite.HatInfo.HatParticipants.find(
+        {
+          $or: [{ name: new RegExp(Template.instance().filter.get(), 'i') }, { email: new RegExp(Template.instance().filter.get(), 'i') }],
+        },
+        { sort: hatSort() }
+      );
     }
     return UltiSite.HatInfo.HatParticipants.find({}, { sort: hatSort() });
   },
@@ -80,26 +83,53 @@ Template.hatInfos.helpers({
   activeFilter() {
     return !!Template.instance().filter.get();
   },
+  stats() {
+    const stats = {};
+    ['tested', 'sleepFriday', 'sleepSaturday', 'breakfastSaturday', 'breakfastSunday'].forEach((val) => {
+      stats[val] = UltiSite.HatInfo.HatParticipants.find({ confirmed: true, [val]: true, payed: { $lte: new Date() } }).count();
+    });
+    return stats;
+  },
   hatParticipants() {
-    return UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }, { sort: hatSort(), limit: Number(UltiSite.settings().hatNumPlayers) });
+    return UltiSite.HatInfo.HatParticipants.find(
+      { confirmed: true, payed: { $lte: new Date() } },
+      { sort: hatSort(), limit: Number(UltiSite.settings().hatNumPlayers) }
+    );
   },
   hatWaiting() {
-    return UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }, { sort: hatSort(), skip: Number(UltiSite.settings().hatNumPlayers) });
+    return UltiSite.HatInfo.HatParticipants.find(
+      { confirmed: true, payed: { $lte: new Date() } },
+      { sort: hatSort(), skip: Number(UltiSite.settings().hatNumPlayers) }
+    );
   },
   hatNotPaid() {
     return UltiSite.HatInfo.HatParticipants.find({ $or: [{ payed: { $gt: new Date() } }, { confirmed: { $ne: true } }] }, { sort: hatSort() });
   },
   emails() {
-    return UltiSite.HatInfo.HatParticipants.find().map(p => p.email).join(',');
+    return UltiSite.HatInfo.HatParticipants.find()
+      .map((p) => p.email)
+      .join(',');
   },
   emailsParticipate() {
-    return UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }, { sort: hatSort(), limit: Number(UltiSite.settings().hatNumPlayers) }).map(p => p.email).join(',');
+    return UltiSite.HatInfo.HatParticipants.find(
+      { confirmed: true, payed: { $lte: new Date() } },
+      { sort: hatSort(), limit: Number(UltiSite.settings().hatNumPlayers) }
+    )
+      .map((p) => p.email)
+      .join(',');
   },
   emailsWaiting() {
-    return UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }, { sort: hatSort(), skip: Number(UltiSite.settings().hatNumPlayers) }).map(p => p.email).join(',');
+    return UltiSite.HatInfo.HatParticipants.find(
+      { confirmed: true, payed: { $lte: new Date() } },
+      { sort: hatSort(), skip: Number(UltiSite.settings().hatNumPlayers) }
+    )
+      .map((p) => p.email)
+      .join(',');
   },
   activeEntry() {
-    if (activeEntry.get()) { return UltiSite.HatInfo.HatParticipants.findOne({ accessKey: activeEntry.get() }); }
+    if (activeEntry.get()) {
+      return UltiSite.HatInfo.HatParticipants.findOne({ accessKey: activeEntry.get() });
+    }
   },
 });
 
