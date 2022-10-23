@@ -1,6 +1,6 @@
-FROM node:12.22 as builder
+FROM node:14.20 as builder
 RUN apt-get update && apt-get install -y curl git python build-essential
-RUN curl https://install.meteor.com/?release=2.2 | sh
+RUN curl https://install.meteor.com/?release=2.8.0 | sh
 
 # Base image done, pulling sources for build
 ENV METEOR_ALLOW_SUPERUSER 1
@@ -13,7 +13,7 @@ RUN cd appsrc && meteor npm install --production && meteor npm audit fix --only=
 RUN cd appsrc && meteor build --directory ../bundle
 
 # final stage for running the container, only needs node
-FROM node:12.22-slim as final 
+FROM node:14.20-slim as final 
 
 RUN mkdir /app
 COPY --from=builder /build/bundle /app

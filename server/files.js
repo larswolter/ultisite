@@ -3,41 +3,62 @@ import os from 'os';
 import sharp from 'sharp';
 import Grid from 'gridfs-locking-stream';
 import Base64Decode from 'base64-stream';
+import { GridFSBucket, ObjectId } from 'mongodb';
 
-const gridFS = Grid(UltiSite.Documents.rawDatabase(), Npm.require('mongodb'), 'documents-grid');
+const bucket = new GridFSBucket(UltiSite.Documents.rawDatabase(), { bucketName: 'documents-grid' });
 
 Meteor.methods({
   retrieveNewestFiles() {
-    if (!this.userId) { return []; }
-    return _.sortBy(UltiSite.Images.find({}, {
-      limit: 5,
-      sort: {
-        created: -1,
-      },
-    }).fetch().concat(
-      UltiSite.Documents.find({}, {
-        limit: 5,
-        sort: {
-          created: -1,
-        },
-      }).fetch()
-    ), function (doc) {
-      return doc.created;
-    }).slice(0, 5).map(function (doc) {
-      return doc._id;
-    });
+    if (!this.userId) {
+      return [];
+    }
+    return _.sortBy(
+      UltiSite.Images.find(
+        {},
+        {
+          limit: 5,
+          sort: {
+            created: -1,
+          },
+        }
+      )
+        .fetch()
+        .concat(
+          UltiSite.Documents.find(
+            {},
+            {
+              limit: 5,
+              sort: {
+                created: -1,
+              },
+            }
+          ).fetch()
+        ),
+      function (doc) {
+        return doc.created;
+      }
+    )
+      .slice(0, 5)
+      .map(function (doc) {
+        return doc._id;
+      });
   },
   retrieveAbandonedFiles() {
-    if (!this.userId) { return []; }
+    if (!this.userId) {
+      return [];
+    }
     return UltiSite.Images.find({
       associated: [],
-    }).fetch().concat(
-      UltiSite.Documents.find({
-        associated: [],
-      }).fetch()
-    ).map(function (doc) {
-      return doc._id;
-    });
+    })
+      .fetch()
+      .concat(
+        UltiSite.Documents.find({
+          associated: [],
+        }).fetch()
+      )
+      .map(function (doc) {
+        return doc._id;
+      });
   },
   fileUploadChunk(base64, metadata, lastPackage) {
     let meteorCall;
@@ -53,7 +74,7 @@ Meteor.methods({
           _.extend(metadata, {
             created: new Date(),
             creator: this.userId,
-          }),
+          })
         );
         fs.writeFileSync(`${os.tmpdir()}/${imgId}.image.temp`, base64, { encoding: 'base64' });
       } else {
@@ -65,31 +86,35 @@ Meteor.methods({
       if (lastPackage) {
         const fileStats = fs.statSync(`${os.tmpdir()}/${imgId}.image.temp`);
         console.log('writing image to database');
-        fs.readFile(`${os.tmpdir()}/${imgId}.image.temp`, { encoding: 'base64' }, Meteor.bindEnvironment(function (err, data) {
-          if (err) {
-            console.log(err);
-            throw err;
-          }
-          UltiSite.Images.update(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
-          fs.unlinkSync(`${os.tmpdir()}/${imgId}.image.temp`);
-          console.log('finished image upload');
-          if (meteorCall) {
-            Meteor.call(meteorCall, UltiSite.Images.findOne(imgId));
-          } else {
-            let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
-            if (!ref || ref.length === 0) {
-              ref = [{ type: 'files', name: 'Bilder' }];
+        fs.readFile(
+          `${os.tmpdir()}/${imgId}.image.temp`,
+          { encoding: 'base64' },
+          Meteor.bindEnvironment(function (err, data) {
+            if (err) {
+              console.log(err);
+              throw err;
             }
-            Meteor.call('addEvent', {
-              type: ref[0].type,
-              _id: metadata.associated[0],
-              text: 'Neues Bild hinzugefügt',
-              name: ref[0].name,
-              additional: ref[0].type,
-              images: [imgId],
-            });
-          }
-        }));
+            UltiSite.Images.update(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
+            fs.unlinkSync(`${os.tmpdir()}/${imgId}.image.temp`);
+            console.log('finished image upload');
+            if (meteorCall) {
+              Meteor.call(meteorCall, UltiSite.Images.findOne(imgId));
+            } else {
+              let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
+              if (!ref || ref.length === 0) {
+                ref = [{ type: 'files', name: 'Bilder' }];
+              }
+              Meteor.call('addEvent', {
+                type: ref[0].type,
+                _id: metadata.associated[0],
+                text: 'Neues Bild hinzugefügt',
+                name: ref[0].name,
+                additional: ref[0].type,
+                images: [imgId],
+              });
+            }
+          })
+        );
       }
       return imgId;
     }
@@ -99,7 +124,7 @@ Meteor.methods({
         _.extend(metadata, {
           created: new Date(),
           creator: this.userId,
-        }),
+        })
       );
       fs.writeFileSync(`${os.tmpdir()}/${docId}.doc.temp`, base64, { encoding: 'base64' });
     } else {
@@ -110,19 +135,19 @@ Meteor.methods({
     }
     if (lastPackage) {
       const fileStats = fs.statSync(`${os.tmpdir()}/${docId}.doc.temp`);
-      gridFS.createWriteStream({
-        filename: metadata.name,
-        content_type: metadata.type,
-      }, Meteor.bindEnvironment(function (err, wstream) {
-        if (err) {
-          console.log(err);
-          fs.unlinkSync(`${os.tmpdir()}/${docId}.doc.temp`);
-          throw err;
-        }
-        wstream.on('close', Meteor.bindEnvironment(function (fileObj) {
+      const wstream = bucket.openUploadStream(metadata.name, {
+        metadata: {
+          filename: metadata.name,
+          content_type: metadata.type,
+        },
+      });
+      wstream.on(
+        'close',
+        Meteor.bindEnvironment(function (fileObj) {
           UltiSite.Documents.update(docId, {
             $set: {
-              gridId: `${fileObj._id}`, size: fileStats.size,
+              gridId: `${fileObj._id}`,
+              size: fileStats.size,
             },
             $unset: { progress: 1 },
           });
@@ -143,15 +168,17 @@ Meteor.methods({
               additional: ref[0].type,
             });
           }
-        }));
-        fs.createReadStream(`${os.tmpdir()}/${docId}.doc.temp`).pipe(wstream);
-      }));
+          fs.createReadStream(`${os.tmpdir()}/${docId}.doc.temp`).pipe(wstream);
+        })
+      );
     }
     return docId;
   },
   removeFile(fileId) {
     check(fileId, String);
-    if (!this.userId) { throw new Meteor.Error('not-allowed'); }
+    if (!this.userId) {
+      throw new Meteor.Error('not-allowed');
+    }
     let file = UltiSite.Images.findOne(fileId);
     if (file) {
       if (this.userId !== file.creator && !UltiSite.isAdmin(this.userId)) {
@@ -167,13 +194,16 @@ Meteor.methods({
         throw new Meteor.Error('not-allowed');
       }
       if (file.gridId) {
-        gridFS.remove({ _id: file.gridId }, Meteor.bindEnvironment((err, res) => {
-          if (err) {
-            console.log('Error removing gridfs file', err);
-          } else {
-            UltiSite.Documents.remove(fileId);
-          }
-        }));
+        bucket.delete(
+          ObjectId(file.gridId),
+          Meteor.bindEnvironment((err, res) => {
+            if (err) {
+              console.log('Error removing gridfs file', err);
+            } else {
+              UltiSite.Documents.remove(fileId);
+            }
+          })
+        );
       }
     }
 
@@ -186,7 +216,6 @@ Meteor.methods({
     });
   },
 });
-
 
 Meteor.startup(function () {
   /*
@@ -218,7 +247,9 @@ WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res, next) {
         res.writeHead(500);
         res.end(JSON.stringify(err));
       });
-  } else { res.end(Buffer.from(icon.base64, 'base64')); }
+  } else {
+    res.end(Buffer.from(icon.base64, 'base64'));
+  }
 });
 
 WebApp.connectHandlers.use('/_document', (req, resp) => {
@@ -233,7 +264,7 @@ WebApp.connectHandlers.use('/_document', (req, resp) => {
     resp.end('doc not found');
     return;
   }
-  gridFS.createReadStream({ _id: doc.gridId }, function (error, readstream) {
+  bucket.openDownloadStream(ObjectId(doc.gridId), function (error, readstream) {
     if (readstream) {
       resp.setHeader('Content-Type', doc.type);
       resp.setHeader('Content-Disposition', `attachment; filename="${doc.name}"`);
