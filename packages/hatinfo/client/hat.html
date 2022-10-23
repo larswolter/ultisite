@@ -179,8 +179,14 @@
                 {{/if}}
             </strong>
             <div class="col-6 col-sm-6 col-md-4">
-                <div class="progress text-center">
-                    <div class="progress-bar bg-info" role="progressbar" style="width:{{strengthPercent}}%">{{strength}}</div>
+                <div class="progress text-center" title="Spielstärke">
+                    <div class="progress-bar bg-info" role="progressbar" style="width:{{strengthPercent}}%">Stärke {{strength}}</div>
+                </div>
+                <div class="progress text-center" title="Fitness">
+                    <div class="progress-bar bg-info" role="progressbar" style="width:{{fitnessPercent}}%">Fitness {{fitness}}</div>
+                </div>
+                <div class="progress text-center" title="Erfahrung">
+                    <div class="progress-bar bg-info" role="progressbar" style="width:{{experiencePercent}}%">Erfahrung {{experience}}</div>
                 </div>
                 <div>{{years}} Spieljahre</div>
             </div>
@@ -302,12 +308,12 @@
                             {{> afQuickFields}}
                         {{else}}
                             {{#if existing._id}}
-                                {{> afQuickFields fields="name,city,hometeam,strength,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday"}}
+                                {{> afQuickFields fields="name,gender,age,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday"}}
                                 <fieldset disabled>
                                     {{> afQuickFields fields="email"}}
                                 </fieldset>
                             {{else}}
-                                {{> afQuickFields fields="name,email,city,hometeam,strength,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday" }}
+                                {{> afQuickFields fields="name,gender,age,email,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday" }}
                             {{/if}}
                         {{/if}}
                     </div>

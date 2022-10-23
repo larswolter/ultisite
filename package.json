@@ -40,7 +40,7 @@
     "popper.js": "^1.16.1",
     "quoted-printable": "^1.0.0",
     "sanitize-html": "^2.3.2",
-    "sharp": "^0.25.2",
+    "sharp": "~0.25.2",
     "simpl-schema": "^1.12.0",
     "stream-to-buffer": "^0.1.0",
     "workbox-window": "^6.1.5",

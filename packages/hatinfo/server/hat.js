@@ -196,6 +196,8 @@ Meteor.publish('hatParticipants', function (limit, search) {
     sort,
     fields: {
       strength: 1,
+      fitness: 1,
+      experience: 1,
       years: 1,
       public: 1,
       createdAt: 1,

@@ -135,7 +135,13 @@ Template.hatInfos.helpers({
 
 Template.hatParticipant.helpers({
   strengthPercent() {
-    return (Number(this.strength) + 1) * 10;
+    return Number(this.strength) * 20;
+  },
+  experiencePercent() {
+    return Number(this.experience) * 20;
+  },
+  fitnessPercent() {
+    return Number(this.fitness) * 20;
   },
   accessKey() {
     return activeEntry.get();
