@@ -33,7 +33,7 @@
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.2.5",
-    "mongodb": "^4.16.0",
+    "mongodb": "^4.17.0",
     "nodemailer": "^6.9.3",
     "popper.js": "^1.16.1",
     "quoted-printable": "^1.0.0",
