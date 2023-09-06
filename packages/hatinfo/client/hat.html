@@ -23,7 +23,7 @@
                             <small>Auf der Spielerliste: {{hatParticipants.count}}</small><br />
                             <small>Auf Warteliste: {{hatWaiting.count}}</small><br />
                             {{#if isInRole "hatAdmin"}}
-                                <br/>Details (Bezahlt und bestätigt)<br/>
+                                <br/>Details (Nur von der Spielerliste)<br/>
                                 {{#with stats}}
                                 <small>Nur getestet: {{this.tested}}</small><br />
                                 <small>ÜN Freitag: {{this.sleepFriday}}</small><br />

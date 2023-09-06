@@ -1,3 +1,5 @@
+import { FlowRouter } from 'meteor/kadira:flow-router';
+import { moment } from 'meteor/momentjs:moment';
 import { AutoForm } from 'meteor/ultisite:autoform';
 
 const activeEntry = new ReactiveVar();
@@ -37,7 +39,7 @@ Template.hatInfoSettings.helpers({
     let name = '';
     if (UltiSite.State.get('wikiPageNames')) {
       UltiSite.State.get('wikiPageNames').forEach(function (page) {
-        if (page._id == id) {
+        if (page._id === id) {
           name = page.name;
         }
       });
@@ -70,7 +72,10 @@ Template.hatInfos.helpers({
     if (Template.instance().filter.get()) {
       return UltiSite.HatInfo.HatParticipants.find(
         {
-          $or: [{ name: new RegExp(Template.instance().filter.get(), 'i') }, { email: new RegExp(Template.instance().filter.get(), 'i') }],
+          $or: [
+            { name: new RegExp(Template.instance().filter.get(), 'i') },
+            { email: new RegExp(Template.instance().filter.get(), 'i') },
+          ],
         },
         { sort: hatSort() }
       );
@@ -78,15 +83,24 @@ Template.hatInfos.helpers({
     return UltiSite.HatInfo.HatParticipants.find({}, { sort: hatSort() });
   },
   spotsAvailable() {
-    return Math.max(0, UltiSite.settings().hatNumPlayers - UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }).count());
+    return Math.max(
+      0,
+      UltiSite.settings().hatNumPlayers -
+        UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }).count()
+    );
   },
   activeFilter() {
     return !!Template.instance().filter.get();
   },
   stats() {
     const stats = {};
-    ['tested', 'sleepFriday', 'sleepSaturday', 'breakfastSaturday', 'breakfastSunday'].forEach((val) => {
-      stats[val] = UltiSite.HatInfo.HatParticipants.find({ confirmed: true, [val]: true, payed: { $lte: new Date() } }).count();
+    UltiSite.HatInfo.HatParticipants.find(
+      { confirmed: true, payed: { $lte: new Date() } },
+      { sort: hatSort(), limit: Number(UltiSite.settings().hatNumPlayers) }
+    ).forEach((part) => {
+      ['tested', 'sleepFriday', 'sleepSaturday', 'breakfastSaturday', 'breakfastSunday'].forEach((val) => {
+        if (part[val]) stats[val] = (stats[val] || 0) + 1;
+      });
     });
     return stats;
   },
@@ -103,7 +117,10 @@ Template.hatInfos.helpers({
     );
   },
   hatNotPaid() {
-    return UltiSite.HatInfo.HatParticipants.find({ $or: [{ payed: { $gt: new Date() } }, { confirmed: { $ne: true } }] }, { sort: hatSort() });
+    return UltiSite.HatInfo.HatParticipants.find(
+      { $or: [{ payed: { $gt: new Date() } }, { confirmed: { $ne: true } }] },
+      { sort: hatSort() }
+    );
   },
   emails() {
     return UltiSite.HatInfo.HatParticipants.find()
@@ -171,7 +188,11 @@ Template.hatParticipant.events({
   },
   'click .action-payed': function (evt) {
     evt.preventDefault();
-    Meteor.call('hatParticipationPayed', this.accessKey, UltiSite.userFeedbackFunction('Zahlungsstatus ändern', evt.currentTarget));
+    Meteor.call(
+      'hatParticipationPayed',
+      this.accessKey,
+      UltiSite.userFeedbackFunction('Zahlungsstatus ändern', evt.currentTarget)
+    );
   },
 });
 
