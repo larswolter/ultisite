@@ -79,7 +79,11 @@ Meteor.methods({
     const participant = _.clone(p);
     participant.createdAt = new Date();
     participant.modifiedAt = new Date();
-    participant.payed = moment().add(10, 'years').toDate();
+    if (participant.hometeam === UltiSite.settings().teamname) {
+      participant.payed = moment().subtract(1, 'second').toDate();
+    } else {
+      participant.payed = moment().add(10, 'years').toDate();
+    }
     participant.accessKey = Random.id(34);
     participant.hatId = UltiSite.settings().hatId;
     if (
@@ -88,7 +92,7 @@ Meteor.methods({
         hatId: participant.hatId,
       })
     ) {
-      throw new Meteor.Error('Teilnehmer mit dieser E-Mail exisitiert schon!');
+      throw new Meteor.Error('Teilnehmer mit dieser E-Mail existiert schon!');
     }
     UltiSite.HatInfo.HatParticipants.insert(participant);
     const template = Assets.getText('private/confirm.html');
