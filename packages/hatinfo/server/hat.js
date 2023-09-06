@@ -2,6 +2,7 @@ import { moment } from 'meteor/momentjs:moment';
 import { check } from 'meteor/check';
 import { Random } from 'meteor/random';
 import { Roles } from 'meteor/alanning:roles';
+import Excel from 'exceljs';
 
 Meteor.startup(function () {
   UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
@@ -10,7 +11,9 @@ Meteor.startup(function () {
     Roles.createRole('hatAdmin');
   }
   UltiSite.HatInfo.HatParticipants.find({ payed: { $exists: false } }).forEach((elem) => {
-    UltiSite.HatInfo.HatParticipants.update(elem._id, { $set: { payed: moment(elem.createdAt).clone().add(10, 'years').toDate() } });
+    UltiSite.HatInfo.HatParticipants.update(elem._id, {
+      $set: { payed: moment(elem.createdAt).clone().add(10, 'years').toDate() },
+    });
   });
 });
 Meteor.methods({
@@ -172,7 +175,7 @@ Meteor.methods({
   },
 });
 
-Meteor.publish('hatParticipants', function (limit, search) {
+Meteor.publish('hatParticipants', function () {
   const sort = {};
   if (UltiSite.settings().hatSort) {
     sort[UltiSite.settings().hatSort] = 1;
@@ -220,16 +223,28 @@ WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
     return;
   }
 
-  let csv = `${_.without(UltiSite.HatInfo.schema._schemaKeys, 'accessKey').join(';')}\n\r`;
-  csv += UltiSite.HatInfo.HatParticipants.find({
+  const workbook = new Excel.Workbook();
+  workbook.creator = 'Ultisite';
+  workbook.lastModifiedBy = user.username;
+  workbook.created = new Date();
+  workbook.modified = new Date();
+
+  const sheet = workbook.addWorksheet('Participants', { views: [{ xSplit: 1, ySplit: 1 }] });
+  sheet.columns = _.without(UltiSite.HatInfo.schema._schemaKeys, 'accessKey').map((column) => ({
+    header: UltiSite.HatInfo.schema.label(column),
+    key: column,
+    width: 20,
+  }));
+  UltiSite.HatInfo.HatParticipants.find({
     hatId: UltiSite.settings().hatId || undefined,
-  })
-    .map((p) =>
-      _.without(UltiSite.HatInfo.schema._schemaKeys, 'accessKey')
-        .map((key) => `"${String(p[key]).replace(/"/g, "'")}"`)
-        .join(';')
-    )
-    .join('\n\r');
-  res.writeHead(200, { 'content-type': 'text/csv', 'content-disposition': `attachment; filename="participants-${UltiSite.settings().hatName}.csv"` });
-  res.end(`${csv}\n\r`);
+  }).forEach((entry) => sheet.addRow(entry));
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="${UltiSite.settings().hatId}-Participants-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
+  );
+  res.writeHead(200);
+  workbook.xlsx.write(res).then(() => {
+    res.end();
+  });
 });
