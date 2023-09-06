@@ -143,6 +143,22 @@ Template.hatInfos.helpers({
       .map((p) => p.email)
       .join(',');
   },
+  myPosition() {
+    let pos = -1;
+    UltiSite.HatInfo.HatParticipants.find(
+      { confirmed: true, payed: { $lte: new Date() } },
+      { sort: hatSort() }
+    ).forEach((part, idx) => {
+      if (part.accessKey === activeEntry.get()) {
+        pos = idx;
+      }
+    });
+    if (pos > -1 && pos <= Number(UltiSite.settings().hatNumPlayers)) return `Spielerliste Platz ${pos + 1}`;
+    else if (pos > -1) {
+      return `Warteliste Platz ${pos - UltiSite.settings().hatNumPlayers + 1}`;
+    }
+    return 'Noch nicht bezahlt oder E-Mail nicht bestätigt';
+  },
   activeEntry() {
     if (activeEntry.get()) {
       return UltiSite.HatInfo.HatParticipants.findOne({ accessKey: activeEntry.get() });

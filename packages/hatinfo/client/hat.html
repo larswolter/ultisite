@@ -76,14 +76,14 @@
                         {{#with activeEntry}}
                             <ul class="list-group">
                                 <li class="list-group-item">
-                                    Mein Eintrag
+                                    Mein Eintrag ({{myPosition}})
                                 </li>
                                 {{>hatParticipant}}
                             </ul>
-                    {{else}}
-                        <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button">
-                            <span class="fa fa-plus"></span> Eintragen
-                        </button>
+                        {{else}}
+                            <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button">
+                                <span class="fa fa-plus"></span> Eintragen
+                            </button>
                         {{/with}}
                     {{/if}}
                 {{else}}
@@ -158,7 +158,7 @@
 </template>
 
 <template name="hatParticipant">
-    <a class="list-group-item {{#if activeEntry}}selected{{/if}}">
+    <li class="list-group-item {{#if activeEntry}}selected{{/if}}">
         <div class="row">
             <strong class="col-6 col-sm-6 col-md-8 {{#if isInRole "hatAdmin"}}participant-entry{{/if}}">
                 <span class="fa fa-envelope-o {{#if confirmed}}text-success{{else}}text-muted{{/if}}"></span>
@@ -229,7 +229,7 @@
             {{/if}}
 
         </div>
-    </a>
+    </li>
 </template>
 
 
