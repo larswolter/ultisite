@@ -1,5 +1,3 @@
-
-
 Meteor.methods({
   updatePracticeImage(image) {
     check(image, Object);
@@ -22,9 +20,20 @@ Meteor.methods({
       if (!practice.$set) throw new Meteor.Error('update needs to be an update');
       practice.$set.lastChange = new Date();
       UltiSite.Practices.update(id, practice);
+      console.log('updated practice');
     } else {
+      console.log('inserting practice');
       return UltiSite.Practices.insert({ ...practice, lastChange: new Date() });
     }
     return id;
+  },
+  removePractice(id) {
+    check(id, String);
+    if (!this.userId) {
+      throw new Meteor.Error('access-denied');
+    }
+
+    UltiSite.Practices.remove(id);
+    console.log('deleted practice');
   },
 });
