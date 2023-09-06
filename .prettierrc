@@ -4,5 +4,6 @@
   "bracketSpacing": true,
   "proseWrap": "preserve",
   "singleQuote": true,
-  "printWidth": 160
+  "useTabs": false,
+  "printWidth": 120
 }

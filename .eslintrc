@@ -18,7 +18,8 @@
   ],
   "extends": [
     "airbnb-base",
-    "plugin:meteor/recommended"
+    "plugin:meteor/recommended",
+    "prettier"
   ],
   "rules": {
     "meteor/eventmap-params": [
@@ -91,6 +92,6 @@
     ]
   },
   "globals": {
-    "UltiSite": false,
+    "UltiSite": false
   }
 }

@@ -60,16 +60,18 @@ Accounts.onLogout(function (attempt) {
   refreshDownloadToken(attempt.user && attempt.user._id);
 });
 
-
 Meteor.publish('lastChangedElements', function (modifiedAfter) {
   if (!this.userId) return this.ready();
 
   return UltiSite.offlineCollections.map((col) => {
     if (modifiedAfter && modifiedAfter[col.name]) {
-      return UltiSite[col.name].find({
-        ...col.filter(),
-        lastChange: { $gt: modifiedAfter[col.name] },
-      }, col.options());
+      return UltiSite[col.name].find(
+        {
+          ...col.filter(),
+          lastChange: { $gt: modifiedAfter[col.name] },
+        },
+        col.options()
+      );
     } else {
       return UltiSite[col.name].find(col.filter(), col.options());
     }
@@ -79,17 +81,21 @@ Meteor.publish('lastChangedElements', function (modifiedAfter) {
 Meteor.methods({
   ping() {
     if (this.connection.httpHeaders && this.connection.httpHeaders['save-data'] === 'on') {
-      Meteor.users.update({
-        _id: this.userId,
-        $or: [{ 'connection.saveData': { $exists: false } },
-        { 'connection.saveData': false }],
-      }, { $set: { 'connection.saveData': true } });
+      Meteor.users.update(
+        {
+          _id: this.userId,
+          $or: [{ 'connection.saveData': { $exists: false } }, { 'connection.saveData': false }],
+        },
+        { $set: { 'connection.saveData': true } }
+      );
     } else {
-      Meteor.users.update({
-        _id: this.userId,
-        $or: [{ 'connection.saveData': { $exists: false } },
-        { 'connection.saveData': true }],
-      }, { $set: { 'connection.saveData': false } });
+      Meteor.users.update(
+        {
+          _id: this.userId,
+          $or: [{ 'connection.saveData': { $exists: false } }, { 'connection.saveData': true }],
+        },
+        { $set: { 'connection.saveData': false } }
+      );
     }
   },
   offlineCheckForNew(since) {
@@ -101,7 +107,9 @@ Meteor.methods({
       info.mustSync = true;
     } else {
       const tChange = UltiSite.Tournaments.find({ lastChange: { $gte: since } }).count();
-      if (tChange > 3) { info.mustSync = true; }
+      if (tChange > 3) {
+        info.mustSync = true;
+      }
     }
     return info;
   },
@@ -151,16 +159,19 @@ WebApp.connectHandlers.use('/sw.js', (req, response) => {
     const arch = isModern(cr.browser) ? 'web.browser' : 'web.browser.legacy';
 
     const clientHash = WebApp.clientPrograms[arch].version;
-    const urls = WebApp.clientPrograms[arch].manifest.filter((f) => (f.type !== 'dynamic js') && (f.type !== 'json')).filter((f) => f.url).map((f) => f.url).map((url) => ({ url, revision: clientHash }));
+    const urls = WebApp.clientPrograms[arch].manifest
+      .filter((f) => f.type !== 'dynamic js' && f.type !== 'json')
+      .filter((f) => f.url)
+      .map((f) => f.url)
+      .map((url) => ({ url, revision: clientHash }));
     urls.push({ url: '/', revision: clientHash });
     urls.push({ url: '/chrome-manifest', revision: clientHash });
     serviceWorker = serviceWorker.replace(/CURRENT_CACHE_NAME/g, clientHash);
-    serviceWorker = serviceWorker.replace('\'FILES_TO_CACHE\'', JSON.stringify(urls, null, 2));
+    serviceWorker = serviceWorker.replace("'FILES_TO_CACHE'", JSON.stringify(urls, null, 2));
     if (Meteor.isProduction) {
       serviceWorker = serviceWorker.replace(', debug: true', '');
     }
     response.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-    console.debug('service-worker: sending service worker ', clientHash, arch, crypto.createHash('md5').update(serviceWorker).digest('hex'));
     response.writeHead(200);
     response.end(serviceWorker);
   }, 3000);

@@ -40,10 +40,12 @@ Meteor.methods({
       if (UltiSite[col.name].find().count() > 0) return;
       localForage.getItem('ultisiteOffline' + col.name, (err, offline) => {
         if (offline && offline.data) {
-          offline.data.forEach((i) => UltiSite[col.name].insert({
-            ...i,
-            _offline: true,
-          }));
+          offline.data.forEach((i) =>
+            UltiSite[col.name].insert({
+              ...i,
+              _offline: true,
+            })
+          );
         }
       });
     });
@@ -96,13 +98,13 @@ Meteor.startup(function () {
       localForage.getItem('ultisiteUser', (err, user) => {
         console.log('go user', user, Meteor.status());
         if (user && !Meteor.status().connected) {
-          Meteor.apply('offlineInitUser', [user], { noRetry: true }, (err) => { });
+          Meteor.apply('offlineInitUser', [user], { noRetry: true }, (err) => {});
         }
       });
       comp.stop();
     }
   });
-  Meteor.apply('offlineInitCollections', [], { noRetry: true }, (err) => { });
+  Meteor.apply('offlineInitCollections', [], { noRetry: true }, (err) => {});
 });
 
 UltiSite.getTournament = function (id) {
@@ -112,23 +114,31 @@ UltiSite.getTournament = function (id) {
 };
 UltiSite.getTournamentByTeam = function (id) {
   UltiSite.offlineTournamentDependency.depend();
-  const t = UltiSite.Tournaments.findOne({ 'teams._id': id })
-    || _.find(this.offlineTournaments, (tournament) => _.find(tournament.teams, (te) => te._id === id));
+  const t =
+    UltiSite.Tournaments.findOne({ 'teams._id': id }) ||
+    _.find(this.offlineTournaments, (tournament) => _.find(tournament.teams, (te) => te._id === id));
   return t;
 };
 UltiSite.getTeam = function (id) {
   UltiSite.offlineTournamentDependency.depend();
-  const t = UltiSite.Tournaments.findOne({ 'teams._id': id })
-    || _.find(this.offlineTournaments, (tournament) => _.find(tournament.teams, (te) => te._id === id));
-  return (t && _.find(t.teams, (te) => te._id === id));
+  const t =
+    UltiSite.Tournaments.findOne({ 'teams._id': id }) ||
+    _.find(this.offlineTournaments, (tournament) => _.find(tournament.teams, (te) => te._id === id));
+  return t && _.find(t.teams, (te) => te._id === id);
 };
 
 UltiSite.offlineCheck = function () {
-  if (!UltiSite.checkedLocalStorage) { return; }
+  if (!UltiSite.checkedLocalStorage) {
+    return;
+  }
   const lastSync = moment(localStorage.getItem('offlineLastSync'));
   Meteor.call('offlineCheckForNew', lastSync.toDate(), (err, info) => {
-    if (info.mustSync) { UltiSite.offlineFetch(); }
-    if (info.tournamentCount !== this.offlineTournaments.length) { UltiSite.offlineFetch(); }
+    if (info.mustSync) {
+      UltiSite.offlineFetch();
+    }
+    if (info.tournamentCount !== this.offlineTournaments.length) {
+      UltiSite.offlineFetch();
+    }
   });
 };
 
@@ -142,21 +152,23 @@ UltiSite.offlineClear = function () {
 
 UltiSite.offlineUpdateTournament = function (tournament, wait) {
   let found = false;
-  for (let i = 0; i < this.offlineTournaments.length; i++) {
+  for (let i = 0; i < this.offlineTournaments.length; i += 1) {
     if (this.offlineTournaments[i]._id === tournament._id) {
       this.offlineTournaments[i] = tournament;
       found = true;
       break;
     }
   }
-  if (!found) { this.offlineTournaments.push(tournament); }
+  if (!found) {
+    this.offlineTournaments.push(tournament);
+  }
   if (!wait) {
     localForage.setItem('Tournaments', this.offlineTournaments);
   }
 };
 
 UltiSite.offlineRemoveTournament = function (id, wait) {
-  for (let i = 0; i < this.offlineTournaments.length; i++) {
+  for (let i = 0; i < this.offlineTournaments.length; i += 1) {
     if (this.offlineTournaments[i]._id === id) {
       this.offlineTournaments.splice(i, 1);
       break;
@@ -168,60 +180,74 @@ UltiSite.offlineRemoveTournament = function (id, wait) {
 };
 
 UltiSite.offlineFetch = _.throttle((update) => {
-  if (!Meteor.user()) { return; }
+  if (!Meteor.user()) {
+    return;
+  }
   console.log('loading data from server');
   const lastSync = moment(localStorage.getItem('offlineLastSync'));
-  if (!lastSync.isValid()) { update = false; }
-  HTTP.get('/_rest/offlineTournaments.json?accessToken=' + Meteor.user().profile.downloadToken + (update ? '&since=' + lastSync.toISOString() : ''), {
-    beforeSend(xhr) {
-      xhr.onloadend = (evt) => {
-        console.log('finished fetching offline data');
-      };
-      xhr.onprogress = (evt) => {
-        if (evt.lengthComputable) {
-          console.log('fetching offline data', ((evt.loaded / evt.total) * 100) + '%');
-        } else { console.log('fetching offline data', (evt.loaded / 1000).toFixed(0) + ' kB'); }
-      };
+  if (!lastSync.isValid()) {
+    update = false;
+  }
+  HTTP.get(
+    '/_rest/offlineTournaments.json?accessToken=' +
+      Meteor.user().profile.downloadToken +
+      (update ? '&since=' + lastSync.toISOString() : ''),
+    {
+      beforeSend(xhr) {
+        xhr.onloadend = (evt) => {
+          console.log('finished fetching offline data');
+        };
+        xhr.onprogress = (evt) => {
+          if (evt.lengthComputable) {
+            console.log('fetching offline data', (evt.loaded / evt.total) * 100 + '%');
+          } else {
+            console.log('fetching offline data', (evt.loaded / 1000).toFixed(0) + ' kB');
+          }
+        };
+      },
     },
-  }, (err, res) => {
-    if (!err && res.data) {
-      if (update) {
-        console.log('loaded update data from server', res.data.tournaments.length);
-        res.data.tournaments.forEach((t) => UltiSite.offlineUpdateTournament(t, true));
-        res.data.removed.forEach((removed) => {
-          UltiSite['offlineRemove' + removed.type](removed._id, true);
+    (err, res) => {
+      if (!err && res.data) {
+        if (update) {
+          console.log('loaded update data from server', res.data.tournaments.length);
+          res.data.tournaments.forEach((t) => UltiSite.offlineUpdateTournament(t, true));
+          res.data.removed.forEach((removed) => {
+            UltiSite['offlineRemove' + removed.type](removed._id, true);
+          });
+          localForage.setItem('Tournaments', UltiSite.offlineTournaments);
+        } else {
+          console.log('loaded full data from server:', res.data.tournaments.length);
+          localForage.setItem('Tournaments', res.data.tournaments);
+        }
+        localStorage.setItem('offlineLastSync', moment().toISOString());
+        localForage.getItem('offlineSyncHistory', (err, data) => {
+          const history = data || [];
+          history.push({
+            date: new Date(),
+            lastSync: lastSync.toISOString(),
+            type: update ? 'update' : 'full',
+            tournaments: res.data.tournaments.length,
+          });
+          localForage.setItem('offlineSyncHistory', history);
         });
-        localForage.setItem('Tournaments', UltiSite.offlineTournaments);
+        UltiSite.offlineFetchDependency.changed();
+      } else if (err) {
+        UltiSite.notify(err, 'error');
+        localForage.getItem('offlineSyncHistory', (err, data) => {
+          const history = data || [];
+          history.push({
+            date: new Date(),
+            lastSync: lastSync.toISOString(),
+            type: update ? 'update' : 'full',
+            error: err,
+          });
+          localForage.setItem('offlineSyncHistory', history);
+        });
       } else {
-        console.log('loaded full data from server:', res.data.tournaments.length);
-        localForage.setItem('Tournaments', res.data.tournaments);
+        UltiSite.notify('Es konnten keine Daten abgerufen werden', 'warning');
       }
-      localStorage.setItem('offlineLastSync', moment().toISOString());
-      localForage.getItem('offlineSyncHistory', (err, data) => {
-        const history = (data || []);
-        history.push({
-          date: new Date(),
-          lastSync: lastSync.toISOString(),
-          type: update ? 'update' : 'full',
-          tournaments: res.data.tournaments.length,
-        });
-        localForage.setItem('offlineSyncHistory', history);
-      });
-      UltiSite.offlineFetchDependency.changed();
-    } else if (err) {
-      UltiSite.notify(err, 'error');
-      localForage.getItem('offlineSyncHistory', (err, data) => {
-        const history = (data || []);
-        history.push({
-          date: new Date(),
-          lastSync: lastSync.toISOString(),
-          type: update ? 'update' : 'full',
-          error: err,
-        });
-        localForage.setItem('offlineSyncHistory', history);
-      });
-    } else { UltiSite.notify('Es konnten keine Daten abgerufen werden', 'warning'); }
-  });
+    }
+  );
 }, 1000);
 
 Meteor.startup(function () {
@@ -249,13 +275,16 @@ Meteor.startup(function () {
         });
         UltiSite.offlineTournamentDependency.changed();
         console.log('retrieved tournaments from local storage');
-      } else { UltiSite.offlineTournaments = []; }
-      if (UltiSite.checkedLocalStorage) { UltiSite.offlineCheck(); }
+      } else {
+        UltiSite.offlineTournaments = [];
+      }
+      if (UltiSite.checkedLocalStorage) {
+        UltiSite.offlineCheck();
+      }
       UltiSite.checkedLocalStorage = true;
     });
   });
 });
-
 
 if (!Package.appcache) {
   Package.appcache = {};
@@ -295,12 +324,14 @@ if ('serviceWorker' in navigator) {
   wb.addEventListener('controlling', (event) => {
     console.log('service-worker: is controlling, retrying migration');
     canMigrate = true;
-    if (retry) retry(); else window.location.reload();
+    if (retry) retry();
+    else window.location.reload();
   });
   wb.addEventListener('externalactivated', (event) => {
     console.log('service-worker: is external activated, retrying migration');
     canMigrate = true;
-    if (retry) retry(); else window.location.reload();
+    if (retry) retry();
+    else window.location.reload();
   });
   Reload._onMigrate((r) => {
     if (canMigrate) return [canMigrate];

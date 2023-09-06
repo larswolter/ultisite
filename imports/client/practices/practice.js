@@ -1,7 +1,7 @@
-
+import { moment } from 'meteor/momentjs:moment';
 import { AutoForm } from 'meteor/ultisite:autoform';
-import '../forms/address.js';
-import '../files/files.js';
+import '../forms/address';
+import '../files/files';
 import './practice.scss';
 import './practice.html';
 
@@ -11,7 +11,6 @@ const mapImageUrl = new ReactiveVar();
 Meteor.startup(function () {
   UltiSite.maps = {};
 });
-
 
 Template.practiceDialog.events({
   'click .action-clear-image': function (evt, tmpl) {
@@ -30,16 +29,22 @@ Template.practiceDialog.helpers({
     return AutoForm.getFieldValue('address.geocoords', 'practiceDialogForm');
   },
   mapImage() {
-    if (mapImageUrl.get()) { return mapImageUrl.get(); }
+    if (mapImageUrl.get()) {
+      return mapImageUrl.get();
+    }
   },
   mapCaptureCallback() {
     const template = Template.instance();
     return function (canvas, map) {
       template.$('input[name="imageMapCenter"]').val(map.getView().getCenter());
       template.$('input[name="imageMapZoom"]').val(map.getView().getZoom());
-      canvas.toBlob((blob) => {
-        mapImageFile = blob;
-      }, 'image/jpeg', 0.75);
+      canvas.toBlob(
+        (blob) => {
+          mapImageFile = blob;
+        },
+        'image/jpeg',
+        0.75
+      );
       mapImageUrl.set(canvas.toDataURL('image/jpeg', 0.75));
     };
   },
@@ -66,7 +71,11 @@ AutoForm.hooks({
           UltiSite.pushToUploadQueue(fsFile);
           UltiSite.triggerUpload();
         }
-        if (err) { UltiSite.notify('Fehler beim Speichern des Trainings:' + err.message, 'error'); }        else { UltiSite.hideModal(); }
+        if (err) {
+          UltiSite.notify('Fehler beim Speichern des Trainings:' + err.message, 'error');
+        } else {
+          UltiSite.hideModal();
+        }
       });
       return false;
     },
@@ -79,14 +88,17 @@ Template.practicesDetailed.onCreated(function () {
 
 Template.practicesDetailed.helpers({
   clubPractices() {
-    return UltiSite.Practices.find({}, {
-      sort: {
-        weekday: 1,
-        start: 1,
-        club: -1,
-        hostingTeam: 1,
-      },
-    });
+    return UltiSite.Practices.find(
+      {},
+      {
+        sort: {
+          weekday: 1,
+          start: 1,
+          club: -1,
+          hostingTeam: 1,
+        },
+      }
+    );
   },
 });
 
@@ -114,9 +126,8 @@ Template.practiceSmall.helpers({
 });
 
 Template.practiceSmall.events({
-  'click .btn': function (e) {
-    UltiSite.State.set('clickedPractice', $(e.currentTarget).data('id'));
+  'click .btn': function (evt) {
+    UltiSite.State.set('clickedPractice', $(evt.currentTarget).data('id'));
     $('#practice-dialog').modal('show');
   },
 });
-

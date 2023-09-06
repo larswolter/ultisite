@@ -1,3 +1,4 @@
+import { moment } from 'meteor/momentjs:moment';
 import './practiceView.html';
 import './practice.scss';
 
@@ -75,10 +76,10 @@ Template.practice.helpers({
 });
 
 Template.practice.events({
-  'click .action-edit': function (evt, tmpl) {
+  'click .action-edit': function () {
     UltiSite.showModal('practiceDialog', this);
   },
-  'click .action-delete': function (evt, tmpl) {
+  'click .action-delete': function () {
     UltiSite.confirmDialog('Willst du wirklich das Training löschen?', () => {
       Meteor.call('removePractice', this._id);
     });
