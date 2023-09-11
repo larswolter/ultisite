@@ -16,6 +16,7 @@ Meteor.startup(function () {
     });
   });
 });
+
 Meteor.methods({
   createRandomData(total, payed, confirmed) {
     check(total, Number);
@@ -174,6 +175,15 @@ Meteor.methods({
     if (!part) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
+    const emails = Roles.getUsersInRole('hatAdmin').map(
+      (user) => user.emails && user.emails[0] && user.emails[0].address
+    );
+    UltiSite.Mail.send(
+      emails,
+      `Stornierung beim ${UltiSite.settings().hatName}`,
+      `<p>Der folgende Teilnehmer hat sich abgemeldet:</p><pre>${JSON.stringify(part, null, 2)}</pre>`
+    );
+
     UltiSite.HatInfo.HatParticipants.remove(part._id);
     return 'removed';
   },
