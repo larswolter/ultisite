@@ -1,0 +1,35 @@
+<html>
+
+<body>
+  <p>
+    Hallo {{participant.name}},
+  </p>
+  <p>
+    Dies ist eine Erinnerungsmail bzgl. deiner Teilnahme beim {{hatName}}.
+  </p>
+  {{#unless payed}}
+  <p>
+    Du hast noch nicht für das Turnier bezahlt. 
+    Falls du doch nicht teilnehmen willst, kannst du dich mit dem Link auch wieder abmelden. 
+  </p>
+  {{/unless}}
+  {{#unless confirmed}}
+  <p>
+    Bitte bestätige deine Anmeldung und die E-Mail Adresse fürs Turnier indem du den folgenden Link anklickst.
+  </p>
+  {{/unless}}
+  <a href="{{url}}">{{url}}</a>
+  <p>
+    Mit dem Link kannst du auch ein paar deiner Angaben aktualisieren
+    und deinen Status einsehen, also hebe ihn bitte gut auf.
+  </p>
+  <p>
+    {{{additionalInfos}}}
+  </p>
+  <p>
+    Viele Grüße<br />
+    {{team}}
+  </p>
+</body>
+
+</html>

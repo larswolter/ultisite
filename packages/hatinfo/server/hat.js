@@ -2,7 +2,9 @@ import { moment } from 'meteor/momentjs:moment';
 import { check } from 'meteor/check';
 import { Random } from 'meteor/random';
 import { Roles } from 'meteor/alanning:roles';
+import { CronJob } from 'cron';
 import Excel from 'exceljs';
+import { sendHatReminderEmails } from './mails';
 
 Meteor.startup(function () {
   UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
@@ -15,9 +17,30 @@ Meteor.startup(function () {
       $set: { payed: moment(elem.createdAt).clone().add(10, 'years').toDate() },
     });
   });
+
+  const job = new CronJob(
+    '0 17 6 * * *',
+    Meteor.bindEnvironment(() => {
+      console.log('checking hat mails');
+      sendHatReminderEmails();
+    }),
+    null,
+    false,
+    'Europe/Berlin'
+  );
+
+  if (Meteor.absoluteUrl('').indexOf('localhost') === -1) {
+    job.start();
+  }
 });
 
 Meteor.methods({
+  hatTriggerMailReminder() {
+    if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
+      throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
+    }
+    sendHatReminderEmails();
+  },
   createRandomData(total, payed, confirmed) {
     check(total, Number);
     check(payed, Number);

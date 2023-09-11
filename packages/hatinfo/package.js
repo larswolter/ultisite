@@ -14,7 +14,8 @@ Package.describe({
 /* This defines your actual package */
 Package.onUse(function (api) {
   api.versionsFrom('1.2.0.1');
-  api.use(['fourseven:scss',
+  api.use([
+    'fourseven:scss',
     'ecmascript',
     'kadira:flow-router',
     'standard-minifiers',
@@ -39,5 +40,5 @@ Package.onUse(function (api) {
   api.addFiles(['schema.js'], ['client', 'server']);
   api.addFiles(['client/hat.html', 'client/hat.js', 'client/hat.scss'], 'client');
   api.addFiles('server/hat.js', 'server');
-  api.addAssets('private/confirm.html', 'server');
+  api.addAssets(['private/confirm.html', 'private/reminder.html'], 'server');
 });
