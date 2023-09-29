@@ -21,7 +21,9 @@ Accounts.onLogin(function (attempt) {
 Meteor.startup(function () {
   UltiSite.getEvents = function (limitCount, days = 1) {
     let search = { 'detail.time': { $gte: moment().subtract(days, 'day').toDate() } };
-    if (limitCount) { search = {}; }
+    if (limitCount) {
+      search = {};
+    }
     const events = {};
     UltiSite.Events.find(search, {
       sort: {
@@ -31,7 +33,9 @@ Meteor.startup(function () {
     }).forEach(function (event) {
       event.url = FlowRouter.url(event.route, { _id: event.groupBy });
       event.detail.timeFormatted = moment(event.detail.time).format('DD.MM. HH:mm');
-      if (events[event.groupBy]) { events[event.groupBy].detail.push(event.detail); } else {
+      if (events[event.groupBy]) {
+        events[event.groupBy].detail.push(event.detail);
+      } else {
         events[event.groupBy] = event;
         events[event.groupBy].detail = [event.detail];
       }
@@ -41,39 +45,51 @@ Meteor.startup(function () {
     });
   };
 
-  const job = new CronJob('0 9 15 * * *', Meteor.bindEnvironment(() => {
-    let result = 0;
-    console.log('sending digests');
-    const eventList = UltiSite.getEvents();
-    Meteor.users.find().forEach(function (user) {
-      if (UltiSite.sendEventDigest(user, eventList)) {
-        result += 1;
-      }
-    });
-    console.log(eventList.length + ' Digest events send to ' + result + ' users');
-  }), null, false, 'Europe/Berlin');
+  const job = new CronJob(
+    '0 9 15 * * *',
+    Meteor.bindEnvironment(() => {
+      let result = 0;
+      console.log('sending digests');
+      const eventList = UltiSite.getEvents();
+      Meteor.users.find().forEach(function (user) {
+        if (UltiSite.sendEventDigest(user, eventList)) {
+          result += 1;
+        }
+      });
+      console.log(eventList.length + ' Digest events send to ' + result + ' users');
+    }),
+    null,
+    false,
+    'Europe/Berlin'
+  );
 
   if (Meteor.absoluteUrl('').indexOf('localhost') === -1) {
     job.start();
   }
 });
 
-
 UltiSite.sendEventDigest = function (user, eventList, force = false) {
-  if (!force && (eventList.length === 0)) { return false; }
-  if (!force && (user.settings && user.settings.noDigestMail)) { return false; }
+  if (!force && eventList.length === 0) {
+    return false;
+  }
+  if (!force && user.settings && user.settings.noDigestMail) {
+    return false;
+  }
   const template = Assets.getText('mail-templates/events.html');
   const layout = Assets.getText('mail-templates/layout.html');
   const tournaments = UltiSite.getTournamentsStates(user._id);
 
-  UltiSite.Mail.send([user._id], 'Tägliche Zusammenfassung',
+  UltiSite.Mail.send(
+    [user._id],
+    'Tägliche Zusammenfassung',
     UltiSite.renderMailTemplate(layout, template, {
       user,
       profilUrl: FlowRouter.url('user', { _id: user._id }),
       tournamentUrl: FlowRouter.url('tournaments', {}),
       events: eventList,
       tournaments,
-    }));
+    })
+  );
   return true;
 };
 
@@ -81,24 +97,30 @@ const sendEvent = function (user, event) {
   const template = Assets.getText('mail-templates/event.html');
   const layout = Assets.getText('mail-templates/layout.html');
 
-  UltiSite.Mail.send([user._id], event.name,
+  UltiSite.Mail.send(
+    [user._id],
+    event.name,
     UltiSite.renderMailTemplate(layout, template, {
       user,
       profilUrl: FlowRouter.url('user', { _id: user._id }),
       event,
-    }));
+    })
+  );
   return true;
 };
 UltiSite.addEvent = function (info) {
   info.time = new Date();
-  UltiSite.LastChanges.upsert({
-    type: info.type,
-  }, {
-    $set: {
+  UltiSite.LastChanges.upsert(
+    {
+      type: info.type,
+    },
+    {
+      $set: {
         type: info.type,
         date: new Date(),
       },
-  });
+    }
+  );
   info.alias = info.userId && UltiSite.getAlias(info.userId);
   if (info.type === 'files' && info.images) {
     const ev = UltiSite.Events.findOne({
@@ -120,10 +142,7 @@ UltiSite.addEvent = function (info) {
   const event = { lastChange: new Date() };
   if (info.type === 'team' || info.type === 'tournament') {
     const tournament = UltiSite.Tournaments.findOne({
-      $or: [
-        { _id: info._id || info.group },
-        { 'teams._id': info._id || info.group },
-      ],
+      $or: [{ _id: info._id || info.group }, { 'teams._id': info._id || info.group }],
     });
     event.groupBy = tournament._id;
     event.route = 'tournament';
@@ -151,10 +170,12 @@ UltiSite.addEvent = function (info) {
   UltiSite.Events.insert(event, function (err, res) {
     console.log('inserted event:', err, res);
     const search = {};
-    search['settings.email.' + event.route] = 'immediate';
-    Meteor.users.find(search).forEach(function (user) {
-      sendEvent(user, UltiSite.Events.findOne(res));
-    });
+    if (['team', 'tournament'].includes(info.type)) {
+      search['settings.email.' + event.route] = 'immediate';
+      Meteor.users.find(search).forEach(function (user) {
+        sendEvent(user, UltiSite.Events.findOne(res));
+      });
+    }
   });
 };
 
@@ -178,10 +199,7 @@ Meteor.methods({
   removeEvent(id) {
     check(id, String);
     UltiSite.Events.remove({
-      $or: [
-        { groupBy: id },
-        { 'detail._id': id },
-      ],
+      $or: [{ groupBy: id }, { 'detail._id': id }],
     });
     UltiSite.Events.udate({
       $pull: { images: id },

@@ -126,15 +126,20 @@ Meteor.methods({
           creator: this.userId,
         })
       );
+      console.log(`wrote temp file ${os.tmpdir()}/${docId}.doc.temp`);
       fs.writeFileSync(`${os.tmpdir()}/${docId}.doc.temp`, base64, { encoding: 'base64' });
     } else {
       const existing = UltiSite.Documents.findOne(metadata._id);
+      console.log(`append temp file ${os.tmpdir()}/${docId}.doc.temp`);
       fs.appendFileSync(`${os.tmpdir()}/${metadata._id}.doc.temp`, base64, { encoding: 'base64' });
       docId = existing._id;
       UltiSite.Documents.update(docId, { $set: { progress: Math.floor(metadata.progress) } });
+      console.log(`updated document`);
     }
     if (lastPackage) {
+      console.log(`get file stats`);
       const fileStats = fs.statSync(`${os.tmpdir()}/${docId}.doc.temp`);
+      console.log(`open bucket stream`);
       const wstream = bucket.openUploadStream(metadata.name, {
         metadata: {
           filename: metadata.name,
@@ -142,7 +147,7 @@ Meteor.methods({
         },
       });
       wstream.on(
-        'close',
+        'finish',
         Meteor.bindEnvironment(function (fileObj) {
           UltiSite.Documents.update(docId, {
             $set: {
@@ -168,9 +173,9 @@ Meteor.methods({
               additional: ref[0].type,
             });
           }
-          fs.createReadStream(`${os.tmpdir()}/${docId}.doc.temp`).pipe(wstream);
         })
       );
+      fs.createReadStream(`${os.tmpdir()}/${docId}.doc.temp`).pipe(wstream);
     }
     return docId;
   },
@@ -200,10 +205,14 @@ Meteor.methods({
             if (err) {
               console.log('Error removing gridfs file', err);
             } else {
+              console.log('removed gridfs file');
               UltiSite.Documents.remove(fileId);
             }
           })
         );
+      } else {
+        console.log('removed non gridfs file');
+        UltiSite.Documents.remove(fileId);
       }
     }
 
@@ -264,18 +273,19 @@ WebApp.connectHandlers.use('/_document', (req, resp) => {
     resp.end('doc not found');
     return;
   }
-  bucket.openDownloadStream(ObjectId(doc.gridId), function (error, readstream) {
-    if (readstream) {
-      resp.setHeader('Content-Type', doc.type);
-      resp.setHeader('Content-Disposition', `attachment; filename="${doc.name}"`);
-      resp.writeHead(200);
-      if (req.query.base64) {
-        readstream.pipe(Base64Decode.decode()).pipe(resp);
-      } else {
-        readstream.pipe(resp);
-      }
+  console.log('opening stream', doc.gridId);
+  const readstream = bucket.openDownloadStream(ObjectId(doc.gridId));
+  if (readstream) {
+    console.log('got read stream, piping...');
+    resp.setHeader('Content-Type', doc.type);
+    resp.setHeader('Content-Disposition', `attachment; filename="${doc.name}"`);
+    resp.writeHead(200);
+    if (req.query.base64) {
+      readstream.pipe(Base64Decode.decode()).pipe(resp);
     } else {
-      console.log(error);
+      readstream.pipe(resp);
     }
-  });
+  } else {
+    console.log('file downloaderror: no readstream');
+  }
 });
