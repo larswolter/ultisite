@@ -82,18 +82,18 @@ Meteor.startup(function () {
           },
         },
         years: {
-          type: Number,
+          type: String,
           label: 'Spieljahre',
           optional: false,
           autoform: {
             firstOption: 'Bitte wählen',
             options() {
               return [
-                { label: '< 1 Jahr', value: 1 },
-                { label: '1-2 Jahre', value: 2 },
-                { label: '2-5 Jahre', value: 3 },
-                { label: '5-10 Jahre', value: 4 },
-                { label: '>10 Jahre', value: 5 },
+                { label: '< 1 Jahr', value: '1' },
+                { label: '1-2 Jahre', value: '2' },
+                { label: '2-5 Jahre', value: '3' },
+                { label: '5-10 Jahre', value: '4' },
+                { label: '>10 Jahre', value: '5' },
               ];
             },
           },
