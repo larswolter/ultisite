@@ -299,8 +299,9 @@
                     <div class="modal-body">
                         Die eingetragenen Daten stehen nur den Ausrichtern zur Verfügung, es sei den,
                         das Häkchen bei der Ausnahme ist gesetzt.<br />
-                        Stärke und Spieljahre sind notwendig, um die Teams zusammenzustellen, Stadt und Heimatteam, um eine
-                        Durchmischung zu ermöglichen. Die E-Mail Adresse wird benötigt, um mit euch Kontakt aufzunehmen.<br />
+                        Geschlecht, Stärke, aktive Spieljahre, Fitness und Erfahrung sind notwendig, um die Teams zusammenzustellen, Stadt und Heimatteam, um eine
+                        Durchmischung zu ermöglichen. Die E-Mail Adresse wird benötigt, um mit euch Kontakt aufzunehmen. 
+                        Die Info über die Volljährigkeit wird benötigt wegen Alkohol etc.<br />
                         Die Daten werden automatisch nach 60 Tagen gelöscht, solltet ihr noch Fragen zum Datenschutz haben,
                         schreibt uns eine Mail an <a href="mailto:kontakt@hallunken.de">kontakt@hallunken.de</a>
                         <hr />
@@ -308,12 +309,12 @@
                             {{> afQuickFields}}
                         {{else}}
                             {{#if existing._id}}
-                                {{> afQuickFields fields="name,gender,age,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday"}}
+                                {{> afQuickFields fields="name,gender,age,fullAge,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday"}}
                                 <fieldset disabled>
                                     {{> afQuickFields fields="email"}}
                                 </fieldset>
                             {{else}}
-                                {{> afQuickFields fields="name,gender,age,email,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday" }}
+                                {{> afQuickFields fields="name,gender,age,fullAge,email,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday" }}
                             {{/if}}
                         {{/if}}
                     </div>
