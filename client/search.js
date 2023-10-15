@@ -1,4 +1,4 @@
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 Template.searchField.onCreated(function () {
   this.results = new ReactiveVar([]);
@@ -17,10 +17,14 @@ Template.searchField.events({
 
       console.log('Search for ' + t.data.searchType);
       Meteor.call('search', $(e.currentTarget).val(), t.data.searchType.split(','), function (err, res) {
-        if (t.data.notFoundContent) { res = res.concat(t.data.notFoundContent($(e.currentTarget).val())); }
+        if (t.data.notFoundContent) {
+          res = res.concat(t.data.notFoundContent($(e.currentTarget).val()));
+        }
         t.results.set(res);
       });
-    } else { t.results.set(['Mind. zwei Zeichen']); }
+    } else {
+      t.results.set(['Mind. zwei Zeichen']);
+    }
   },
   'click a': function (e, t) {
     if (t.data.onResultClick) {
@@ -34,7 +38,6 @@ Template.searchField.events({
       FlowRouter.go(this.link);
     }
   },
-
 });
 
 Template.searchField.helpers({
@@ -46,17 +49,26 @@ Template.searchField.helpers({
   },
   placeHolder() {
     const searchTypes = Template.instance().data.searchType.split(',');
-    if (searchTypes.length === 1) { return '' + searchTypeMapping(searchTypes[0]); } else if (searchTypes.length === 2) { return '' + searchTypeMapping(searchTypes[0]) + ' und ' + searchTypeMapping(searchTypes[1]); }
+    if (searchTypes.length === 1) {
+      return '' + searchTypeMapping(searchTypes[0]);
+    } else if (searchTypes.length === 2) {
+      return '' + searchTypeMapping(searchTypes[0]) + ' und ' + searchTypeMapping(searchTypes[1]);
+    }
     return 'Suche...';
   },
 });
 
 function searchTypeMapping(searchType) {
   switch (searchType) {
-    case 'Users': return UltiSite.settings().multiplePlayers;
-    case 'Tournaments': return 'Turniere';
-    case 'Documents': return 'Dateien';
-    case 'Images': return 'Bilder';
-    default: return searchType;
+    case 'Users':
+      return UltiSite.settings().multiplePlayers;
+    case 'Tournaments':
+      return 'Turniere';
+    case 'Documents':
+      return 'Dateien';
+    case 'Images':
+      return 'Bilder';
+    default:
+      return searchType;
   }
 }

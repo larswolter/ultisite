@@ -12,9 +12,10 @@ Package.describe({
 /* This defines your actual package */
 Package.onUse(function (api) {
   api.versionsFrom('1.2.0.1');
-  api.use(['fourseven:scss',
+  api.use([
+    'fourseven:scss',
     'ecmascript',
-    'kadira:flow-router',
+    'ostrio:flow-router-extra',
     'standard-minifiers',
     'meteor-base',
     'mobile-experience',

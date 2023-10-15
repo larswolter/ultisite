@@ -17,7 +17,7 @@ Package.onUse(function (api) {
   api.use([
     'fourseven:scss',
     'ecmascript',
-    'kadira:flow-router',
+    'ostrio:flow-router-extra',
     'standard-minifiers',
     'meteor-base',
     'mobile-experience',

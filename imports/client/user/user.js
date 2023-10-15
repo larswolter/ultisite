@@ -1,5 +1,5 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { Roles } from 'meteor/alanning:roles';
 import { moment } from 'meteor/momentjs:moment';
 
@@ -8,7 +8,9 @@ import './user.html';
 import './userlist.html';
 
 Meteor.startup(function () {
-  Meteor.subscribe('UserDetails', Meteor.userId());
+  if (Meteor.userId()) {
+    Meteor.subscribe('UserDetails', Meteor.userId());
+  }
 });
 
 const userHelper = {
@@ -22,11 +24,15 @@ const userHelper = {
     return this.username;
   },
   sexIcon() {
-    return this.profile ? this.profile.sex === 'W' ? 'fa-female' : 'fa-male' : 'fa-user';
+    return this.profile ? (this.profile.sex === 'W' ? 'fa-female' : 'fa-male') : 'fa-user';
   },
   isEditable() {
-    if (UltiSite.isAdmin()) { return true; }
-    if (Meteor.userId() === FlowRouter.getParam('_id')) { return true; }
+    if (UltiSite.isAdmin()) {
+      return true;
+    }
+    if (Meteor.userId() === FlowRouter.getParam('_id')) {
+      return true;
+    }
     return false;
   },
   imagesWithUser() {
@@ -35,11 +41,16 @@ const userHelper = {
     });
   },
   contactDetails() {
-    if (!this.profile.contactDetails) { return []; }
+    if (!this.profile.contactDetails) {
+      return [];
+    }
     return this.profile.contactDetails.map(function (elem, idx) {
-      return _.extend({
-        index: idx,
-      }, elem);
+      return _.extend(
+        {
+          index: idx,
+        },
+        elem
+      );
     });
   },
   email() {
@@ -63,12 +74,15 @@ const userHelper = {
     });
   },
   notificationsStatus() {
-    return ('Notification' in window) ? Notification.permission : 'unsupported';
+    return 'Notification' in window ? Notification.permission : 'unsupported';
   },
   emailNotificationTypes() {
     let mls = [];
     if (UltiSite.settings()) {
-      mls = UltiSite.settings().mailingListConfigs.map(mc => ({ type: mc.from.toCamelCase(), name: 'Mailingliste ' + mc.from }));
+      mls = UltiSite.settings().mailingListConfigs.map((mc) => ({
+        type: mc.from.toCamelCase(),
+        name: 'Mailingliste ' + mc.from,
+      }));
     }
     return mls.concat([
       { type: 'wiki', name: 'Wiki' },
@@ -80,60 +94,77 @@ const userHelper = {
   },
   isMailType(status) {
     const user = Meteor.users.findOne(FlowRouter.getParam('_id'));
-    return user.settings && user.settings.email && (user.settings.email[this.type] === status);
+    return user.settings && user.settings.email && user.settings.email[this.type] === status;
   },
   hasStatistics() {
-    if (UltiSite.Statistics.find({
-      target: this._id,
-    }).count() > 0) { return true; }
+    if (
+      UltiSite.Statistics.find({
+        target: this._id,
+      }).count() > 0
+    ) {
+      return true;
+    }
     return false;
   },
   plannedTournaments() {
-    return (UltiSite.Statistics.findOne({
-      target: this._id,
-      type: 'plannedTournaments',
-    }) || { data: [] }).data;
+    return (
+      UltiSite.Statistics.findOne({
+        target: this._id,
+        type: 'plannedTournaments',
+      }) || { data: [] }
+    ).data;
   },
   playedTournamentYears() {
     const years = {};
     let unsure = 0;
     let total = 0;
-    const data = (UltiSite.Statistics.findOne({
-      target: this._id,
-      type: 'playedTournaments',
-    }, {
-      sort: {
-        'data.date': -1,
+    const { data } = UltiSite.Statistics.findOne(
+      {
+        target: this._id,
+        type: 'playedTournaments',
       },
-    }) || {
-        data: [],
-      }).data;
+      {
+        sort: {
+          'data.date': -1,
+        },
+      }
+    ) || {
+      data: [],
+    };
     data.forEach(function (elem) {
       const m = moment(elem.date);
       if (m.isValid()) {
-        if (elem.unsure) { unsure += 1; }
+        if (elem.unsure) {
+          unsure += 1;
+        }
         total += 1;
         const year = m.format('YYYY');
-        if (!years[year]) { years[year] = []; }
+        if (!years[year]) {
+          years[year] = [];
+        }
         years[year].push(elem);
       } else console.log('Invalid statistics:', elem);
     });
     return {
       count: total - unsure,
       total,
-      years: Object.keys(years).map(function (year) {
-        return {
-          t: years[year],
-          y: year,
-        };
-      }).reverse(),
+      years: Object.keys(years)
+        .map(function (year) {
+          return {
+            t: years[year],
+            y: year,
+          };
+        })
+        .reverse(),
     };
   },
   top10Players() {
-    return (UltiSite.Statistics.findOne({
-      target: this._id,
-      type: 'top10Players',
-    }) || { data: [] }).data;
+    return (
+      UltiSite.Statistics.findOne({
+        target: this._id,
+        type: 'top10Players',
+      }) || { data: [] }
+    ).data;
   },
   // TODO: add statistics, like top 10 cities
 };
@@ -204,43 +235,56 @@ Template.user.events({
       const modifier = {};
 
       modifier[`profile.contactDetails.${$(e.currentTarget).attr('data-index')}`] = null;
-      Meteor.users.update({
-        _id: FlowRouter.getParam('_id'),
-      }, {
-        $set: modifier,
-      });
-
-      Meteor.users.update({
-        _id: FlowRouter.getParam('_id'),
-      }, {
-        $pull: {
-          'profile.contactDetails': null,
+      Meteor.users.update(
+        {
+          _id: FlowRouter.getParam('_id'),
         },
-      });
+        {
+          $set: modifier,
+        }
+      );
+
+      Meteor.users.update(
+        {
+          _id: FlowRouter.getParam('_id'),
+        },
+        {
+          $pull: {
+            'profile.contactDetails': null,
+          },
+        }
+      );
     });
   },
   'click .user-contacts .type-selector a': function (e, t) {
     e.preventDefault();
     const modifier = {};
     modifier[`profile.contactDetails.${$(e.currentTarget).attr('data-index')}.type`] = $(e.currentTarget).text();
-    Meteor.users.update({
-      _id: FlowRouter.getParam('_id'),
-    }, {
-      $set: modifier,
-    }, UltiSite.userFeedbackFunction('Kontaktinfo speichern'));
+    Meteor.users.update(
+      {
+        _id: FlowRouter.getParam('_id'),
+      },
+      {
+        $set: modifier,
+      },
+      UltiSite.userFeedbackFunction('Kontaktinfo speichern')
+    );
   },
   'click .user-contacts .btn-add-contact': function (e, t) {
     e.preventDefault();
-    Meteor.users.update({
-      _id: FlowRouter.getParam('_id'),
-    }, {
-      $push: {
-        'profile.contactDetails': {
-          type: '',
-          detail: '',
-        },
+    Meteor.users.update(
+      {
+        _id: FlowRouter.getParam('_id'),
       },
-    });
+      {
+        $push: {
+          'profile.contactDetails': {
+            type: '',
+            detail: '',
+          },
+        },
+      }
+    );
   },
   'click .action-remove-role': function (evt) {
     evt.preventDefault();
@@ -255,16 +299,30 @@ Template.user.events({
     const user = Meteor.users.findOne(FlowRouter.getParam('_id'));
     const toSet = {};
     toSet[`settings.email.${this.type}`] = 'immediate';
-    if (user.settings && user.settings.email && user.settings.email[this.type] === 'immediate') { toSet[`settings.email.${this.type}`] = null; }
-    Meteor.users.update(user._id, { $set: toSet }, UltiSite.userFeedbackFunction(`Mail Bencharichtigung für ${this.name} setzen`));
+    if (user.settings && user.settings.email && user.settings.email[this.type] === 'immediate') {
+      toSet[`settings.email.${this.type}`] = null;
+    }
+    Meteor.users.update(
+      user._id,
+      { $set: toSet },
+      UltiSite.userFeedbackFunction(`Mail Bencharichtigung für ${this.name} setzen`)
+    );
   },
   'click .action-digest': function (e) {
     e.preventDefault();
-    Meteor.users.update(FlowRouter.getParam('_id'), { $set: { 'settings.noDigestMail': false } }, UltiSite.userFeedbackFunction('Tägliche Mail Bencharichtigung aktivieren'));
+    Meteor.users.update(
+      FlowRouter.getParam('_id'),
+      { $set: { 'settings.noDigestMail': false } },
+      UltiSite.userFeedbackFunction('Tägliche Mail Bencharichtigung aktivieren')
+    );
   },
   'click .action-no-digest': function (e) {
     e.preventDefault();
-    Meteor.users.update(FlowRouter.getParam('_id'), { $set: { 'settings.noDigestMail': true } }, UltiSite.userFeedbackFunction('Tägliche Mail Bencharichtigung deaktivieren'));
+    Meteor.users.update(
+      FlowRouter.getParam('_id'),
+      { $set: { 'settings.noDigestMail': true } },
+      UltiSite.userFeedbackFunction('Tägliche Mail Bencharichtigung deaktivieren')
+    );
   },
   'change .user-contacts .opt-editable-field': function (e, t) {
     const modifier = {};
@@ -278,15 +336,19 @@ Template.user.events({
     }
     modifier[`profile.contactDetails.${t.$(e.currentTarget).attr('data-index')}.detail`] = value;
     const userId = FlowRouter.getParam('_id');
-    Meteor.users.update({
-      _id: userId,
-    }, {
-      $set: modifier,
-    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
-      if (name === 'username') {
-        Meteor.call('correctParticipants', userId);
-      }
-    }));
+    Meteor.users.update(
+      {
+        _id: userId,
+      },
+      {
+        $set: modifier,
+      },
+      UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget, () => {
+        if (name === 'username') {
+          Meteor.call('correctParticipants', userId);
+        }
+      })
+    );
   },
   'click .user-base .dropdown-select-item': function (e, t) {
     e.preventDefault();
@@ -294,14 +356,22 @@ Template.user.events({
     const name = t.$(e.currentTarget).attr('data-name');
     const type = t.$(e.currentTarget).attr('data-type');
     const toSet = {};
-    if (type && (type === 'boolean')) {
+    if (type && type === 'boolean') {
       toSet[name] = !!value;
-    } else if (type && (type === 'number')) { toSet[name] = Number(value); } else { toSet[name] = value; }
-    Meteor.users.update({
-      _id: FlowRouter.getParam('_id'),
-    }, {
-      $set: toSet,
-    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode));
+    } else if (type && type === 'number') {
+      toSet[name] = Number(value);
+    } else {
+      toSet[name] = value;
+    }
+    Meteor.users.update(
+      {
+        _id: FlowRouter.getParam('_id'),
+      },
+      {
+        $set: toSet,
+      },
+      UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode)
+    );
   },
   'change .dfv-select': function (evt, tmpl) {
     evt.preventDefault();
@@ -313,36 +383,48 @@ Template.user.events({
     } else {
       update.$pull = { 'club.dfv': moment().year() };
     }
-    Meteor.users.update({
-      _id: userId,
-    }, update, UltiSite.userFeedbackFunction('Wert speichern', evt.currentTarget.parentNode));
+    Meteor.users.update(
+      {
+        _id: userId,
+      },
+      update,
+      UltiSite.userFeedbackFunction('Wert speichern', evt.currentTarget.parentNode)
+    );
   },
   'change .user-base .opt-editable-field,.user-base .radio-select': function (e, t) {
     const value = t.$(e.currentTarget).val();
     const name = $(e.currentTarget).attr('name');
     const type = $(e.currentTarget).attr('data-type');
     const toSet = {};
-    if (type && (type === 'boolean')) {
+    if (type && type === 'boolean') {
       toSet[name] = !!value;
-    } else if (type && (type === 'number')) {
+    } else if (type && type === 'number') {
       toSet[name] = Number(value);
-    } else if (type && (type === 'date')) {
+    } else if (type && type === 'date') {
       toSet[name] = moment(value, 'DD.MM.YYYY');
-    } else { toSet[name] = value; }
+    } else {
+      toSet[name] = value;
+    }
     const userId = FlowRouter.getParam('_id');
 
-    Meteor.users.update({
-      _id: userId,
-    }, {
-      $set: toSet,
-    }, UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
-      if (name === 'profile.sex') {
-        Meteor.call('correctParticipants', userId);
-      }
-    }));
+    Meteor.users.update(
+      {
+        _id: userId,
+      },
+      {
+        $set: toSet,
+      },
+      UltiSite.userFeedbackFunction('Wert speichern', e.currentTarget.parentNode, () => {
+        if (name === 'profile.sex') {
+          Meteor.call('correctParticipants', userId);
+        }
+      })
+    );
   },
   'click .action-check-notification-permissions': function (e, t) {
-    if (!('Notification' in window)) { console.log('This browser does not support desktop notification'); }
+    if (!('Notification' in window)) {
+      console.log('This browser does not support desktop notification');
+    }
     // Otherwise, we need to ask the user for permission
     else if (Notification.permission !== 'denied') {
       Notification.requestPermission(function (permission) {
@@ -353,12 +435,9 @@ Template.user.events({
   },
 });
 
-
-Template.userCreateDialog.onCreated(function () {
-});
+Template.userCreateDialog.onCreated(function () {});
 Template.userCreateDialog.events({
-  'click button[type="submit"]': function (evt) {
-  },
+  'click button[type="submit"]': function (evt) {},
 });
 
 Template.userCreateDialog.helpers({
@@ -366,7 +445,9 @@ Template.userCreateDialog.helpers({
     return Template.instance().data && Template.instance().data.setupNeeded;
   },
   userSchema() {
-    if (Meteor.userId() || (UltiSite.settings().siteRegistration !== 'password')) { return UltiSite.schemas.user.get(); }
+    if (Meteor.userId() || UltiSite.settings().siteRegistration !== 'password') {
+      return UltiSite.schemas.user.get();
+    }
     return UltiSite.schemas.userRegister.get();
   },
 });
@@ -380,9 +461,15 @@ AutoForm.hooks({
     },
     onError(formType, err) {
       console.log(formType, err);
-      if (err.error === 'duplicate-email') { AutoForm.addStickyValidationError('userAddForm', 'email', err.reason); }
-      if (err.error === 'wrong-password') { AutoForm.addStickyValidationError('userAddForm', 'sitePassword', err.reason); }
-      if (err.error === 'duplicate-username') { AutoForm.addStickyValidationError('userAddForm', 'alias', err.reason); }
+      if (err.error === 'duplicate-email') {
+        AutoForm.addStickyValidationError('userAddForm', 'email', err.reason);
+      }
+      if (err.error === 'wrong-password') {
+        AutoForm.addStickyValidationError('userAddForm', 'sitePassword', err.reason);
+      }
+      if (err.error === 'duplicate-username') {
+        AutoForm.addStickyValidationError('userAddForm', 'alias', err.reason);
+      }
     },
   },
 });

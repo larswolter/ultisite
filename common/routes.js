@@ -1,4 +1,4 @@
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 if (Meteor.isClient) {
   Meteor.startup(() => {
@@ -71,7 +71,6 @@ FlowRouter.route('/image/:_id/:associated?', {
     });
   },
 });
-
 
 FlowRouter.route('/files/:_id?', {
   name: 'files',

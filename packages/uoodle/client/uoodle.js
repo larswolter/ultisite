@@ -1,4 +1,4 @@
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { Meteor } from 'meteor/meteor';
 import { moment } from 'meteor/momentjs:moment';
 import { AutoForm } from 'meteor/ultisite:autoform';
@@ -58,7 +58,7 @@ Template.uoodles.events({
 
 Template.uoodleItem.helpers({
   canEdit() {
-    return UltiSite.isAdmin() || (this.owner === Meteor.userId());
+    return UltiSite.isAdmin() || this.owner === Meteor.userId();
   },
 });
 
@@ -87,7 +87,11 @@ Template.uoodleDetails.onCreated(function () {
   this.autorun(() => {
     if (FlowRouter.getParam('_id')) {
       Meteor.call('uoodleParticipantNames', FlowRouter.getParam('_id'), (err, res) => {
-        if (err) { console.log(err); } else { this.userMapping.set(res); }
+        if (err) {
+          console.log(err);
+        } else {
+          this.userMapping.set(res);
+        }
       });
     }
   });
@@ -96,14 +100,18 @@ Template.uoodleDetails.onCreated(function () {
 Template.uoodleDetails.helpers({
   alreadyVoted() {
     const uoodle = Uoodles.findOne(FlowRouter.getParam('_id'));
-    if (uoodle) { return _.contains(uoodle.participants, Meteor.userId()); }
+    if (uoodle) {
+      return _.contains(uoodle.participants, Meteor.userId());
+    }
   },
   uoodleUser(id) {
     return Template.instance().userMapping.get()[id];
   },
   isOpen() {
     const uoodle = Uoodles.findOne(FlowRouter.getParam('_id'));
-    if (uoodle) { return moment(uoodle.validUntil).isAfter(moment()); }
+    if (uoodle) {
+      return moment(uoodle.validUntil).isAfter(moment());
+    }
   },
   stats() {
     const result = {
@@ -113,8 +121,14 @@ Template.uoodleDetails.helpers({
     };
     const option = this;
     Object.keys(option).forEach(function (key) {
-      if (typeof (option[key]) === 'number') {
-        if (option[key] === 0) { result.maybe++; } else if (option[key] > 0) { result.yes++; } else if (option[key] < 0) { result.no++; }
+      if (typeof option[key] === 'number') {
+        if (option[key] === 0) {
+          result.maybe++;
+        } else if (option[key] > 0) {
+          result.yes++;
+        } else if (option[key] < 0) {
+          result.no++;
+        }
       }
     });
     return result;
@@ -144,8 +158,13 @@ Template.uoodleDetails.events({
   'click .action-choose': function (evt, tmpl) {
     evt.preventDefault();
 
-    Meteor.call('uoodleSetParticipation', FlowRouter.getParam('_id'), this.id,
-      Number(tmpl.$(evt.currentTarget).attr('data-value')), UltiSite.userFeedbackFunction('Speichern'));
+    Meteor.call(
+      'uoodleSetParticipation',
+      FlowRouter.getParam('_id'),
+      this.id,
+      Number(tmpl.$(evt.currentTarget).attr('data-value')),
+      UltiSite.userFeedbackFunction('Speichern')
+    );
   },
 });
 

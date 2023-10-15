@@ -1,4 +1,4 @@
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 let getTextCallback;
 const getTextOptions = new ReactiveVar();
@@ -46,10 +46,7 @@ UltiSite.showModal = function (templateName, data, options) {
     });
     UltiSite.modalDialogTemplate = modal;
     modal.modal(options || {});
-    FlowRouter.go(
-      FlowRouter.current().path,
-      {},
-      Object.assign({ modalDialog: 1 }, FlowRouter.current().queryParams));
+    FlowRouter.go(FlowRouter.current().path, {}, Object.assign({ modalDialog: 1 }, FlowRouter.current().queryParams));
   }
 };
 
@@ -133,7 +130,11 @@ Template.searchDialog.onRendered(function () {
 });
 Template.searchDialog.events({
   'change .search-type': function (evt, tmpl) {
-    searchDependency.set(_.filter(tmpl.$('.search-type'), st => st.checked).map(st => tmpl.$(st).attr('data-type')).join(','));
+    searchDependency.set(
+      _.filter(tmpl.$('.search-type'), (st) => st.checked)
+        .map((st) => tmpl.$(st).attr('data-type'))
+        .join(',')
+    );
   },
 });
 Template.searchDialog.helpers({

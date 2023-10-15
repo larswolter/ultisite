@@ -1,14 +1,17 @@
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 const lastConnectedStatus = true;
 
 Meteor.startup(function () {
   UltiSite.State.set('searchResults', ['Mind. drei Zeichen']);
   UltiSite.State.setDefault('message', {});
-  document.title = UltiSite.settings().siteTitle +
-    (UltiSite.settings().siteSubTitle ? ' - ' + UltiSite.settings().siteSubTitle : '');
+  document.title =
+    UltiSite.settings().siteTitle + (UltiSite.settings().siteSubTitle ? ' - ' + UltiSite.settings().siteSubTitle : '');
   $('meta[name=application-name]').attr('content', UltiSite.settings().siteTitle);
-  $('meta[name=msapplication-tooltip]').attr('content', UltiSite.settings().siteSubTitle || UltiSite.settings().siteTitle);
+  $('meta[name=msapplication-tooltip]').attr(
+    'content',
+    UltiSite.settings().siteSubTitle || UltiSite.settings().siteTitle
+  );
   $('meta[name=apple-mobile-web-app-name]').attr('content', UltiSite.settings().siteTitle);
 
   $(window).scroll(() => {
@@ -51,7 +54,11 @@ Template.header.events({
   'click .action-logout': function (e) {
     e.preventDefault();
     Meteor.logout((err) => {
-      if (err) { UltiSite.notify('Abmelden fehlgeschlagen', 'error'); } else { UltiSite.notify('Erfolgreich abgemeldet', 'success'); }
+      if (err) {
+        UltiSite.notify('Abmelden fehlgeschlagen', 'error');
+      } else {
+        UltiSite.notify('Erfolgreich abgemeldet', 'success');
+      }
       FlowRouter.go('/');
     });
   },
@@ -89,7 +96,6 @@ Template.header.helpers({
   },
 });
 
-
 Template.sidebar.helpers({
   userImageUrl() {
     return UltiSite.Images.findOne().url({
@@ -110,7 +116,11 @@ Template.sidebar.events({
   },
   'click .action-logout': function (e, t) {
     Meteor.logout((err) => {
-      if (err) { UltiSite.notify('Abmelden fehlgeschlagen', 'error'); } else { UltiSite.notify('Erfolgreich abgemeldet', 'success'); }
+      if (err) {
+        UltiSite.notify('Abmelden fehlgeschlagen', 'error');
+      } else {
+        UltiSite.notify('Erfolgreich abgemeldet', 'success');
+      }
       FlowRouter.go('/');
     });
   },
@@ -124,7 +134,9 @@ Template.sidebar.events({
     Meteor.reconnect();
   },
   'click a': function (e) {
-    if (!$(e.currentTarget).hasClass('sublinks')) { UltiSite.toggleSidebar(false); }
+    if (!$(e.currentTarget).hasClass('sublinks')) {
+      UltiSite.toggleSidebar(false);
+    }
   },
   'click .action-admin-mode': function (evt) {
     evt.preventDefault();

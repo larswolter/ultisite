@@ -1,5 +1,5 @@
 import { moment } from 'meteor/momentjs:moment';
-import { FlowRouter } from 'meteor/kadira:flow-router';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 import './team.js';
 import './tournament.js';
@@ -44,11 +44,14 @@ Meteor.startup(function () {
   });
 });
 
-
 Template.tournamentList.events({
   'click .action-add-tournament': function (evt, tmpl) {
     evt.preventDefault();
-    UltiSite.showModal('tournamentUpdate', { type: 'insert', tournament: prefillData.get() }, { dynamicImport: '/imports/client/tournaments/tournament.js' });
+    UltiSite.showModal(
+      'tournamentUpdate',
+      { type: 'insert', tournament: prefillData.get() },
+      { dynamicImport: '/imports/client/tournaments/tournament.js' }
+    );
   },
   'click .action-toggle-filter': function (evt, tmpl) {
     evt.preventDefault();
@@ -59,29 +62,27 @@ Template.tournamentList.events({
     let neu = null;
     let last = null;
     if (!_.contains(tabSelection.get(), 'past')) {
-      last = months.findOne({}, {
-        sort: {
-          year: -1,
-          code: -1,
-        },
-      });
-      neu = moment()
-        .year(last.year)
-        .month(last.month)
-        .startOf('month')
-        .add(1, 'month');
+      last = months.findOne(
+        {},
+        {
+          sort: {
+            year: -1,
+            code: -1,
+          },
+        }
+      );
+      neu = moment().year(last.year).month(last.month).startOf('month').add(1, 'month');
     } else {
-      last = months.findOne({}, {
-        sort: {
-          year: 1,
-          code: 1,
-        },
-      });
-      neu = moment()
-        .year(last.year)
-        .month(last.month)
-        .startOf('month')
-        .subtract(1, 'month');
+      last = months.findOne(
+        {},
+        {
+          sort: {
+            year: 1,
+            code: 1,
+          },
+        }
+      );
+      neu = moment().year(last.year).month(last.month).startOf('month').subtract(1, 'month');
     }
     console.log(`additional month:${neu.format('MM.YYYY')}`);
     months.insert({
@@ -146,14 +147,21 @@ Template.tournamentList.onCreated(function () {
         Tracker.nonreactive(() => {
           exists = integratedTournamentList.findOne(t._id);
         });
-        if (!exists) { integratedTournamentList.insert(_.extend({ fromOfflineStore: true, removeMe: false }, t)); } else { integratedTournamentList.update({ _id: t._id, lastChange: { $lte: t.lastChange } }, _.extend({ fromOfflineStore: true, removeMe: false }, t)); }
+        if (!exists) {
+          integratedTournamentList.insert(_.extend({ fromOfflineStore: true, removeMe: false }, t));
+        } else {
+          integratedTournamentList.update(
+            { _id: t._id, lastChange: { $lte: t.lastChange } },
+            _.extend({ fromOfflineStore: true, removeMe: false }, t)
+          );
+        }
       });
       integratedTournamentList.remove({ fromOfflineStore: true, removeMe: true });
     });
   });
   this.autorun(() => {
     if (this.subscriptionsReady()) {
-      UltiSite.Tournaments.find().forEach(t => integratedTournamentList.upsert(t._id, t));
+      UltiSite.Tournaments.find().forEach((t) => integratedTournamentList.upsert(t._id, t));
     }
   });
 
@@ -174,9 +182,11 @@ Template.tournamentList.onCreated(function () {
           $gte: moment().year(filter[key]).startOf('year').toDate(),
           $lte: moment().year(filter[key]).endOf('year').toDate(),
         };
-      } else if (filter[key] !== 'Alle') { query[filterMap[key]] = { $regex: filter[key], $options: 'i' }; }
+      } else if (filter[key] !== 'Alle') {
+        query[filterMap[key]] = { $regex: filter[key], $options: 'i' };
+      }
     });
-    if (filter.year && (filter.year !== moment().format('YYYY')) && (filter.year !== 'Kommende')) {
+    if (filter.year && filter.year !== moment().format('YYYY') && filter.year !== 'Kommende') {
       console.log('Rebuilding query:', filter);
       this.subscribe('Tournaments', false, query);
       UltiSite.notify('Alte Turniere werden geladen...', 'info');
@@ -191,27 +201,41 @@ Template.tournamentList.helpers({
   filterAsText() {
     const filter = tournamentFilter.get();
     let text = 'Kommende ';
-    if (filter.year !== 'Kommende') { text = `In ${filter.year} stattfindende `; }
-    if (filter.division !== 'Alle') { text += `${filter.division} `; }
+    if (filter.year !== 'Kommende') {
+      text = `In ${filter.year} stattfindende `;
+    }
+    if (filter.division !== 'Alle') {
+      text += `${filter.division} `;
+    }
 
-    if (filter.category !== 'Alle') { text += filter.category + (filter.category.indexOf('urnier') > 0 ? 'e' : ''); } else { text += 'Turniere'; }
-    if (filter.surface !== 'Alle') { text += ` auf ${filter.surface}`; }
-    if (filter.withTeams) { text += ' mit Teams'; }
+    if (filter.category !== 'Alle') {
+      text += filter.category + (filter.category.indexOf('urnier') > 0 ? 'e' : '');
+    } else {
+      text += 'Turniere';
+    }
+    if (filter.surface !== 'Alle') {
+      text += ` auf ${filter.surface}`;
+    }
+    if (filter.withTeams) {
+      text += ' mit Teams';
+    }
     return text;
   },
   showFilter() {
     return Template.instance().showFilter.get();
   },
   newestTournament() {
-    return UltiSite.Tournaments.findOne({
-      date: {
-        $gte: moment().toDate(),
+    return UltiSite.Tournaments.findOne(
+      {
+        date: {
+          $gte: moment().toDate(),
+        },
+        lastChange: {
+          $gte: moment().subtract(1, 'day').toDate(),
+        },
       },
-      lastChange: {
-        $gte: moment().subtract(1, 'day').toDate(),
-      },
-
-    }, { limit: 1, sort: { lastChange: -1 } });
+      { limit: 1, sort: { lastChange: -1 } }
+    );
   },
   hasPast() {
     return moment(this.date).isBefore(moment().subtract(this.numDays));
@@ -219,8 +243,8 @@ Template.tournamentList.helpers({
   plannedTournaments() {
     const cursor = integratedTournamentList.find(tournamentQuery.get());
     Template.instance().topListEntries.set(Math.max(cursor.count(), 10));
-    const grouped = _.groupBy(_.sortBy(cursor.fetch(), 'date'), t => moment(t.date).format('MMMM YYYY'));
-    return Object.keys(grouped).map(key => ({
+    const grouped = _.groupBy(_.sortBy(cursor.fetch(), 'date'), (t) => moment(t.date).format('MMMM YYYY'));
+    return Object.keys(grouped).map((key) => ({
       _id: key,
       header: key,
       elements: grouped[key],
@@ -229,7 +253,8 @@ Template.tournamentList.helpers({
   playedTournaments() {
     if (Template.instance().topListEntries.get()) {
       return integratedTournamentList.find({
-        date: { $lte: new Date() }, 'teams.state': 'dabei',
+        date: { $lte: new Date() },
+        'teams.state': 'dabei',
       });
     }
     return [];
@@ -282,14 +307,15 @@ Template.tournamentFilter.helpers({
     return tournamentFilter.get();
   },
   tournamentYears() {
-    return [moment().format('YYYY'),
-    moment().subtract(1, 'year').format('YYYY'),
-    moment().subtract(2, 'year').format('YYYY'),
-    moment().subtract(3, 'year').format('YYYY'),
-    moment().subtract(4, 'year').format('YYYY'),
-    moment().subtract(5, 'year').format('YYYY'),
-    moment().subtract(6, 'year').format('YYYY'),
-    moment().subtract(7, 'year').format('YYYY'),
+    return [
+      moment().format('YYYY'),
+      moment().subtract(1, 'year').format('YYYY'),
+      moment().subtract(2, 'year').format('YYYY'),
+      moment().subtract(3, 'year').format('YYYY'),
+      moment().subtract(4, 'year').format('YYYY'),
+      moment().subtract(5, 'year').format('YYYY'),
+      moment().subtract(6, 'year').format('YYYY'),
+      moment().subtract(7, 'year').format('YYYY'),
     ];
   },
 });
@@ -299,13 +325,21 @@ const helpers = {
     return Template.instance().data._id;
   },
   over() {
-    if (!Template.instance().data) { return false; }
-    if (moment(Template.instance().data.date).isBefore(moment(), 'day')) { return true; }
+    if (!Template.instance().data) {
+      return false;
+    }
+    if (moment(Template.instance().data.date).isBefore(moment(), 'day')) {
+      return true;
+    }
     return false;
   },
   dateState() {
-    if (moment(Template.instance().data.date).clone().add(Template.instance().data.days, 'days').isBefore(moment())) { return 'text-muted'; }
-    if (moment(Template.instance().data.date).isAfter(moment())) { return ''; }
+    if (moment(Template.instance().data.date).clone().add(Template.instance().data.days, 'days').isBefore(moment())) {
+      return 'text-muted';
+    }
+    if (moment(Template.instance().data.date).isAfter(moment())) {
+      return '';
+    }
     return 'text-info';
   },
   tags() {
@@ -377,23 +411,34 @@ const helpers = {
     });
   },
   divisionIcon() {
-    if (!this.division) { return 'question'; }
-    if (this.division.indexOf('Damen') >= 0) { return 'venus'; }
-    if (this.division.indexOf('Mixed') >= 0) { return 'venus-mars'; }
-    if (this.division.indexOf('Open') >= 0) { return 'mars'; }
+    if (!this.division) {
+      return 'question';
+    }
+    if (this.division.indexOf('Damen') >= 0) {
+      return 'venus';
+    }
+    if (this.division.indexOf('Mixed') >= 0) {
+      return 'venus-mars';
+    }
+    if (this.division.indexOf('Open') >= 0) {
+      return 'mars';
+    }
     return 'question';
   },
   myTeamState() {
-    return (_.find(this.participants, p => p.user === Meteor.userId()));
+    return _.find(this.participants, (p) => p.user === Meteor.userId());
   },
   teaminfo() {
     const teams = this.teams || [];
 
     return teams.map((team) => {
-      return _.extend({
-        participants: this.participants.filter(p => p.team === team._id),
-        stateColor: UltiSite.stateColor(team.state),
-      }, team);
+      return _.extend(
+        {
+          participants: this.participants.filter((p) => p.team === team._id),
+          stateColor: UltiSite.stateColor(team.state),
+        },
+        team
+      );
     });
   },
 };
@@ -401,16 +446,25 @@ Template.tournamentListItem.helpers(helpers);
 Template.detailedTournamentListItem.helpers(helpers);
 Template.pastTournamentListItem.helpers({
   teamImages() {
-    return (this.teams || []).map(t => t.image).filter(i => !!i);
+    return (this.teams || []).map((t) => t.image).filter((i) => !!i);
   },
   teamNames() {
     let iamIn = false;
-    let names = (this.teams || []).map((team) => {
-      if (!team) { return '-'; }
-      if (team.state !== 'dabei') { return '-'; }
-      iamIn = iamIn || !!_.find(team.participants, p => (p.user === Meteor.userId()) && (p.state === 100));
-      return team.name + (team.results && team.results.placement ? ` machten Platz ${team.results.placement}` : ' waren dabei ');
-    }).filter(x => x !== '-');
+    let names = (this.teams || [])
+      .map((team) => {
+        if (!team) {
+          return '-';
+        }
+        if (team.state !== 'dabei') {
+          return '-';
+        }
+        iamIn = iamIn || !!_.find(team.participants, (p) => p.user === Meteor.userId() && p.state === 100);
+        return (
+          team.name +
+          (team.results && team.results.placement ? ` machten Platz ${team.results.placement}` : ' waren dabei ')
+        );
+      })
+      .filter((x) => x !== '-');
     if (iamIn) {
       names = ['Ich'].concat(names);
     }
