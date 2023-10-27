@@ -1,6 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { moment } from 'meteor/momentjs:moment';
 import { AutoForm } from 'meteor/ultisite:autoform';
+import SimpleSchema from 'simpl-schema';
 
 const activeEntry = new ReactiveVar();
 
@@ -218,6 +219,10 @@ Template.hatParticipant.events({
 });
 
 Template.hatInfos.events({
+  'click .action-draw-teams': function (evt) {
+    evt.preventDefault();
+    UltiSite.showModal('hatDrawTeamsDialog');
+  },
   'keyup .participant-filter': function (evt, tmpl) {
     tmpl.filter.set(tmpl.$(evt.currentTarget).val());
   },
@@ -278,5 +283,19 @@ AutoForm.hooks({
         UltiSite.showModal('hatParticipateDialogError');
       });
     },
+  },
+});
+
+Template.hatDrawTeamsDialog.helpers({
+  schema() {
+    return new SimpleSchema({
+      teams: {
+        type: Number,
+        label: 'Anzahl Teams',
+      },
+    });
+  },
+  drawingParams() {
+    return `&teams=${AutoForm.getFieldValue('teams')}`;
   },
 });

@@ -5,6 +5,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { CronJob } from 'cron';
 import Excel from 'exceljs';
 import { sendHatReminderEmails } from './mails';
+import './teamDrawing';
 
 Meteor.startup(function () {
   UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
@@ -251,7 +252,7 @@ Meteor.publish('hatParticipant', function (accessKey) {
 WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
   const { query } = Npm.require('url').parse(req.url, true);
   const user = Meteor.users.findOne({ 'profile.downloadToken': query.downloadToken });
-  if (!user) {
+  if (!user || !Roles.userIsInRole(user._id, ['hatAdmin'])) {
     res.writeHead(403);
     res.end();
     return;

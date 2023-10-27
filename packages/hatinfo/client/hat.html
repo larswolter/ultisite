@@ -48,6 +48,9 @@
                         <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-light pull-right" title="Export" type="button">
                             <span class="fa fa-download"></span> Exportieren
                         </a>
+                        <a href="#" class="btn btn-light pull-right action-draw-teams" title="Export" type="button">
+                            <span class="fa fa-random"></span> Auslosen
+                        </a>
                         <a href="mailto:no-reply@hallunken.de?bcc={{emails}}" class="btn btn-light pull-right" title="Export" type="button">
                             <span class="fa fa-envelope"></span> Mail an alle
                         </a>
@@ -372,6 +375,30 @@
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" aria-label="Ok" class="btn btn-light">Ok</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="hatDrawTeamsDialog">
+    <div class="modal fade" id="hatDrawTeams">
+        <div class="modal-dialog modal-success">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Teams auslosen
+                    </h5>
+                </div>
+                {{#autoForm schema=schema id="hatDrawTeamForm" type="normal"}}
+                    <div class="modal-body">
+                        Auslosung mit den folgenden Daten durchführen.
+                        {{> afQuickFields}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-light">Schließen</button>
+                        <a target="_blank" href="/_hatTeamDrawing?downloadToken={{currentUser.profile.downloadToken}}{{drawingParams}}" class="btn btn-primary">Auslosen</a>
+                    </div>
+                {{/autoForm}}
             </div>
         </div>
     </div>
