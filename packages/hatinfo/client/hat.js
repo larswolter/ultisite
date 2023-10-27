@@ -176,6 +176,11 @@ Template.hatParticipant.helpers({
   fitnessPercent() {
     return Number(this.fitness) * 20;
   },
+  getYears() {
+    if (this.years === undefined) return '';
+    const { options } = UltiSite.HatInfo.schema.mergedSchema().years.autoform;
+    return options().find((o) => Number(o.value) === Number(this.years))?.label;
+  },
   accessKey() {
     return activeEntry.get();
   },
