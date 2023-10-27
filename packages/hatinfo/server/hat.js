@@ -271,7 +271,15 @@ WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
   }));
   UltiSite.HatInfo.HatParticipants.find({
     hatId: UltiSite.settings().hatId || undefined,
-  }).forEach((entry) => sheet.addRow(entry));
+  }).forEach((entry) =>
+    sheet.addRow({
+      ...entry,
+      strength: Number(entry.strength),
+      experience: Number(entry.experience),
+      years: Number(entry.years),
+      fitness: Number(entry.fitness),
+    })
+  );
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader(
     'Content-Disposition',
