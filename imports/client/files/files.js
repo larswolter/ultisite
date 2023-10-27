@@ -1,4 +1,5 @@
-import './fileUpload.js';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
+import './fileUpload';
 import './fileGallery.html';
 import './files.html';
 import './files.scss';
@@ -6,9 +7,9 @@ import './files.scss';
 if (!HTMLCanvasElement.prototype.toBlob) {
   Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
     value(callback, type, quality) {
-      let binStr = atob(this.toDataURL(type, quality).split(',')[1]),
-        len = binStr.length,
-        arr = new Uint8Array(len);
+      const binStr = atob(this.toDataURL(type, quality).split(',')[1]);
+      const len = binStr.length;
+      const arr = new Uint8Array(len);
 
       for (let i = 0; i < len; i++) {
         arr[i] = binStr.charCodeAt(i);
@@ -41,9 +42,17 @@ Template.registerHelper('fileRootFolder', function () {
 
 const getIcon = function () {
   let file = this;
-  if (!file.type && this.file) { file = this.file; }
-  if (!file.type) { return 'fa-question'; }
-  if (file.type.indexOf('image') === 0) { return 'fa-file-image-o'; } else if (file.type.indexOf('video') === 0) { return 'fa-file-video-o'; }
+  if (!file.type && this.file) {
+    file = this.file;
+  }
+  if (!file.type) {
+    return 'fa-question';
+  }
+  if (file.type.indexOf('image') === 0) {
+    return 'fa-file-image-o';
+  } else if (file.type.indexOf('video') === 0) {
+    return 'fa-file-video-o';
+  }
   return 'fa-file-o';
 };
 // FUTURE: add editing capabilities
@@ -57,7 +66,6 @@ Template.editFileDialog.helpers({
   },
 });
 
-
 Template.fileBrowser.onCreated(function () {
   UltiSite.State.set('fileBrowserFolder', UltiSite.settings().rootFolderId);
   UltiSite.State.setDefault('fileBrowserGalleryView', false);
@@ -67,10 +75,9 @@ Template.fileBrowser.onCreated(function () {
     const dataId = Template.currentData().fileBrowserFolder;
     if (dataId) {
       UltiSite.State.set('fileBrowserFolder', dataId);
-    } else
-      if (id) {
-        UltiSite.State.set('fileBrowserFolder', id);
-      }
+    } else if (id) {
+      UltiSite.State.set('fileBrowserFolder', id);
+    }
   });
   this.autorun(() => {
     this.subscribe('Files', UltiSite.State.get('fileBrowserFolder'));
@@ -85,18 +92,22 @@ Template.fileBrowser.onCreated(function () {
     });
     if (readmeFile) {
       HTTP.get(readmeFile.url(), (err, res) => {
-        if (!err) { this.readme.set(res.content); }
+        if (!err) {
+          this.readme.set(res.content);
+        }
       });
-    } else { this.readme.set(undefined); }
+    } else {
+      this.readme.set(undefined);
+    }
   });
 });
 
 Template.fileBrowser.events({
-  'click .toggle-gallery-view': function(e, t) {
+  'click .toggle-gallery-view': function (e, t) {
     e.preventDefault();
     UltiSite.State.set('fileBrowserGalleryView', !UltiSite.State.get('fileBrowserGalleryView'));
   },
-  'click .btn-new-folder': function(e, t) {
+  'click .btn-new-folder': function (e, t) {
     e.preventDefault();
     console.log('Add folder', e);
     UltiSite.Folders.insert({
@@ -115,31 +126,34 @@ Template.fileBrowser.helpers({
     return Template.instance().readme.get();
   },
   curFolder() {
-    return UltiSite.getAnyById(UltiSite.State.get('fileBrowserFolder')) || { _id: UltiSite.State.get('fileBrowserFolder') };
+    return (
+      UltiSite.getAnyById(UltiSite.State.get('fileBrowserFolder')) || { _id: UltiSite.State.get('fileBrowserFolder') }
+    );
   },
   rootFolder() {
     return UltiSite.getAnyById(UltiSite.settings().rootFolderId);
   },
 });
 
-
 Template.fileBrowserItem.events({
-  'click .remove-file': function(e, t) {
+  'click .remove-file': function (e, t) {
     e.preventDefault();
     UltiSite.confirmDialog(`Willst du die Datei ${this.name} wirklich löschen?`, () => {
       Meteor.call('removeFile', this._id);
     });
   },
-  'click .edit-file': function(e) {
+  'click .edit-file': function (e) {
     e.preventDefault();
     currentlyEditedFile.set(this);
     $('#editFileDialog').modal('show');
   },
-  'click .select-file': function(e, t) {
+  'click .select-file': function (e, t) {
     e.preventDefault();
     e.stopPropagation();
     const callback = fileBrowserCallback.get();
-    if (callback) { callback(this); }
+    if (callback) {
+      callback(this);
+    }
   },
 });
 
@@ -160,22 +174,23 @@ Template.fileBrowserDialog.onDestroyed(function () {
 });
 
 Template.fileBrowserDialog.events({
-  'hidden.bs.modal .modal': function(e, t) {
+  'hidden.bs.modal .modal': function (e, t) {
     fileBrowserCallback.set(null);
   },
-  'click .action-switch-source': function(e, t) {
+  'click .action-switch-source': function (e, t) {
     e.preventDefault();
-    if (t.$(e.currentTarget).attr('data-value') !== 'search') { UltiSite.State.set('fileBrowserFolder', t.$(e.currentTarget).attr('data-value')); }
+    if (t.$(e.currentTarget).attr('data-value') !== 'search') {
+      UltiSite.State.set('fileBrowserFolder', t.$(e.currentTarget).attr('data-value'));
+    }
     t.activePane.set(t.$(e.currentTarget).attr('data-value'));
   },
-  'click .action-select-nothing': function(e) {
+  'click .action-select-nothing': function (e) {
     e.preventDefault();
     const callback = fileBrowserCallback.get();
     if (callback) {
       callback(null);
     }
   },
-
 });
 
 Template.fileBrowserDialog.helpers({
@@ -193,21 +208,26 @@ Template.fileBrowserDialog.helpers({
   },
 });
 
-
 const helpers = {
   icon: getIcon,
   folder() {
     return UltiSite.getAnyById(UltiSite.State.get('fileBrowserFolder')) || {};
   },
   files() {
-    return _.sortBy(UltiSite.Images.find({
-      associated: UltiSite.State.get('fileBrowserFolder'),
-    }).fetch().concat(
-      UltiSite.Documents.find({
+    return _.sortBy(
+      UltiSite.Images.find({
         associated: UltiSite.State.get('fileBrowserFolder'),
-      }).fetch()), function (doc) {
-      return doc.created;
-    });
+      })
+        .fetch()
+        .concat(
+          UltiSite.Documents.find({
+            associated: UltiSite.State.get('fileBrowserFolder'),
+          }).fetch()
+        ),
+      function (doc) {
+        return doc.created;
+      }
+    );
   },
   folders() {
     const folders = [];
@@ -217,16 +237,22 @@ const helpers = {
         folders.push({ name: '..', isParent: true, _id: folder.associated[0], type: 'folder' });
       }
     }
-    return folders.concat(UltiSite.Folders.find({
-      associated: UltiSite.State.get('fileBrowserFolder'),
-    }).fetch());
+    return folders.concat(
+      UltiSite.Folders.find({
+        associated: UltiSite.State.get('fileBrowserFolder'),
+      }).fetch()
+    );
   },
   fileActions() {
     const element = UltiSite.getAnyById(this._id);
-    if (!element) { return []; }
+    if (!element) {
+      return [];
+    }
     if (element.type === 'tournament') {
       const tournament = UltiSite.getTournament(element._id);
-      if (!tournament) { return []; }
+      if (!tournament) {
+        return [];
+      }
       const elems = tournament.teams.map(function (elem) {
         return {
           text: `Teamfoto:${elem.name}`,
@@ -245,7 +271,6 @@ const helpers = {
   },
 };
 
-
 Template.fileBrowserList.onCreated(function () {
   console.log('List: onCreated');
   const self = this;
@@ -256,40 +281,46 @@ Template.fileBrowserList.onRendered(function () {
 
 Template.fileBrowserList.helpers(_.extend({}, helpers));
 Template.fileBrowserList.events({
-  'click .folder-link': function(e, t) {
+  'click .folder-link': function (e, t) {
     UltiSite.State.set('fileBrowserFolder', this._id);
     e.preventDefault();
   },
-  'click .remove-folder': function(e, t) {
+  'click .remove-folder': function (e, t) {
     e.preventDefault();
     UltiSite.Folders.remove({
       _id: this._id,
     });
   },
-  'click .rename-folder': function(e, t) {
+  'click .rename-folder': function (e, t) {
     e.preventDefault();
     const input = $(e.currentTarget);
-    UltiSite.Folders.update({
-      _id: this._id,
-    }, {
-      $set: {
+    UltiSite.Folders.update(
+      {
+        _id: this._id,
+      },
+      {
+        $set: {
           rename: true,
         },
-    });
+      }
+    );
   },
-  'change .folder-name': function(e, t) {
+  'change .folder-name': function (e, t) {
     e.preventDefault();
     const input = $(e.currentTarget);
-    UltiSite.Folders.update({
-      _id: input.data('id'),
-    }, {
-      $set: {
+    UltiSite.Folders.update(
+      {
+        _id: input.data('id'),
+      },
+      {
+        $set: {
           name: input.val(),
         },
-      $unset: {
+        $unset: {
           rename: 1,
         },
-    });
+      }
+    );
   },
 });
 
@@ -300,14 +331,14 @@ Template.fileBrowserGallery.onCreated(function () {
 
 Template.fileBrowserGallery.helpers(helpers);
 Template.fileBrowserGallery.events({
-  'click .action-open-folder': function(e, t) {
+  'click .action-open-folder': function (e, t) {
     e.preventDefault();
     UltiSite.State.set('fileBrowserFolder', this._id);
   },
 });
 
 Template.fileBrowserGalleryItem.events({
-  'click .file-browser-gallery-item .image': function() {
+  'click .file-browser-gallery-item .image': function () {
     try {
       if (Template.instance().$('.file-browser-item').parent('#fileBrowserDialog')) {
         const callback = fileBrowserCallback.get();
@@ -316,14 +347,14 @@ Template.fileBrowserGalleryItem.events({
           return;
         }
       }
-    } catch (err) { }
+    } catch (err) {}
 
     FlowRouter.go('image', {
       _id: this.file._id,
       associated: this.associatedId,
     });
   },
-  'click .file-browser-gallery-item .icon-image': function() {
+  'click .file-browser-gallery-item .icon-image': function () {
     try {
       if (Template.instance().$('.file-browser-item').parent('#fileBrowserDialog')) {
         const callback = fileBrowserCallback.get();
@@ -332,27 +363,29 @@ Template.fileBrowserGalleryItem.events({
           return;
         }
       }
-    } catch (err) { }
+    } catch (err) {}
     window.open(this.file.url(), '_blank');
   },
-  'click .remove-file': function(e, t) {
+  'click .remove-file': function (e, t) {
     e.preventDefault();
     UltiSite.confirmDialog(`Willst du die Datei ${this.file.name} wirklich löschen?`, () => {
       Meteor.call('removeFile', this.file._id);
     });
   },
-  'click .edit-file': function(e) {
+  'click .edit-file': function (e) {
     e.preventDefault();
     currentlyEditedFile.set(this.file);
     $('#editFileDialog').modal('show');
   },
-  'click .select-file': function(e, t) {
+  'click .select-file': function (e, t) {
     e.preventDefault();
     e.stopPropagation();
     const callback = fileBrowserCallback.get();
-    if (callback) { callback(this.file); }
+    if (callback) {
+      callback(this.file);
+    }
   },
-  'click .custom-action': function(e, t) {
+  'click .custom-action': function (e, t) {
     e.preventDefault();
     // e.stopPropagation();
     console.log('Custom:', this);
@@ -371,4 +404,3 @@ Template.folderTreeItem.helpers({
     });
   },
 });
-

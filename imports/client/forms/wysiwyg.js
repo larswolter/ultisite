@@ -1,4 +1,5 @@
 import { ReactiveVar } from 'meteor/reactive-var';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 import './wysiwyg.scss';
 import './wysiwyg.html';
@@ -81,7 +82,7 @@ Template.ultisiteWysiwyg.onRendered(function () {
     }
     this.state.set(state);
   };
-  document.addEventListener("selectionchange", this.selectHandler);
+  document.addEventListener('selectionchange', this.selectHandler);
 
   this.scrollHandler = function () {
     if (this.$('.ultisite-wysiwyg').offset().top - $(window).scrollTop() < 50) {
@@ -103,62 +104,64 @@ Template.ultisiteWysiwyg.helpers({
 });
 
 Template.ultisiteWysiwyg.events({
-  'click .bold'(evt, tmpl) {
+  'click .bold': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.bold();
     tmpl.syncField();
   },
-  'click .italic'(evt, tmpl) {
+  'click .italic': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.italic();
     tmpl.syncField();
   },
-  'click .underline'(evt, tmpl) {
+  'click .underline': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.underline();
     tmpl.syncField();
   },
-  'click .strikethrough'(evt, tmpl) {
+  'click .strikethrough': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.strikethrough();
     tmpl.syncField();
   },
-  'click .list-ul'(evt, tmpl) {
+  'click .list-ul': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.insertList(false);
     tmpl.syncField();
   },
-  'click .list-ol'(evt, tmpl) {
+  'click .list-ol': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.insertList(true);
     tmpl.syncField();
   },
-  'click .remove-format'(evt, tmpl) {
+  'click .remove-format': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.removeFormat();
     tmpl.syncField();
   },
-  'click .alignment a'(evt, tmpl) {
+  'click .alignment a': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.align(evt.currentTarget.className);
     tmpl.syncField();
   },
-  'click .add-image'(evt, tmpl) {
+  'click .add-image': function (evt, tmpl) {
     evt.preventDefault();
-    import('/imports/client/files/files.js').then(() => {
+    import('../../../../../../../imports/client/files/files.js').then(() => {
       UltiSite.fileBrowserShowDialog(tmpl.data.source._id, function (fileObj) {
         if (fileObj) {
-          const path = FlowRouter.path("image", {
+          const path = FlowRouter.path('image', {
             _id: fileObj._id,
           });
-          tmpl.textEditor.insertHTML(`<div class=editable-image><a href="${path}"><img src="${fileObj.url(120)}"></a></div>`);
+          tmpl.textEditor.insertHTML(
+            `<div class=editable-image><a href="${path}"><img src="${fileObj.url(120)}"></a></div>`
+          );
           console.log('inserted html');
         }
         UltiSite.fileBrowserHideDialog();
       });
     });
   },
-  'click .rich-text-input a'(evt, tmpl) {
+  'click .rich-text-input a': function (evt, tmpl) {
     evt.preventDefault();
     evt.stopPropagation();
     const linkElem = evt.currentTarget;
@@ -179,7 +182,7 @@ Template.ultisiteWysiwyg.events({
       });
     }
   },
-  'click .add-video'(evt, tmpl) {
+  'click .add-video': function (evt, tmpl) {
     evt.preventDefault();
     UltiSite.getTextDialog({ text: 'Gib eine Video URL ein', header: 'Video einfügen' }, function (text) {
       if (text) {
@@ -187,7 +190,7 @@ Template.ultisiteWysiwyg.events({
       }
     });
   },
-  'click .add-link'(evt, tmpl) {
+  'click .add-link': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.textEditor.openPopup();
     UltiSite.getTextDialog({ text: 'https://', header: 'Link einfügen' }, function (text) {
@@ -198,13 +201,13 @@ Template.ultisiteWysiwyg.events({
       }
     });
   },
-  'click .forecolor'(evt, tmpl) {
+  'click .forecolor': function (evt, tmpl) {
     evt.preventDefault();
     const color = tmpl.$(evt.currentTarget).attr('data-color');
     tmpl.textEditor.forecolor(color);
     tmpl.syncField();
   },
-  'click .headings a'(evt, tmpl) {
+  'click .headings a': function (evt, tmpl) {
     evt.preventDefault();
     const heading = tmpl.$(evt.currentTarget).attr('class');
     tmpl.textEditor.format(heading);
@@ -216,7 +219,7 @@ Template.editImageDialog.onCreated(function () {
   this.imgInfo = new ReactiveVar({});
   this.elem = new ReactiveVar();
   this.autorun(() => {
-    const elem = Template.currentData().elem;
+    const { elem } = Template.currentData();
     this.elem.set(elem);
     const imgLink = elem.children[0].children[0].src.split(/[\?\&]/);
     this.imgInfo.set({
@@ -237,31 +240,31 @@ Template.editImageDialog.helpers({
 });
 
 Template.editImageDialog.events({
-  'click .action-set-size'(evt, tmpl) {
+  'click .action-set-size': function (evt, tmpl) {
     evt.preventDefault();
     const cur = tmpl.imgInfo.get();
     cur.size = this;
     tmpl.imgInfo.set(cur);
   },
-  'click .action-set-left'(evt, tmpl) {
+  'click .action-set-left': function (evt, tmpl) {
     evt.preventDefault();
     const cur = tmpl.imgInfo.get();
     cur.pos = 'pull-left';
     tmpl.imgInfo.set(cur);
   },
-  'click .action-set-line'(evt, tmpl) {
+  'click .action-set-line': function (evt, tmpl) {
     evt.preventDefault();
     const cur = tmpl.imgInfo.get();
     cur.pos = '';
     tmpl.imgInfo.set(cur);
   },
-  'click .action-set-right'(evt, tmpl) {
+  'click .action-set-right': function (evt, tmpl) {
     evt.preventDefault();
     const cur = tmpl.imgInfo.get();
     cur.pos = 'pull-right';
     tmpl.imgInfo.set(cur);
   },
-  'click .action-apply'(evt, tmpl) {
+  'click .action-apply': function (evt, tmpl) {
     evt.preventDefault();
     const cur = tmpl.imgInfo.get();
     tmpl.elem.get().className = `editable-image ${cur.pos}`;
@@ -269,7 +272,7 @@ Template.editImageDialog.events({
     Template.currentData().callback();
     UltiSite.hideModal();
   },
-  'click .action-remove'(evt, tmpl) {
+  'click .action-remove': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.elem.get().parentNode.removeChild(tmpl.elem.get());
     Template.currentData().callback();

@@ -1,4 +1,5 @@
 /*
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import ol from 'openlayers';
 
 Template.tournamentMap.onCreated(function () {
