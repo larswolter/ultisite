@@ -18,15 +18,52 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   const numTeams = Number(query.teams);
   const teams = [];
   const participants = UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }).fetch();
+  const partStrength = (p) => {
+    return Number(p.strength) + Number(p.years) + Number(p.experience) + Number(p.fitness);
+  };
+  // separate by girls and non girls
+  let girls = participants
+    .filter((p) => p.gender === 'weiblich')
+    .sort((b, a) => {
+      return partStrength(a) - partStrength(b);
+    });
+  let guys = participants
+    .filter((p) => p.gender !== 'weiblich')
+    .sort((b, a) => {
+      return partStrength(a) - partStrength(b);
+    });
+  console.log(`separeted players ${girls.length} girls and ${guys.length} guys`);
+  // add storngest girls
+  let strengthList = girls.slice(0, numTeams);
+  girls = girls.slice(numTeams);
+  // add weakest girls
+  strengthList = [...strengthList, ...girls.slice(-numTeams)];
+  girls = girls.slice(0, -numTeams);
+  // add strongest non-girls
+  strengthList = [...strengthList, ...guys.slice(0, numTeams)];
+  guys = guys.slice(numTeams);
+  // add weakest non-girls
+  strengthList = [...strengthList, ...guys.slice(-numTeams)];
+  guys = guys.slice(0, -numTeams);
+
+  strengthList = [...strengthList, ...guys, ...girls].reverse();
   const playersPerTeam = Math.ceil(participants.length / numTeams);
-  console.log(`Drawing ${numTeams} teams with ${playersPerTeam} from ${participants.length} players`);
+  console.log(`Drawing ${numTeams} teams with ${playersPerTeam} from ${strengthList.length} players`);
+  // create teams
   for (let t = 0; t < numTeams; t += 1) {
-    const players = [];
-    for (let p = 0; p < playersPerTeam; p += 1) {
-      const player = participants.pop();
-      player && players.push(`${player.name} (${player.hometeam})`);
-    }
-    teams.push({ name: `Team ${t}`, players });
+    teams.push({ name: `Team ${t}`, players: [] });
+  }
+  const total = strengthList.length;
+
+  // distribute all players across the teams
+  for (let p = 0; p < total; p += 1) {
+    const player = strengthList.pop();
+    player &&
+      teams[p % numTeams].players.push(
+        `[${partStrength(player).toLocaleString('de', { minimumSignificantDigits: 2 })}] - ${player.name} (${
+          player.hometeam
+        })`
+      );
   }
 
   const workbook = new Excel.Workbook();
