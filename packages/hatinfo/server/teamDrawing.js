@@ -4,6 +4,8 @@ import { Random } from 'meteor/random';
 import { Roles } from 'meteor/alanning:roles';
 import { CronJob } from 'cron';
 import Excel from 'exceljs';
+import { hatSort } from '../utils';
+import { sendHatPlaylistEmails } from './mails';
 
 WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   const { query } = Npm.require('url').parse(req.url, true);
@@ -17,7 +19,10 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   }
   const numTeams = Number(query.teams);
   const teams = [];
-  const participants = UltiSite.HatInfo.HatParticipants.find({ confirmed: true, payed: { $lte: new Date() } }).fetch();
+  const participants = UltiSite.HatInfo.HatParticipants.find(
+    { confirmed: true, payed: { $lte: new Date() } },
+    { sort: hatSort(), limit: Number(UltiSite.settings().hatNumPlayers) }
+  ).fetch();
   const partStrength = (p) => {
     return Number(p.strength) + Number(p.years) + Number(p.experience) + Number(p.fitness);
   };
@@ -37,13 +42,13 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   let strengthList = girls.slice(0, numTeams);
   girls = girls.slice(numTeams);
   // add weakest girls
-  strengthList = [...strengthList, ...girls.slice(-numTeams)];
+  strengthList = [...strengthList, ...girls.slice(-numTeams).reverse()];
   girls = girls.slice(0, -numTeams);
   // add strongest non-girls
   strengthList = [...strengthList, ...guys.slice(0, numTeams)];
   guys = guys.slice(numTeams);
   // add weakest non-girls
-  strengthList = [...strengthList, ...guys.slice(-numTeams)];
+  strengthList = [...strengthList, ...guys.slice(-numTeams).reverse()];
   guys = guys.slice(0, -numTeams);
 
   strengthList = [...strengthList, ...guys, ...girls].reverse();
@@ -58,12 +63,7 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   // distribute all players across the teams
   for (let p = 0; p < total; p += 1) {
     const player = strengthList.pop();
-    player &&
-      teams[p % numTeams].players.push(
-        `[${partStrength(player).toLocaleString('de', { minimumSignificantDigits: 2 })}] - ${player.name} (${
-          player.hometeam
-        })`
-      );
+    player && teams[p % numTeams].players.push([`${player.name} (${player.hometeam})`, partStrength(player)]);
   }
 
   const workbook = new Excel.Workbook();
@@ -73,13 +73,48 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   workbook.modified = new Date();
 
   const sheet = workbook.addWorksheet('Teams', { views: [{ xSplit: 1, ySplit: 1 }] });
-  sheet.columns = teams.map((team, idx) => ({
-    header: team.name,
-    key: idx,
-    width: 60,
-  }));
-  for (let p = 0; p < playersPerTeam; p += 1) {
-    sheet.addRow(teams.map((t) => t.players[p] || '-'));
+
+  sheet.columns = teams
+    .map((team, idx) => [
+      {
+        header: team.name,
+        style: {
+          alignment: { vertical: 'middle', horizontal: 'center' },
+          border: {
+            left: { style: 'thick', color: { argb: 'FF000000' } },
+          },
+        },
+        key: idx,
+        width: 60,
+      },
+      {
+        header: {
+          formula: `=SUM(${String.fromCharCode([idx * 2 + 1 + 'A'.charCodeAt(0)])}2:${String.fromCharCode([
+            idx * 2 + 1 + 'A'.charCodeAt(0),
+          ])}100)`,
+          result: team.players.reduce((sum, cur) => cur[1] + sum, 0),
+        },
+        style: {
+          alignment: { vertical: 'middle', horizontal: 'center' },
+          border: {
+            right: { style: 'thick', color: { argb: 'FF000000' } },
+          },
+        },
+        key: idx + '-',
+        width: 10,
+      },
+    ])
+    .flat();
+  sheet.getRow(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'FFAAAAAA' },
+  };
+  sheet.getRow(1).border = { bottom: { style: 'double', color: { argb: 'FF000000' } } };
+  sheet.getRow(1).height = 15;
+
+  for (let p = 0; p < playersPerTeam + 1; p += 1) {
+    sheet.addRow(teams.map((t) => t.players[p] || ['-', 0]).flat());
   }
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader(

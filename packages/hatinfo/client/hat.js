@@ -2,6 +2,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { moment } from 'meteor/momentjs:moment';
 import { AutoForm } from 'meteor/ultisite:autoform';
 import SimpleSchema from 'simpl-schema';
+import { hatSort } from '../utils';
 
 const activeEntry = new ReactiveVar();
 
@@ -59,14 +60,6 @@ Template.hatInfos.onCreated(function () {
     this.subscribe('hatParticipants', this.limit.get(), this.filter.get());
   });
 });
-function hatSort() {
-  const sort = {};
-  if (UltiSite.settings().hatSort) {
-    sort[UltiSite.settings().hatSort] = 1;
-  }
-  sort.createdAt = 1;
-  return sort;
-}
 
 Template.hatInfos.helpers({
   allParticipants() {

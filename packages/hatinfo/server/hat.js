@@ -6,6 +6,7 @@ import { CronJob } from 'cron';
 import Excel from 'exceljs';
 import { sendHatReminderEmails } from './mails';
 import './teamDrawing';
+import { hatSort } from '../utils';
 
 Meteor.startup(function () {
   UltiSite.HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
@@ -211,11 +212,7 @@ Meteor.methods({
 });
 
 Meteor.publish('hatParticipants', function () {
-  const sort = {};
-  if (UltiSite.settings().hatSort) {
-    sort[UltiSite.settings().hatSort] = 1;
-  }
-  sort.createdAt = 1;
+  const sort = hatSort();
   const filter = {
     hatId: UltiSite.settings().hatId || undefined,
   };
