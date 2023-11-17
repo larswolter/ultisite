@@ -38,7 +38,7 @@
     "popper.js": "^1.16.1",
     "quoted-printable": "^1.0.0",
     "sanitize-html": "^2.10.0",
-    "sharp": "^0.31.3",
+    "sharp": "^0.32.6",
     "simpl-schema": "^1.13.1",
     "workbox-window": "^6.6.0",
     "wysiwyg.js": "^1.0.0"
