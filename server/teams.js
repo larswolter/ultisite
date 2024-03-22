@@ -1,5 +1,4 @@
 import { moment } from 'meteor/momentjs:moment';
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 Meteor.methods({
   teamRemove(teamId) {
@@ -140,7 +139,7 @@ Meteor.methods({
           formatedDate: moment(tournament.date).format('DD.MM.YYYY'),
           team,
           participants: UltiSite.participantList(team._id),
-          tournamentUrl: FlowRouter.url('tournament', { _id: tournament._id }),
+          tournamentUrl: getClientUrl('tournament', { _id: tournament._id }),
         })
       );
       UltiSite.addEvent({

@@ -2,7 +2,16 @@ import { onPageLoad } from 'meteor/server-render';
 import handlebars from 'handlebars';
 
 onPageLoad((sink) => {
-  sink.appendToHead(`<style type="text/css">@media(min-width: 768px) {#serverRendered .page-content {  padding-top: ${Number(UltiSite.settings().titleImageHeight) + 90}px; } }</style>`);
+  sink.appendToHead(`  <title>Ultisite</title>
+  <meta charset="utf-8"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+  <meta
+      name="viewport"
+      content="width=device-width, height=device-height, viewport-fit=cover, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+  />
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+`);
 
   const wiki = UltiSite.WikiPages.findOne(UltiSite.settings().wikiStart);
   const layout = handlebars.compile(Assets.getText('mail-templates/static-layout.html'));
@@ -11,5 +20,5 @@ onPageLoad((sink) => {
     content: wiki && wiki.content,
   };
 
-  sink.appendToBody(layout(context));
+  sink.appendToBody('<div id="react-target"></div>');
 });

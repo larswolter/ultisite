@@ -1,5 +1,4 @@
 import { moment } from 'meteor/momentjs:moment';
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { CronJob } from 'cron';
 
 Accounts.onLogin(function (attempt) {
@@ -31,7 +30,7 @@ Meteor.startup(function () {
       },
       limit: limitCount,
     }).forEach(function (event) {
-      event.url = FlowRouter.url(event.route, { _id: event.groupBy });
+      event.url = getClientUrl(event.route, { _id: event.groupBy });
       event.detail.timeFormatted = moment(event.detail.time).format('DD.MM. HH:mm');
       if (events[event.groupBy]) {
         events[event.groupBy].detail.push(event.detail);
@@ -84,8 +83,8 @@ UltiSite.sendEventDigest = function (user, eventList, force = false) {
     'Tägliche Zusammenfassung',
     UltiSite.renderMailTemplate(layout, template, {
       user,
-      profilUrl: FlowRouter.url('user', { _id: user._id }),
-      tournamentUrl: FlowRouter.url('tournaments', {}),
+      profilUrl: getClientUrl('user', { _id: user._id }),
+      tournamentUrl: getClientUrl('tournaments', {}),
       events: eventList,
       tournaments,
     })
@@ -102,7 +101,7 @@ const sendEvent = function (user, event) {
     event.name,
     UltiSite.renderMailTemplate(layout, template, {
       user,
-      profilUrl: FlowRouter.url('user', { _id: user._id }),
+      profilUrl: getClientUrl('user', { _id: user._id }),
       event,
     })
   );

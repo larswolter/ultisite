@@ -1,6 +1,6 @@
 import { moment } from 'meteor/momentjs:moment';
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { Roles } from 'meteor/alanning:roles';
+import { getClientUrl } from '../../imports/helpers';
 
 UltiSite = {
   offlineCollections: [
@@ -227,7 +227,7 @@ _.extend(UltiSite, {
           if (elem.type === 'team') {
             elem = _.extend(
               {
-                link: FlowRouter.path('tournament', {
+                link: getClientUrl('tournament', {
                   _id: (UltiSite.Tournaments.findOne({ 'team._id': elem._id }) || elem)._id,
                 }),
               },
@@ -236,7 +236,7 @@ _.extend(UltiSite, {
           } else if (elem.type === 'folder') {
             elem = _.extend(
               {
-                link: FlowRouter.path('files', {
+                link: getClientUrl('files', {
                   _id: elem._id,
                 }),
               },

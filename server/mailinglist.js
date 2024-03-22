@@ -4,7 +4,6 @@ import quotedPrintable from 'quoted-printable';
 import sanitizeHtml from 'sanitize-html';
 import { CronJob } from 'cron';
 import { moment } from 'meteor/momentjs:moment';
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 Meteor.startup(function () {
   const job = new CronJob(
@@ -247,9 +246,9 @@ const sendMailinglistArticle = function (user, blogId, mailinglist) {
     blog.title,
     UltiSite.renderMailTemplate(layout, template, {
       user,
-      profilUrl: FlowRouter.url('user', { _id: user._id }),
+      profilUrl: getClientUrl('user', { _id: user._id }),
       mailinglist,
-      url: FlowRouter.url('blog', { _id: blog._id }),
+      url: getClientUrl('blog', { _id: blog._id }),
       title: blog.title,
       content: sanitizeHtml(blog.content),
       email: author.emails[0].address,

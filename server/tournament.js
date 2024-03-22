@@ -1,5 +1,4 @@
 import { moment } from 'meteor/momentjs:moment';
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { CronJob } from 'cron';
 
 UltiSite.Tournaments.before.update(function (userId, doc, fieldNames, modifier, options) {
@@ -31,7 +30,7 @@ UltiSite.getTournamentsStates = function (userId) {
       .forEach((part) => {
         const team = _.find(tournament.teams, (t) => t._id === part.team);
         teams.push({
-          url: FlowRouter.url('tournament', { _id: tournament._id }),
+          url: getClientUrl('tournament', { _id: tournament._id }),
           name: tournament.name,
           date: moment(tournament.date).format('DD.MM.'),
           city: tournament.address && tournament.address.city,

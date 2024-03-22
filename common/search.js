@@ -1,6 +1,7 @@
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
-
 // generate search filter
+
+import { getClientUrl } from '../imports/helpers';
+
 // (term1 in field1 or term1 in field2) and (term2 in field1 or term2 in field2)
 function getSearchFilter(term, fields) {
   const search = {
@@ -50,7 +51,7 @@ Meteor.startup(function () {
               isImage: false,
               id: elem._id,
               _id: elem._id,
-              link: FlowRouter.path('tournament', {
+              link: getClientUrl('tournament', {
                 _id: elem._id,
               }),
             };
@@ -69,7 +70,7 @@ Meteor.startup(function () {
               isImage: true,
               id: elem._id,
               _id: elem._id,
-              link: FlowRouter.path('image', {
+              link: getClientUrl('image', {
                 _id: elem._id,
               }),
             };
@@ -103,7 +104,7 @@ Meteor.startup(function () {
               isImage: false,
               id: elem._id,
               _id: elem._id,
-              link: FlowRouter.path('wikipage', {
+              link: getClientUrl('wikipage', {
                 name: elem._id,
               }),
             };
@@ -121,7 +122,7 @@ Meteor.startup(function () {
               isImage: false,
               id: elem._id,
               _id: elem._id,
-              link: FlowRouter.path('blog', {
+              link: getClientUrl('blog', {
                 title: elem.title,
               }),
             };
@@ -144,7 +145,7 @@ Meteor.startup(function () {
                 icon: 'fa-user',
                 id: elem._id,
                 _id: elem._id,
-                link: FlowRouter.path('user', {
+                link: getClientUrl('user', {
                   _id: elem._id,
                 }),
               };

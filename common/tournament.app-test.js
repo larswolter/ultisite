@@ -6,7 +6,6 @@ import assert from 'assert';
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker';
 import { DDP } from 'meteor/ddp-client';
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { Promise } from 'meteor/promise';
 import denodeify from 'denodeify';
 
