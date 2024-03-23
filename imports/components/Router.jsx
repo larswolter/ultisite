@@ -1,13 +1,24 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './Layout.jsx';
+import Dashboard from './Dashboard.jsx';
+import Practices from './Practices.jsx';
+import Login from './Login.jsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
       <Layout>
-        <div>Aktuelles</div>
+        <Dashboard />
+      </Layout>
+    ),
+  },
+  {
+    path: '/anmelden',
+    element: (
+      <Layout>
+        <Login />
       </Layout>
     ),
   },
@@ -23,7 +34,7 @@ const router = createBrowserRouter([
     path: '/training',
     element: (
       <Layout>
-        <div>Training</div>
+        <Practices />
       </Layout>
     ),
   },
