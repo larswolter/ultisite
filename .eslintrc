@@ -4,20 +4,24 @@
     "prettier"
   ],
   "plugins": [
+    "react",
+    "meteor",
     "react-hooks"
   ],
   "env": {
     "meteor": true
   },
   "rules": {
+    "unused-imports/no-unused-imports": "warn",
     "import/no-unresolved": "error",
+    "no-unused-vars": "warn",
     "prefer-const": "warn",
     "no-shadow": "warn",
     "no-var": "warn",
     "object-shorthand": "warn",
     "react/no-unused-prop-types": "warn",
     "react/no-unused-state": "warn",
-    "react/prop-types": "warn",
+    "react/prop-types": "off",
     "react/jsx-key": "warn",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  } from 'react';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Box from '@mui/material/Box';
@@ -6,20 +6,16 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import HistoryIcon from '@mui/icons-material/ShowChart';
 import CompareIcon from '@mui/icons-material/StackedLineChart';
-import Router from './Router.jsx';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useMediaQuery, Tabs, Tab } from '@mui/material';
 import { useAuth } from './Authenticator.jsx';
+import ErrorBoundary from './ErrorBoundary.jsx';
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -56,6 +52,8 @@ const Layout = ({ children }) => {
           {!sm ? (
             <Tabs
               value={location.pathname}
+              indicatorColor="default"
+              textColor="inherit"
               onChange={(event, newValue) => {
                 navigate(newValue);
               }}>
@@ -66,7 +64,7 @@ const Layout = ({ children }) => {
                   <Tab key="docs" value="/dokumente" label="Dokumente" />,
                 ]
               ) : (
-                <Tab value="/anmelden" label="Anmelden" />
+                <Tab value="/anmelden" label="Anmelden" sx={{ color: 'primary.contrastText' }} />
               )}
             </Tabs>
           ) : null}
@@ -101,9 +99,9 @@ const Layout = ({ children }) => {
             </div>
           ) : null}
         </Toolbar>
-      </AppBar>{' '}
+      </AppBar>
       <Box flexBasis="100%" overflow="auto" padding={2}>
-        {children}
+        <ErrorBoundary>{children}</ErrorBoundary>
       </Box>
       {sm ? (
         <BottomNavigation

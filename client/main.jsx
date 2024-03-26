@@ -9,7 +9,7 @@ import App from '../imports/components/App.jsx';
 const AppShell = () => {
   const theme = createTheme({
     palette: {
-      mode: 'dark',
+      //mode: 'dark',
     },
   });
   return (

@@ -34,3 +34,4 @@ xolvio:cleaner
 underscore@1.0.13
 server-render@0.4.1
 react-meteor-data       # React higher-order component for reactively tracking Meteor data
+hot-module-replacement
