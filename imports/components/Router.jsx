@@ -4,6 +4,8 @@ import Layout from './Layout.jsx';
 import Dashboard from './Dashboard.jsx';
 import Practices from './Practices.jsx';
 import Login from './Login.jsx';
+import WikiPage from './WikiPage.jsx';
+import Dokumente from './Dokumente.jsx';
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,30 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <Practices />
+      </Layout>
+    ),
+  },
+  {
+    path: '/dokumente',
+    element: (
+      <Layout>
+        <Dokumente />
+      </Layout>
+    ),
+  },
+  {
+    path: '/wasistultimate',
+    element: (
+      <Layout>
+        <WikiPage name="WasIstUltimateFrisbee" />
+      </Layout>
+    ),
+  },
+  {
+    path: '/infos',
+    element: (
+      <Layout>
+        <WikiPage name="Kommunikation" />
       </Layout>
     ),
   },

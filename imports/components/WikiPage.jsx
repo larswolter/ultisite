@@ -28,7 +28,7 @@ const WikiPage = ({ name }) => {
   const [edit, setEdit] = useState(false);
   const { page, isLoading } = useTracker(() => {
     const sub = Meteor.subscribe('WikiPage', name);
-    return { page: UltiSite.WikiPages.findOne({ name }), isLoading: !sub.ready() };
+    return { page: UltiSite.WikiPages.findOne({ name }) || {}, isLoading: !sub.ready() };
   });
   const rteRef = useRef(null);
   return edit ? (
