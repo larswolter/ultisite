@@ -1,16 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import HistoryIcon from '@mui/icons-material/ShowChart';
-import CompareIcon from '@mui/icons-material/StackedLineChart';
 import Router from './Router.jsx';
-import { useHref } from 'react-router-dom';
-import { Link } from '@mui/material';
 
 const App = () => {
-  const [view, setView] = useState('Dashboard');
   return (
     <Box
       sx={{

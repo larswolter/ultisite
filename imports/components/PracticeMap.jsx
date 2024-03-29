@@ -27,6 +27,7 @@ const PracticeMap = ({ location: { geocoords } }) => {
         view: new View({ center: coordinates, zoom: 16 }),
       })
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     if (map && mapRef.current) {

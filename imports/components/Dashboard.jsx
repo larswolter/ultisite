@@ -1,4 +1,4 @@
-import React, {  } from 'react';
+import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
 import Card from '@mui/material/Card';
@@ -10,11 +10,12 @@ import Typography from '@mui/material/Typography';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import UltiSite from '../Ultisite';
 import Practices from './Practices.jsx';
-import { CircularProgress } from '@mui/material';
+import { Skeleton } from '@mui/material';
+import WikiPage from './WikiPage.jsx';
 
 window.history.replaceState({}, 'Wetter', window.location.toString().split('?')[0]);
 
-const Dashboard = ({ children }) => {
+const Dashboard = () => {
   const { blogs, isLoading } = useTracker(() => {
     const handler = Meteor.subscribe('BlogsStart');
     const handler2 = Meteor.subscribe('Blogs', 3);
@@ -27,34 +28,54 @@ const Dashboard = ({ children }) => {
   });
   console.log(blogs, isLoading);
   return (
-    <Box display="flex" flexDirection="row" gap={1} width="100%">
-      <Box display="flex" flexDirection="column" gap={1}>
+    <Box display="flex" flexDirection="row" gap={2} width="100%">
+      <Box display="flex" flexDirection="column" gap={1} flex={1}>
+        <WikiPage name="Startseite" />
         <Typography variant="h5">Aktuelle Infos</Typography>
         {isLoading ? (
-          <CircularProgress />
-        ) : (
-          blogs.map((blog) => (
-            <Card sx={{}} key={blog._id}>
-              <CardHeader
-                action={
-                  <IconButton aria-label="settings">
-                    <MoreVertIcon />
-                  </IconButton>
-                }
-                title={blog.title}
-                subheader={blog.date.toLocaleString('de')}
-              />
-              <CardContent>
-                <Typography variant="body2" color="text.secondary">
-                  {blog.preview}
-                </Typography>
-              </CardContent>
+          <>
+            <Card>
+              <Skeleton variant="text" width="80%" height={32} />
+              <Skeleton variant="text" width="40%" height={24} />
+              <br />
+              <Skeleton variant="text" width="80%" height={24} />
+              <Skeleton variant="text" width="90%" height={24} />
+              <Skeleton variant="text" width="70%" height={24} />
             </Card>
-          ))
+            <Card>
+              <Skeleton variant="text" width="80%" height={32} />
+              <Skeleton variant="text" width="40%" height={24} />
+              <br />
+              <Skeleton variant="text" width="80%" height={24} />
+              <Skeleton variant="text" width="90%" height={24} />
+              <Skeleton variant="text" width="70%" height={24} />
+            </Card>
+          </>
+        ) : (
+          <>
+            {blogs.map((blog) => (
+              <Card sx={{}} key={blog._id}>
+                <CardHeader
+                  action={
+                    <IconButton aria-label="settings">
+                      <MoreVertIcon />
+                    </IconButton>
+                  }
+                  title={blog.title}
+                  subheader={blog.date.toLocaleString('de')}
+                />
+                <CardContent>
+                  <Typography variant="body2" color="text.secondary">
+                    {blog.preview}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ))}
+            {blogs.length === 0 ? <Typography>Keine Einträge vorhanden</Typography> : null}
+          </>
         )}
-        {blogs.length === 0 ? <Typography>Keine Einträge vorhanden</Typography> : null}
       </Box>
-      <Box>
+      <Box display="flex" flexDirection="column" gap={1} minWidth={300}>
         <Typography variant="h5">Trainingszeiten</Typography>
         <Practices currentOnly />
       </Box>

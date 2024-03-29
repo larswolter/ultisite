@@ -13,6 +13,8 @@ import Button from '@mui/material/Button';
 import dayjs from 'dayjs';
 import PracticeMap from './PracticeMap.jsx';
 import MenuButton from './MenuButton.jsx';
+import { Skeleton } from '@mui/material';
+import AdminStuff from './AdminStuff.jsx';
 
 /**
  * Single Practice
@@ -22,8 +24,9 @@ import MenuButton from './MenuButton.jsx';
  */
 const Practice = ({ practice }) => {
   const [edit, setEdit] = useState(false);
-  return edit ? (
-    <Paper sx={{ maxWidth: 600, minWidth: 250, flex: 1, width: '100%' }}>
+
+  return edit && practice ? (
+    <Paper sx={{ maxWidth: 600, minWidth: 300, flex: 1, width: '100%' }}>
       <form
         onSubmit={(evt) => {
           evt.preventDefault();
@@ -84,30 +87,47 @@ const Practice = ({ practice }) => {
       </form>
     </Paper>
   ) : (
-    <Card sx={{ maxWidth: 600, minWidth: 250, flex: 1, width: '100%' }} key={practice._id}>
-      <CardHeader
-        action={
-          <MenuButton>
-            <MenuItem onClick={() => setEdit(true)}>Bearbeiten</MenuItem>
-          </MenuButton>
-        }
-        title={`${dayjs().startOf('week').add(practice.weekday, 'days').format('dddd')}s ${practice.startTime} Uhr `}
-        subheader={`${practice.address.street},${practice.address.plz} ${practice.address.city}`}
-      />
-      <CardMedia component="div" sx={{ height: 200, position: 'relative' }}>
-        <PracticeMap location={practice.address} />
-      </CardMedia>
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          Von {new Date(practice.start).toLocaleDateString()} bis {new Date(practice.end).toLocaleDateString()}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {practice.skillLevel}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {practice.description}
-        </Typography>
-      </CardContent>
+    <Card sx={{ maxWidth: 600, minWidth: 300, flex: 1, width: '100%' }}>
+      {practice ? (
+        <>
+          <CardHeader
+            action={
+              <AdminStuff>
+                <MenuButton>
+                  <MenuItem onClick={() => setEdit(true)}>Bearbeiten</MenuItem>
+                </MenuButton>
+              </AdminStuff>
+            }
+            title={`${dayjs().startOf('week').add(practice.weekday, 'days').format('dddd')}s ${
+              practice.startTime
+            } Uhr `}
+            subheader={`${practice.address.street},${practice.address.plz} ${practice.address.city}`}
+          />
+          <CardMedia component="div" sx={{ height: 200, position: 'relative' }}>
+            <PracticeMap location={practice.address} />
+          </CardMedia>
+          <CardContent>
+            <Typography variant="body2" color="text.secondary">
+              Von {new Date(practice.start).toLocaleDateString()} bis {new Date(practice.end).toLocaleDateString()}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {practice.skillLevel}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {practice.description}
+            </Typography>
+          </CardContent>
+        </>
+      ) : (
+        <Box>
+          <Skeleton variant="text" width="60%" height={32} />
+          <Skeleton variant="text" width="60%" height={24} />
+          <Skeleton variant="rectangular" width="100%" height={200} />
+          <Skeleton variant="text" width="60%" height={24} />
+          <Skeleton variant="text" width="50%" height={24} />
+          <Skeleton variant="text" width="70%" height={24} />
+        </Box>
+      )}
     </Card>
   );
 };
