@@ -12,7 +12,6 @@
     "meteor": true
   },
   "rules": {
-    "unused-imports/no-unused-imports": "warn",
     "import/no-unresolved": "error",
     "no-unused-vars": "warn",
     "prefer-const": "warn",

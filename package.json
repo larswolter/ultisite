@@ -22,6 +22,13 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
+    "@tiptap/core": "^2.2.4",
+    "@tiptap/extension-heading": "^2.2.4",
+    "@tiptap/extension-image": "^2.2.4",
+    "@tiptap/extension-table": "^2.2.4",
+    "@tiptap/pm": "^2.2.4",
+    "@tiptap/react": "^2.2.4",
+    "@tiptap/starter-kit": "^2.2.4",
     "addressparser": "^1.0.1",
     "babel-runtime": "^6.26.0",
     "base64-stream": "^1.0.0",
@@ -38,6 +45,7 @@
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.2.5",
     "mongodb": "^4.16.0",
+    "mui-tiptap": "^1.8.6",
     "nodemailer": "^6.9.3",
     "ol": "^8.2.0",
     "popper.js": "^1.16.1",
@@ -47,9 +55,7 @@
     "react-router-dom": "^6.22.3",
     "sanitize-html": "^2.10.0",
     "sharp": "^0.31.3",
-    "simpl-schema": "^1.13.1",
-    "workbox-window": "^6.6.0",
-    "wysiwyg.js": "^1.0.0"
+    "simpl-schema": "^1.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
