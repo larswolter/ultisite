@@ -11,7 +11,7 @@ import WikiPage from './WikiPage.jsx';
 
 window.history.replaceState({}, 'Wetter', window.location.toString().split('?')[0]);
 
-const Practices = ({ children, currentOnly }) => {
+const Practices = ({ currentOnly }) => {
   const { practices, isLoading } = useTracker(() => {
     const handler = Meteor.subscribe('Practices');
 
@@ -30,6 +30,7 @@ const Practices = ({ children, currentOnly }) => {
       ).fetch(),
     };
   });
+  console.log(practices);
 
   return (
     <Box display="flex" flexDirection="row" flexWrap="wrap" gap={2} alignItems="stretch" justifyContent="space-evenly">

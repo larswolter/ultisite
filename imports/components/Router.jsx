@@ -1,11 +1,13 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, useParams } from 'react-router-dom';
 import Layout from './Layout.jsx';
 import Dashboard from './Dashboard.jsx';
 import Practices from './Practices.jsx';
 import Login from './Login.jsx';
 import WikiPage from './WikiPage.jsx';
 import Dokumente from './Dokumente.jsx';
+import Tournaments from './Tournaments.jsx';
+import Tournament from './Tournament.jsx';
 
 const router = createBrowserRouter([
   {
@@ -28,7 +30,15 @@ const router = createBrowserRouter([
     path: '/turniere',
     element: (
       <Layout>
-        <div>Turniere</div>
+        <Tournaments />
+      </Layout>
+    ),
+  },
+  {
+    path: '/turnier/:tournamentId',
+    element: (
+      <Layout>
+        <Tournament />
       </Layout>
     ),
   },
