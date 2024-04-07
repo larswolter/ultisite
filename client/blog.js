@@ -99,13 +99,13 @@ Template.blogPreview.events({
 
 Template.blogUpdate.onCreated(function () {
   const self = this;
-  import('../../../../../imports/client/files/files.js');
+  import('/imports/client/files/files.js');
   this.wysiwygLoaded = new ReactiveVar(false);
   this.autorun((comp) => {
     if (!Meteor.user()) {
       return;
     }
-    import('../../../../../imports/client/forms/wysiwyg.js').then(() => this.wysiwygLoaded.set(true));
+    import('/imports/client/forms/wysiwyg.js').then(() => this.wysiwygLoaded.set(true));
   });
   self.autorun(function () {
     self.subscribe('Blog', FlowRouter.getParam('_id'));
