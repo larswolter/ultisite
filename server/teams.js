@@ -1,4 +1,5 @@
 import { moment } from 'meteor/momentjs:moment';
+import UltiSite from '../imports/Ultisite';
 
 Meteor.methods({
   teamRemove(teamId) {
@@ -229,10 +230,11 @@ Meteor.methods({
       }
     );
   },
-  participationUpdate(teamId, userId, participantValue) {
+  participationUpdate(teamId, userId, participantValue, participantComment) {
     check(teamId, String);
     check(userId, String);
     check(participantValue, Number);
+    check(participantComment, Match.Maybe(String));
     const activeUser = Meteor.users.findOne(this.userId);
     if (!activeUser) {
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
@@ -248,12 +250,16 @@ Meteor.methods({
       user = { username: part.user, profile: { sex: part.sex } };
     }
     let drawingUpdate;
+    let commentUpdate;
     let safeStateDate = part.safeStateDate;
     if (participantValue !== part.state) {
       if (part.drawing) {
         drawingUpdate = 1000;
       }
       safeStateDate = new Date();
+    }
+    if(participantComment) {
+      commentUpdate = participantComment;
     }
     UltiSite.Tournaments.update(
       {
@@ -266,6 +272,7 @@ Meteor.methods({
           'participants.$.state': participantValue,
           'participants.$.responsible': this.userId,
           'participants.$.responsibleName': activeUser.username,
+          'participants.$.comment': commentUpdate,
           'participants.$.drawing': drawingUpdate,
           'participants.$.safeStateDate': safeStateDate,
           'participants.$.username': user.username,

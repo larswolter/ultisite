@@ -9,18 +9,25 @@ import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import dayjs from 'dayjs';
-import PracticeMap from './PracticeMap.jsx';
-import ExpandIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import DateIcon from '@mui/icons-material/Event';
+import TimeIcon from '@mui/icons-material/AccessTime';
+import CategoryIcon from '@mui/icons-material/Category';
+import DivisionIcon from '@mui/icons-material/Groups';
+import SurfaceIcon from '@mui/icons-material/Water';
+import FemaleIcon from '@mui/icons-material/Female';
+import PlayersIcon from '@mui/icons-material/Wc';
+import StateIcon from '@mui/icons-material/MarkEmailRead';
 import MenuButton from './MenuButton.jsx';
-import { Collapse, IconButton, Skeleton, Slide } from '@mui/material';
+import { Chip, Collapse, IconButton, Skeleton, Slide } from '@mui/material';
 import AdminStuff from './AdminStuff.jsx';
 import { useTracker } from 'meteor/react-meteor-data';
 import UltiSite from '../Ultisite.js';
 import { useParams } from 'react-router-dom';
 import TeamState from './TeamState.jsx';
+import TournamentEdit from './TournamentEdit.jsx';
+import TournamentParticipant from './TournamentParticipant.jsx';
+import { participantList } from '../helpers.js';
+import TournamentParticipantAdd from './TournamentParticipantAdd.jsx';
 
 /**
  * Single Tournament
@@ -47,110 +54,70 @@ const Tournament = () => {
   console.log({ tournament, params, isLoading });
   return edit && tournament ? (
     <Paper sx={{ maxWidth: 600, minWidth: 300, flex: 1, width: '100%' }}>
-      <form
-        onSubmit={(evt) => {
-          evt.preventDefault();
-          const data = {};
-          [...evt.target.getElementsByTagName('input')].forEach((input) => {
-            if ('date' === input.type) data[input.name] = input.valueAsDate;
-            else if ('number' === input.type) data[input.name] = input.valueAsNumber;
-            else data[input.name] = input.value;
-          });
-          console.log(data);
-          Meteor.callAsync('updatePractice', tournament._id, { $set: data })
-            .then(() => {
-              setEdit(false);
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-          return false;
-        }}>
-        <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="space-evenly" gap={2} padding={2}>
-          <TextField fullWidth label="Veranstalter" name="hostingTeam" defaultValue={tournament.hostingTeam} />
-          <TextField fullWidth label="Wochentag" name="weekday" defaultValue={tournament.weekday} />
-          <TextField
-            label="Erstes Training"
-            name="start"
-            type="date"
-            sx={{ width: '50%' }}
-            defaultValue={new Date(tournament.start).toISOString().substr(0, 10)}
-          />
-          <TextField
-            label="Letztes Training"
-            name="end"
-            type="date"
-            sx={{ width: '50%' }}
-            defaultValue={new Date(tournament.end).toISOString().substr(0, 10)}
-          />
-          <TextField label="Beginn" name="startTime" sx={{ width: '50%' }} defaultValue={tournament.startTime} />
-          <TextField
-            label="Länge"
-            name="duration"
-            type="number"
-            sx={{ width: '50%' }}
-            defaultValue={tournament.duration}
-          />
-          <TextField fullWidth label="Straße" name="street" defaultValue={tournament.address.street} />
-          <TextField fullWidth label="Trainer" name="trainer" defaultValue={tournament.trainer} />
-          <TextField fullWidth label="Zielgruppe" name="skillLevel" defaultValue={tournament.skillLevel} />
-          <TextField fullWidth label="Beschreibung" name="description" defaultValue={tournament.description} />
-          <Box textAlign="right">
-            <Button type="submit" onClick={() => setEdit(false)}>
-              Abbrechen
-            </Button>
-            <Button type="submit" variant="primary">
-              Speichern
-            </Button>
-          </Box>
-        </Box>
-      </form>
+      <TournamentEdit tournament={tournament} setEdit={setEdit} />
     </Paper>
   ) : (
     <Box sx={{ width: '100%' }} flexDirection="column" display="flex" gap={2}>
       {tournament ? (
         <>
           <Box display="flex" justifyContent="space-between">
-            <Typography variant="h4">{tournament.name}</Typography>
+            <Typography variant="h4">
+              {tournament.name} <Typography variant="body1">In {tournament.address.city}</Typography>
+            </Typography>
             <AdminStuff>
               <MenuButton>
                 <MenuItem onClick={() => setEdit(true)}>Bearbeiten</MenuItem>
               </MenuButton>
             </AdminStuff>
           </Box>
-          <Box>
-            <Paper>
-              Infos zum Turnier
-            </Paper>
+          <Box display="Flex" gap={1}>
+            <Chip icon={<DateIcon />} label={tournament.date.toLocaleDateString()} variant="outlined" />
+            <Chip icon={<TimeIcon />} label={`${tournament.numDays} Tage`} variant="outlined" />
+            <Chip icon={<CategoryIcon />} label={tournament.category} variant="outlined" />
+            {(tournament.divisions || []).map((d) => (
+              <Chip key={d} icon={<DivisionIcon />} label={d} variant="outlined" />
+            ))}
+            {(tournament.surfaces || []).map((d) => (
+              <Chip key={d} icon={<SurfaceIcon />} label={d} variant="outlined" />
+            ))}
           </Box>
-          {tournament.teams.map((team) => {
-            return (
-              <Box key={team._id}>
-                <Paper>
-                  <Box display="flex" padding={2}>
-                    <Box flexGrow={1} width="100%">
-                      <Typography variant="h5">{team.name}</Typography>
-                    </Box>
-                    <TeamState team={team} />
-                    <IconButton onClick={() => setExpandedTeam(expandedTeam === team._id ? null : team._id)}>
-                      {expandedTeam === team._id ? <ExpandLessIcon /> : <ExpandIcon />}
-                    </IconButton>
+          <Box display="flex" flexWrap="wrap" gap={2}>
+            <Paper flex={1}>
+              <Box display="flex" flexDirection="column" padding={2}>
+                <Typography variant="h5">Infos</Typography>
+                {(tournament.description || []).map((desc) => (
+                  <Box key={desc.date}>
+                    <Typography variant="caption">{desc.date.toLocaleString()}</Typography>
+                    <Typography variant="body1" maxWidth={400} dangerouslySetInnerHTML={{ __html: desc.content }} />
                   </Box>
-                  <Collapse in={expandedTeam === team._id}>
-                    <Box display="flex" flexDirection="column">
-                      {tournament.participants
-                        .filter((p) => p.team === team._id)
-                        .map((p) => (
-                          <Box key={p._id}>
-                            {p.state} {p.username}
-                          </Box>
-                        ))}
-                    </Box>
-                  </Collapse>
-                </Paper>
+                ))}
               </Box>
-            );
-          })}
+            </Paper>
+            {tournament.teams.map((team) => {
+              return (
+                <Box key={team._id} flex={1}>
+                  <Paper>
+                    <Box display="flex" padding={2}>
+                      <Box flexGrow={1} width="100%">
+                        <Typography variant="h5">{team.name}</Typography>
+                        <Chip icon={<DivisionIcon />} label={team.division} variant="outlined" />
+                        <Chip icon={<PlayersIcon />} label={team.maxPlayers} variant="outlined" />
+                        <Chip icon={<FemaleIcon />} label={team.minFemale} variant="outlined" />
+                        <Chip icon={<StateIcon />} label={team.state} variant="outlined" />
+                      </Box>
+                      <TeamState team={team} />
+                    </Box>
+                    <Box display="flex" flexDirection="column" padding={2}>
+                      {participantList({ tournament, team }).map((p) => (
+                        <TournamentParticipant key={p._id} participant={p} />
+                      ))}
+                      <TournamentParticipantAdd team={team} tournament={tournament} />
+                    </Box>
+                  </Paper>
+                </Box>
+              );
+            })}
+          </Box>
         </>
       ) : (
         <Box>

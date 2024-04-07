@@ -40,7 +40,7 @@ Meteor.startup(function () {
     });
   });
 
-  UltiSite.Tournaments.find({ 'teams.teamInfo': { $exists: false }, 'teams.name': { $exists: true } }).forEach(
+  UltiSite.Tournaments.find({ 'teams.teamInfo.femalesFull': { $exists: false }, 'teams.name': { $exists: true } }).forEach(
     (tournament) => {
       tournament.teams.forEach((t) => {
         const info = aggregateTeamInfo({
