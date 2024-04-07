@@ -13,43 +13,6 @@ UltiSite = {
         return { limit: 30, sort: { 'detail.time': -1 } };
       },
     },
-    {
-      name: 'Blogs',
-      filter() {
-        return {};
-      },
-      options() {
-        return { sort: { date: -1 } };
-      },
-    },
-    {
-      name: 'WikiPages',
-      filter() {
-        return {
-          _id: {
-            $in: [
-              UltiSite.settings().wikiStart,
-              UltiSite.settings().wikiHelp,
-              UltiSite.settings().wikiDatenschutz,
-              UltiSite.settings().wikiImpressum,
-              UltiSite.settings().wikiPractice,
-            ],
-          },
-        };
-      },
-      options() {
-        return {};
-      },
-    },
-    {
-      name: 'Practices',
-      filter() {
-        return {};
-      },
-      options() {
-        return {};
-      },
-    },
   ],
 };
 
