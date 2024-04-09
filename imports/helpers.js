@@ -46,9 +46,6 @@ export const aggregateTeamInfo = ({ participants, maxPlayers, minFemale }) => {
       }
     });
   }
-  if (full + half + rest === 0) {
-    return undefined;
-  }
   const max = Math.max(maxPlayers, full + half + rest);
   if (full > maxPlayers) {
     full = maxPlayers;

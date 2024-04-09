@@ -15,19 +15,15 @@ import { useAppContext } from './App.jsx';
 
 const Editor = React.lazy(() => import('react-simple-wysiwyg'));
 
-const TournamentEdit = ({ open, tournament, onClose }) => {
+const TeamEdit = ({ open, team, tournament, onClose }) => {
   const settings = UltiSite.settings();
   const { notifyUser } = useAppContext();
-  const [description, setDescription] = useState((tournament.description || []).map((d) => d.content).join(''));
-  useEffect(() => {
-    setDescription((tournament.description || []).map((d) => d.content).join(''));
-  }, [tournament.description]);
   return (
     <Dialog open={open} onClose={onClose}>
       <form
         onSubmit={(evt) => {
           evt.preventDefault();
-          const data = { description };
+          const data = {};
           [...evt.target.getElementsByTagName('input')].forEach((input) => {
             if ('date' === input.type) data[input.name] = input.valueAsDate;
             else if ('number' === input.type) data[input.name] = input.valueAsNumber;
@@ -37,10 +33,7 @@ const TournamentEdit = ({ open, tournament, onClose }) => {
           });
           console.log(data);
 
-          Meteor.callAsync(tournament._id ? 'tournamentUpdate' : 'tournamentInsert', {
-            ...data,
-            _id: tournament._id,
-          })
+          Meteor.callAsync(team._id ? 'teamUpdate' : 'addTeam', { ...data, _id: team._id }, tournament._id)
             .then(() => {
               onClose();
             })
@@ -50,7 +43,7 @@ const TournamentEdit = ({ open, tournament, onClose }) => {
 
           return false;
         }}>
-        <DialogTitle> {tournament._id ? 'Turnier bearbeiten' : 'Neues Turnier Anlegen'}</DialogTitle>
+        <DialogTitle> {team._id ? 'Team bearbeiten' : 'Neues Team Anlegen'}</DialogTitle>
         {open ? (
           <DialogContent>
             <Box
@@ -62,47 +55,42 @@ const TournamentEdit = ({ open, tournament, onClose }) => {
               justifyContent="space-evenly"
               gap={2}
               padding={2}>
-              <TextField fullWidth label="Turniername" name="name" defaultValue={tournament.name} />
-              <Select fullWidth label="Kategorie" name="category" defaultValue={tournament.category}>
-                {settings.arrayCategorys.map((cat) => (
+              <TextField fullWidth label="Teamname" name="name" defaultValue={team.name} />
+              <MultipleSelect
+                fullWidth
+                name="teamType"
+                label="Art des Teams"
+                defaultValue={(team.teamType && team.teamType.split(' - ')) || ['Verein', 'Auslosung']}
+                options={['Verein', 'Auslosung', 'Offiziell', 'International', 'Extern / Projekt']}
+              />
+              <Select fullWidth label="Division" name="division" defaultValue={team.division}>
+                {tournament.divisions.map((cat) => (
                   <MenuItem key={cat} value={cat}>
                     {cat}
                   </MenuItem>
                 ))}
               </Select>
+              <Select fullWidth label="Status" name="state" defaultValue={team.state}>
+                <MenuItem value={''}>nicht gemeldet</MenuItem>
+                <MenuItem value={'angemeldet'}>angemeldet</MenuItem>
+                <MenuItem value={'dabei'}>angemeldet</MenuItem>
+                <MenuItem value={'auf Warteliste'}>angemeldet</MenuItem>
+                <MenuItem value={'abgesagt'}>angemeldet</MenuItem>
+              </Select>
               <TextField
-                label="Datum"
-                name="date"
-                type="date"
-                sx={{ width: '50%' }}
-                defaultValue={tournament.date ? new Date(tournament.date).toISOString().substring(0, 10) : undefined}
-              />
-              <TextField
-                label="Anzahl Tage"
-                name="numDays"
+                label="Maximale Spieler"
+                name="maxPlayers"
                 type="number"
                 sx={{ width: '50%' }}
-                defaultValue={tournament.numDays}
+                defaultValue={team.maxPlayers}
               />
-              <TextField fullWidth label="Stadt" name="address.city" defaultValue={tournament.address?.city} />
-              <MultipleSelect
-                fullWidth
-                defaultValue={tournament.surfaces || []}
-                name="surfaces"
-                label="Untergründe"
-                options={settings.arraySurfaces}
+              <TextField
+                label="Minimum Frauen"
+                name="minFemale"
+                type="number"
+                sx={{ width: '50%' }}
+                defaultValue={team.minFemale}
               />
-              <MultipleSelect
-                fullWidth
-                name="divisions"
-                label="Divisionen"
-                defaultValue={tournament.divisions || []}
-                options={settings.arrayDivisions}
-              />
-              <Typography variant="caption">Beschreibung</Typography>
-              <Suspense fallback={<div>Loading...</div>}>
-                <Editor name="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-              </Suspense>
             </Box>
           </DialogContent>
         ) : null}
@@ -111,7 +99,7 @@ const TournamentEdit = ({ open, tournament, onClose }) => {
             Abbrechen
           </Button>
           <Button type="submit" color="primary">
-            {tournament._id ? 'Speichern' : 'Anlegen!'}
+            {team._id ? 'Speichern' : 'Anlegen!'}
           </Button>
         </DialogActions>
       </form>
@@ -119,4 +107,4 @@ const TournamentEdit = ({ open, tournament, onClose }) => {
   );
 };
 
-export default TournamentEdit;
+export default TeamEdit;

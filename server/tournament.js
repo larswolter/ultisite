@@ -155,6 +155,46 @@ Meteor.methods({
       text: `Neue Infos zum Turnier: ${content.substr(0, 20)}`,
     });
   },
+  tournamentUpdate({ _id, date, name, description, ...fields }) {
+    check(_id, String);
+    check(name, String);
+    check(date, Date);
+    check(fields, Object);
+    check(this.userId, String);
+    UltiSite.Tournaments.updateAsync(
+      {
+        _id,
+      },
+      {
+        $set: {
+          ...fields,
+          description: [{date:new Date(), content: description || '' }],
+          name,
+          date,
+          lastChange: new Date(),
+        },
+      }
+    );
+  },
+  async tournamentInsert({ date, name, description, team, ...fields }) {
+    check(name, String);
+    check(date, Date);
+    check(fields, Object);
+    check(this.userId, String);
+    const city = fields['address.city'];
+    delete fields['address.city'];
+    const tournamentId = await UltiSite.Tournaments.insertAsync({
+      ...fields,
+      address: { city },
+      name,
+      date,
+      description: [{ content: description }],
+      lastChange: new Date(),
+    });
+    if (team) {
+      Meteor.call('addTeam', tournamentId, team);
+    }
+  },
   tournamentUpdateReport(id, infoId, content) {
     check(id, String);
     check(infoId, String);

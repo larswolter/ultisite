@@ -85,9 +85,10 @@ Meteor.methods({
     UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: upd });
   },
 
-  teamUpdate(teamId, teamData) {
-    check(teamId, String);
+  teamUpdate(teamData, tournamentId) {
+    check(tournamentId, String);
     check(teamData, Object);
+    check(teamData._id, String);
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
@@ -95,7 +96,7 @@ Meteor.methods({
     Object.keys(teamData).forEach((key) => {
       upd['teams.$.' + key] = teamData[key];
     });
-    UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: upd });
+    UltiSite.Tournaments.update({ _id: tournamentId, 'teams._id': teamData._id }, { $set: upd });
   },
   teamUpdateState(teamId, state) {
     check(teamId, String);
@@ -230,11 +231,12 @@ Meteor.methods({
       }
     );
   },
-  participationUpdate(teamId, userId, participantValue, participantComment) {
+  participationUpdate({ teamId, userId, state, comment, sex }) {
     check(teamId, String);
     check(userId, String);
-    check(participantValue, Number);
-    check(participantComment, Match.Maybe(String));
+    check(state, Number);
+    check(comment, Match.Maybe(String));
+    check(sex, Match.Maybe(String));
     const activeUser = Meteor.users.findOne(this.userId);
     if (!activeUser) {
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
@@ -247,19 +249,19 @@ Meteor.methods({
 
     let user = Meteor.users.findOne(userId);
     if (!user) {
-      user = { username: part.user, profile: { sex: part.sex } };
+      user = { username: part.user, profile: { sex: sex || part.sex } };
     }
     let drawingUpdate;
     let commentUpdate;
     let safeStateDate = part.safeStateDate;
-    if (participantValue !== part.state) {
+    if (state !== part.state) {
       if (part.drawing) {
         drawingUpdate = 1000;
       }
       safeStateDate = new Date();
     }
-    if(participantComment) {
-      commentUpdate = participantComment;
+    if (comment) {
+      commentUpdate = comment;
     }
     UltiSite.Tournaments.update(
       {
@@ -269,7 +271,7 @@ Meteor.methods({
       },
       {
         $set: {
-          'participants.$.state': participantValue,
+          'participants.$.state': state,
           'participants.$.responsible': this.userId,
           'participants.$.responsibleName': activeUser.username,
           'participants.$.comment': commentUpdate,
@@ -297,7 +299,7 @@ Meteor.methods({
           _id: tournament._id,
           text:
             (this.userId === user._id ? '' : `${user.username}: `) +
-            UltiSite.textState(participantValue) +
+            UltiSite.textState(state) +
             (part.comment ? `(${part.comment})` : ''),
         });
         if (user && user._id) {

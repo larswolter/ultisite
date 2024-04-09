@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import React, { PureComponent } from 'react';
 import {
   BarChart,
@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 
 const TeamState = ({ team }) => {
+  if(!team || !team.teamInfo) return <CircularProgress />
   const femaleData = [
     { name: 'femalesFull', value: team.teamInfo.femalesFull, color: 'green' },
     { name: 'femalesHalf', value: team.teamInfo.femalesHalf, color: 'orange' },

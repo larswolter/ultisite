@@ -6,11 +6,11 @@ import StyledEngineProvider from '@mui/material/StyledEngineProvider';
 import Authenticator from '../imports/components/Authenticator.jsx';
 import App from '../imports/components/App.jsx';
 
+const palette = Meteor.settings?.public?.palette || {};
+
 const AppShell = () => {
   const theme = createTheme({
-    palette: {
-      //mode: 'dark',
-    },
+    palette,
   });
   return (
     <StyledEngineProvider injectFirst>

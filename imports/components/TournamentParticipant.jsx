@@ -17,6 +17,7 @@ import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfi
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { percentStateToState, stateToPercentState } from '../helpers';
 import {
   Button,
@@ -33,6 +34,7 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
+import { useAppContext } from './App.jsx';
 
 const StyledRating = styled(Rating)(({ theme }) => ({
   '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
@@ -77,23 +79,36 @@ export const RadioGroupRating = (props) => {
 };
 const TournamentParticipant = ({ participant }) => {
   const [edit, setEdit] = useState(false);
-
+  const { confirm, notifyUser } = useAppContext();
   return (
     <>
       <Divider />
       {participant ? (
-        <Box display="flex" gap={1} alignItems="center">
+        <Box display="flex" gap={1} alignItems="center" flexWrap="wrap">
           {edit ? (
             <RadioGroupRating value={edit.state} onChange={(_, value) => setEdit({ ...edit, state: value })} />
           ) : (
             participantStates[percentStateToState(participant.state) + 1].icon
           )}
 
-          <Typography variant="body1">
+          <Typography variant="body1" color={participant.username === participant.user ? 'gray' : 'default'}>
             {participant.username}
-            {participant.sex === 'W' ? <FemaleIcon fontSize="inherit" /> : <MaleIcon fontSize="inherit" />}
+            {edit && participant.user === participant.username ? (
+              <IconButton onClick={() => setEdit({ ...edit, sex: edit.sex === 'W' ? 'M' : 'W' })} size="small">
+                {edit.sex === 'W' ? <FemaleIcon fontSize="inherit" /> : <MaleIcon fontSize="inherit" />}
+              </IconButton>
+            ) : participant.sex === 'W' ? (
+              <FemaleIcon fontSize="inherit" />
+            ) : (
+              <MaleIcon fontSize="inherit" />
+            )}
           </Typography>
-          <Typography variant="body2" flex={1}>
+          {participant.responsible !== participant.user ? (
+            <Typography flexShrink={1} variant="body2" color="gray" flex={1}>
+              durch {participant.responsibleName}
+            </Typography>
+          ) : null}
+          <Typography variant="body2" flex={1} minWidth={150}>
             {edit ? (
               <TextField
                 fullWidth
@@ -107,35 +122,58 @@ const TournamentParticipant = ({ participant }) => {
           </Typography>
           {edit ? (
             <>
-              <IconButton onClick={() => setEdit(false)}>
+              <IconButton onClick={() => setEdit(false)} size="small">
                 <CancelIcon />
               </IconButton>
+              {/*} <IconButton
+                color="error"
+                onClick={() =>
+                  confirm({
+                    text: `Willst du ${participant.username} wirklich aus dem Team löschen? `,
+                    okText: 'Löschen',
+                    onCancel: () => {},
+                    onOk: () => Meteor.callAsync('participationRemove', participant.team, participant.user),
+                  })
+                }
+                size="small">
+                <DeleteIcon />
+              </IconButton>*/}
               <IconButton
+                size="small"
                 color="primary"
-                onClick={() => {
-                  Meteor.call(
-                    'participationUpdate',
-                    participant.team,
-                    participant.user,
-                    stateToPercentState(edit.state),
-                    edit.comment
-                  );
-                  setEdit(false);
+                onClick={async () => {
+                  try {
+                    await Meteor.callAsync('participationUpdate', {
+                      teamId: participant.team,
+                      userId: participant.user,
+                      state: stateToPercentState(edit.state),
+                      comment: edit.comment,
+                      sex: edit.sex,
+                    });
+                    setEdit(false);
+                  } catch (err) {
+                    notifyUser({ message: err.message, severity: 'error' });
+                  }
                 }}>
                 <SaveIcon />
               </IconButton>
             </>
           ) : (
             <IconButton
+              size="small"
               onClick={() =>
-                setEdit({ state: percentStateToState(participant.state) + 1, comment: participant.comment })
+                setEdit({
+                  state: percentStateToState(participant.state) + 1,
+                  comment: participant.comment,
+                  sex: participant.sex,
+                })
               }>
               <EditIcon />
             </IconButton>
           )}
         </Box>
       ) : (
-        <Skeleton variant='text' height={24}></Skeleton>
+        <Skeleton variant="text" height={24}></Skeleton>
       )}
     </>
   );
