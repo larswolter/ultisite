@@ -39,7 +39,6 @@ const WikiPage = ({ name }) => {
           RichTextFieldProps={{ minHeight: 400 }}
           extensions={[StarterKit]}
           content={page.content || ''} // Initial content for the editor
-          // Optionally include `renderControls` for a menu-bar atop the editor:
           renderControls={() => (
             <MenuControlsContainer>
               <MenuSelectHeading />

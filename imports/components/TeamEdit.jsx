@@ -6,14 +6,12 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
-import { Skeleton } from '@mui/material';
 import UltiSite from '../Ultisite.js';
 import MultipleSelect from './MultipleSelect.jsx';
 import { useAppContext } from './App.jsx';
-
-const Editor = React.lazy(() => import('react-simple-wysiwyg'));
 
 const TeamEdit = ({ open, team, tournament, onClose }) => {
   const settings = UltiSite.settings();
@@ -32,7 +30,10 @@ const TeamEdit = ({ open, team, tournament, onClose }) => {
             else data[input.name] = input.value;
           });
           console.log(data);
-
+          if (!data.state) {
+            notifyUser({ severity: 'error', message: 'Status muss ausgewählt werden' });
+            return;
+          }
           Meteor.callAsync(team._id ? 'teamUpdate' : 'addTeam', { ...data, _id: team._id }, tournament._id)
             .then(() => {
               onClose();
@@ -55,7 +56,7 @@ const TeamEdit = ({ open, team, tournament, onClose }) => {
               justifyContent="space-evenly"
               gap={2}
               padding={2}>
-              <TextField fullWidth label="Teamname" name="name" defaultValue={team.name} />
+              <TextField fullWidth label="Teamname" name="name" defaultValue={team.name || settings.teamname} />
               <MultipleSelect
                 fullWidth
                 name="teamType"
@@ -63,34 +64,42 @@ const TeamEdit = ({ open, team, tournament, onClose }) => {
                 defaultValue={(team.teamType && team.teamType.split(' - ')) || ['Verein', 'Auslosung']}
                 options={['Verein', 'Auslosung', 'Offiziell', 'International', 'Extern / Projekt']}
               />
-              <Select fullWidth label="Division" name="division" defaultValue={team.division}>
-                {tournament.divisions.map((cat) => (
-                  <MenuItem key={cat} value={cat}>
-                    {cat}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select fullWidth label="Status" name="state" defaultValue={team.state}>
-                <MenuItem value={''}>nicht gemeldet</MenuItem>
-                <MenuItem value={'angemeldet'}>angemeldet</MenuItem>
-                <MenuItem value={'dabei'}>angemeldet</MenuItem>
-                <MenuItem value={'auf Warteliste'}>angemeldet</MenuItem>
-                <MenuItem value={'abgesagt'}>angemeldet</MenuItem>
-              </Select>
-              <TextField
-                label="Maximale Spieler"
-                name="maxPlayers"
-                type="number"
-                sx={{ width: '50%' }}
-                defaultValue={team.maxPlayers}
-              />
-              <TextField
-                label="Minimum Frauen"
-                name="minFemale"
-                type="number"
-                sx={{ width: '50%' }}
-                defaultValue={team.minFemale}
-              />
+              <FormControl fullWidth required>
+                <InputLabel id="division-label">Division</InputLabel>
+                <Select label="Division" name="division" defaultValue={team.division || tournament.divisions[0]}>
+                  {tournament.divisions.map((cat) => (
+                    <MenuItem key={cat} value={cat}>
+                      {cat}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth required>
+                <InputLabel id="division-label">Status</InputLabel>
+                <Select fullWidth label="Status" name="state" defaultValue={team.state}>
+                  <MenuItem value={''}>nicht gemeldet</MenuItem>
+                  <MenuItem value={'angemeldet'}>angemeldet</MenuItem>
+                  <MenuItem value={'dabei'}>dabei</MenuItem>
+                  <MenuItem value={'auf Warteliste'}>auf Warteliste</MenuItem>
+                  <MenuItem value={'abgesagt'}>abgesagt</MenuItem>
+                </Select>
+              </FormControl>
+              <Box display="flex" gap={1}>
+                <TextField
+                  required
+                  label="Maximale Spieler"
+                  name="maxPlayers"
+                  type="number"
+                  defaultValue={team.maxPlayers || 12}
+                />
+                <TextField
+                  required
+                  label="Minimum Frauen"
+                  name="minFemale"
+                  type="number"
+                  defaultValue={team.minFemale || 0}
+                />
+              </Box>
             </Box>
           </DialogContent>
         ) : null}

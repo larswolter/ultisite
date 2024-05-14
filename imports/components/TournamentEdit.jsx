@@ -8,7 +8,6 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
-import { Skeleton } from '@mui/material';
 import UltiSite from '../Ultisite.js';
 import MultipleSelect from './MultipleSelect.jsx';
 import { useAppContext } from './App.jsx';

@@ -138,7 +138,7 @@ const Tournament = () => {
             })}
             {(tournament.teams || []).length === 0 ? (
               <Box flex={1} width="100%">
-                <Button size="large" fullWidth variant="contained" color="primary">
+                <Button size="large"  onClick={() => setTeamEdit({})} fullWidth variant="contained" color="primary">
                   <AddIcon />
                   Team anlegen
                 </Button>

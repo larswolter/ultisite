@@ -29,6 +29,7 @@ import {
 import { useAuth } from './Authenticator.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
 import { AppBar, DrawerHeader, Main } from './LayoutHelpers.jsx';
+import UltiSite from '../Ultisite.js';
 
 const drawerWidth = 240;
 const navigation = [
@@ -74,11 +75,11 @@ const Layout = ({ children }) => {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1 }}
+            sx={{ flexGrow: 1,cursor:'pointer' }}
             onClick={(event) => {
               navigate('/');
             }}>
-            Ultisite
+            {UltiSite.settings().teamname || 'Ultisite'}
           </Typography>
           <Box display="flex" gap={2}>
             {user ? (

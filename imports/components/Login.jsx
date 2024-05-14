@@ -34,26 +34,33 @@ const Login = ({ children }) => {
   return (
     <Box display="flex" justifyContent="center">
       <Paper>
-        <Box display="flex" flexDirection="column" padding={2} gap={1}>
-          <Typography variant="h5">Anmeldung für den internen Bereich</Typography>
-          <br />
-          <br />
-          <TextField label="E-Mail" value={username} id="username" onChange={(evt) => setUsername(evt.target.value)} />
-          <TextField
-            label="Passwort"
-            value={password}
-            id="password"
-            onChange={(evt) => setPassword(evt.target.value)}
-            type="password"
-          />
-          <Box textAlign="right">
-            <Button disabled={loggingIn} onClick={submit}>
-              Anmelden
-            </Button>
+        <form onSubmit={submit}>
+          <Box display="flex" flexDirection="column" padding={2} gap={1}>
+            <Typography variant="h5">Anmeldung für den internen Bereich</Typography>
+            <br />
+            <br />
+            <TextField
+              label="E-Mail"
+              value={username}
+              id="username"
+              onChange={(evt) => setUsername(evt.target.value)}
+            />
+            <TextField
+              label="Passwort"
+              value={password}
+              id="password"
+              onChange={(evt) => setPassword(evt.target.value)}
+              type="password"
+            />
+            <Box textAlign="right">
+              <Button disabled={loggingIn} type="submit">
+                Anmelden
+              </Button>
+            </Box>
+            {loggingIn ? <LinearProgress /> : null}
+            {error ? <Alert severity="error">{error}</Alert> : null}
           </Box>
-          {loggingIn ? <LinearProgress /> : null}
-          {error ? <Alert severity="error">{error}</Alert> : null}
-        </Box>
+        </form>
       </Paper>
     </Box>
   );
