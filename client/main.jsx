@@ -26,3 +26,12 @@ const AppShell = () => {
 
 const root = createRoot(document.getElementById('react-target')); // createRoot(container!) if you use TypeScript
 root.render(<AppShell />);
+
+if (window.navigator.serviceWorker) {
+  console.log('unregistering any service worker...');
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((reg) => {
+      reg.unregister();
+    });
+  });
+}
