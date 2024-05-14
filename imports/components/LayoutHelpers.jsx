@@ -4,7 +4,10 @@ import MuiAppBar from '@mui/material/AppBar';
 export const Main = styled('main', { shouldForwardProp: (prop) => !['open', 'drawerWidth'].includes(prop) })(
   ({ theme, open, drawerWidth }) => ({
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(1),
+    [theme.breakpoints.up("sm")]: {
+      padding: theme.spacing(3),
+    },
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,

@@ -1,4 +1,4 @@
-import { CircularProgress } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import React, { PureComponent } from 'react';
 import {
   BarChart,
@@ -14,8 +14,8 @@ import {
   PieChart,
 } from 'recharts';
 
-const TeamState = ({ team }) => {
-  if(!team || !team.teamInfo) return <CircularProgress />
+const TeamState = ({ team, small }) => {
+  if (!team || !team.teamInfo) return <CircularProgress />;
   const femaleData = [
     { name: 'femalesFull', value: team.teamInfo.femalesFull, color: 'green' },
     { name: 'femalesHalf', value: team.teamInfo.femalesHalf, color: 'orange' },
@@ -40,14 +40,52 @@ const TeamState = ({ team }) => {
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
     if (Number(value))
       return (
-        <text x={x} y={y} fill={['red','green'].includes(color)?'white':'black'} textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+        <text
+          x={x}
+          y={y}
+          fill={['red', 'green'].includes(color) ? 'white' : 'black'}
+          textAnchor={x > cx ? 'start' : 'end'}
+          dominantBaseline="central">
           {value}
         </text>
       );
     return null;
   };
   const withFemaleChart = team.minFemale && team.minFemale < team.maxPlayers;
-  
+  const full = data.reduce((total, cur) => total + cur.value, 0);
+  if (small)
+    return (
+      <>
+        {withFemaleChart ? (
+          <Box display="flex">
+            {femaleData
+              .filter((e) => e.value > 0)
+              .map((entry) => (
+                <Box
+                  color={['red', 'green'].includes(entry.color) ? 'white' : 'black'}
+                  textAlign="center"
+                  width={`${(100 / full) * entry.value}%`}
+                  backgroundColor={entry.color}
+                  key={entry.name} height={4} />
+              ))}
+          </Box>
+        ) : null}
+        <Box display="flex">
+          {data
+            .filter((e) => e.value > 0)
+            .map((entry) => (
+              <Box
+                color={['red', 'green'].includes(entry.color) ? 'white' : 'black'}
+                textAlign="center"
+                width={`${(100 / full) * entry.value}%`}
+                backgroundColor={entry.color}
+                key={entry.name}>
+                {entry.value}
+              </Box>
+            ))}
+        </Box>
+      </>
+    );
   return (
     <ResponsiveContainer width="100%" minWidth={180} flex={1} height={100}>
       <PieChart>
@@ -82,8 +120,8 @@ const TeamState = ({ team }) => {
           data={data}
           cx="50%"
           cy="100%"
-          outerRadius={withFemaleChart?65:90}
-          innerRadius={withFemaleChart?40:50}
+          outerRadius={withFemaleChart ? 65 : 90}
+          innerRadius={withFemaleChart ? 40 : 50}
           fill="#8884d8">
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />

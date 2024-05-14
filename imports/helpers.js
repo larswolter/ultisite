@@ -1,4 +1,4 @@
-import { first, rest, sortBy } from 'lodash';
+import { head, tail, sortBy } from 'lodash';
 
 export const getClientUrl = (target, params) => {
   return `/${target}?`;
@@ -66,7 +66,7 @@ export const aggregateTeamInfo = ({ participants, maxPlayers, minFemale }) => {
     all: full + half,
     half,
     rest,
-    spots: maxPlayers - full,
+    spots: maxPlayers - full - half,
     femalesFull,
     femalesHalf,
     missingFemales: Math.max(0, minFemale - femalesFull - femalesHalf),
@@ -129,10 +129,10 @@ export const participantList = ({ team, tournament }) => {
     });
     console.log('Female state:', females, femalesWaiting, team.minFemale);
     if (females < team.minFemale && femalesWaiting > 0) {
-      const players = sortBy(first(partUser, team.maxPlayers), (p) => {
+      const players = sortBy(head(partUser, team.maxPlayers), (p) => {
         return p.sex === 'W' ? 0 : 1;
       });
-      const waiting = sortBy(rest(partUser, team.maxPlayers), (p) => {
+      const waiting = sortBy(tail(partUser, team.maxPlayers), (p) => {
         return p.sex === 'W' ? 0 : 1;
       });
       let switches = 0;

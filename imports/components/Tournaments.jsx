@@ -23,6 +23,7 @@ import TeamState from './TeamState.jsx';
 import AddIcon from '@mui/icons-material/Add';
 import TournamentEdit from './TournamentEdit.jsx';
 import ErrorBoundary from './ErrorBoundary.jsx';
+import dayjs from 'dayjs';
 
 const Tournaments = () => {
   const [newTournament, setNewTournament] = useState(null);
@@ -38,12 +39,13 @@ const Tournaments = () => {
     }
 
     return {
-      tournaments: UltiSite.Tournaments.find({}, { limit: 10 }).fetch(),
+      tournaments: UltiSite.Tournaments.find({}, { sort: { date: 1 } }).fetch(),
     };
   });
   console.log({ tournaments, isLoading });
+  let lastMonth = '';
   return (
-    <Box display="flex" flexDirection="column" gap={2} alignItems="center">
+    <Box display="flex" flexDirection="column" gap={1} alignItems="center">
       <WikiPage name="Turniere" />
       {isLoading ? (
         <Box maxWidth={800} minWidth={300}>
@@ -74,37 +76,34 @@ const Tournaments = () => {
         </Box>
       ) : (
         <>
-          {tournaments.map((tournament) => (
-            <Card sx={{ maxWidth: 800, minWidth: 300, flex: 1, width: '100%' }} key={tournament._id}>
-              <CardActionArea onClick={() => navigate(`/turnier/${tournament._id}`)}>
-                <CardHeader
-                  title={tournament.name}
-                  subheader={`In ${tournament.address?.city} am ${new Date(tournament.date).toLocaleDateString()}`}
-                />
-                <CardContent>
-                  <Box display="flex" flexDirection="row" gap={2} flexWrap="wrap">
-                    <Box position="relative" height={100} width="100%" flex={1}>
-                      {tournament.numDays} Tage {tournament.category}
-                      <br />
-                      Divisionen: {tournament.divisions.join(', ')}
-                      <br />
-                      Untergrund: {tournament.surfaces.join(', ')}
-                    </Box>
-                    {(tournament.teams || []).map((team) => {
-                      return (
-                        <Box key={team._id} position="relative" height={100} flex={1} width="100%">
-                          <TeamState team={team} />
-                          <Box position="absolute" bottom={0} left={0} textAlign="center" width="100%">
-                            {team.name}
-                          </Box>
+          {tournaments.map((tournament) => {
+            const printMonth = lastMonth !== dayjs(tournament.date).format('MMMM YYYY');
+            lastMonth = dayjs(tournament.date).format('MMMM YYYY');
+            return (
+              <React.Fragment key={tournament._id}>
+                {printMonth ? <Typography>{lastMonth}</Typography> : null}
+                <Card sx={{ maxWidth: 800, minWidth: 300, flex: 1, width: '100%' }}>
+                  <CardActionArea  onClick={() => navigate(`/turnier/${tournament._id}`)}>
+                    <CardContent>
+                      <Box display="flex" flexDirection="row" gap={2} justifyContent="space-between" flexWrap="wrap">
+                        <Box flex={1}>
+                          <Typography>{tournament.name}</Typography>
+                          <Typography variant='body2'>{dayjs(tournament.date).format('DD.MM.')} in {tournament.address?.city}</Typography>
                         </Box>
-                      );
-                    })}
-                  </Box>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
+                        {(tournament.teams || []).map((team) => {
+                          return (
+                            <Box key={team._id} position="relative" height={100} flex={1} width="100%">
+                              <TeamState small team={team} />
+                            </Box>
+                          );
+                        })}
+                      </Box>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </React.Fragment>
+            );
+          })}
           {tournaments.length === 0 ? <Typography>Aktuell keine Turniere</Typography> : null}
           <Box position="fixed" bottom={0} right={0} margin={4}>
             <Fab
@@ -114,9 +113,13 @@ const Tournaments = () => {
               }}>
               <AddIcon />
             </Fab>
-                <ErrorBoundary>
-                  <TournamentEdit open={!!newTournament} tournament={{ address: {}, numDays: 2 }} onClose={()=>setNewTournament(false)} />
-                </ErrorBoundary>
+            <ErrorBoundary>
+              <TournamentEdit
+                open={!!newTournament}
+                tournament={{ address: {}, numDays: 2 }}
+                onClose={() => setNewTournament(false)}
+              />
+            </ErrorBoundary>
           </Box>
         </>
       )}
