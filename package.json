@@ -23,7 +23,7 @@
     "base64-stream": "^1.0.0",
     "bcrypt": "^5.1.0",
     "blueimp-load-image": "^5.16.0",
-    "bootstrap": "^4.6.2",
+    "bootstrap": "^5.0.0",
     "cron": "^1.8.2",
     "exceljs": "^4.3.0",
     "gridfs-locking-stream": "^1.1.1",
