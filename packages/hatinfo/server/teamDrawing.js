@@ -63,7 +63,11 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   // distribute all players across the teams
   for (let p = 0; p < total; p += 1) {
     const player = strengthList.pop();
-    player && teams[p % numTeams].players.push([`${player.name} (${player.hometeam})`, partStrength(player)]);
+    player &&
+      teams[p % numTeams].players.push([
+        `${player.name} (${player.hometeam}) [${player.gender[0]}]`,
+        partStrength(player),
+      ]);
   }
 
   const workbook = new Excel.Workbook();
