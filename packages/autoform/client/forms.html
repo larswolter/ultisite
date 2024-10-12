@@ -37,7 +37,7 @@
 <template name="afFieldInput">
     {{#with fieldData}}
         {{#if or (equals autoform.type "hidden") (equals type "hidden")}}
-            <input name="{{name}}" type="hidden" value="{{getFieldValue}}"/>
+            <input name="{{name}}" type="hidden" value="{{getFieldValue}}" {{autoform.inputAttribs}}/>
         {{else}}
             {{#if readOnly}}
                 <div class="form-control-plaintext">{{getFieldValue}}</div>
@@ -79,7 +79,7 @@
                     {{else}}
                         {{#if isDate}}
                             <div class="input-group">
-                            <input name="{{name}}" class="form-control {{validity}}" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
+                            <input name="{{name}}" class="form-control {{validity}}" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" {{autoform.inputAttribs}}/>
                             <span class="input-group-btn">
                                 <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="fa fa-calendar"></span>
@@ -90,7 +90,7 @@
                                 </span>
                             </div>
                         {{else}}
-                            <input name="{{name}}" type="{{type}}" class="form-control {{validity}}" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" />
+                            <input name="{{name}}" type="{{type}}" class="form-control {{validity}}" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" {{autoform.inputAttribs}} />
                         {{/if}}
                     {{/if}}
                 {{/if}}

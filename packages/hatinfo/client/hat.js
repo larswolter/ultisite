@@ -232,8 +232,15 @@ Template.hatInfos.events({
     }
   },
 });
+Template.hatParticipateDialog.onCreated(function () {
+  this.hometeams = new ReactiveVar([]);
+  Meteor.call('hatHomeTeams', (err, res) => this.hometeams.set(res));
+});
 
 Template.hatParticipateDialog.helpers({
+  hometeams() {
+    return Template.instance().hometeams.get() || ['Hallunken'];
+  },
   existing() {
     if (activeEntry.get()) {
       return UltiSite.HatInfo.HatParticipants.findOne({ accessKey: activeEntry.get() });

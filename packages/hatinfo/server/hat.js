@@ -43,6 +43,15 @@ Meteor.methods({
     }
     sendHatReminderEmails();
   },
+  async hatHomeTeams() {
+    const res = await UltiSite.HatInfo.HatParticipants.rawCollection()
+      .aggregate([
+        { $match: { hatId: UltiSite.settings().hatId } },
+        { $group: { _id: null, hometeams: { $addToSet: '$hometeam' } } },
+      ])
+      .toArray();
+    return [...(UltiSite.settings().arrayHatHomeTeams || []), ...res[0].hometeams];
+  },
   createRandomData(total, payed, confirmed) {
     check(total, Number);
     check(payed, Number);

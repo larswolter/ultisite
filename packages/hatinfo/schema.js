@@ -60,6 +60,11 @@ Meteor.startup(function () {
           type: String,
           label: 'Heimatteam',
           optional: true,
+          autoform: {
+            inputAttribs: {
+              list: 'hometeams',
+            },
+          },
         },
         strength: {
           type: String,
@@ -100,7 +105,7 @@ Meteor.startup(function () {
         },
         experience: {
           type: String,
-          label: 'Wie erfahren bist Du im Schabernack und dem Spiel mit der Scheibe?',
+          label: 'Wie erfahren schlägt das Tanzbein auf der Platte und rotiert deine Frisbee in der Luft?',
           optional: false,
           autoform: {
             firstOption: 'Bitte wählen',
@@ -146,7 +151,7 @@ Meteor.startup(function () {
                 },
                 {
                   label:
-                    'Extra Einheiten an Geschenke klauen und Fitnessschabernack zusätzlich zum Training, sind voll mein Ding.',
+                    'Extraeinheiten an Tanzschritten und Fitnessschabernack zusätzlich zum Training, sind voll mein Ding.',
                   value: '4',
                 },
                 {
@@ -157,6 +162,20 @@ Meteor.startup(function () {
               ];
             },
           },
+        },
+        decisionDate: {
+          type: Date,
+          label:
+            'Falls du auf der Warteliste landest: bis zu welchem Datum möchtest du dich bereithalten noch nachzurücken? Je spontaner, desto höher die Wahrscheinlichkeit dabei zu sein! Wenn beim Nachrücken dieses Datum schon vorrüber ist, würden wir dich u.U. aus der Spiellerliste entfernen (PF gibts dann zurück).',
+          autoform: {
+            format: 'DD.MM.YYYY',
+          },
+        },
+        mobilePhone: {
+          type: String,
+          label:
+            'Falls du beim Nachrücken auch noch sehr spontan bist, kannst du uns hier deine Handynummer hinterlassen, damit wir dich im Zweifel schnell erreichen können. ',
+          optional: true,
         },
         sleepFriday: {
           type: Boolean,
@@ -176,11 +195,6 @@ Meteor.startup(function () {
         breakfastSunday: {
           type: Boolean,
           label: 'Frühstück Sonntag',
-          defaultValue: false,
-        },
-        tested: {
-          type: Boolean,
-          label: 'Nur getestet, nicht geimpft/genesen',
           defaultValue: false,
         },
         allowPublic: {
@@ -206,6 +220,16 @@ Meteor.startup(function () {
         payed: {
           type: Date,
           label: 'Bezahlt',
+          optional: true,
+        },
+        nachrueckSent: {
+          type: Boolean,
+          label: 'Nachrück-Anfrage gesendet',
+          optional: true,
+        },
+        nachrueckConfirmed: {
+          type: Boolean,
+          label: 'Nachrücken bestätigt',
           optional: true,
         },
       },

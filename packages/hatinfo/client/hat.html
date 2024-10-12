@@ -25,7 +25,6 @@
                             {{#if isInRole "hatAdmin"}}
                                 <br/>Details (Nur von der Spielerliste)<br/>
                                 {{#with stats}}
-                                <small>Nur getestet: {{this.tested}}</small><br />
                                 <small>ÜN Freitag: {{this.sleepFriday}}</small><br />
                                 <small>ÜN Samstag: {{this.sleepSaturday}}</small><br />
                                 <small>Frühstück Samstag: {{this.breakfastSaturday}}</small><br />
@@ -196,6 +195,7 @@
             {{#if activeEntry}}
                 <div class="col-12 col-sm-6">
                     <a href="mailto:{{this.email}}">{{this.email}}</a><br />
+                    Entscheidungsdatum: {{formatDate this.decisionDate}}<br />
                     Eingetragen: {{formatDateTime this.createdAt}}<br />
                     Geändert: {{formatDateTime this.modifiedAt}}<br />
                     E-Mail bestätigt:
@@ -212,6 +212,10 @@
                     <br />
                     {{#if isInRole "hatAdmin"}}
                         Bezahlt: {{#if hasPayed}}{{formatDateTime payed}}{{else}}Nein{{/if}}<br />
+                        
+                        Nachrücken gesendet: {{#if nachrueckSent}}Ja{{else}}Nein{{/if}}<br />
+                        
+                        Nachrücken bestätigt: {{#if nachrueckConfirmed}}Ja{{else}}Nein{{/if}}<br />
                     {{/if}}
                 </div>
                 <div class="col-12 col-sm-6 text-right participant-buttons">
@@ -261,6 +265,9 @@
     </div>
     <div class="col-sm-2">
         <input name="hatEmail" class="form-control" value="{{settings.hatEmail}}" placeholder="E-Mail" title="E-Mail">
+    </div>
+    <div class="col-sm-2">
+        <input name="arrayHatHomeTeams" class="form-control" value="{{settings.arrayHatHomeTeams}}" placeholder="Team1,Team2,TEam3" title="Hometeam Defaults">
     </div>
     <div class="dropdown col-sm-3 wiki-association">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
@@ -323,6 +330,11 @@
                                 {{> afQuickFields fields="name,gender,age,fullAge,email,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday" }}
                             {{/if}}
                         {{/if}}
+                        <datalist id="hometeams">
+                            {{#each hometeams}}
+                                <option value={{this}} >{{this}}</option>
+                            {{/each}}
+                        </datalist>
                     </div>
                     <div class="modal-footer">
                         <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-light">Abbrechen</button>
