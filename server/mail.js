@@ -24,7 +24,6 @@ function setupMailServer(club) {
   } else {
     console.log('Creating mail transport for ' + club.teamname + ':' + club.emailServer);
     UltiSite.Mail = {
-
       transport: UltiSite.Nodemailer.createTransport({
         pool: true,
         rateLimit: 3,
@@ -35,7 +34,8 @@ function setupMailServer(club) {
           pass: club.emailPassword,
         },
         tls: {
-          ciphers: 'SSLv3',
+          maxVersion: 'TLSv1.3',
+          minVersion: 'TLSv1.2',
           rejectUnauthorized: false,
         },
       }),
