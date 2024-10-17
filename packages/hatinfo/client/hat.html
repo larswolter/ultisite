@@ -167,6 +167,8 @@
                 <span class="fa fa-money {{#if hasPayed}}text-success{{else}}text-muted{{/if}}"></span>
                 {{#if isInRole "hatAdmin"}}
                     <span class="fa fa-eye {{#if allowPublic}}text-success{{else}}text-muted{{/if}}"></span>
+                    <span class="fa fa-check {{#if nachrueckSent}}text-success{{else}}text-muted{{/if}}"></span>
+                    <span class="fa fa-check {{#if nachrueckConfirmed}}text-success{{else}}text-muted{{/if}}"></span>
                 {{/if}}
                 {{#if this.name}}
                     {{name}}
@@ -212,10 +214,10 @@
                     <br />
                     {{#if isInRole "hatAdmin"}}
                         Bezahlt: {{#if hasPayed}}{{formatDateTime payed}}{{else}}Nein{{/if}}<br />
-                        
+                        Telefon: {{this.mobilePhone}}<br />
                         Nachrücken gesendet: {{#if nachrueckSent}}Ja{{else}}Nein{{/if}}<br />
-                        
                         Nachrücken bestätigt: {{#if nachrueckConfirmed}}Ja{{else}}Nein{{/if}}<br />
+                        Musikhit: {{this.musicHit}}<br />
                     {{/if}}
                 </div>
                 <div class="col-12 col-sm-6 text-right participant-buttons">
@@ -310,10 +312,10 @@
                 </div>
                 {{#autoForm schema=schema doc=existing id="hatParticipantForm" meteormethod=method type="method"}}
                     <div class="modal-body">
-                        Die eingetragenen Daten stehen nur den Ausrichtern zur Verfügung, es sei den,
+                        Die eingetragenen Daten stehen nur den Ausrichtern zur Verfügung, es sei denn,
                         das Häkchen bei der Ausnahme ist gesetzt.<br />
                         Geschlecht, Stärke, aktive Spieljahre, Fitness und Erfahrung sind notwendig, um die Teams zusammenzustellen, Stadt und Heimatteam, um eine
-                        Durchmischung zu ermöglichen. Die E-Mail Adresse wird benötigt, um mit euch Kontakt aufzunehmen. 
+                        Durchmischung zu ermöglichen. Die E-Mail-Adresse wird benötigt, um mit euch Kontakt aufzunehmen.
                         Die Info über die Volljährigkeit wird benötigt wegen Alkohol etc.<br />
                         Die Daten werden automatisch nach 60 Tagen gelöscht, solltet ihr noch Fragen zum Datenschutz haben,
                         schreibt uns eine Mail an <a href="mailto:kontakt@hallunken.de">kontakt@hallunken.de</a>
@@ -322,12 +324,12 @@
                             {{> afQuickFields}}
                         {{else}}
                             {{#if existing._id}}
-                                {{> afQuickFields fields="name,gender,age,fullAge,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday"}}
+                                {{> afQuickFields fields="name,gender,age,fullAge,city,hometeam,strength,fitness,experience,years,decisionDate,mobilePhone,allowPublic,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday,musicHit"}}
                                 <fieldset disabled>
                                     {{> afQuickFields fields="email"}}
                                 </fieldset>
                             {{else}}
-                                {{> afQuickFields fields="name,gender,age,fullAge,email,city,hometeam,strength,fitness,experience,years,allowPublic,tested,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday" }}
+                                {{> afQuickFields fields="name,gender,age,fullAge,email,city,hometeam,strength,fitness,experience,years,decisionDate,mobilePhone,allowPublic,sleepFriday,breakfastSaturday,sleepSaturday,breakfastSunday,musicHit" }}
                             {{/if}}
                         {{/if}}
                         <datalist id="hometeams">

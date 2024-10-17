@@ -113,7 +113,7 @@ Meteor.startup(function () {
               return [
                 { label: 'Mini-Playback-Show - Ich bin neu dabei.', value: '1' },
                 {
-                  label: 'Die Standarttänze sind kein Problem - die wichtigsten Tricks und Basics habe ich drauf.',
+                  label: 'Die Standardtänze sind kein Problem - die wichtigsten Tricks und Basics habe ich drauf.',
                   value: '2',
                 },
                 {
@@ -123,7 +123,7 @@ Meteor.startup(function () {
                 },
                 {
                   label:
-                    'Helene Fische macht mir nichts vor - ich übernehme viel Verantwortung im Team, kann Training und Coaching übernehmen.',
+                    'Helene Fischer macht mir nichts vor - ich übernehme viel Verantwortung im Team, kann Training und Coaching übernehmen.',
                   value: '4',
                 },
                 {
@@ -200,6 +200,12 @@ Meteor.startup(function () {
         allowPublic: {
           type: Boolean,
           label: 'Mein Name, Stadt und Heimatteam sollen allen gezeigt werden',
+          optional: true,
+        },
+        musicHit: {
+          type: String,
+          label:
+            'Und jetzt kannst du uns für die Playlist noch deinen Musikhit nennen, bei dem du auf dem Feld vor Freude eine kleine Tanzperformance hinlest, egal was dort gerade los ist (gern mit YouTube-Link)',
           optional: true,
         },
         createdAt: {
