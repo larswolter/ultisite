@@ -3,18 +3,18 @@ import { check } from 'meteor/check';
 import { moment } from 'meteor/momentjs:moment';
 import { Statistics, Tournaments } from '../common/lib/ultisite';
 
-Meteor.startup(() => {
-  Statistics.remove({});
+Meteor.startup(async () => {
+  await Statistics.removeAsync({});
 });
 
 Meteor.methods({
-  computeStatistics(userId) {
+  async computeStatistics(userId) {
     check(userId, String);
     this.unblock();
     let players = [];
 
     const teams = [];
-    Tournaments.find({
+    await Tournaments.find({
       'teams.state': 'dabei',
       participants: {
         $elemMatch: {
@@ -22,7 +22,7 @@ Meteor.methods({
           state: 100,
         },
       },
-    }).forEach(function (tournament) {
+    }).forEachAsync(function (tournament) {
       tournament.teams.forEach((team) => {
         if (!tournament.participants.find((p) => p.team === team._id && p.user === userId)) return;
         const participants = tournament.participants.filter((p) => p.team === team._id);
@@ -83,7 +83,7 @@ Meteor.methods({
       type: 'playedTournaments',
       data: played,
     };
-    Statistics.upsert(
+    await Statistics.upsertAsync(
       {
         target: stats.target,
         type: stats.type,
@@ -99,7 +99,7 @@ Meteor.methods({
       type: 'plannedTournaments',
       data: planned,
     };
-    Statistics.upsert(
+    await Statistics.upsertAsync(
       {
         target: stats.target,
         type: stats.type,
@@ -113,11 +113,11 @@ Meteor.methods({
     let result = [];
     const playerCounts = _.countBy(players, (p) => p);
 
-    Object.keys(playerCounts).forEach((pc) => {
+    Object.keys(playerCounts).forEach(async pc => {
       if (pc !== userId) {
         result.push({
           userId: pc,
-          username: (Meteor.users.findOne(pc) || {}).username || pc,
+          username: ((await Meteor.users.findOneAsync(pc)) || {}).username || pc,
           count: playerCounts[pc],
         });
       }
@@ -129,7 +129,7 @@ Meteor.methods({
       type: 'top10Players',
       data: result,
     };
-    Statistics.upsert(
+    await Statistics.upsertAsync(
       {
         target: top10Stats.target,
         type: top10Stats.type,

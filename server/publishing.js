@@ -17,7 +17,7 @@ import {
 } from '../common/lib/ultisite';
 
 Meteor.startup(function () {
-  Meteor.publish('Blogs', function (limit) {
+  Meteor.publish('Blogs', async function (limit) {
     check(limit, Match.Maybe(Number));
 
     const search = {};
@@ -35,12 +35,12 @@ Meteor.startup(function () {
       },
     });
   });
-  Meteor.publish('BlogsStart', function () {
+  Meteor.publish('BlogsStart', async function () {
     const search = {};
     if (!this.userId) {
       search.public = true;
     }
-    const newest = (Blogs.findOne(search, { sort: { date: -1 } }) || {})._id;
+    const newest = ((await Blogs.findOneAsync(search, { sort: { date: -1 } })) || {})._id;
     search.$or = [
       {
         date: {
@@ -61,16 +61,16 @@ Meteor.startup(function () {
       },
     });
   });
-  Meteor.publish('Blog', function (_id) {
+  Meteor.publish('Blog', async function (_id) {
     return Blogs.find({ _id });
   });
-  Meteor.publish('UserRoles', function () {
-    if (isAdmin(this.userId)) {
+  Meteor.publish('UserRoles', async function () {
+    if (await isAdmin(this.userId)) {
       return Roles.getAllRoles();
     }
     this.ready();
   });
-  Meteor.publish('LastChanges', function (types) {
+  Meteor.publish('LastChanges', async function (types) {
     if (types) {
       return LastChanges.find({
         type: {
@@ -80,17 +80,17 @@ Meteor.startup(function () {
     }
     return LastChanges.find();
   });
-  Meteor.publish('Statistics', function (target) {
+  Meteor.publish('Statistics', async function (target) {
     check(target, String);
     const res = Statistics.find({
       target,
     });
-    if (res.count() === 0) {
-      Meteor.call('computeStatistics', target);
+    if ((await res.countAsync()) === 0) {
+      await Meteor.callAsync('computeStatistics', target);
     }
     return res;
   });
-  Meteor.publish('Files', function (associatedIds) {
+  Meteor.publish('Files', async function (associatedIds) {
     if (!Array.isArray(associatedIds)) {
       associatedIds = [associatedIds];
     }
@@ -129,7 +129,7 @@ Meteor.startup(function () {
       Folders.find(),
     ];
   });
-  Meteor.publish('UserDetails', function (userId) {
+  Meteor.publish('UserDetails', async function (userId) {
     check(userId, String);
     if (!this.userId) {
       return this.ready();
@@ -153,7 +153,7 @@ Meteor.startup(function () {
       }
     );
   });
-  Meteor.publish('Events', function () {
+  Meteor.publish('Events', async function () {
     if (!this.userId) {
       return undefined;
     }
@@ -165,7 +165,7 @@ Meteor.startup(function () {
       }
     );
   });
-  Meteor.publish('tournamentDetails', function (tournamentId) {
+  Meteor.publish('tournamentDetails', async function (tournamentId) {
     check(tournamentId, String);
     if (!this.userId) {
       return undefined;
@@ -173,7 +173,7 @@ Meteor.startup(function () {
     return Tournaments.find({ _id: tournamentId });
   });
 
-  Meteor.publish('Tournaments', function (since, query) {
+  Meteor.publish('Tournaments', async function (since, query) {
     return Tournaments.find(
       {
         $or: [
@@ -185,15 +185,15 @@ Meteor.startup(function () {
     );
   });
 
-  Meteor.publish('WikiPageDiscussions', function (id) {
+  Meteor.publish('WikiPageDiscussions', async function (id) {
     check(id, String);
     return WikiPageDiscussions.find({ pageId: id });
   });
-  Meteor.publish('ContentVersions', function (id) {
+  Meteor.publish('ContentVersions', async function (id) {
     check(id, String);
     return ContentVersions.find({ associated: id }, { fields: { content: 0 } });
   });
-  Meteor.publish('WikiPage', function (id) {
+  Meteor.publish('WikiPage', async function (id) {
     check(id, String);
     return WikiPages.find({
       $or: [
@@ -207,7 +207,7 @@ Meteor.startup(function () {
     });
   });
 
-  Meteor.publish('ContentVersion', function (id) {
+  Meteor.publish('ContentVersion', async function (id) {
     check(id, String);
     if (this.userId) {
       return ContentVersions.find({ _id: id });
@@ -215,10 +215,10 @@ Meteor.startup(function () {
     this.ready();
   });
 
-  Meteor.publish('Practices', function () {
+  Meteor.publish('Practices', async function () {
     return Practices.find({});
   });
-  Meteor.publish('Places', function () {
+  Meteor.publish('Places', async function () {
     return Countries.find();
   });
 });

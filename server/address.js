@@ -1,10 +1,10 @@
 import { Cities, Countries } from '../common/lib/ultisite';
 
 Meteor.methods({
-  getCityNames: function (term, country) {
+  getCityNames: async function(term, country) {
     check(country, String);
     check(term, String);
-    return Cities.find(
+    return await Cities.find(
       {
         country: country,
         name: new RegExp(term.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'), 'i'),
@@ -12,30 +12,30 @@ Meteor.methods({
       {
         limit: 10,
       }
-    ).map(function (elem) {
+    ).mapAsync(function (elem) {
       return {
         name: elem.name,
         geocoords: elem.geocoords,
       };
     });
   },
-  getCountryNames: function (term) {
+  getCountryNames: async function(term) {
     check(term, String);
-    return Countries.find(
+    return await Countries.find(
       {
         name: new RegExp(term.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'), 'i'),
       },
       {
         limit: 10,
       }
-    ).fetch();
+    ).fetchAsync();
   },
-  checkAddress: function (country, city) {
+  checkAddress: async function(country, city) {
     check(country, String);
     check(city, String);
     let res = {};
-    res.validCountry = !!Countries.findOne(country.toUpperCase());
-    res.validCity = !!Cities.findOne({ country: country.toUpperCase(), name: city });
+    res.validCountry = !!(await Countries.findOneAsync(country.toUpperCase()));
+    res.validCity = !!(await Cities.findOneAsync({ country: country.toUpperCase(), name: city }));
     return res;
   },
 });

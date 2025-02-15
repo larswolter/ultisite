@@ -1,7 +1,7 @@
 import { hostname, isAdmin, settings } from '../common/lib/ultisite';
 import { Mail } from './mail';
 
-Meteor.startup(function () {
+Meteor.startup(async function () {
   Accounts.validateLoginAttempt(function (attempt) {
     if (attempt.user) {
       if (settings().siteRegistration === 'admin' && attempt.user.profile.unverified) {
@@ -10,27 +10,29 @@ Meteor.startup(function () {
     }
     return true;
   });
-  Meteor.users.update({ activeAdmin: true }, { $unset: { activeAdmin: true } }, { multi: true });
+  await Meteor.users.updateAsync({ activeAdmin: true }, { $unset: { activeAdmin: true } }, { multi: true });
 });
 
-Meteor.publish(null, function () {
+Meteor.publish(null, async function () {
   return this.userId && Meteor.users.find({ _id: this.userId }, { fields: { activeAdmin: 1 } });
 });
 
-Accounts.onLogin(function (attempt) {
-  attempt.user && attempt.user._id && Meteor.users.update(attempt.user._id, { $unset: { activeAdmin: true } });
+Accounts.onLogin(async function (attempt) {
+  attempt.user &&
+    attempt.user._id &&
+    (await Meteor.users.updateAsync(attempt.user._id, { $unset: { activeAdmin: true } }));
 });
 
 Meteor.methods({
-  makeMeAdmin() {
+  async makeMeAdmin() {
     check(this.userId, String);
     if (Roles.userIsInRole(this.userId, ['admin'])) {
-      Meteor.users.update(this.userId, { $set: { activeAdmin: true } });
+      await Meteor.users.updateAsync(this.userId, { $set: { activeAdmin: true } });
     }
   },
-  passwordReset(email) {
+  async passwordReset(email) {
     check(email, String);
-    const user = Meteor.users.findOne(
+    const user = await Meteor.users.findOneAsync(
       {
         'emails.address': email,
       },
@@ -42,7 +44,7 @@ Meteor.methods({
     );
     if (user) {
       console.log('Sending mail to:', email);
-      const token = createEmailVerificationToken(user._id, email);
+      const token = await createEmailVerificationToken(user._id, email);
       Mail.send(
         [user._id],
         'Passwort Zurücksetzen',
@@ -50,13 +52,13 @@ Meteor.methods({
       );
     }
   },
-  userVerification(userId, accept) {
-    if (!isAdmin(this.userId)) {
+  async userVerification(userId, accept) {
+    if (!(await isAdmin(this.userId))) {
       return;
     }
     console.log('userVerification', userId, accept);
     if (accept) {
-      Meteor.users.update(
+      await Meteor.users.updateAsync(
         {
           _id: userId,
         },
@@ -68,9 +70,9 @@ Meteor.methods({
             'profile.unverified': '',
           },
         },
-        function () {
-          const email = Meteor.users.findOne(userId).emails[0].address;
-          const token = createEmailVerificationToken(userId, email);
+        async function () {
+          const email = (await Meteor.users.findOneAsync(userId)).emails[0].address;
+          const token = await createEmailVerificationToken(userId, email);
           console.log('Created token:', token);
 
           Mail.send(
@@ -82,19 +84,19 @@ Meteor.methods({
         }
       );
     } else {
-      Meteor.users.remove({
+      await Meteor.users.removeAsync({
         _id: userId,
       });
     }
   },
-  addUser(userData) {
+  async addUser(userData) {
     const profile = {
       name: userData.name,
       surname: userData.surname,
       sex: userData.sex,
     };
     profile.clubProperties = {};
-    if (Meteor.users.find().count() > 0) {
+    if ((await Meteor.users.find().countAsync()) > 0) {
       if (!this.userId) {
         // we need to check the registration password
         if (settings().siteRegistration === 'password') {
@@ -107,7 +109,7 @@ Meteor.methods({
           }
         }
       }
-      let user = Meteor.users.findOne(
+      let user = await Meteor.users.findOneAsync(
         {
           'emails.address': userData.email,
         },
@@ -120,7 +122,7 @@ Meteor.methods({
       if (user) {
         throw new Meteor.Error('duplicate-email', 'Ein Nutzer mit dieser E-Mail Adresse existiert bereits');
       }
-      user = Meteor.users.findOne(
+      user = await Meteor.users.findOneAsync(
         { username: { $regex: userData.alias, $options: 'i' } },
         {
           fields: {
@@ -131,7 +133,7 @@ Meteor.methods({
       if (user) {
         throw new Meteor.Error('duplicate-username', 'Ein Nutzer mit diesem Nuiternamen existiert bereits');
       }
-      if (isAdmin(this.userId)) {
+      if (await isAdmin(this.userId)) {
         profile.verifiedBy = this.userId;
       } else {
         profile.unverified = true;
@@ -144,14 +146,14 @@ Meteor.methods({
       email: userData.email,
       profile,
     });
-    if (Meteor.users.find().count() === 1) {
+    if ((await Meteor.users.find().countAsync()) === 1) {
       Accounts.setPassword(userId, 'blubs');
-      Roles.addUsersToRoles(Meteor.users.findOne(userId), ['admin', 'club']);
+      Roles.addUsersToRoles(await Meteor.users.findOneAsync(userId), ['admin', 'club']);
     } else {
       console.log('Created user:', userId, userData.email);
       // send enrollment link to new user if a admin adds a new one
       if (settings().siteRegistration !== 'admin') {
-        const token = createEmailVerificationToken(userId, userData.email);
+        const token = await createEmailVerificationToken(userId, userData.email);
         console.log('Created token:', token);
 
         Mail.send(
@@ -165,8 +167,8 @@ Meteor.methods({
   },
 });
 
-function createEmailVerificationToken(userId, email) {
-  const user = Meteor.users.findOne(userId);
+async function createEmailVerificationToken(userId, email) {
+  const user = await Meteor.users.findOneAsync(userId);
   if (!user) {
     throw new Meteor.Error('auth-err', 'No user found');
   }
@@ -180,7 +182,7 @@ function createEmailVerificationToken(userId, email) {
     when: new Date(),
   };
 
-  Meteor.users.update(userId, {
+  await Meteor.users.updateAsync(userId, {
     $set: {
       'services.password.reset': tokenRecord,
     },

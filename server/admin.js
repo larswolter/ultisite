@@ -12,8 +12,8 @@ import {
   Settings,
 } from '../common/lib/ultisite';
 
-function syncSettings() {
-  _.extend(Meteor.settings, Settings.findOne() || {});
+async function syncSettings() {
+  _.extend(Meteor.settings, (await Settings.findOneAsync()) || {});
 
   Object.keys(Meteor.settings).forEach((key) => {
     if (key === 'mailingListConfigs') {
@@ -25,69 +25,69 @@ function syncSettings() {
   });
 
   __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (
-    Folders.findOne({
+    (await Folders.findOneAsync({
       name: '/',
-    }) || {}
+    })) || {}
   )._id;
   WebAppInternals.generateBoilerplate();
   console.log('synced settings');
   return __meteor_runtime_config__.PUBLIC_SETTINGS;
 }
-Meteor.startup(function () {
-  if (!Settings.findOne()) {
-    Settings.insert({});
+Meteor.startup(async function() {
+  if (!(await Settings.findOneAsync())) {
+    await Settings.insertAsync({});
   }
-  syncSettings();
+  await syncSettings();
 });
 
 Meteor.methods({
-  updateSettings(modifier) {
-    if (!isAdmin(this.userId)) {
+  async updateSettings(modifier) {
+    if (!(await isAdmin(this.userId))) {
       throw new Meteor.error('access-denied', 'Zugriff nur für Admins');
     }
     console.log('updating settings', modifier);
-    Settings.update({}, modifier);
-    return syncSettings();
+    await Settings.updateAsync({}, modifier);
+    return await syncSettings();
   },
-  recreateCollections() {
-    Meteor.call('cleanDatabases');
-    Meteor.call('createDatabases');
+  async recreateCollections() {
+    await Meteor.callAsync('cleanDatabases');
+    await Meteor.callAsync('createDatabases');
     Accounts.setPassword(
-      Meteor.users.findOne({
+      (await Meteor.users.findOneAsync({
         'emails.address': 'lars@larswolter.de',
-      })._id,
+      }))._id,
       'blubs'
     );
   },
-  queryCollectionStatus() {
+  async queryCollectionStatus() {
     return [
       {
         name: 'Settings',
-        count: Settings.find().count(),
+        count: await Settings.find().countAsync(),
       },
       {
         name: 'Users',
-        count: Meteor.users.find().count(),
+        count: await Meteor.users.find().countAsync(),
       },
       {
         name: 'Tournaments',
-        count: Tournaments.find().count(),
+        count: await Tournaments.find().countAsync(),
       },
       {
         name: 'Files',
-        count: Images.find().count() + Documents.find().count(),
+        count: (await Images.find().countAsync()) + (await Documents.find().countAsync()),
       },
       {
         name: 'Practices',
-        count: Practices.find().count(),
+        count: await Practices.find().countAsync(),
       },
       {
         name: 'Events',
-        count: Events.find().count(),
+        count: await Events.find().countAsync(),
       },
       {
         name: 'WikiPages',
-        count: WikiPages.find().count(),
+        count: await WikiPages.find().countAsync(),
       },
     ];
   },

@@ -6,11 +6,11 @@ import { hatSort } from '../utils';
 import { HatParticipants } from '../schema';
 import { settings } from './server';
 
-WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
+WebApp.connectHandlers.use('/_hatTeamDrawing', async function(req, res, next) {
   const { query } = Npm.require('url').parse(req.url, true);
   check(query.downloadToken, String);
   check(query.teams, String);
-  const user = Meteor.users.findOne({ 'profile.downloadToken': query.downloadToken });
+  const user = await Meteor.users.findOneAsync({ 'profile.downloadToken': query.downloadToken });
   if (!user || !Roles.userIsInRole(user._id, ['hatAdmin'])) {
     res.writeHead(403);
     res.end();
@@ -18,10 +18,10 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   }
   const numTeams = Number(query.teams);
   const teams = [];
-  const participants = HatParticipants.find(
+  const participants = await HatParticipants.find(
     { confirmed: true, payed: { $lte: new Date() } },
     { sort: hatSort(), limit: Number(settings().hatNumPlayers) }
-  ).fetch();
+  ).fetchAsync();
   const partStrength = (p) => {
     return Number(p.strength) + Number(p.years) + Number(p.experience) + Number(p.fitness);
   };

@@ -39,32 +39,33 @@ function setupMailServer(club) {
       },
     });
   }
-  Mail.send = function (recievers, subject, content) {
+  Mail.send = async function (recievers, subject, content) {
     console.log('sending mail on ' + club.teamname);
 
     const mailOptions = {
       from: club.teamname + ' Verwaltung <' + club.emailFrom + '>',
       to:
-        Meteor.users
-          .find({
-            _id: {
-              $in: recievers,
-            },
-          })
-          .map(function (u) {
-            let vemail;
-            u.emails.forEach(function (mail) {
-              if (mail.verified) {
-                vemail = mail.address;
+        (
+          await Meteor.users
+            .find({
+              _id: {
+                $in: recievers,
+              },
+            })
+            .mapAsync(function (u) {
+              let vemail;
+              u.emails.forEach(function (mail) {
+                if (mail.verified) {
+                  vemail = mail.address;
+                }
+              });
+              if (!vemail) {
+                // Take the first unverified email
+                vemail = u.emails[0].address;
               }
-            });
-            if (!vemail) {
-              // Take the first unverified email
-              vemail = u.emails[0].address;
-            }
-            return u.username + ' <' + vemail + '>';
-          })
-          .join(', ') || recievers.join(','),
+              return u.username + ' <' + vemail + '>';
+            })
+        ).join(', ') || recievers.join(','),
       subject: '[' + club.teamname + '] ' + subject,
       html: content,
     };
@@ -97,7 +98,7 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
-  updateMailserver() {
+  async updateMailserver() {
     setupMailServer(settings());
   },
 });

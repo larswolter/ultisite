@@ -14,20 +14,20 @@ Tournaments.before.insert(function (userId, doc) {
   doc.participants = [];
 });
 
-export const getTeam = function (id) {
-  const tournament = Tournaments.findOne({ 'teams._id': id });
+export const getTeam = async function(id) {
+  const tournament = await Tournaments.findOneAsync({ 'teams._id': id });
   return tournament && tournament.teams[id];
 };
 
-export const getTournamentsStates = function (userId) {
+export const getTournamentsStates = async function(userId) {
   const teams = [];
-  Tournaments.find(
+  await Tournaments.find(
     {
       date: { $gte: new Date() },
       participants: { $elemMatch: { user: userId, state: { $gt: 50 } } },
     },
     { sort: { date: 1 } }
-  ).forEach((tournament) => {
+  ).forEachAsync((tournament) => {
     tournament.participants
       .filter((p) => p.user === userId)
       .forEach((part) => {
@@ -53,16 +53,16 @@ export const getTournamentsStates = function (userId) {
 };
 
 Meteor.methods({
-  offlineTournamentCheck(ids) {
+  async offlineTournamentCheck(ids) {
     check(ids, [String]);
-    const existing = Tournaments.find({ _id: { $in: ids } }).map((t) => t._id);
+    const existing = await Tournaments.find({ _id: { $in: ids } }).mapAsync((t) => t._id);
     return _.without(ids, existing);
   },
-  myTournamentStates() {
-    return getTournamentsStates(this.userId);
+  async myTournamentStates() {
+    return await getTournamentsStates(this.userId);
   },
-  myTournaments() {
-    const ids = Tournaments.find(
+  async myTournaments() {
+    const ids = await Tournaments.find(
       {
         date: {
           $gte: moment().toDate(),
@@ -70,11 +70,11 @@ Meteor.methods({
         $or: [{ 'teams.clubTeam': true }, { 'participants.user': this.userId }],
       },
       { fields: { _id: 1 } }
-    ).map(function (t) {
+    ).mapAsync(function (t) {
       return t._id;
     });
     ids.concat(
-      Tournaments.find(
+      await Tournaments.find(
         {
           tournamentDate: {
             $lte: moment().toDate(),
@@ -87,19 +87,19 @@ Meteor.methods({
           limit: 5,
           fields: { _id: 1 },
         }
-      ).map(function (t) {
+      ).mapAsync(function (t) {
         return t._id;
       })
     );
     return ids;
   },
-  addTeam(teamData, tournamentId) {
+  async addTeam(teamData, tournamentId) {
     check(teamData, Object);
     check(tournamentId, String);
     if (!this.userId) {
       throw new Meteor.Error('not-logged-in', 'Nicht angemeldet');
     }
-    const tourney = Tournaments.findOne(tournamentId);
+    const tourney = await Tournaments.findOneAsync(tournamentId);
     if (!tourney) {
       throw new Meteor.Error('does-not-exist', `Das Turnier ${tournamentId} existiert nicht`);
     }
@@ -120,26 +120,26 @@ Meteor.methods({
     } else {
       teamData.clubTeam = false;
       teamData.responsible = this.userId;
-      teamData.responsibleName = Meteor.users.findOne(this.userId).username;
+      teamData.responsibleName = (await Meteor.users.findOneAsync(this.userId)).username;
     }
     teamData._id = Random.id();
     console.log(`Created Team ${teamData._id} `);
-    Tournaments.update(tournamentId, {
+    await Tournaments.updateAsync(tournamentId, {
       $set: { lastChange: new Date() },
       $push: { teams: teamData },
     });
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'tournament',
       _id: tournamentId,
       text: `Neues Team ${teamData.name}`,
     });
     return teamData._id;
   },
-  tournamentUpdateInfos(id, infoId, content) {
+  async tournamentUpdateInfos(id, infoId, content) {
     check(id, String);
     check(infoId, String);
     check(content, String);
-    Tournaments.update(
+    await Tournaments.updateAsync(
       {
         _id: id,
         'description._id': infoId,
@@ -151,17 +151,17 @@ Meteor.methods({
         },
       }
     );
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'tournament',
       _id: id,
       text: `Neue Infos zum Turnier: ${content.substr(0, 20)}`,
     });
   },
-  tournamentUpdateReport(id, infoId, content) {
+  async tournamentUpdateReport(id, infoId, content) {
     check(id, String);
     check(infoId, String);
     check(content, String);
-    Tournaments.update(
+    await Tournaments.updateAsync(
       {
         _id: id,
         'reports._id': infoId,
@@ -174,10 +174,10 @@ Meteor.methods({
       }
     );
   },
-  tournamentAddReport(id, report) {
+  async tournamentAddReport(id, report) {
     check(id, String);
     check(report, Object);
-    Tournaments.update(
+    await Tournaments.updateAsync(
       {
         _id: id,
       },
@@ -193,14 +193,14 @@ Meteor.methods({
         },
       }
     );
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'tournament',
       _id: id,
       text: 'Neuer Bericht zum Turnier',
     });
   },
-  tournamentCoordinates() {
-    return Tournaments.find(
+  async tournamentCoordinates() {
+    return await Tournaments.find(
       {
         $and: [
           {
@@ -225,12 +225,12 @@ Meteor.methods({
           date: 1,
         },
       }
-    ).fetch();
+    ).fetchAsync();
   },
 });
 
-export const teamDrawings = function () {
-  Tournaments.find({
+export const teamDrawings = async function() {
+  await Tournaments.find({
     date: {
       $gte: moment().startOf('day').toDate(),
     },
@@ -238,8 +238,8 @@ export const teamDrawings = function () {
     'teams.drawingDate': {
       $lte: moment().endOf('day').toDate(),
     },
-  }).forEach(function (tournament) {
-    tournament.teams.forEach((team) => {
+  }).forEachAsync(function (tournament) {
+    tournament.teams.forEach(async team => {
       if (team.drawingResult) {
         return;
       }
@@ -258,7 +258,7 @@ export const teamDrawings = function () {
       }
       const orderedParticipants = _.sortBy(_.sortBy(participants, 'safeStateDate'), (p) => 100 - p.state);
 
-      orderedParticipants.forEach((part, idx) => {
+      orderedParticipants.forEach(async (part, idx) => {
         const selection = (Math.random() * numbers.length).toFixed();
         let pos = numbers[selection];
         numbers = _.without(numbers, pos);
@@ -268,7 +268,7 @@ export const teamDrawings = function () {
         if (part.state !== 100) {
           pos = 1000;
         }
-        Tournaments.update(
+        await Tournaments.updateAsync(
           { _id: tournament._id, 'participants.user': part.user },
           {
             $set: { 'participants.$.drawing': pos },
@@ -276,7 +276,7 @@ export const teamDrawings = function () {
         );
         result[part.user.toCamelCase()] = pos;
       });
-      Tournaments.update(
+      await Tournaments.updateAsync(
         { _id: tournament._id, 'teams._id': team._id },
         {
           $set: {
@@ -291,7 +291,7 @@ export const teamDrawings = function () {
 
       console.log(`finished drawing:${drawnParticipants}`);
       if (team.maxPlayers < partCount * 2) {
-        Meteor.call('addEvent', {
+        await Meteor.callAsync('addEvent', {
           type: 'tournament',
           _id: tournament._id,
           text: `Auslosung bei ${team.name}:${drawnParticipants}`,

@@ -10,14 +10,14 @@ import { hatSort } from '../utils';
 import { HatInfo, HatParticipants } from '../schema';
 import { isAdmin, Mail, renderMailTemplate, settings } from './server';
 
-Meteor.startup(function () {
+Meteor.startup(async function () {
   HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
 
   if (!_.find(Roles.getAllRoles().fetch(), (r) => r.name === 'hatAdmin')) {
     Roles.createRole('hatAdmin');
   }
-  HatParticipants.find({ payed: { $exists: false } }).forEach((elem) => {
-    HatParticipants.update(elem._id, {
+  await HatParticipants.find({ payed: { $exists: false } }).forEachAsync(async (elem) => {
+    await HatParticipants.updateAsync(elem._id, {
       $set: { payed: moment(elem.createdAt).clone().add(10, 'years').toDate() },
     });
   });
@@ -39,7 +39,7 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
-  hatTriggerMailReminder() {
+  async hatTriggerMailReminder() {
     if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
@@ -54,16 +54,16 @@ Meteor.methods({
       .toArray();
     return [...(settings().arrayHatHomeTeams || []), ...res[0].hometeams];
   },
-  createRandomData(total, payed, confirmed) {
+  async createRandomData(total, payed, confirmed) {
     check(total, Number);
     check(payed, Number);
     check(confirmed, Number);
     if (!isAdmin(this.userId)) return;
-    HatParticipants.remove({});
+    await HatParticipants.removeAsync({});
 
     for (let i = 0; i < total; i += 1) {
       const createdAt = moment().subtract(Math.floor(Math.random() * 10) + 3, 'days');
-      HatParticipants.insert({
+      await HatParticipants.insertAsync({
         createdAt: createdAt.toDate(),
         modifiedAt: createdAt.toDate(),
         confirmed: i < confirmed,
@@ -84,11 +84,11 @@ Meteor.methods({
       console.log(createdAt);
     }
   },
-  hatConfirmParticipant(accessKey) {
+  async hatConfirmParticipant(accessKey) {
     check(accessKey, String);
-    const part = HatParticipants.findOne({ accessKey });
+    const part = await HatParticipants.findOneAsync({ accessKey });
     if (part.allowPublic) {
-      HatParticipants.update(
+      await HatParticipants.updateAsync(
         { accessKey },
         {
           $set: {
@@ -102,7 +102,7 @@ Meteor.methods({
         }
       );
     } else {
-      HatParticipants.update(
+      await HatParticipants.updateAsync(
         { accessKey },
         {
           $set: { confirmed: true },
@@ -110,7 +110,7 @@ Meteor.methods({
       );
     }
   },
-  hatParticipate(p) {
+  async hatParticipate(p) {
     check(p, Object);
 
     const participant = _.clone(p);
@@ -124,14 +124,14 @@ Meteor.methods({
     participant.accessKey = Random.id(34);
     participant.hatId = settings().hatId;
     if (
-      HatParticipants.findOne({
+      await HatParticipants.findOneAsync({
         email: participant.email,
         hatId: participant.hatId,
       })
     ) {
       throw new Meteor.Error('Teilnehmer mit dieser E-Mail existiert schon!');
     }
-    HatParticipants.insert(participant);
+    await HatParticipants.insertAsync(participant);
     const template = Assets.getText('private/confirm.html');
     Mail.send(
       [participant.email],
@@ -145,12 +145,12 @@ Meteor.methods({
     );
     return 'inserted';
   },
-  hatResendMail(accessKey) {
+  async hatResendMail(accessKey) {
     check(accessKey, String);
     if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
-    const participant = HatParticipants.findOne({ accessKey });
+    const participant = await HatParticipants.findOneAsync({ accessKey });
     const template = Assets.getText('private/confirm.html');
     Mail.send(
       [participant.email],
@@ -163,9 +163,9 @@ Meteor.methods({
       })
     );
   },
-  hatParticipationPayed(accessKey) {
+  async hatParticipationPayed(accessKey) {
     check(accessKey, String);
-    const part = HatParticipants.findOne({ accessKey });
+    const part = await HatParticipants.findOneAsync({ accessKey });
     if (!part) {
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
@@ -173,13 +173,13 @@ Meteor.methods({
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
 
-    HatParticipants.update(part._id, { $set: { payed: moment().subtract(1, 'minute').toDate() } });
+    await HatParticipants.updateAsync(part._id, { $set: { payed: moment().subtract(1, 'minute').toDate() } });
     return 'payed';
   },
-  hatUpdateParticipation(participant) {
+  async hatUpdateParticipation(participant) {
     check(participant, Object);
     check(participant.accessKey, String);
-    const part = HatParticipants.findOne({ accessKey: participant.accessKey });
+    const part = await HatParticipants.findOneAsync({ accessKey: participant.accessKey });
     if (!part) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
@@ -189,7 +189,7 @@ Meteor.methods({
     participant.modifiedAt = new Date();
 
     if (participant.allowPublic && part.confirmed) {
-      HatParticipants.update(part._id, {
+      await HatParticipants.updateAsync(part._id, {
         $set: {
           ...participant,
           public: {
@@ -198,16 +198,16 @@ Meteor.methods({
         },
       });
     } else {
-      HatParticipants.update(part._id, {
+      await HatParticipants.updateAsync(part._id, {
         $set: participant,
         $unset: { public: 1 },
       });
     }
     return 'updated';
   },
-  hatRemoveParticipation(accessKey) {
+  async hatRemoveParticipation(accessKey) {
     check(accessKey, String);
-    const part = HatParticipants.findOne({ accessKey });
+    const part = await HatParticipants.findOneAsync({ accessKey });
     if (!part) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
@@ -217,12 +217,12 @@ Meteor.methods({
       `<p>Der folgende Teilnehmer hat sich abgemeldet:</p><pre>${JSON.stringify(part, null, 2)}</pre>`
     );
 
-    HatParticipants.remove(part._id);
+    await HatParticipants.removeAsync(part._id);
     return 'removed';
   },
 });
 
-Meteor.publish('hatParticipants', function () {
+Meteor.publish('hatParticipants', async function () {
   const sort = hatSort();
   const filter = {
     hatId: settings().hatId || undefined,
@@ -252,14 +252,14 @@ Meteor.publish('hatParticipants', function () {
     },
   });
 });
-Meteor.publish('hatParticipant', function (accessKey) {
+Meteor.publish('hatParticipant', async function (accessKey) {
   check(accessKey, String);
   return HatParticipants.find({ accessKey });
 });
 
-WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
+WebApp.connectHandlers.use('/_hatInfoExport', async function (req, res, next) {
   const { query } = Npm.require('url').parse(req.url, true);
-  const user = Meteor.users.findOne({ 'profile.downloadToken': query.downloadToken });
+  const user = await Meteor.users.findOneAsync({ 'profile.downloadToken': query.downloadToken });
   if (!user || !Roles.userIsInRole(user._id, ['hatAdmin'])) {
     res.writeHead(403);
     res.end();
@@ -278,9 +278,9 @@ WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
     key: column,
     width: 20,
   }));
-  HatParticipants.find({
+  await HatParticipants.find({
     hatId: settings().hatId || undefined,
-  }).forEach((entry) =>
+  }).forEachAsync((entry) =>
     sheet.addRow({
       ...entry,
       strength: Number(entry.strength),

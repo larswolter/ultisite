@@ -61,7 +61,7 @@ Meteor.startup(function () {
                     });
                     msg.on(
                       'end',
-                      Meteor.bindEnvironment(function (attrs) {
+                      Meteor.bindEnvironment(async function(attrs) {
                         const address = addressparser(header.from[0]);
                         const user = Accounts.findUserByEmail(address[0].address);
                         const date = moment(header.date[0], 'ddd, DD MMM YYYY HH:mm:ss ZZ');
@@ -69,11 +69,11 @@ Meteor.startup(function () {
 
                         if (user) {
                           console.log('got email from user:', user.username, address[0].address);
-                          const exists = Blogs.findOne({ author: user._id, date: date.toDate() });
+                          const exists = await Blogs.findOneAsync({ author: user._id, date: date.toDate() });
                           if (exists) {
                             blogId = exists._id;
                           }
-                          Blogs.upsert(blogId, {
+                          await Blogs.upsertAsync(blogId, {
                             $set: {
                               lastChange: new Date(),
                               _id: blogId,
@@ -85,7 +85,7 @@ Meteor.startup(function () {
                             },
                           });
                           if (!exists) {
-                            Meteor.call('addEvent', {
+                            await Meteor.callAsync('addEvent', {
                               type: 'blog',
                               _id: blogId,
                               userId: user._id,
@@ -123,7 +123,7 @@ Meteor.startup(function () {
                           imap.addFlags(
                             uid,
                             'Deleted',
-                            Meteor.bindEnvironment(function (err) {
+                            Meteor.bindEnvironment(async function(err) {
                               if (err) {
                                 console.log('deletion failed:', err);
                               }
@@ -136,8 +136,8 @@ Meteor.startup(function () {
                               imap.end();
                               const search = {};
                               search['settings.email.' + config.from.toCamelCase()] = 'immediate';
-                              Meteor.users.find(search).forEach(function (user) {
-                                sendMailinglistArticle(user, blogId);
+                              await Meteor.users.find(search).forEachAsync(async function(user) {
+                                await sendMailinglistArticle(user, blogId);
                               });
                             })
                           );
@@ -192,7 +192,7 @@ const fetchPart = function (imap, blogId, uid, part) {
           );
           stream.once(
             'end',
-            Meteor.bindEnvironment(function () {
+            Meteor.bindEnvironment(async function() {
               if (part.disposition && part.disposition.type === 'attachment') {
                 /* TODO: image from mail
           if (file.isImage()) {
@@ -219,7 +219,7 @@ const fetchPart = function (imap, blogId, uid, part) {
               } else if (part.type === 'text') {
                 let text = quotedPrintable.decode(buffer);
                 text = sanitizeHtml(text);
-                Blogs.upsert(blogId, {
+                await Blogs.upsertAsync(blogId, {
                   $set: {
                     _id: blogId,
                     content: text,
@@ -239,11 +239,11 @@ const fetchPart = function (imap, blogId, uid, part) {
   });
 };
 
-const sendMailinglistArticle = function (user, blogId, mailinglist) {
+const sendMailinglistArticle = async function(user, blogId, mailinglist) {
   const template = Assets.getText('mail-templates/article.html');
   const layout = Assets.getText('mail-templates/layout.html');
-  const blog = Blogs.findOne(blogId);
-  const author = Meteor.users.findOne(blog.author);
+  const blog = await Blogs.findOneAsync(blogId);
+  const author = await Meteor.users.findOneAsync(blog.author);
   Mail.send(
     [user._id],
     blog.title,

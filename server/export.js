@@ -2,20 +2,20 @@ import { WebApp } from 'meteor/webapp';
 import Excel from 'exceljs';
 import { Statistics } from '../common/lib/ultisite';
 
-WebApp.connectHandlers.use('/_myTournaments.xlsx', (req, resp) => {
+WebApp.connectHandlers.use('/_myTournaments.xlsx', async (req, resp) => {
   if (!req.query.token) {
     resp.writeHead(403);
     resp.end('Param token required');
     return;
   }
-  const user = Meteor.users.findOne({ 'profile.downloadToken': req.query.token });
+  const user = await Meteor.users.findOneAsync({ 'profile.downloadToken': req.query.token });
   if (!user) {
     resp.writeHead(403);
     resp.end('token not valid');
     return;
   }
 
-  const stats = Statistics.findOne({ target: user._id, type: 'playedTournaments' });
+  const stats = await Statistics.findOneAsync({ target: user._id, type: 'playedTournaments' });
   if (!stats) {
     resp.writeHead(404);
     resp.end('no statistics found');

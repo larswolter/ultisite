@@ -1,18 +1,18 @@
 import { Blogs, isAdmin, Tournaments } from '../common/lib/ultisite';
 
-Accounts.onLogin(function (attempt) {
+Accounts.onLogin(async function (attempt) {
   if (attempt.user) {
     Roles.addUsersToRoles(attempt.user, ['user']);
-    if (Tournaments.findOne({ 'participants.user': attempt.user._id })) {
+    if (await Tournaments.findOneAsync({ 'participants.user': attempt.user._id })) {
       Roles.addUsersToRoles(attempt.user, ['player']);
     }
     if (!attempt.user.settings) {
-      Meteor.users.update(attempt.user._id, { $set: { settings: {} } });
+      await Meteor.users.updateAsync(attempt.user._id, { $set: { settings: {} } });
     }
   }
 });
 
-Meteor.publish('usersOverview', function (options) {
+Meteor.publish('usersOverview', async function (options) {
   check(options, Object);
   if (this.userId) {
     const fields = {};
@@ -27,27 +27,27 @@ Meteor.publish('usersOverview', function (options) {
   this.ready();
 });
 Meteor.methods({
-  userRemove(userId) {
+  async userRemove(userId) {
     check(userId, String);
-    if (isAdmin(this.userId)) {
-      Meteor.users.remove(userId);
+    if (await isAdmin(this.userId)) {
+      await Meteor.users.removeAsync(userId);
     } else {
       throw new Meteor.Error('access-denied');
     }
   },
-  userToggleBlocked(userId) {
+  async userToggleBlocked(userId) {
     check(userId, String);
-    if (!isAdmin(this.userId)) {
+    if (!(await isAdmin(this.userId))) {
       throw new Meteor.Error('access-denied');
     }
   },
-  retrieveEmails(userIds) {
+  async retrieveEmails(userIds) {
     if (!this.userId) {
       return null;
     }
     return userIds
-      .map(function (uid) {
-        const user = Meteor.users.findOne(uid);
+      .map(async function (uid) {
+        const user = await Meteor.users.findOneAsync(uid);
         if (user) {
           return user.username + ' <' + user.emails[0].address + '>';
         }
@@ -56,32 +56,32 @@ Meteor.methods({
       .filter((x) => x !== '')
       .join(',');
   },
-  totalUsers() {
-    return Meteor.users.find().count();
+  async totalUsers() {
+    return await Meteor.users.find().countAsync();
   },
-  userUpdateEmail(userid, oldAddress, newAddress) {
-    if (!isAdmin(this.userId)) {
+  async userUpdateEmail(userid, oldAddress, newAddress) {
+    if (!(await isAdmin(this.userId))) {
       throw new Meteor.Error('access-denied');
     }
-    Meteor.users.update(
+    await Meteor.users.updateAsync(
       { _id: userid, 'emails.address': oldAddress },
       { $set: { 'emails.$.address': newAddress, 'emails.$.verified': false } }
     );
   },
-  impersonateUser(username) {
-    if (isAdmin(this.userId)) {
-      const u = Meteor.users.findOne({ username });
+  async impersonateUser(username) {
+    if (await isAdmin(this.userId)) {
+      const u = await Meteor.users.findOneAsync({ username });
       console.log('impersonating ' + u.username);
       this.setUserId(u._id);
     }
   },
-  correctParticipants(userId) {
-    if (this.userId !== userId && !isAdmin(this.userId)) {
+  async correctParticipants(userId) {
+    if (this.userId !== userId && !(await isAdmin(this.userId))) {
       return;
     }
-    const user = Meteor.users.findOne(userId);
+    const user = await Meteor.users.findOneAsync(userId);
     if (user) {
-      Tournaments.update(
+      await Tournaments.updateAsync(
         { 'participants.user': userId },
         {
           $set: {
@@ -92,7 +92,7 @@ Meteor.methods({
         },
         { multi: true }
       );
-      Tournaments.update(
+      await Tournaments.updateAsync(
         { 'participants.responsible': userId },
         {
           $set: {
@@ -102,7 +102,7 @@ Meteor.methods({
         },
         { multi: true }
       );
-      Tournaments.update(
+      await Tournaments.updateAsync(
         { responsible: userId },
         {
           $set: {
@@ -112,7 +112,7 @@ Meteor.methods({
         },
         { multi: true }
       );
-      Blogs.update(
+      await Blogs.updateAsync(
         { author: userId },
         {
           $set: {
@@ -157,19 +157,19 @@ Accounts.onLogin(function (attempt) {
 });
 
 activeConnections.find().observe({
-  added(doc) {
+  async added(doc) {
     if (doc.userId) {
-      Meteor.users.update(doc.userId, { $set: { status: { connected: true, status: 'online' } } });
+      await Meteor.users.updateAsync(doc.userId, { $set: { status: { connected: true, status: 'online' } } });
     }
   },
-  changed(doc) {
+  async changed(doc) {
     if (doc.userId) {
-      Meteor.users.update(doc.userId, { $set: { status: { connected: true, status: 'online' } } });
+      await Meteor.users.updateAsync(doc.userId, { $set: { status: { connected: true, status: 'online' } } });
     }
   },
-  removed(doc) {
+  async removed(doc) {
     if (doc.userId) {
-      Meteor.users.update(doc.userId, { $set: { status: { connected: false, status: 'offline' } } });
+      await Meteor.users.updateAsync(doc.userId, { $set: { status: { connected: false, status: 'offline' } } });
     }
   },
 });

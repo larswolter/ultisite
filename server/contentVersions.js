@@ -2,8 +2,8 @@ import { moment } from 'meteor/momentjs:moment';
 import { ContentVersions } from '../common/lib/ultisite';
 
 Meteor.methods({
-  storeContentVersion: function (id, content) {
-    var lastEntry = ContentVersions.findOne(
+  storeContentVersion: async function(id, content) {
+    var lastEntry = await ContentVersions.findOneAsync(
       {
         associated: id,
       },
@@ -21,7 +21,7 @@ Meteor.methods({
         );
         return;
       }
-    ContentVersions.insert({
+    await ContentVersions.insertAsync({
       associated: id,
       author: Meteor.userId(),
       date: new Date(),

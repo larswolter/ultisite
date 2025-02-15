@@ -1,8 +1,8 @@
 import handlebars from 'handlebars';
 import { settings, WikiPages } from '../common/lib/ultisite';
 
-WebApp.connectHandlers.use('/staticStartpage', function (req, res, next) {
-  const wiki = WikiPages.findOne(settings().wikiStart);
+WebApp.connectHandlers.use('/staticStartpage', async function(req, res, next) {
+  const wiki = await WikiPages.findOneAsync(settings().wikiStart);
   const layout = handlebars.compile(Assets.getText('mail-templates/static-layout.html'));
   const context = {
     settings: settings(),

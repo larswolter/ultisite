@@ -7,9 +7,9 @@ import { participantList } from '../common/teams';
 import { addEvent } from './events';
 
 Meteor.methods({
-  teamRemove(teamId) {
+  async teamRemove(teamId) {
     check(teamId, String);
-    const tournament = Tournaments.findOne({
+    const tournament = await Tournaments.findOneAsync({
       participants: {
         $elemMatch: { team: teamId, state: 100 },
       },
@@ -17,7 +17,7 @@ Meteor.methods({
     if (tournament) {
       throw new Meteor.Error('team-not-empty', 'Es sind Spieler im Team');
     }
-    Tournaments.update(
+    await Tournaments.updateAsync(
       { 'teams._id': teamId },
       {
         $pull: {
@@ -27,24 +27,24 @@ Meteor.methods({
       }
     );
   },
-  teamMoveToTournament(teamId, tournamentId) {
+  async teamMoveToTournament(teamId, tournamentId) {
     check(teamId, String);
     check(tournamentId, String);
-    const team = getTeam(teamId);
+    const team = await getTeam(teamId);
     if (!team) {
       return;
     }
     // first insert, then remove, to not loose the team
-    Tournaments.update(tournamentId, { $push: { teams: team } });
-    Tournaments.update({ _id: { $ne: tournamentId, 'teams._id': teamId } }, { $pull: { teams: { _id: teamId } } });
+    await Tournaments.updateAsync(tournamentId, { $push: { teams: team } });
+    await Tournaments.updateAsync({ _id: { $ne: tournamentId, 'teams._id': teamId } }, { $pull: { teams: { _id: teamId } } });
   },
-  teamMakeMeResponsible(teamId) {
+  async teamMakeMeResponsible(teamId) {
     check(teamId, String);
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
-    const user = Meteor.users.findOne(this.userId);
-    Tournaments.update(
+    const user = await Meteor.users.findOneAsync(this.userId);
+    await Tournaments.updateAsync(
       { 'teams._id': teamId },
       {
         $set: {
@@ -55,23 +55,23 @@ Meteor.methods({
       }
     );
   },
-  teamUpdateRemarks(teamId, remark) {
+  async teamUpdateRemarks(teamId, remark) {
     check(teamId, String);
     check(remark, String);
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
-    Tournaments.update({ 'teams._id': teamId }, { $set: { 'teams.$.remarks': remark } });
+    await Tournaments.updateAsync({ 'teams._id': teamId }, { $set: { 'teams.$.remarks': remark } });
   },
-  teamUpdateImage(teamId, image) {
+  async teamUpdateImage(teamId, image) {
     check(teamId, String);
     check(image, String);
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
-    Tournaments.update({ 'teams._id': teamId }, { $set: { 'teams.$.image': image } });
+    await Tournaments.updateAsync({ 'teams._id': teamId }, { $set: { 'teams.$.image': image } });
   },
-  teamUpdateResults(teamId, name, value) {
+  async teamUpdateResults(teamId, name, value) {
     check(teamId, String);
     check(name, String);
     check(value, String);
@@ -84,10 +84,10 @@ Meteor.methods({
     const upd = {};
     upd['teams.$.' + name] = value;
 
-    Tournaments.update({ 'teams._id': teamId }, { $set: upd });
+    await Tournaments.updateAsync({ 'teams._id': teamId }, { $set: upd });
   },
 
-  teamUpdate(teamId, teamData) {
+  async teamUpdate(teamId, teamData) {
     check(teamId, String);
     check(teamData, Object);
     if (!this.userId) {
@@ -97,13 +97,13 @@ Meteor.methods({
     Object.keys(teamData).forEach((key) => {
       upd['teams.$.' + key] = teamData[key];
     });
-    Tournaments.update({ 'teams._id': teamId }, { $set: upd });
+    await Tournaments.updateAsync({ 'teams._id': teamId }, { $set: upd });
   },
-  teamUpdateState(teamId, state) {
+  async teamUpdateState(teamId, state) {
     check(teamId, String);
     check(state, String);
 
-    const tournament = Tournaments.findOne({ 'teams._id': teamId });
+    const tournament = await Tournaments.findOneAsync({ 'teams._id': teamId });
     const team = _.find(tournament.teams, (t) => t._id === teamId);
     if (state === team.state) {
       return;
@@ -120,7 +120,7 @@ Meteor.methods({
       console.log(candidates);
       const resp = _.sample(candidates);
       let text = 'Du wurdest als Verantwortliche(r) für ein Team ausgelost.';
-      const user = Meteor.users.findOne(resp.user);
+      const user = await Meteor.users.findOneAsync(resp.user);
       if (user) {
         update.responsible = resp.user;
         update.responsibleName = user.username;
@@ -136,7 +136,7 @@ Meteor.methods({
         [update.responsible],
         'Als Verantwortlicher gelost',
         renderMailTemplate(layout, template, {
-          user: Meteor.users.findOne(update.responsible),
+          user: await Meteor.users.findOneAsync(update.responsible),
           infoText: text,
           tournament,
           formatedDate: moment(tournament.date).format('DD.MM.YYYY'),
@@ -145,7 +145,7 @@ Meteor.methods({
           tournamentUrl: FlowRouter.url('tournament', { _id: tournament._id }),
         })
       );
-      addEvent({
+      await addEvent({
         type: 'tournament',
         _id: tournament._id,
         text: `Für das Team ${team.name} ist jetzt ${update.responsibleName} Zuständig`,
@@ -156,7 +156,7 @@ Meteor.methods({
       upd['teams.$.' + key] = update[key];
     });
 
-    Tournaments.update(
+    await Tournaments.updateAsync(
       {
         'teams._id': teamId,
       },
@@ -164,26 +164,26 @@ Meteor.methods({
         $set: upd,
       }
     );
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'tournament',
       _id: tournament._id,
       text: `Das Team ${team.name} ist jetzt ${state}`,
     });
   },
-  participationComment(teamId, userId, comment) {
+  async participationComment(teamId, userId, comment) {
     check(teamId, String);
     check(userId, String);
     check(comment, String);
-    const activeUser = Meteor.users.findOne(this.userId);
+    const activeUser = await Meteor.users.findOneAsync(this.userId);
     if (!activeUser) {
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
     }
-    const tournament = Tournaments.findOne({ 'teams._id': teamId });
+    const tournament = await Tournaments.findOneAsync({ 'teams._id': teamId });
     const part = _.find(tournament.participants, (p) => p.team === teamId && p.user === userId);
-    if (userId !== this.userId && !isAdmin(this.userId) && part.responsible !== this.userId) {
+    if (userId !== this.userId && !(await isAdmin(this.userId)) && part.responsible !== this.userId) {
       throw new Meteor.Error('access-denied', 'Sie dürfen diese Teilnahme nicht ändern');
     }
-    Tournaments.update(
+    await Tournaments.updateAsync(
       {
         participants: {
           $elemMatch: { user: userId, team: teamId },
@@ -196,24 +196,24 @@ Meteor.methods({
         },
       }
     );
-    let user = Meteor.users.findOne(userId);
+    let user = await Meteor.users.findOneAsync(userId);
     if (!user) {
       user = { username: userId };
     }
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'tournament',
       _id: tournament._id,
       userId: this.userId,
       text: `${this.userId === user._id ? '' : user.username} sagt: ${comment}`,
     });
   },
-  participationRemove(teamId, userId) {
+  async participationRemove(teamId, userId) {
     check(teamId, String);
     check(userId, String);
-    if (!isAdmin(this.userId)) {
+    if (!(await isAdmin(this.userId))) {
       throw new Meteor.Error('access-denied', 'Nur Admins');
     }
-    Tournaments.update(
+    await Tournaments.updateAsync(
       {
         participants: {
           $elemMatch: { user: userId, team: teamId },
@@ -232,21 +232,21 @@ Meteor.methods({
       }
     );
   },
-  participationUpdate(teamId, userId, participantValue) {
+  async participationUpdate(teamId, userId, participantValue) {
     check(teamId, String);
     check(userId, String);
     check(participantValue, Number);
-    const activeUser = Meteor.users.findOne(this.userId);
+    const activeUser = await Meteor.users.findOneAsync(this.userId);
     if (!activeUser) {
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
     }
-    const tournament = Tournaments.findOne({ 'teams._id': teamId });
+    const tournament = await Tournaments.findOneAsync({ 'teams._id': teamId });
     const part = _.find(tournament.participants, (p) => p.team === teamId && p.user === userId);
-    if (userId !== this.userId && !isAdmin(this.userId) && part.responsible !== this.userId) {
+    if (userId !== this.userId && !(await isAdmin(this.userId)) && part.responsible !== this.userId) {
       throw new Meteor.Error('access-denied', 'Sie dürfen diese Teilnahme nicht ändern');
     }
 
-    let user = Meteor.users.findOne(userId);
+    let user = await Meteor.users.findOneAsync(userId);
     if (!user) {
       user = { username: part.user, profile: { sex: part.sex } };
     }
@@ -258,7 +258,7 @@ Meteor.methods({
       }
       safeStateDate = new Date();
     }
-    Tournaments.update(
+    await Tournaments.updateAsync(
       {
         participants: {
           $elemMatch: { user: userId, team: teamId },
@@ -283,11 +283,11 @@ Meteor.methods({
           },
         },
       },
-      (err, res) => {
+      async (err, res) => {
         if (err) {
           throw err;
         }
-        Meteor.call('addEvent', {
+        await Meteor.callAsync('addEvent', {
           type: 'tournament',
           userId: this.userId,
           _id: tournament._id,
@@ -297,21 +297,21 @@ Meteor.methods({
             (part.comment ? `(${part.comment})` : ''),
         });
         if (user && user._id) {
-          Meteor.call('computeStatistics', user._id);
+          await Meteor.callAsync('computeStatistics', user._id);
         }
       }
     );
   },
-  participantInsert(params, teamId) {
+  async participantInsert(params, teamId) {
     check(params, Object);
     check(teamId, String);
-    const activeUser = Meteor.users.findOne(this.userId);
+    const activeUser = await Meteor.users.findOneAsync(this.userId);
     if (!activeUser) {
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
     }
-    let user = Meteor.users.findOne(params.userid);
+    let user = await Meteor.users.findOneAsync(params.userid);
     if (!user && params.alias) {
-      user = userByAlias(params.alias, this.connection);
+      user = await userByAlias(params.alias, this.connection);
     }
     if (!user) {
       user = {
@@ -321,13 +321,13 @@ Meteor.methods({
       };
       params.dummy = true;
     }
-    let tournament = Tournaments.findOne({
+    let tournament = await Tournaments.findOneAsync({
       participants: { $elemMatch: { user: user._id, team: teamId } },
     });
     if (tournament) {
       throw new Meteor.Error('already-there', 'Der Spieler ist bereits beim Team dabei');
     }
-    tournament = Tournaments.findOne({
+    tournament = await Tournaments.findOneAsync({
       participants: { $elemMatch: { team: teamId } },
     });
     delete params.alias;
@@ -341,18 +341,18 @@ Meteor.methods({
     params.safeStateDate = new Date();
     params.team = teamId;
 
-    Tournaments.update(
+    await Tournaments.updateAsync(
       { 'teams._id': teamId },
       {
         $set: { lastChange: new Date() },
         $push: { participants: params },
       },
-      (err, affected) => {
+      async (err, affected) => {
         if (err) {
           throw err;
         }
 
-        Meteor.call('addEvent', {
+        await Meteor.callAsync('addEvent', {
           type: 'tournament',
           userId: this.userId,
           _id: tournament._id,
@@ -362,20 +362,20 @@ Meteor.methods({
             (params.comment ? ` und sagt: ${params.comment}` : ''),
         });
         if (!params.dummy) {
-          Meteor.call('computeStatistics', user._id);
+          await Meteor.callAsync('computeStatistics', user._id);
         }
       }
     );
   },
-  participantRemove(params, teamId) {
+  async participantRemove(params, teamId) {
     check(params, Object);
     check(teamId, String);
-    const activeUser = Meteor.users.findOne(this.userId);
+    const activeUser = await Meteor.users.findOneAsync(this.userId);
     if (!activeUser) {
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
     }
 
-    Tournaments.update(
+    await Tournaments.updateAsync(
       {
         participants: { $elemMatch: { user: params.userid, team: teamId } },
       },

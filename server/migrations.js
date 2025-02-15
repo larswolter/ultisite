@@ -1,18 +1,18 @@
 import Grid from 'gridfs-locking-stream';
 import { Blogs, Events, Practices, Teams, Tournaments } from '../common/lib/ultisite';
 
-Meteor.startup(function () {
+Meteor.startup(async function() {
   console.log('starting migrations...');
-  Events.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
-  Blogs.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
-  Practices.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
+  await Events.updateAsync({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
+  await Blogs.updateAsync({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
+  await Practices.updateAsync({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
 
-  Tournaments.find({ participants: { $exists: false } }).forEach((tournament) => {
+  await Tournaments.find({ participants: { $exists: false } }).forEachAsync(async tournament => {
     const participants = [];
     const teams = [];
     tournament.teams &&
-      tournament.teams.forEach((teamId) => {
-        const team = Teams.findOne(teamId);
+      tournament.teams.forEach(async teamId => {
+        const team = await Teams.findOneAsync(teamId);
         if (team) {
           team.participants &&
             team.participants.forEach((p) => {
@@ -26,7 +26,7 @@ Meteor.startup(function () {
           teams.push(team);
         }
       });
-    Tournaments.update(tournament._id, {
+    await Tournaments.updateAsync(tournament._id, {
       $set: {
         participants,
         teams,
@@ -34,12 +34,12 @@ Meteor.startup(function () {
       },
     });
   });
-  Meteor.users.find({ 'club.dfv': { $exists: true } }).forEach((u) => {
+  await Meteor.users.find({ 'club.dfv': { $exists: true } }).forEachAsync(async u => {
     if (!Array.isArray(u.club.dfv)) {
       if (u.club.dfv) {
-        Meteor.users.update(u._id, { $set: { 'club.dfv': [2018] } });
+        await Meteor.users.updateAsync(u._id, { $set: { 'club.dfv': [2018] } });
       } else {
-        Meteor.users.update(u._id, { $set: { 'club.dfv': [] } });
+        await Meteor.users.updateAsync(u._id, { $set: { 'club.dfv': [] } });
       }
     }
   });

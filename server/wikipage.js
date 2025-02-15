@@ -13,8 +13,8 @@ Meteor.startup(function () {
 });
 
 Meteor.methods({
-  getWikiPageNames: function () {
-    return WikiPages.find(
+  getWikiPageNames: async function() {
+    return await WikiPages.find(
       {},
       {
         fields: {
@@ -22,19 +22,19 @@ Meteor.methods({
           _id: 1,
         },
       }
-    ).map(function (e) {
+    ).mapAsync(function (e) {
       return e;
     });
   },
-  addWikiPageDiscussion: function (pageId, text) {
-    WikiPageDiscussions.insert({
+  addWikiPageDiscussion: async function(pageId, text) {
+    await WikiPageDiscussions.insertAsync({
       content: text,
       editor: this.userId,
-      editorName: Meteor.users.findOne(this.userId).username,
+      editorName: (await Meteor.users.findOneAsync(this.userId)).username,
       date: new Date(),
       pageId: pageId,
     });
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'wiki',
       _id: pageId,
       text: 'Neuer Diskussionsbeitrag',

@@ -5,10 +5,10 @@ import { Blogs, Events, getAlias, isAdmin, LastChanges, Tournaments, WikiPages }
 import { getTournamentsStates } from './tournament';
 import { Mail, renderMailTemplate } from './mail';
 
-Accounts.onLogin(function (attempt) {
+Accounts.onLogin(async function(attempt) {
   if (attempt.user) {
     if (!attempt.user.settings || !attempt.user.settings.email) {
-      Meteor.users.update(attempt.user._id, {
+      await Meteor.users.updateAsync(attempt.user._id, {
         $set: {
           'settings.email.wiki': 'daily',
           'settings.email.tournament': 'daily',
@@ -21,18 +21,18 @@ Accounts.onLogin(function (attempt) {
   }
 });
 
-export const getEvents = function (limitCount, days = 1) {
+export const getEvents = async function(limitCount, days = 1) {
   let search = { 'detail.time': { $gte: moment().subtract(days, 'day').toDate() } };
   if (limitCount) {
     search = {};
   }
   const events = {};
-  Events.find(search, {
+  await Events.find(search, {
     sort: {
       'detail.time': -1,
     },
     limit: limitCount,
-  }).forEach(function (event) {
+  }).forEachAsync(function (event) {
     event.url = FlowRouter.url(event.route, { _id: event.groupBy });
     event.detail.timeFormatted = moment(event.detail.time).format('DD.MM. HH:mm');
     if (events[event.groupBy]) {
@@ -49,12 +49,12 @@ export const getEvents = function (limitCount, days = 1) {
 Meteor.startup(function () {
   const job = new CronJob(
     '0 9 15 * * *',
-    Meteor.bindEnvironment(() => {
+    Meteor.bindEnvironment(async () => {
       let result = 0;
       console.log('sending digests');
-      const eventList = getEvents();
-      Meteor.users.find().forEach(function (user) {
-        if (sendEventDigest(user, eventList)) {
+      const eventList = await getEvents();
+      await Meteor.users.find().forEachAsync(async function(user) {
+        if (await sendEventDigest(user, eventList)) {
           result += 1;
         }
       });
@@ -70,7 +70,7 @@ Meteor.startup(function () {
   }
 });
 
-export const sendEventDigest = function (user, eventList, force = false) {
+export const sendEventDigest = async function(user, eventList, force = false) {
   if (!force && eventList.length === 0) {
     return false;
   }
@@ -79,7 +79,7 @@ export const sendEventDigest = function (user, eventList, force = false) {
   }
   const template = Assets.getText('mail-templates/events.html');
   const layout = Assets.getText('mail-templates/layout.html');
-  const tournaments = getTournamentsStates(user._id);
+  const tournaments = await getTournamentsStates(user._id);
 
   Mail.send(
     [user._id],
@@ -110,9 +110,9 @@ const sendEvent = function (user, event) {
   );
   return true;
 };
-export const addEvent = function (info) {
+export const addEvent = async function(info) {
   info.time = new Date();
-  LastChanges.upsert(
+  await LastChanges.upsertAsync(
     {
       type: info.type,
     },
@@ -123,9 +123,9 @@ export const addEvent = function (info) {
       },
     }
   );
-  info.alias = info.userId && getAlias(info.userId);
+  info.alias = info.userId && (await getAlias(info.userId));
   if (info.type === 'files' && info.images) {
-    const ev = Events.findOne({
+    const ev = await Events.findOneAsync({
       groupBy: info._id,
       'detail.userId': info.userId,
       'detail.time': {
@@ -134,7 +134,7 @@ export const addEvent = function (info) {
       'detail.text': info.text,
     });
     if (ev) {
-      Events.update(ev._id, {
+      await Events.updateAsync(ev._id, {
         $push: {
           images: info.images[0],
         },
@@ -143,7 +143,7 @@ export const addEvent = function (info) {
   }
   const event = { lastChange: new Date() };
   if (info.type === 'team' || info.type === 'tournament') {
-    const tournament = Tournaments.findOne({
+    const tournament = await Tournaments.findOneAsync({
       $or: [{ _id: info._id || info.group }, { 'teams._id': info._id || info.group }],
     });
     event.groupBy = tournament._id;
@@ -151,13 +151,13 @@ export const addEvent = function (info) {
     event.name = tournament.name;
     event.additional = moment(tournament.date).format('DD.MM.YY') + ' in ' + tournament.address.city;
   } else if (info.type === 'wiki') {
-    const page = WikiPages.findOne(info._id);
+    const page = await WikiPages.findOneAsync(info._id);
     event.groupBy = info._id;
     event.route = 'wikipage';
     event.name = page.name;
     event.additional = moment(page.created).format('DD.MM.YY');
   } else if (info.type === 'blog') {
-    const page = Blogs.findOne(info._id);
+    const page = await Blogs.findOneAsync(info._id);
     event.groupBy = info._id;
     event.route = 'blog';
     event.name = page.title;
@@ -169,38 +169,38 @@ export const addEvent = function (info) {
     event.additional = info.additional;
   }
   event.detail = info;
-  Events.insert(event, function (err, res) {
+  await Events.insertAsync(event, async function(err, res) {
     console.log('inserted event:', err, res);
     const search = {};
     if (['team', 'tournament'].includes(info.type)) {
       search['settings.email.' + event.route] = 'immediate';
-      Meteor.users.find(search).forEach(function (user) {
-        sendEvent(user, Events.findOne(res));
+      await Meteor.users.find(search).forEachAsync(async function(user) {
+        sendEvent(user, await Events.findOneAsync(res));
       });
     }
   });
 };
 
 Meteor.methods({
-  sendEventDigestToMe() {
+  async sendEventDigestToMe() {
     check(this.userId, String);
-    const eventList = getEvents(20, 100);
+    const eventList = await getEvents(20, 100);
     console.log('gathering digest');
-    Meteor.users.find({ _id: this.userId }).forEach(function (user) {
+    await Meteor.users.find({ _id: this.userId }).forEachAsync(async function(user) {
       console.log('sendign to', user.username);
-      sendEventDigest(user, eventList, true);
+      await sendEventDigest(user, eventList, true);
     });
   },
-  addEvent(info) {
+  async addEvent(info) {
     check(info, Object);
-    if (!isAdmin(this.userId) || !info.userId) {
+    if (!(await isAdmin(this.userId)) || !info.userId) {
       info.userId = this.userId;
     }
-    addEvent(info);
+    await addEvent(info);
   },
-  removeEvent(id) {
+  async removeEvent(id) {
     check(id, String);
-    Events.remove({
+    await Events.removeAsync({
       $or: [{ groupBy: id }, { 'detail._id': id }],
     });
     Events.udate({

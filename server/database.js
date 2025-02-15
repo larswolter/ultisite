@@ -14,8 +14,8 @@ import {
   WikiPages,
 } from '../common/lib/ultisite';
 
-const handleStuff = function () {
-  Folders.upsert(
+const handleStuff = async function() {
+  await Folders.upsertAsync(
     {
       name: '/',
     },
@@ -30,8 +30,8 @@ const handleStuff = function () {
   if (!Meteor.isAppTest) {
     // Read countries
     const rows = JSON.parse(Assets.getText('countries.json'));
-    rows.forEach(function (entry) {
-      Countries.upsert(entry.cca2, {
+    rows.forEach(async function(entry) {
+      await Countries.upsertAsync(entry.cca2, {
         _id: entry.cca2,
         name: (entry.translations.deu && entry.translations.deu.common) || entry.name.common,
         coordinates: entry.latlng,
@@ -40,11 +40,11 @@ const handleStuff = function () {
     });
 
     // read cities
-    if (Cities.find().count() === 0) {
+    if ((await Cities.find().countAsync()) === 0) {
       console.log('Recreating cities database');
       const cities = Assets.getText('cities5000.csv');
       let count = 0;
-      cities.split('\n').forEach(function (line) {
+      cities.split('\n').forEach(async function(line) {
         try {
           const lineAr = line.split('\t');
           const city = {
@@ -55,7 +55,7 @@ const handleStuff = function () {
             country: lineAr[8],
             timezone: lineAr[17],
           };
-          Cities.upsert(city._id, city);
+          await Cities.upsertAsync(city._id, city);
           count += 1;
           if (count % 10000 === 0) {
             console.log(`Parsed ${count} cities`);
@@ -67,7 +67,7 @@ const handleStuff = function () {
   }
   // Add default Settings
   if (!settings()) {
-    Settings.insert({
+    await Settings.insertAsync({
       imageLogo: null,
       imageTitleImage: null,
       imageMobileLogo: null,
@@ -141,49 +141,49 @@ const handleStuff = function () {
 };
 
 Meteor.methods({
-  createDatabases() {
-    if (!isAdmin()) {
+  async createDatabases() {
+    if (!(await isAdmin())) {
       return;
     }
     if (settings() && settings().databaseCreated) {
       return;
     }
-    Tracker.nonreactive(function () {
-      handleStuff();
+    Tracker.nonreactive(async function() {
+      await handleStuff();
     });
   },
 
-  cleanDatabases() {
-    if (!isAdmin()) {
+  async cleanDatabases() {
+    if (!(await isAdmin())) {
       return;
     }
-    Tracker.nonreactive(function () {
+    Tracker.nonreactive(async function() {
       console.log('Start cleaning all databases');
-      Settings.remove({});
-      Meteor.users.remove({});
-      Tournaments.remove({});
-      WikiPages.remove({});
-      Practices.remove({});
-      Teams.remove({});
-      Events.remove({});
-      Images.remove({});
-      Documents.remove({});
+      await Settings.removeAsync({});
+      await Meteor.users.removeAsync({});
+      await Tournaments.removeAsync({});
+      await WikiPages.removeAsync({});
+      await Practices.removeAsync({});
+      await Teams.removeAsync({});
+      await Events.removeAsync({});
+      await Images.removeAsync({});
+      await Documents.removeAsync({});
       console.log('Finished cleaning all databases');
     });
   },
-  recreateCitiesCountries() {
-    if (!isAdmin(this.userId)) {
+  async recreateCitiesCountries() {
+    if (!(await isAdmin(this.userId))) {
       return;
     }
-    handleStuff();
+    await handleStuff();
   },
-  setupNeeded() {
-    return !Meteor.users.findOne();
+  async setupNeeded() {
+    return !(await Meteor.users.findOneAsync());
   },
 });
 
-Meteor.startup(function () {
-  Meteor.call('createDatabases');
+Meteor.startup(async function() {
+  await Meteor.callAsync('createDatabases');
   Tournaments._ensureIndex({ date: -1 });
   Tournaments._ensureIndex({ lastChange: -1 });
   Tournaments._ensureIndex({ name: 1 });

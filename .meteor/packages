@@ -29,9 +29,6 @@ standard-minifier-css@1.9.2
 standard-minifier-js@2.8.1
 shell-server@0.5.0
 
-jkuester:migration-helper
-ultisite:autoform
-ultisite:hatinfo
 
 #kadira:debug
 #appcache@1.2.0
@@ -46,3 +43,7 @@ fourseven:scss
 jquery
 useraccounts:flow-routing-extra
 ostrio:flow-router-extra
+
+jkuester:migration-helper
+ultisite:autoform
+ultisite:hatinfo

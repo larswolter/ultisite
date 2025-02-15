@@ -8,12 +8,12 @@ import { Documents, Images, isAdmin, settings } from '../common/lib/ultisite';
 const bucket = new GridFSBucket(Documents.rawDatabase(), { bucketName: 'documents-grid' });
 
 Meteor.methods({
-  retrieveNewestFiles() {
+  async retrieveNewestFiles() {
     if (!this.userId) {
       return [];
     }
     return _.sortBy(
-      Images.find(
+      (await Images.find(
         {},
         {
           limit: 5,
@@ -22,9 +22,9 @@ Meteor.methods({
           },
         }
       )
-        .fetch()
+        .fetchAsync())
         .concat(
-          Documents.find(
+          await Documents.find(
             {},
             {
               limit: 5,
@@ -32,7 +32,7 @@ Meteor.methods({
                 created: -1,
               },
             }
-          ).fetch()
+          ).fetchAsync()
         ),
       function (doc) {
         return doc.created;
@@ -43,24 +43,24 @@ Meteor.methods({
         return doc._id;
       });
   },
-  retrieveAbandonedFiles() {
+  async retrieveAbandonedFiles() {
     if (!this.userId) {
       return [];
     }
-    return Images.find({
+    return (await Images.find({
       associated: [],
     })
-      .fetch()
+      .fetchAsync())
       .concat(
-        Documents.find({
+        await Documents.find({
           associated: [],
-        }).fetch()
+        }).fetchAsync()
       )
       .map(function (doc) {
         return doc._id;
       });
   },
-  fileUploadChunk(base64, metadata, lastPackage) {
+  async fileUploadChunk(base64, metadata, lastPackage) {
     let meteorCall;
     if (metadata._meteorCall) {
       meteorCall = metadata._meteorCall;
@@ -70,7 +70,7 @@ Meteor.methods({
     if (metadata.type.indexOf('image') === 0) {
       let imgId;
       if (!metadata._id) {
-        imgId = Images.insert(
+        imgId = await Images.insertAsync(
           _.extend(metadata, {
             created: new Date(),
             creator: this.userId,
@@ -78,10 +78,10 @@ Meteor.methods({
         );
         fs.writeFileSync(`${os.tmpdir()}/${imgId}.image.temp`, base64, { encoding: 'base64' });
       } else {
-        const existing = Images.findOne(metadata._id);
+        const existing = await Images.findOneAsync(metadata._id);
         fs.appendFileSync(`${os.tmpdir()}/${metadata._id}.image.temp`, base64, { encoding: 'base64' });
         imgId = existing._id;
-        Images.update(imgId, { $set: { progress: Math.floor(metadata.progress) } });
+        await Images.updateAsync(imgId, { $set: { progress: Math.floor(metadata.progress) } });
       }
       if (lastPackage) {
         const fileStats = fs.statSync(`${os.tmpdir()}/${imgId}.image.temp`);
@@ -89,22 +89,22 @@ Meteor.methods({
         fs.readFile(
           `${os.tmpdir()}/${imgId}.image.temp`,
           { encoding: 'base64' },
-          Meteor.bindEnvironment(function (err, data) {
+          Meteor.bindEnvironment(async function(err, data) {
             if (err) {
               console.log(err);
               throw err;
             }
-            Images.update(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
+            await Images.updateAsync(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
             fs.unlinkSync(`${os.tmpdir()}/${imgId}.image.temp`);
             console.log('finished image upload');
             if (meteorCall) {
-              Meteor.call(meteorCall, Images.findOne(imgId));
+              await Meteor.callAsync(meteorCall, await Images.findOneAsync(imgId));
             } else {
-              let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
+              let ref = await Meteor.callAsync('getAnyObjectByIds', metadata.associated);
               if (!ref || ref.length === 0) {
                 ref = [{ type: 'files', name: 'Bilder' }];
               }
-              Meteor.call('addEvent', {
+              await Meteor.callAsync('addEvent', {
                 type: ref[0].type,
                 _id: metadata.associated[0],
                 text: 'Neues Bild hinzugefügt',
@@ -120,7 +120,7 @@ Meteor.methods({
     }
     let docId;
     if (!metadata._id) {
-      docId = Documents.insert(
+      docId = await Documents.insertAsync(
         _.extend(metadata, {
           created: new Date(),
           creator: this.userId,
@@ -129,11 +129,11 @@ Meteor.methods({
       console.log(`wrote temp file ${os.tmpdir()}/${docId}.doc.temp`);
       fs.writeFileSync(`${os.tmpdir()}/${docId}.doc.temp`, base64, { encoding: 'base64' });
     } else {
-      const existing = Documents.findOne(metadata._id);
+      const existing = await Documents.findOneAsync(metadata._id);
       console.log(`append temp file ${os.tmpdir()}/${docId}.doc.temp`);
       fs.appendFileSync(`${os.tmpdir()}/${metadata._id}.doc.temp`, base64, { encoding: 'base64' });
       docId = existing._id;
-      Documents.update(docId, { $set: { progress: Math.floor(metadata.progress) } });
+      await Documents.updateAsync(docId, { $set: { progress: Math.floor(metadata.progress) } });
       console.log(`updated document`);
     }
     if (lastPackage) {
@@ -148,8 +148,8 @@ Meteor.methods({
       });
       wstream.on(
         'finish',
-        Meteor.bindEnvironment(function (fileObj) {
-          Documents.update(docId, {
+        Meteor.bindEnvironment(async function(fileObj) {
+          await Documents.updateAsync(docId, {
             $set: {
               gridId: `${fileObj._id}`,
               size: fileStats.size,
@@ -159,13 +159,13 @@ Meteor.methods({
           fs.unlinkSync(`${os.tmpdir()}/${docId}.doc.temp`);
           console.log('finished file upload');
           if (meteorCall) {
-            Meteor.call(meteorCall, Documents.findOne(docId));
+            await Meteor.callAsync(meteorCall, await Documents.findOneAsync(docId));
           } else {
-            let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
+            let ref = await Meteor.callAsync('getAnyObjectByIds', metadata.associated);
             if (!ref || ref.length === 0) {
               ref = [{ type: 'files', name: 'Dokumente' }];
             }
-            Meteor.call('addEvent', {
+            await Meteor.callAsync('addEvent', {
               type: ref[0].type,
               _id: metadata.associated[0],
               text: 'Neues Dokument hinzugefügt',
@@ -179,44 +179,44 @@ Meteor.methods({
     }
     return docId;
   },
-  removeFile(fileId) {
+  async removeFile(fileId) {
     check(fileId, String);
     if (!this.userId) {
       throw new Meteor.Error('not-allowed');
     }
-    let file = Images.findOne(fileId);
+    let file = await Images.findOneAsync(fileId);
     if (file) {
-      if (this.userId !== file.creator && !isAdmin(this.userId)) {
+      if (this.userId !== file.creator && !(await isAdmin(this.userId))) {
         throw new Meteor.Error('not-allowed');
       }
-      Images.remove(fileId);
+      await Images.removeAsync(fileId);
     } else {
-      file = Documents.findOne(fileId);
+      file = await Documents.findOneAsync(fileId);
       if (!file) {
         throw new Meteor.Error('not-found');
       }
-      if (this.userId !== file.creator && !isAdmin(this.userId)) {
+      if (this.userId !== file.creator && !(await isAdmin(this.userId))) {
         throw new Meteor.Error('not-allowed');
       }
       if (file.gridId) {
         bucket.delete(
           ObjectId(file.gridId),
-          Meteor.bindEnvironment((err) => {
+          Meteor.bindEnvironment(async err => {
             if (err) {
               console.log('Error removing gridfs file', err);
             } else {
               console.log('removed gridfs file');
-              Documents.remove(fileId);
+              await Documents.removeAsync(fileId);
             }
           })
         );
       } else {
         console.log('removed non gridfs file');
-        Documents.remove(fileId);
+        await Documents.removeAsync(fileId);
       }
     }
 
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'files',
       _id: file.associated[0],
       text: 'Datei entfernt',
@@ -234,9 +234,9 @@ Meteor.startup(function () {
   }); */
 });
 
-WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res) {
+WebApp.connectHandlers.use('/dynamicAppIcon.png', async function(req, res) {
   const { query } = req;
-  const icon = Images.findOne(settings().imageIcon);
+  const icon = await Images.findOneAsync(settings().imageIcon);
   if (!icon) {
     res.writeHead(404);
     res.end();
@@ -261,13 +261,13 @@ WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res) {
   }
 });
 
-WebApp.connectHandlers.use('/_document', (req, resp) => {
+WebApp.connectHandlers.use('/_document', async (req, resp) => {
   if (!req.query.docId) {
     resp.writeHead(404);
     resp.end('Param docId required');
     return;
   }
-  const doc = Documents.findOne({ _id: req.query.docId, gridId: { $exists: true } });
+  const doc = await Documents.findOneAsync({ _id: req.query.docId, gridId: { $exists: true } });
   if (!doc) {
     resp.writeHead(404);
     resp.end('doc not found');

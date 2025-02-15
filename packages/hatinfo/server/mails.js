@@ -3,7 +3,7 @@ import { HatParticipants } from '../schema';
 import { Mail, renderMailTemplate } from './server';
 import { settings } from './server';
 
-export const sendHatReminderEmails = () => {
+export const sendHatReminderEmails = async () => {
   const template = Assets.getText('private/reminder.html');
   const query = {
     createdAt: {
@@ -12,7 +12,7 @@ export const sendHatReminderEmails = () => {
     },
     $or: [{ confirmed: { $ne: true } }, { payed: { $gt: new Date() } }],
   };
-  HatParticipants.find(query).forEach((participant) => {
+  await HatParticipants.find(query).forEachAsync((participant) => {
     console.log(`sending reminder to ${participant.email}`);
     Mail.send(
       [participant.email],

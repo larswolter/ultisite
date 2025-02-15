@@ -32,14 +32,14 @@ Documents.allow(allowByUser);
 Images.allow(allowByUser);
 
 Folders.deny({
-  remove(userId, doc) {
+  async remove(userId, doc) {
     if (userId) {
-      var anzahl = Images.find({
+      var anzahl = await Images.find({
         associated: doc._id,
-      }).count();
-      anzahl += Documents.find({
+      }).countAsync();
+      anzahl += await Documents.find({
         associated: doc._id,
-      }).count();
+      }).countAsync();
       if (anzahl === 0) return false;
     }
     return true;
@@ -92,22 +92,22 @@ WikiPageDiscussions.allow({
   },
 });
 WikiPages.allow({
-  update(userId, doc, fieldNames, modifier) {
-    if (isAdmin(userId)) return true;
+  async update(userId, doc, fieldNames, modifier) {
+    if (await isAdmin(userId)) return true;
     if (fieldNames.length === 1 && fieldNames[0] === 'locked' && (!doc.locked || doc.locked === userId)) return true;
     if (doc.editor !== userId) return false;
     if (userId) return true;
     return false;
   },
-  insert(userId, doc) {
-    if (isAdmin(userId)) return true;
+  async insert(userId, doc) {
+    if (await isAdmin(userId)) return true;
     if (doc.editor !== userId) return false;
     if (doc.owner !== userId) return false;
     if (userId) return true;
     return false;
   },
-  remove(userId, doc) {
-    if (isAdmin(userId)) return true;
+  async remove(userId, doc) {
+    if (await isAdmin(userId)) return true;
     if (userId === doc.owner) return true;
     return false;
   },
