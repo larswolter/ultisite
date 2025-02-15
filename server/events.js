@@ -18,33 +18,32 @@ Accounts.onLogin(function (attempt) {
   }
 });
 
-Meteor.startup(function () {
-  UltiSite.getEvents = function (limitCount, days = 1) {
-    let search = { 'detail.time': { $gte: moment().subtract(days, 'day').toDate() } };
-    if (limitCount) {
-      search = {};
+export const getEvents = function (limitCount, days = 1) {
+  let search = { 'detail.time': { $gte: moment().subtract(days, 'day').toDate() } };
+  if (limitCount) {
+    search = {};
+  }
+  const events = {};
+  UltiSite.Events.find(search, {
+    sort: {
+      'detail.time': -1,
+    },
+    limit: limitCount,
+  }).forEach(function (event) {
+    event.url = FlowRouter.url(event.route, { _id: event.groupBy });
+    event.detail.timeFormatted = moment(event.detail.time).format('DD.MM. HH:mm');
+    if (events[event.groupBy]) {
+      events[event.groupBy].detail.push(event.detail);
+    } else {
+      events[event.groupBy] = event;
+      events[event.groupBy].detail = [event.detail];
     }
-    const events = {};
-    UltiSite.Events.find(search, {
-      sort: {
-        'detail.time': -1,
-      },
-      limit: limitCount,
-    }).forEach(function (event) {
-      event.url = FlowRouter.url(event.route, { _id: event.groupBy });
-      event.detail.timeFormatted = moment(event.detail.time).format('DD.MM. HH:mm');
-      if (events[event.groupBy]) {
-        events[event.groupBy].detail.push(event.detail);
-      } else {
-        events[event.groupBy] = event;
-        events[event.groupBy].detail = [event.detail];
-      }
-    });
-    return Object.keys(events).map(function (key) {
-      return events[key];
-    });
-  };
-
+  });
+  return Object.keys(events).map(function (key) {
+    return events[key];
+  });
+};
+Meteor.startup(function () {
   const job = new CronJob(
     '0 9 15 * * *',
     Meteor.bindEnvironment(() => {
@@ -68,7 +67,7 @@ Meteor.startup(function () {
   }
 });
 
-UltiSite.sendEventDigest = function (user, eventList, force = false) {
+export const sendEventDigest = function (user, eventList, force = false) {
   if (!force && eventList.length === 0) {
     return false;
   }
@@ -108,7 +107,7 @@ const sendEvent = function (user, event) {
   );
   return true;
 };
-UltiSite.addEvent = function (info) {
+export const addEvent = function (info) {
   info.time = new Date();
   UltiSite.LastChanges.upsert(
     {

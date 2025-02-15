@@ -1,20 +1,7 @@
+import { Mongo } from 'meteor/mongo';
 import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { Roles } from 'meteor/alanning:roles';
-
-UltiSite = {
-  offlineCollections: [
-    {
-      name: 'Events',
-      filter() {
-        return {};
-      },
-      options() {
-        return { limit: 30, sort: { 'detail.time': -1 } };
-      },
-    },
-  ],
-};
 
 moment.locale('de', {
   months: [
@@ -57,9 +44,6 @@ const translationTable = {
 // Ground.Collection(Meteor.users);
 
 if (Meteor.isServer) {
-  const appCacheConfig = {
-    onlineOnly: ['/icons/countries/'],
-  };
   // appCacheConfig.chrome = false;
   if (Meteor.absoluteUrl('').indexOf('localhost') > -1) {
     //    appCacheConfig.chrome = false;
@@ -68,216 +52,224 @@ if (Meteor.isServer) {
   }
   //  Meteor.AppCache.config(appCacheConfig);
 }
-_.extend(UltiSite, {
-  baseLayoutData: new ReactiveVar(),
-  tournamentsReady: new ReactiveVar(false),
-  wikiPagesReady: new ReactiveVar(false),
-  blogsReady: new ReactiveVar(false),
-  filesReady: new ReactiveVar(false),
-  usersReady: new ReactiveVar(false),
-  schemas: {
-    links: new ReactiveVar(null),
-    team: new ReactiveVar(null),
-    tournament: new ReactiveVar(null),
-    user: new ReactiveVar(null),
-    userRegister: new ReactiveVar(null),
-    blog: new ReactiveVar(null),
-    emailServerSchema: new ReactiveVar(null),
-    practice: new ReactiveVar(null),
-  },
-  initialSubsReady: new ReactiveVar(false),
-  LookupId: new Meteor.Collection(null),
-  AdminNotifications: new Meteor.Collection('AdminNotifications'),
-  LastChanges: new Meteor.Collection('LastChanges'),
-  WikiPages: new Meteor.Collection('WikiPages'),
-  WikiPageDiscussions: new Meteor.Collection('WikiPagDiscussiones'),
-  Blogs: new Meteor.Collection('Blogs'),
-  Statistics: new Meteor.Collection('Statistics'),
-  Practices: new Meteor.Collection('Practices'),
-  Tournaments: new Meteor.Collection('Tournaments'),
-  TournamentList: new Meteor.Collection('tournamentList'),
-  Participants: new Meteor.Collection('Participants'),
-  Events: new Meteor.Collection('Events'),
-  Countries: new Meteor.Collection('Countries'),
-  Cities: new Meteor.Collection('Cities'),
-  ContentVersions: new Meteor.Collection('ContentVersions'),
-  Images: new Meteor.Collection('photos', {
-    transform(doc) {
-      if (Meteor.isServer) {
-        return doc;
-      }
-      return _.extend(doc, {
-        isImage() {
-          return true;
-        },
-        url(size) {
-          if (size) {
-            return `/_image?imageId=${doc._id}&size=${size}`;
-          }
-          return `/_image?imageId=${doc._id}`;
-        },
-      });
-    },
-  }),
-  Documents: new Meteor.Collection('documents', {
-    transform(doc) {
-      return _.extend(doc, {
-        isImage() {
-          return false;
-        },
-        url(size) {
-          if (size) {
-            return false;
-          }
-          return `/_document?docId=${doc._id}&${moment().unix()}`;
-        },
-      });
-    },
-  }),
-  Folders: new Meteor.Collection('Folders'),
-});
 
-_.extend(UltiSite, {
-  getAlias(userOrId) {
-    if (typeof userOrId === 'undefined') {
-      return 'Unbekannt';
+export const LookupId = new Mongo.Collection(null);
+export const AdminNotifications = new Mongo.Collection('AdminNotifications');
+export const LastChanges = new Mongo.Collection('LastChanges');
+export const WikiPages = new Mongo.Collection('WikiPages');
+export const WikiPageDiscussions = new Mongo.Collection('WikiPagDiscussiones');
+export const Blogs = new Mongo.Collection('Blogs');
+export const Statistics = new Mongo.Collection('Statistics');
+export const Practices = new Mongo.Collection('Practices');
+export const Tournaments = new Mongo.Collection('Tournaments');
+export const TournamentList = new Mongo.Collection('tournamentList');
+export const Participants = new Mongo.Collection('Participants');
+export const Events = new Mongo.Collection('Events');
+export const Countries = new Mongo.Collection('Countries');
+export const Cities = new Mongo.Collection('Cities');
+export const ContentVersions = new Mongo.Collection('ContentVersions');
+export const Images = new Mongo.Collection('photos', {
+  transform(doc) {
+    if (Meteor.isServer) {
+      return doc;
     }
-    if (userOrId === null) {
-      return 'Unbekannt';
-    }
-    const user = Meteor.users.findOne(userOrId);
-    if (user) {
-      return user.username;
-    }
-    if (userOrId.username) {
-      return userOrId.username;
-    }
-  },
-  getAnyById(ids) {
-    if (!ids) {
-      return [];
-    }
-    const self = this;
-    let idArray = ids;
-    if (!idArray.length) {
-      return undefined;
-    }
-    if (typeof idArray === 'string') {
-      idArray = [ids];
-    }
-    let res;
-    if (typeof ids === 'string') {
-      res = UltiSite.LookupId.findOne(ids);
-      if (res) {
-        return res;
-      }
-    } else {
-      res = UltiSite.LookupId.find({
-        _id: {
-          $in: ids,
-        },
-      });
-      if (res.count() === idArray.length) {
-        return res;
-      }
-    }
-    Meteor.call('getAnyObjectByIds', idArray, function (err, res) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.forEach(function (o) {
-          let elem = o;
-          if (elem.type === 'team') {
-            elem = _.extend(
-              {
-                link: FlowRouter.path('tournament', {
-                  _id: (UltiSite.Tournaments.findOne({ 'team._id': elem._id }) || elem)._id,
-                }),
-              },
-              elem
-            );
-          } else if (elem.type === 'folder') {
-            elem = _.extend(
-              {
-                link: FlowRouter.path('files', {
-                  _id: elem._id,
-                }),
-              },
-              elem
-            );
-          } else {
-            elem = _.extend(
-              {
-                link: FlowRouter.path(elem.type, {
-                  _id: elem._id,
-                }),
-              },
-              elem
-            );
-          }
-          const existing = UltiSite.LookupId.findOne(elem._id);
-          if (!existing) {
-            UltiSite.LookupId.insert(elem);
-          } else if (!existing.link && elem.link) {
-            UltiSite.LookupId.update(elem._id, { $set: { link: elem.link } });
-          }
-        });
-      }
+    return _.extend(doc, {
+      isImage() {
+        return true;
+      },
+      url(size) {
+        if (size) {
+          return `/_image?imageId=${doc._id}&size=${size}`;
+        }
+        return `/_image?imageId=${doc._id}`;
+      },
     });
-    return res;
-  },
-  hostname() {
-    let host = Meteor.absoluteUrl('');
-    if (host[host.length - 1] === '/') {
-      host = host.substr(0, host.length - 1);
-    }
-    return host;
-  },
-  settingsDep: new Tracker.Dependency(),
-  settings(upd) {
-    if (Meteor.isClient) {
-      this.settingsDep.depend();
-      if (upd) {
-        Meteor.settings.public = upd;
-        this.settingsDep.changed();
-      }
-      return Meteor.settings.public;
-    }
-    return UltiSite.Settings.findOne() || {};
-  },
-  isAdmin(userid, con) {
-    if (!userid && Meteor.isServer) {
-      userid = this.userId;
-    }
-    if (!userid && Meteor.isClient) {
-      userid = Meteor.userId();
-    }
-    const user = Meteor.users.findOne(userid);
-    return Roles.userIsInRole(userid, ['admin']) && user && user.activeAdmin;
-  },
-
-  userByAlias(alias, con) {
-    return (
-      alias &&
-      Meteor.users.findOne({
-        username: alias,
-      })
-    );
-  },
-  textState(state) {
-    if (state === 100) {
-      return 'Sicher';
-    } else if (state >= 50) {
-      return 'Vielleicht';
-    } else if (state >= 10) {
-      return 'Interesse';
-    }
-    return 'Kann nicht';
-  },
-  translate(term) {
-    return translationTable[term] || term;
   },
 });
+export const Documents = new Mongo.Collection('documents', {
+  transform(doc) {
+    return _.extend(doc, {
+      isImage() {
+        return false;
+      },
+      url(size) {
+        if (size) {
+          return false;
+        }
+        return `/_document?docId=${doc._id}&${moment().unix()}`;
+      },
+    });
+  },
+});
+export const Folders = new Mongo.Collection('Folders');
+export const offlineCollections = [
+  {
+    name: 'Events',
+    filter() {
+      return {};
+    },
+    options() {
+      return { limit: 30, sort: { 'detail.time': -1 } };
+    },
+  },
+];
+export const baseLayoutData = new ReactiveVar();
+export const tournamentsReady = new ReactiveVar(false);
+export const wikiPagesReady = new ReactiveVar(false);
+export const blogsReady = new ReactiveVar(false);
+export const filesReady = new ReactiveVar(false);
+export const usersReady = new ReactiveVar(false);
+export const initialSubsReady = new ReactiveVar(false);
+export const schemas = {
+  links: new ReactiveVar(null),
+  team: new ReactiveVar(null),
+  tournament: new ReactiveVar(null),
+  user: new ReactiveVar(null),
+  userRegister: new ReactiveVar(null),
+  blog: new ReactiveVar(null),
+  emailServerSchema: new ReactiveVar(null),
+  practice: new ReactiveVar(null),
+};
+
+export const getAlias = async (userOrId) => {
+  if (typeof userOrId === 'undefined') {
+    return 'Unbekannt';
+  }
+  if (userOrId === null) {
+    return 'Unbekannt';
+  }
+  const user = await Meteor.users.findOneAsync(userOrId);
+  if (user) {
+    return user.username;
+  }
+  if (userOrId.username) {
+    return userOrId.username;
+  }
+};
+export function getAnyById(ids) {
+  if (!ids) {
+    return [];
+  }
+  let idArray = ids;
+  if (!idArray.length) {
+    return undefined;
+  }
+  if (typeof idArray === 'string') {
+    idArray = [ids];
+  }
+  let res;
+  if (typeof ids === 'string') {
+    res = UltiSite.LookupId.findOne(ids);
+    if (res) {
+      return res;
+    }
+  } else {
+    res = UltiSite.LookupId.find({
+      _id: {
+        $in: ids,
+      },
+    });
+    if (res.count() === idArray.length) {
+      return res;
+    }
+  }
+  Meteor.call('getAnyObjectByIds', idArray, function (err, res) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.forEach(function (o) {
+        let elem = o;
+        if (elem.type === 'team') {
+          elem = _.extend(
+            {
+              link: FlowRouter.path('tournament', {
+                _id: (UltiSite.Tournaments.findOne({ 'team._id': elem._id }) || elem)._id,
+              }),
+            },
+            elem
+          );
+        } else if (elem.type === 'folder') {
+          elem = _.extend(
+            {
+              link: FlowRouter.path('files', {
+                _id: elem._id,
+              }),
+            },
+            elem
+          );
+        } else {
+          elem = _.extend(
+            {
+              link: FlowRouter.path(elem.type, {
+                _id: elem._id,
+              }),
+            },
+            elem
+          );
+        }
+        const existing = UltiSite.LookupId.findOne(elem._id);
+        if (!existing) {
+          UltiSite.LookupId.insert(elem);
+        } else if (!existing.link && elem.link) {
+          UltiSite.LookupId.update(elem._id, { $set: { link: elem.link } });
+        }
+      });
+    }
+  });
+  return res;
+}
+
+export function hostname() {
+  let host = Meteor.absoluteUrl('');
+  if (host[host.length - 1] === '/') {
+    host = host.substr(0, host.length - 1);
+  }
+  return host;
+}
+export const settingsDep = new Tracker.Dependency();
+export function settings(upd) {
+  if (Meteor.isClient) {
+    this.settingsDep.depend();
+    if (upd) {
+      Meteor.settings.public = upd;
+      this.settingsDep.changed();
+    }
+    return Meteor.settings.public;
+  }
+  return UltiSite.Settings.findOne() || {};
+}
+export async function isAdmin(userid) {
+  if (!userid && Meteor.isServer) {
+    userid = this.userId;
+  }
+  if (!userid && Meteor.isClient) {
+    userid = Meteor.userId();
+  }
+  const user = await Meteor.users.findOneAsync(userid);
+  return Roles.userIsInRole(userid, ['admin']) && user && user.activeAdmin;
+}
+
+export async function userByAlias(alias) {
+  return (
+    alias &&
+    (await Meteor.users.findOneAsync({
+      username: alias,
+    }))
+  );
+}
+export function textState(state) {
+  if (state === 100) {
+    return 'Sicher';
+  } else if (state >= 50) {
+    return 'Vielleicht';
+  } else if (state >= 10) {
+    return 'Interesse';
+  }
+  return 'Kann nicht';
+}
+export function translate(term) {
+  return translationTable[term] || term;
+}
 
 Meteor.methods({
   getAnyObjectById(id) {
@@ -290,7 +282,7 @@ Meteor.methods({
       }
     }
   },
-  getAnyObjectByIds(ids) {
+  async getAnyObjectByIds(ids) {
     check(ids, Match.Maybe([String]));
     check(this.userId, String);
     if (!ids) {
@@ -299,11 +291,11 @@ Meteor.methods({
     let res = [];
 
     res = res.concat(
-      UltiSite.Folders.find({
+      await UltiSite.Folders.find({
         _id: {
           $in: ids,
         },
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           _id: elem._id,
           name: elem.name,
@@ -312,11 +304,11 @@ Meteor.methods({
       })
     );
     res = res.concat(
-      UltiSite.WikiPages.find({
+      await UltiSite.WikiPages.find({
         _id: {
           $in: ids,
         },
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           _id: elem._id,
           name: elem.name,
@@ -325,11 +317,11 @@ Meteor.methods({
       })
     );
     res = res.concat(
-      UltiSite.Tournaments.find({
+      await UltiSite.Tournaments.find({
         _id: {
           $in: ids,
         },
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           _id: elem._id,
           name: elem.name,
@@ -338,13 +330,13 @@ Meteor.methods({
       })
     );
     res = res.concat(
-      Meteor.users
+      await Meteor.users
         .find({
           _id: {
             $in: ids,
           },
         })
-        .map(function (elem) {
+        .mapAsync(function (elem) {
           return {
             _id: elem._id,
             name: elem.username,
@@ -353,11 +345,11 @@ Meteor.methods({
         })
     );
     res = res.concat(
-      UltiSite.Blogs.find({
+      await UltiSite.Blogs.find({
         _id: {
           $in: ids,
         },
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           _id: elem._id,
           name: elem.title,
@@ -390,4 +382,34 @@ String.prototype.toCamelCase = function () {
     return b.trim() + c.toUpperCase();
   });
   return str;
+};
+
+UltiSite = {
+  offlineCollections,
+  LookupId,
+  AdminNotifications,
+  LastChanges,
+  WikiPages,
+  WikiPageDiscussions,
+  Blogs,
+  Statistics,
+  Practices,
+  Tournaments,
+  TournamentList,
+  Participants,
+  Events,
+  Countries,
+  Cities,
+  ContentVersions,
+  Images,
+  Documents,
+  Folders,
+  baseLayoutData,
+  tournamentsReady,
+  wikiPagesReady,
+  blogsReady,
+  filesReady,
+  usersReady,
+  initialSubsReady,
+  schemas,
 };

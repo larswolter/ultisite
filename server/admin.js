@@ -1,21 +1,21 @@
 /* global __meteor_runtime_config__ */
 
-UltiSite.Settings = new Meteor.Collection('Settings');
+export const Settings = new Meteor.Collection('Settings');
 
 function syncSettings() {
   _.extend(Meteor.settings, UltiSite.Settings.findOne() || {});
   Object.keys(Meteor.settings).forEach((key) => {
-    if (key === 'public') {
-
-    } else if (key === 'mailingListConfigs') {
-      __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key].map(config => _.omit(config, 'password'));
+    if (key === 'mailingListConfigs') {
+      __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key].map((config) => _.omit(config, 'password'));
     } else if (key.toLowerCase().indexOf('password') < 0) {
       __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key];
     }
   });
-  __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (UltiSite.Folders.findOne({
-    name: '/',
-  }) || {})._id;
+  __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (
+    UltiSite.Folders.findOne({
+      name: '/',
+    }) || {}
+  )._id;
   WebAppInternals.generateBoilerplate();
   console.log('synced settings');
   return __meteor_runtime_config__.PUBLIC_SETTINGS;
@@ -39,9 +39,12 @@ Meteor.methods({
   recreateCollections() {
     Meteor.call('cleanDatabases');
     Meteor.call('createDatabases');
-    Accounts.setPassword(Meteor.users.findOne({
-      'emails.address': 'lars@larswolter.de',
-    })._id, 'blubs');
+    Accounts.setPassword(
+      Meteor.users.findOne({
+        'emails.address': 'lars@larswolter.de',
+      })._id,
+      'blubs'
+    );
   },
   queryCollectionStatus() {
     return [

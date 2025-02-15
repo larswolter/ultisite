@@ -12,12 +12,12 @@ UltiSite.Tournaments.before.insert(function (userId, doc) {
   doc.participants = [];
 });
 
-UltiSite.getTeam = function (id) {
+export const getTeam = function (id) {
   const tournament = UltiSite.Tournaments.findOne({ 'teams._id': id });
   return tournament && tournament.teams[id];
 };
 
-UltiSite.getTournamentsStates = function (userId) {
+export const getTournamentsStates = function (userId) {
   const teams = [];
   UltiSite.Tournaments.find(
     {
@@ -97,7 +97,6 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('not-logged-in', 'Nicht angemeldet');
     }
-    const userId = this.userId;
     const tourney = UltiSite.Tournaments.findOne(tournamentId);
     if (!tourney) {
       throw new Meteor.Error('does-not-exist', `Das Turnier ${tournamentId} existiert nicht`);
@@ -228,79 +227,78 @@ Meteor.methods({
   },
 });
 
-Meteor.startup(function () {
-  UltiSite.teamDrawings = function () {
-    UltiSite.Tournaments.find({
-      date: {
-        $gte: moment().startOf('day').toDate(),
-      },
-      'teams.drawingResult': { $exists: false },
-      'teams.drawingDate': {
-        $lte: moment().endOf('day').toDate(),
-      },
-    }).forEach(function (tournament) {
-      tournament.teams.forEach((team) => {
-        if (team.drawingResult) {
-          return;
-        }
-        if (moment(team.drawingDate).isAfter(moment().startOf('day'))) {
-          return;
-        }
-        const participants = tournament.participants.filter((p) => p.team === team._id);
+export const teamDrawings = function () {
+  UltiSite.Tournaments.find({
+    date: {
+      $gte: moment().startOf('day').toDate(),
+    },
+    'teams.drawingResult': { $exists: false },
+    'teams.drawingDate': {
+      $lte: moment().endOf('day').toDate(),
+    },
+  }).forEach(function (tournament) {
+    tournament.teams.forEach((team) => {
+      if (team.drawingResult) {
+        return;
+      }
+      if (moment(team.drawingDate).isAfter(moment().startOf('day'))) {
+        return;
+      }
+      const participants = tournament.participants.filter((p) => p.team === team._id);
 
-        const partCount = participants.length;
-        let numbers = [];
-        const result = {
-          date: new Date(),
-        };
-        for (let i = 1; i <= partCount; i += 1) {
-          numbers[i - 1] = i;
-        }
-        const orderedParticipants = _.sortBy(_.sortBy(participants, 'safeStateDate'), (p) => 100 - p.state);
+      const partCount = participants.length;
+      let numbers = [];
+      const result = {
+        date: new Date(),
+      };
+      for (let i = 1; i <= partCount; i += 1) {
+        numbers[i - 1] = i;
+      }
+      const orderedParticipants = _.sortBy(_.sortBy(participants, 'safeStateDate'), (p) => 100 - p.state);
 
-        orderedParticipants.forEach((part, idx) => {
-          const selection = (Math.random() * numbers.length).toFixed();
-          let pos = numbers[selection];
-          numbers = _.without(numbers, pos);
-          if (idx < team.maxPlayers / 2) {
-            pos = 0;
-          }
-          if (part.state !== 100) {
-            pos = 1000;
-          }
-          UltiSite.Tournaments.update(
-            { _id: tournament._id, 'participants.user': part.user },
-            {
-              $set: { 'participants.$.drawing': pos },
-            }
-          );
-          result[part.user.toCamelCase()] = pos;
-        });
+      orderedParticipants.forEach((part, idx) => {
+        const selection = (Math.random() * numbers.length).toFixed();
+        let pos = numbers[selection];
+        numbers = _.without(numbers, pos);
+        if (idx < team.maxPlayers / 2) {
+          pos = 0;
+        }
+        if (part.state !== 100) {
+          pos = 1000;
+        }
         UltiSite.Tournaments.update(
-          { _id: tournament._id, 'teams._id': team._id },
+          { _id: tournament._id, 'participants.user': part.user },
           {
-            $set: {
-              'teams.$.drawingResult': result,
-              lastChange: new Date(),
-            },
+            $set: { 'participants.$.drawing': pos },
           }
         );
-        const drawnParticipants = UltiSite.participantList(team._id)
-          .map((p) => p.username)
-          .join(', ');
-
-        console.log(`finished drawing:${drawnParticipants}`);
-        if (team.maxPlayers < partCount * 2) {
-          Meteor.call('addEvent', {
-            type: 'tournament',
-            _id: tournament._id,
-            text: `Auslosung bei ${team.name}:${drawnParticipants}`,
-          });
-        }
+        result[part.user.toCamelCase()] = pos;
       });
-    });
-  };
+      UltiSite.Tournaments.update(
+        { _id: tournament._id, 'teams._id': team._id },
+        {
+          $set: {
+            'teams.$.drawingResult': result,
+            lastChange: new Date(),
+          },
+        }
+      );
+      const drawnParticipants = UltiSite.participantList(team._id)
+        .map((p) => p.username)
+        .join(', ');
 
+      console.log(`finished drawing:${drawnParticipants}`);
+      if (team.maxPlayers < partCount * 2) {
+        Meteor.call('addEvent', {
+          type: 'tournament',
+          _id: tournament._id,
+          text: `Auslosung bei ${team.name}:${drawnParticipants}`,
+        });
+      }
+    });
+  });
+};
+Meteor.startup(function () {
   const job = new CronJob('0 17 3 * * *', Meteor.bindEnvironment(UltiSite.teamDrawings), null, false, 'Europe/Berlin');
   job.start();
 });
