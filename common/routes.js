@@ -1,5 +1,5 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
-
+FlowRouter.decodeQueryParamsOnce = true;
 if (Meteor.isClient) {
   Meteor.startup(() => {
     if (FlowRouter.current().queryParams.modalDialog) {
