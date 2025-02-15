@@ -2,24 +2,24 @@ import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { CronJob } from 'cron';
 
-UltiSite.Tournaments.before.update(function (userId, doc, fieldNames, modifier, options) {
+Tournaments.before.update(function (userId, doc, fieldNames, modifier, options) {
   modifier.$set = modifier.$set || {};
   modifier.$set.lastChange = new Date();
 });
 
-UltiSite.Tournaments.before.insert(function (userId, doc) {
+Tournaments.before.insert(function (userId, doc) {
   doc.lastChange = new Date();
   doc.participants = [];
 });
 
 export const getTeam = function (id) {
-  const tournament = UltiSite.Tournaments.findOne({ 'teams._id': id });
+  const tournament = Tournaments.findOne({ 'teams._id': id });
   return tournament && tournament.teams[id];
 };
 
 export const getTournamentsStates = function (userId) {
   const teams = [];
-  UltiSite.Tournaments.find(
+  Tournaments.find(
     {
       date: { $gte: new Date() },
       participants: { $elemMatch: { user: userId, state: { $gt: 50 } } },
@@ -35,7 +35,7 @@ export const getTournamentsStates = function (userId) {
           name: tournament.name,
           date: moment(tournament.date).format('DD.MM.'),
           city: tournament.address && tournament.address.city,
-          state: UltiSite.textState(part.state),
+          state: textState(part.state),
           comment: part.comment,
           teamName: team.name,
           teamState: team.state,
@@ -53,14 +53,14 @@ export const getTournamentsStates = function (userId) {
 Meteor.methods({
   offlineTournamentCheck(ids) {
     check(ids, [String]);
-    const existing = UltiSite.Tournaments.find({ _id: { $in: ids } }).map((t) => t._id);
+    const existing = Tournaments.find({ _id: { $in: ids } }).map((t) => t._id);
     return _.without(ids, existing);
   },
   myTournamentStates() {
-    return UltiSite.getTournamentsStates(this.userId);
+    return getTournamentsStates(this.userId);
   },
   myTournaments() {
-    const ids = UltiSite.Tournaments.find(
+    const ids = Tournaments.find(
       {
         date: {
           $gte: moment().toDate(),
@@ -72,7 +72,7 @@ Meteor.methods({
       return t._id;
     });
     ids.concat(
-      UltiSite.Tournaments.find(
+      Tournaments.find(
         {
           tournamentDate: {
             $lte: moment().toDate(),
@@ -97,7 +97,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('not-logged-in', 'Nicht angemeldet');
     }
-    const tourney = UltiSite.Tournaments.findOne(tournamentId);
+    const tourney = Tournaments.findOne(tournamentId);
     if (!tourney) {
       throw new Meteor.Error('does-not-exist', `Das Turnier ${tournamentId} existiert nicht`);
     }
@@ -122,7 +122,7 @@ Meteor.methods({
     }
     teamData._id = Random.id();
     console.log(`Created Team ${teamData._id} `);
-    UltiSite.Tournaments.update(tournamentId, {
+    Tournaments.update(tournamentId, {
       $set: { lastChange: new Date() },
       $push: { teams: teamData },
     });
@@ -137,7 +137,7 @@ Meteor.methods({
     check(id, String);
     check(infoId, String);
     check(content, String);
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       {
         _id: id,
         'description._id': infoId,
@@ -159,7 +159,7 @@ Meteor.methods({
     check(id, String);
     check(infoId, String);
     check(content, String);
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       {
         _id: id,
         'reports._id': infoId,
@@ -175,7 +175,7 @@ Meteor.methods({
   tournamentAddReport(id, report) {
     check(id, String);
     check(report, Object);
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       {
         _id: id,
       },
@@ -198,7 +198,7 @@ Meteor.methods({
     });
   },
   tournamentCoordinates() {
-    return UltiSite.Tournaments.find(
+    return Tournaments.find(
       {
         $and: [
           {
@@ -228,7 +228,7 @@ Meteor.methods({
 });
 
 export const teamDrawings = function () {
-  UltiSite.Tournaments.find({
+  Tournaments.find({
     date: {
       $gte: moment().startOf('day').toDate(),
     },
@@ -266,7 +266,7 @@ export const teamDrawings = function () {
         if (part.state !== 100) {
           pos = 1000;
         }
-        UltiSite.Tournaments.update(
+        Tournaments.update(
           { _id: tournament._id, 'participants.user': part.user },
           {
             $set: { 'participants.$.drawing': pos },
@@ -274,7 +274,7 @@ export const teamDrawings = function () {
         );
         result[part.user.toCamelCase()] = pos;
       });
-      UltiSite.Tournaments.update(
+      Tournaments.update(
         { _id: tournament._id, 'teams._id': team._id },
         {
           $set: {
@@ -283,7 +283,7 @@ export const teamDrawings = function () {
           },
         }
       );
-      const drawnParticipants = UltiSite.participantList(team._id)
+      const drawnParticipants = participantList(team._id)
         .map((p) => p.username)
         .join(', ');
 
@@ -299,6 +299,6 @@ export const teamDrawings = function () {
   });
 };
 Meteor.startup(function () {
-  const job = new CronJob('0 17 3 * * *', Meteor.bindEnvironment(UltiSite.teamDrawings), null, false, 'Europe/Berlin');
+  const job = new CronJob('0 17 3 * * *', Meteor.bindEnvironment(teamDrawings), null, false, 'Europe/Berlin');
   job.start();
 });

@@ -5,7 +5,7 @@ import Grid from 'gridfs-locking-stream';
 import Base64Decode from 'base64-stream';
 import { GridFSBucket, ObjectId } from 'mongodb';
 
-const bucket = new GridFSBucket(UltiSite.Documents.rawDatabase(), { bucketName: 'documents-grid' });
+const bucket = new GridFSBucket(Documents.rawDatabase(), { bucketName: 'documents-grid' });
 
 Meteor.methods({
   retrieveNewestFiles() {
@@ -13,7 +13,7 @@ Meteor.methods({
       return [];
     }
     return _.sortBy(
-      UltiSite.Images.find(
+      Images.find(
         {},
         {
           limit: 5,
@@ -24,7 +24,7 @@ Meteor.methods({
       )
         .fetch()
         .concat(
-          UltiSite.Documents.find(
+          Documents.find(
             {},
             {
               limit: 5,
@@ -47,12 +47,12 @@ Meteor.methods({
     if (!this.userId) {
       return [];
     }
-    return UltiSite.Images.find({
+    return Images.find({
       associated: [],
     })
       .fetch()
       .concat(
-        UltiSite.Documents.find({
+        Documents.find({
           associated: [],
         }).fetch()
       )
@@ -70,7 +70,7 @@ Meteor.methods({
     if (metadata.type.indexOf('image') === 0) {
       let imgId;
       if (!metadata._id) {
-        imgId = UltiSite.Images.insert(
+        imgId = Images.insert(
           _.extend(metadata, {
             created: new Date(),
             creator: this.userId,
@@ -78,10 +78,10 @@ Meteor.methods({
         );
         fs.writeFileSync(`${os.tmpdir()}/${imgId}.image.temp`, base64, { encoding: 'base64' });
       } else {
-        const existing = UltiSite.Images.findOne(metadata._id);
+        const existing = Images.findOne(metadata._id);
         fs.appendFileSync(`${os.tmpdir()}/${metadata._id}.image.temp`, base64, { encoding: 'base64' });
         imgId = existing._id;
-        UltiSite.Images.update(imgId, { $set: { progress: Math.floor(metadata.progress) } });
+        Images.update(imgId, { $set: { progress: Math.floor(metadata.progress) } });
       }
       if (lastPackage) {
         const fileStats = fs.statSync(`${os.tmpdir()}/${imgId}.image.temp`);
@@ -94,11 +94,11 @@ Meteor.methods({
               console.log(err);
               throw err;
             }
-            UltiSite.Images.update(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
+            Images.update(imgId, { $set: { base64: data, size: fileStats.size }, $unset: { progress: 1 } });
             fs.unlinkSync(`${os.tmpdir()}/${imgId}.image.temp`);
             console.log('finished image upload');
             if (meteorCall) {
-              Meteor.call(meteorCall, UltiSite.Images.findOne(imgId));
+              Meteor.call(meteorCall, Images.findOne(imgId));
             } else {
               let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
               if (!ref || ref.length === 0) {
@@ -120,7 +120,7 @@ Meteor.methods({
     }
     let docId;
     if (!metadata._id) {
-      docId = UltiSite.Documents.insert(
+      docId = Documents.insert(
         _.extend(metadata, {
           created: new Date(),
           creator: this.userId,
@@ -129,11 +129,11 @@ Meteor.methods({
       console.log(`wrote temp file ${os.tmpdir()}/${docId}.doc.temp`);
       fs.writeFileSync(`${os.tmpdir()}/${docId}.doc.temp`, base64, { encoding: 'base64' });
     } else {
-      const existing = UltiSite.Documents.findOne(metadata._id);
+      const existing = Documents.findOne(metadata._id);
       console.log(`append temp file ${os.tmpdir()}/${docId}.doc.temp`);
       fs.appendFileSync(`${os.tmpdir()}/${metadata._id}.doc.temp`, base64, { encoding: 'base64' });
       docId = existing._id;
-      UltiSite.Documents.update(docId, { $set: { progress: Math.floor(metadata.progress) } });
+      Documents.update(docId, { $set: { progress: Math.floor(metadata.progress) } });
       console.log(`updated document`);
     }
     if (lastPackage) {
@@ -149,7 +149,7 @@ Meteor.methods({
       wstream.on(
         'finish',
         Meteor.bindEnvironment(function (fileObj) {
-          UltiSite.Documents.update(docId, {
+          Documents.update(docId, {
             $set: {
               gridId: `${fileObj._id}`,
               size: fileStats.size,
@@ -159,7 +159,7 @@ Meteor.methods({
           fs.unlinkSync(`${os.tmpdir()}/${docId}.doc.temp`);
           console.log('finished file upload');
           if (meteorCall) {
-            Meteor.call(meteorCall, UltiSite.Documents.findOne(docId));
+            Meteor.call(meteorCall, Documents.findOne(docId));
           } else {
             let ref = Meteor.call('getAnyObjectByIds', metadata.associated);
             if (!ref || ref.length === 0) {
@@ -184,18 +184,18 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('not-allowed');
     }
-    let file = UltiSite.Images.findOne(fileId);
+    let file = Images.findOne(fileId);
     if (file) {
-      if (this.userId !== file.creator && !UltiSite.isAdmin(this.userId)) {
+      if (this.userId !== file.creator && !isAdmin(this.userId)) {
         throw new Meteor.Error('not-allowed');
       }
-      UltiSite.Images.remove(fileId);
+      Images.remove(fileId);
     } else {
-      file = UltiSite.Documents.findOne(fileId);
+      file = Documents.findOne(fileId);
       if (!file) {
         throw new Meteor.Error('not-found');
       }
-      if (this.userId !== file.creator && !UltiSite.isAdmin(this.userId)) {
+      if (this.userId !== file.creator && !isAdmin(this.userId)) {
         throw new Meteor.Error('not-allowed');
       }
       if (file.gridId) {
@@ -206,13 +206,13 @@ Meteor.methods({
               console.log('Error removing gridfs file', err);
             } else {
               console.log('removed gridfs file');
-              UltiSite.Documents.remove(fileId);
+              Documents.remove(fileId);
             }
           })
         );
       } else {
         console.log('removed non gridfs file');
-        UltiSite.Documents.remove(fileId);
+        Documents.remove(fileId);
       }
     }
 
@@ -228,7 +228,7 @@ Meteor.methods({
 
 Meteor.startup(function () {
   /*
-  UltiSite.Folders.find().observeChanges({
+  Folders.find().observeChanges({
       removed: function(id, doc) {
       }
   }); */
@@ -236,7 +236,7 @@ Meteor.startup(function () {
 
 WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res, next) {
   const { query } = req;
-  const icon = UltiSite.Images.findOne(UltiSite.settings().imageIcon);
+  const icon = Images.findOne(settings().imageIcon);
   if (!icon) {
     res.writeHead(404);
     res.end();
@@ -267,7 +267,7 @@ WebApp.connectHandlers.use('/_document', (req, resp) => {
     resp.end('Param docId required');
     return;
   }
-  const doc = UltiSite.Documents.findOne({ _id: req.query.docId, gridId: { $exists: true } });
+  const doc = Documents.findOne({ _id: req.query.docId, gridId: { $exists: true } });
   if (!doc) {
     resp.writeHead(404);
     resp.end('doc not found');

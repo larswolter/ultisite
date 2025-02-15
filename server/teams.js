@@ -4,7 +4,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 Meteor.methods({
   teamRemove(teamId) {
     check(teamId, String);
-    const tournament = UltiSite.Tournaments.findOne({
+    const tournament = Tournaments.findOne({
       participants: {
         $elemMatch: { team: teamId, state: 100 },
       },
@@ -12,7 +12,7 @@ Meteor.methods({
     if (tournament) {
       throw new Meteor.Error('team-not-empty', 'Es sind Spieler im Team');
     }
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       { 'teams._id': teamId },
       {
         $pull: {
@@ -25,16 +25,13 @@ Meteor.methods({
   teamMoveToTournament(teamId, tournamentId) {
     check(teamId, String);
     check(tournamentId, String);
-    const team = UltiSite.getTeam(teamId);
+    const team = getTeam(teamId);
     if (!team) {
       return;
     }
     // first insert, then remove, to not loose the team
-    UltiSite.Tournaments.update(tournamentId, { $push: { teams: team } });
-    UltiSite.Tournaments.update(
-      { _id: { $ne: tournamentId, 'teams._id': teamId } },
-      { $pull: { teams: { _id: teamId } } }
-    );
+    Tournaments.update(tournamentId, { $push: { teams: team } });
+    Tournaments.update({ _id: { $ne: tournamentId, 'teams._id': teamId } }, { $pull: { teams: { _id: teamId } } });
   },
   teamMakeMeResponsible(teamId) {
     check(teamId, String);
@@ -42,7 +39,7 @@ Meteor.methods({
       throw new Meteor.Error('access-denied');
     }
     const user = Meteor.users.findOne(this.userId);
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       { 'teams._id': teamId },
       {
         $set: {
@@ -59,7 +56,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
-    UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: { 'teams.$.remarks': remark } });
+    Tournaments.update({ 'teams._id': teamId }, { $set: { 'teams.$.remarks': remark } });
   },
   teamUpdateImage(teamId, image) {
     check(teamId, String);
@@ -67,7 +64,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
-    UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: { 'teams.$.image': image } });
+    Tournaments.update({ 'teams._id': teamId }, { $set: { 'teams.$.image': image } });
   },
   teamUpdateResults(teamId, name, value) {
     check(teamId, String);
@@ -82,7 +79,7 @@ Meteor.methods({
     const upd = {};
     upd['teams.$.' + name] = value;
 
-    UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: upd });
+    Tournaments.update({ 'teams._id': teamId }, { $set: upd });
   },
 
   teamUpdate(teamId, teamData) {
@@ -95,13 +92,13 @@ Meteor.methods({
     Object.keys(teamData).forEach((key) => {
       upd['teams.$.' + key] = teamData[key];
     });
-    UltiSite.Tournaments.update({ 'teams._id': teamId }, { $set: upd });
+    Tournaments.update({ 'teams._id': teamId }, { $set: upd });
   },
   teamUpdateState(teamId, state) {
     check(teamId, String);
     check(state, String);
 
-    const tournament = UltiSite.Tournaments.findOne({ 'teams._id': teamId });
+    const tournament = Tournaments.findOne({ 'teams._id': teamId });
     const team = _.find(tournament.teams, (t) => t._id === teamId);
     if (state === team.state) {
       return;
@@ -130,20 +127,20 @@ Meteor.methods({
 
       const template = Assets.getText('mail-templates/team-tournament.html');
       const layout = Assets.getText('mail-templates/layout.html');
-      UltiSite.Mail.send(
+      Mail.send(
         [update.responsible],
         'Als Verantwortlicher gelost',
-        UltiSite.renderMailTemplate(layout, template, {
+        renderMailTemplate(layout, template, {
           user: Meteor.users.findOne(update.responsible),
           infoText: text,
           tournament,
           formatedDate: moment(tournament.date).format('DD.MM.YYYY'),
           team,
-          participants: UltiSite.participantList(team._id),
+          participants: participantList(team._id),
           tournamentUrl: FlowRouter.url('tournament', { _id: tournament._id }),
         })
       );
-      UltiSite.addEvent({
+      addEvent({
         type: 'tournament',
         _id: tournament._id,
         text: `Für das Team ${team.name} ist jetzt ${update.responsibleName} Zuständig`,
@@ -154,7 +151,7 @@ Meteor.methods({
       upd['teams.$.' + key] = update[key];
     });
 
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       {
         'teams._id': teamId,
       },
@@ -176,12 +173,12 @@ Meteor.methods({
     if (!activeUser) {
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
     }
-    const tournament = UltiSite.Tournaments.findOne({ 'teams._id': teamId });
+    const tournament = Tournaments.findOne({ 'teams._id': teamId });
     const part = _.find(tournament.participants, (p) => p.team === teamId && p.user === userId);
-    if (userId !== this.userId && !UltiSite.isAdmin(this.userId) && part.responsible !== this.userId) {
+    if (userId !== this.userId && !isAdmin(this.userId) && part.responsible !== this.userId) {
       throw new Meteor.Error('access-denied', 'Sie dürfen diese Teilnahme nicht ändern');
     }
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       {
         participants: {
           $elemMatch: { user: userId, team: teamId },
@@ -208,10 +205,10 @@ Meteor.methods({
   participationRemove(teamId, userId) {
     check(teamId, String);
     check(userId, String);
-    if (!UltiSite.isAdmin(this.userId)) {
+    if (!isAdmin(this.userId)) {
       throw new Meteor.Error('access-denied', 'Nur Admins');
     }
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       {
         participants: {
           $elemMatch: { user: userId, team: teamId },
@@ -238,9 +235,9 @@ Meteor.methods({
     if (!activeUser) {
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
     }
-    const tournament = UltiSite.Tournaments.findOne({ 'teams._id': teamId });
+    const tournament = Tournaments.findOne({ 'teams._id': teamId });
     const part = _.find(tournament.participants, (p) => p.team === teamId && p.user === userId);
-    if (userId !== this.userId && !UltiSite.isAdmin(this.userId) && part.responsible !== this.userId) {
+    if (userId !== this.userId && !isAdmin(this.userId) && part.responsible !== this.userId) {
       throw new Meteor.Error('access-denied', 'Sie dürfen diese Teilnahme nicht ändern');
     }
 
@@ -256,7 +253,7 @@ Meteor.methods({
       }
       safeStateDate = new Date();
     }
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       {
         participants: {
           $elemMatch: { user: userId, team: teamId },
@@ -291,7 +288,7 @@ Meteor.methods({
           _id: tournament._id,
           text:
             (this.userId === user._id ? '' : `${user.username}: `) +
-            UltiSite.textState(participantValue) +
+            textState(participantValue) +
             (part.comment ? `(${part.comment})` : ''),
         });
         if (user && user._id) {
@@ -309,7 +306,7 @@ Meteor.methods({
     }
     let user = Meteor.users.findOne(params.userid);
     if (!user && params.alias) {
-      user = UltiSite.userByAlias(params.alias, this.connection);
+      user = userByAlias(params.alias, this.connection);
     }
     if (!user) {
       user = {
@@ -319,13 +316,13 @@ Meteor.methods({
       };
       params.dummy = true;
     }
-    let tournament = UltiSite.Tournaments.findOne({
+    let tournament = Tournaments.findOne({
       participants: { $elemMatch: { user: user._id, team: teamId } },
     });
     if (tournament) {
       throw new Meteor.Error('already-there', 'Der Spieler ist bereits beim Team dabei');
     }
-    tournament = UltiSite.Tournaments.findOne({
+    tournament = Tournaments.findOne({
       participants: { $elemMatch: { team: teamId } },
     });
     delete params.alias;
@@ -339,7 +336,7 @@ Meteor.methods({
     params.safeStateDate = new Date();
     params.team = teamId;
 
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       { 'teams._id': teamId },
       {
         $set: { lastChange: new Date() },
@@ -356,7 +353,7 @@ Meteor.methods({
           _id: tournament._id,
           text:
             (this.userId === user._id ? '' : `${user.username}: `) +
-            UltiSite.textState(params.state) +
+            textState(params.state) +
             (params.comment ? ` und sagt: ${params.comment}` : ''),
         });
         if (!params.dummy) {
@@ -373,7 +370,7 @@ Meteor.methods({
       throw new Meteor.Error('access-denied', 'Sie müssen angemeldet sein');
     }
 
-    UltiSite.Tournaments.update(
+    Tournaments.update(
       {
         participants: { $elemMatch: { user: params.userid, team: teamId } },
       },

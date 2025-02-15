@@ -16,13 +16,13 @@ function setupMailServer(club) {
   if (!club.emailServer || Meteor.absoluteUrl().match(/localhost/)) {
     console.log('Creating file mail transport');
     Mail.debug = true;
-    Mail.transport = UltiSite.Nodemailer.createTransport({
+    Mail.transport = Nodemailer.createTransport({
       streamTransport: true,
       buffer: true,
     });
   } else {
     console.log('Creating mail transport for ' + club.teamname + ':' + club.emailServer);
-    Mail.transport = UltiSite.Nodemailer.createTransport({
+    Mail.transport = Nodemailer.createTransport({
       pool: true,
       rateLimit: 3,
       host: club.emailServer.split(':')[0],
@@ -89,14 +89,14 @@ function setupMailServer(club) {
 export const Nodemailer = nodemailer;
 Meteor.startup(function () {
   handlebars.registerHelper('translate', (term) => {
-    return UltiSite.translate(term);
+    return translate(term);
   });
 
-  setupMailServer(UltiSite.settings());
+  setupMailServer(settings());
 });
 
 Meteor.methods({
   updateMailserver() {
-    setupMailServer(UltiSite.settings());
+    setupMailServer(settings());
   },
 });

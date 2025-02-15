@@ -19,9 +19,9 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   }
   const numTeams = Number(query.teams);
   const teams = [];
-  const participants = UltiSite.HatInfo.HatParticipants.find(
+  const participants = HatInfo.HatParticipants.find(
     { confirmed: true, payed: { $lte: new Date() } },
-    { sort: hatSort(), limit: Number(UltiSite.settings().hatNumPlayers) }
+    { sort: hatSort(), limit: Number(settings().hatNumPlayers) }
   ).fetch();
   const partStrength = (p) => {
     return Number(p.strength) + Number(p.years) + Number(p.experience) + Number(p.fitness);
@@ -123,7 +123,7 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader(
     'Content-Disposition',
-    `attachment; filename="${UltiSite.settings().hatId}-Teams-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
+    `attachment; filename="${settings().hatId}-Teams-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
   );
   res.writeHead(200);
   workbook.xlsx.write(res).then(() => {

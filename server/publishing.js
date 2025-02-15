@@ -9,7 +9,7 @@ Meteor.startup(function () {
       search.public = true;
     }
 
-    return UltiSite.Blogs.find(search, {
+    return Blogs.find(search, {
       limit,
       sort: {
         date: -1,
@@ -24,7 +24,7 @@ Meteor.startup(function () {
     if (!this.userId) {
       search.public = true;
     }
-    const newest = (UltiSite.Blogs.findOne(search, { sort: { date: -1 } }) || {})._id;
+    const newest = (Blogs.findOne(search, { sort: { date: -1 } }) || {})._id;
     search.$or = [
       {
         date: {
@@ -35,7 +35,7 @@ Meteor.startup(function () {
       },
       { _id: newest },
     ];
-    return UltiSite.Blogs.find(search, {
+    return Blogs.find(search, {
       limit: 3,
       sort: {
         date: -1,
@@ -46,27 +46,27 @@ Meteor.startup(function () {
     });
   });
   Meteor.publish('Blog', function (_id) {
-    return UltiSite.Blogs.find({ _id });
+    return Blogs.find({ _id });
   });
   Meteor.publish('UserRoles', function () {
-    if (UltiSite.isAdmin(this.userId)) {
+    if (isAdmin(this.userId)) {
       return Roles.getAllRoles();
     }
     this.ready();
   });
   Meteor.publish('LastChanges', function (types) {
     if (types) {
-      return UltiSite.LastChanges.find({
+      return LastChanges.find({
         type: {
           $in: types,
         },
       });
     }
-    return UltiSite.LastChanges.find();
+    return LastChanges.find();
   });
   Meteor.publish('Statistics', function (target) {
     check(target, String);
-    const res = UltiSite.Statistics.find({
+    const res = Statistics.find({
       target,
     });
     if (res.count() === 0) {
@@ -79,7 +79,7 @@ Meteor.startup(function () {
       associatedIds = [associatedIds];
     }
     return [
-      UltiSite.Images.find(
+      Images.find(
         {
           $or: [
             {
@@ -96,7 +96,7 @@ Meteor.startup(function () {
         },
         { fields: { base64: 0, thumb: 0 } }
       ),
-      UltiSite.Documents.find({
+      Documents.find({
         $or: [
           {
             associated: {
@@ -110,7 +110,7 @@ Meteor.startup(function () {
           },
         ],
       }),
-      UltiSite.Folders.find(),
+      Folders.find(),
     ];
   });
   Meteor.publish('UserDetails', function (userId) {
@@ -141,7 +141,7 @@ Meteor.startup(function () {
     if (!this.userId) {
       return undefined;
     }
-    return UltiSite.Events.find(
+    return Events.find(
       {},
       {
         limit: 30,
@@ -154,11 +154,11 @@ Meteor.startup(function () {
     if (!this.userId) {
       return undefined;
     }
-    return UltiSite.Tournaments.find({ _id: tournamentId });
+    return Tournaments.find({ _id: tournamentId });
   });
 
   Meteor.publish('Tournaments', function (since, query) {
-    return UltiSite.Tournaments.find(
+    return Tournaments.find(
       {
         $or: [
           query ? query : { date: { $gte: moment().subtract(1, 'week').toDate() } },
@@ -171,15 +171,15 @@ Meteor.startup(function () {
 
   Meteor.publish('WikiPageDiscussions', function (id) {
     check(id, String);
-    return UltiSite.WikiPageDiscussions.find({ pageId: id });
+    return WikiPageDiscussions.find({ pageId: id });
   });
   Meteor.publish('ContentVersions', function (id) {
     check(id, String);
-    return UltiSite.ContentVersions.find({ associated: id }, { fields: { content: 0 } });
+    return ContentVersions.find({ associated: id }, { fields: { content: 0 } });
   });
   Meteor.publish('WikiPage', function (id) {
     check(id, String);
-    return UltiSite.WikiPages.find({
+    return WikiPages.find({
       $or: [
         {
           _id: id,
@@ -194,15 +194,15 @@ Meteor.startup(function () {
   Meteor.publish('ContentVersion', function (id) {
     check(id, String);
     if (this.userId) {
-      return UltiSite.ContentVersions.find({ _id: id });
+      return ContentVersions.find({ _id: id });
     }
     this.ready();
   });
 
   Meteor.publish('Practices', function () {
-    return UltiSite.Practices.find({});
+    return Practices.find({});
   });
   Meteor.publish('Places', function () {
-    return UltiSite.Countries.find();
+    return Countries.find();
   });
 });

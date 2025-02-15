@@ -24,7 +24,7 @@ export const getEvents = function (limitCount, days = 1) {
     search = {};
   }
   const events = {};
-  UltiSite.Events.find(search, {
+  Events.find(search, {
     sort: {
       'detail.time': -1,
     },
@@ -49,9 +49,9 @@ Meteor.startup(function () {
     Meteor.bindEnvironment(() => {
       let result = 0;
       console.log('sending digests');
-      const eventList = UltiSite.getEvents();
+      const eventList = getEvents();
       Meteor.users.find().forEach(function (user) {
-        if (UltiSite.sendEventDigest(user, eventList)) {
+        if (sendEventDigest(user, eventList)) {
           result += 1;
         }
       });
@@ -76,12 +76,12 @@ export const sendEventDigest = function (user, eventList, force = false) {
   }
   const template = Assets.getText('mail-templates/events.html');
   const layout = Assets.getText('mail-templates/layout.html');
-  const tournaments = UltiSite.getTournamentsStates(user._id);
+  const tournaments = getTournamentsStates(user._id);
 
-  UltiSite.Mail.send(
+  Mail.send(
     [user._id],
     'Tägliche Zusammenfassung',
-    UltiSite.renderMailTemplate(layout, template, {
+    renderMailTemplate(layout, template, {
       user,
       profilUrl: FlowRouter.url('user', { _id: user._id }),
       tournamentUrl: FlowRouter.url('tournaments', {}),
@@ -96,10 +96,10 @@ const sendEvent = function (user, event) {
   const template = Assets.getText('mail-templates/event.html');
   const layout = Assets.getText('mail-templates/layout.html');
 
-  UltiSite.Mail.send(
+  Mail.send(
     [user._id],
     event.name,
-    UltiSite.renderMailTemplate(layout, template, {
+    renderMailTemplate(layout, template, {
       user,
       profilUrl: FlowRouter.url('user', { _id: user._id }),
       event,
@@ -109,7 +109,7 @@ const sendEvent = function (user, event) {
 };
 export const addEvent = function (info) {
   info.time = new Date();
-  UltiSite.LastChanges.upsert(
+  LastChanges.upsert(
     {
       type: info.type,
     },
@@ -120,9 +120,9 @@ export const addEvent = function (info) {
       },
     }
   );
-  info.alias = info.userId && UltiSite.getAlias(info.userId);
+  info.alias = info.userId && getAlias(info.userId);
   if (info.type === 'files' && info.images) {
-    const ev = UltiSite.Events.findOne({
+    const ev = Events.findOne({
       groupBy: info._id,
       'detail.userId': info.userId,
       'detail.time': {
@@ -131,7 +131,7 @@ export const addEvent = function (info) {
       'detail.text': info.text,
     });
     if (ev) {
-      UltiSite.Events.update(ev._id, {
+      Events.update(ev._id, {
         $push: {
           images: info.images[0],
         },
@@ -140,7 +140,7 @@ export const addEvent = function (info) {
   }
   const event = { lastChange: new Date() };
   if (info.type === 'team' || info.type === 'tournament') {
-    const tournament = UltiSite.Tournaments.findOne({
+    const tournament = Tournaments.findOne({
       $or: [{ _id: info._id || info.group }, { 'teams._id': info._id || info.group }],
     });
     event.groupBy = tournament._id;
@@ -148,13 +148,13 @@ export const addEvent = function (info) {
     event.name = tournament.name;
     event.additional = moment(tournament.date).format('DD.MM.YY') + ' in ' + tournament.address.city;
   } else if (info.type === 'wiki') {
-    const page = UltiSite.WikiPages.findOne(info._id);
+    const page = WikiPages.findOne(info._id);
     event.groupBy = info._id;
     event.route = 'wikipage';
     event.name = page.name;
     event.additional = moment(page.created).format('DD.MM.YY');
   } else if (info.type === 'blog') {
-    const page = UltiSite.Blogs.findOne(info._id);
+    const page = Blogs.findOne(info._id);
     event.groupBy = info._id;
     event.route = 'blog';
     event.name = page.title;
@@ -166,13 +166,13 @@ export const addEvent = function (info) {
     event.additional = info.additional;
   }
   event.detail = info;
-  UltiSite.Events.insert(event, function (err, res) {
+  Events.insert(event, function (err, res) {
     console.log('inserted event:', err, res);
     const search = {};
     if (['team', 'tournament'].includes(info.type)) {
       search['settings.email.' + event.route] = 'immediate';
       Meteor.users.find(search).forEach(function (user) {
-        sendEvent(user, UltiSite.Events.findOne(res));
+        sendEvent(user, Events.findOne(res));
       });
     }
   });
@@ -181,26 +181,26 @@ export const addEvent = function (info) {
 Meteor.methods({
   sendEventDigestToMe() {
     check(this.userId, String);
-    const eventList = UltiSite.getEvents(20, 100);
+    const eventList = getEvents(20, 100);
     console.log('gathering digest');
     Meteor.users.find({ _id: this.userId }).forEach(function (user) {
       console.log('sendign to', user.username);
-      UltiSite.sendEventDigest(user, eventList, true);
+      sendEventDigest(user, eventList, true);
     });
   },
   addEvent(info) {
     check(info, Object);
-    if (!UltiSite.isAdmin(this.userId) || !info.userId) {
+    if (!isAdmin(this.userId) || !info.userId) {
       info.userId = this.userId;
     }
-    UltiSite.addEvent(info);
+    addEvent(info);
   },
   removeEvent(id) {
     check(id, String);
-    UltiSite.Events.remove({
+    Events.remove({
       $or: [{ groupBy: id }, { 'detail._id': id }],
     });
-    UltiSite.Events.udate({
+    Events.udate({
       $pull: { images: id },
     });
   },

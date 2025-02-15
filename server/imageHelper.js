@@ -6,7 +6,7 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
     resp.end('Param imageId required');
     return;
   }
-  const image = UltiSite.Images.findOne({ _id: req.query.imageId, base64: { $exists: true } });
+  const image = Images.findOne({ _id: req.query.imageId, base64: { $exists: true } });
   if (!image) {
     resp.writeHead(404);
     resp.end('image not found');
@@ -36,7 +36,7 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
             if (scale[0] + scale[1] < 400 || scale[0] + scale[1] === 1600) {
               const thumb = {};
               thumb['thumb.' + size] = data.toString('base64');
-              UltiSite.Images.update(image._id, { $set: thumb });
+              Images.update(image._id, { $set: thumb });
             }
             resp.setHeader('Content-Length', data.length + '');
             resp.writeHead(200);

@@ -29,7 +29,7 @@ const sha256 = crypto.createHash('sha256');
 const clientHashes = new Mongo.Collection(null);
 /*
 Meteor.startup(function () {
-  UltiSite.Tournaments.find().observe({
+  Tournaments.find().observe({
     changed(doc) {
       clientHashes.update({ 'docs.i': doc._id }, { $set: { 'docs.$.h': null } }, { multi: true });
     },
@@ -63,7 +63,7 @@ Accounts.onLogout(function (attempt) {
 Meteor.publish('lastChangedElements', function (modifiedAfter) {
   if (!this.userId) return this.ready();
 
-  return UltiSite.offlineCollections.map((col) => {
+  return offlineCollections.map((col) => {
     if (modifiedAfter && modifiedAfter[col.name]) {
       return UltiSite[col.name].find(
         {
@@ -101,12 +101,12 @@ Meteor.methods({
   offlineCheckForNew(since) {
     check(since, Date);
     const info = {
-      tournamentCount: UltiSite.Tournaments.find({ date: getOfflineSyncDate() }, { sort: { date: -1 } }).count(),
+      tournamentCount: Tournaments.find({ date: getOfflineSyncDate() }, { sort: { date: -1 } }).count(),
     };
     if (offlineForce.isAfter(moment(since))) {
       info.mustSync = true;
     } else {
-      const tChange = UltiSite.Tournaments.find({ lastChange: { $gte: since } }).count();
+      const tChange = Tournaments.find({ lastChange: { $gte: since } }).count();
       if (tChange > 3) {
         info.mustSync = true;
       }
@@ -136,7 +136,7 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
     teamSearch._lastChange = { $gte: moment(req.query.since).toDate() };
   }
   const offline = {
-    tournaments: UltiSite.Tournaments.find(tournamentSearch, { sort: { date: -1 } }).fetch(),
+    tournaments: Tournaments.find(tournamentSearch, { sort: { date: -1 } }).fetch(),
     removed: [],
   };
 

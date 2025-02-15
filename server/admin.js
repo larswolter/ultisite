@@ -3,7 +3,7 @@
 export const Settings = new Meteor.Collection('Settings');
 
 function syncSettings() {
-  _.extend(Meteor.settings, UltiSite.Settings.findOne() || {});
+  _.extend(Meteor.settings, Settings.findOne() || {});
   Object.keys(Meteor.settings).forEach((key) => {
     if (key === 'mailingListConfigs') {
       __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key].map((config) => _.omit(config, 'password'));
@@ -12,7 +12,7 @@ function syncSettings() {
     }
   });
   __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (
-    UltiSite.Folders.findOne({
+    Folders.findOne({
       name: '/',
     }) || {}
   )._id;
@@ -21,19 +21,19 @@ function syncSettings() {
   return __meteor_runtime_config__.PUBLIC_SETTINGS;
 }
 Meteor.startup(function () {
-  if (!UltiSite.Settings.findOne()) {
-    UltiSite.Settings.insert({});
+  if (!Settings.findOne()) {
+    Settings.insert({});
   }
   syncSettings();
 });
 
 Meteor.methods({
   updateSettings(modifier) {
-    if (!UltiSite.isAdmin(this.userId)) {
+    if (!isAdmin(this.userId)) {
       throw new Meteor.error('access-denied', 'Zugriff nur für Admins');
     }
     console.log('updating settings', modifier);
-    UltiSite.Settings.update({}, modifier);
+    Settings.update({}, modifier);
     return syncSettings();
   },
   recreateCollections() {
@@ -50,7 +50,7 @@ Meteor.methods({
     return [
       {
         name: 'Settings',
-        count: UltiSite.Settings.find().count(),
+        count: Settings.find().count(),
       },
       {
         name: 'Users',
@@ -58,23 +58,23 @@ Meteor.methods({
       },
       {
         name: 'Tournaments',
-        count: UltiSite.Tournaments.find().count(),
+        count: Tournaments.find().count(),
       },
       {
         name: 'Files',
-        count: UltiSite.Images.find().count() + UltiSite.Documents.find().count(),
+        count: Images.find().count() + Documents.find().count(),
       },
       {
         name: 'Practices',
-        count: UltiSite.Practices.find().count(),
+        count: Practices.find().count(),
       },
       {
         name: 'Events',
-        count: UltiSite.Events.find().count(),
+        count: Events.find().count(),
       },
       {
         name: 'WikiPages',
-        count: UltiSite.WikiPages.find().count(),
+        count: WikiPages.find().count(),
       },
     ];
   },

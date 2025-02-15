@@ -5,7 +5,7 @@ Meteor.methods({
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
-    UltiSite.Practices.update(image.associated[0], {
+    Practices.update(image.associated[0], {
       $set: { mapImage: image._id, lastChange: new Date() },
     });
   },
@@ -19,11 +19,11 @@ Meteor.methods({
     if (id) {
       if (!practice.$set) throw new Meteor.Error('update needs to be an update');
       practice.$set.lastChange = new Date();
-      UltiSite.Practices.update(id, practice);
+      Practices.update(id, practice);
       console.log('updated practice');
     } else {
       console.log('inserting practice');
-      return UltiSite.Practices.insert({ ...practice, lastChange: new Date() });
+      return Practices.insert({ ...practice, lastChange: new Date() });
     }
     return id;
   },
@@ -33,7 +33,7 @@ Meteor.methods({
       throw new Meteor.Error('access-denied');
     }
 
-    UltiSite.Practices.remove(id);
+    Practices.remove(id);
     console.log('deleted practice');
   },
 });

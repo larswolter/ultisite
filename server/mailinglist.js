@@ -10,10 +10,10 @@ Meteor.startup(function () {
   const job = new CronJob(
     '0 9 15 * * *',
     Meteor.bindEnvironment(() => {
-      if (!UltiSite.settings().mailingListConfigs) {
+      if (!settings().mailingListConfigs) {
         return;
       }
-      UltiSite.settings().mailingListConfigs.forEach(function (config) {
+      settings().mailingListConfigs.forEach(function (config) {
         const options = _.extend({ tls: true }, config);
         console.log(config.from + ':connecting to mail-server');
         const imap = new Imap(options);
@@ -67,11 +67,11 @@ Meteor.startup(function () {
 
                         if (user) {
                           console.log('got email from user:', user.username, address[0].address);
-                          const exists = UltiSite.Blogs.findOne({ author: user._id, date: date.toDate() });
+                          const exists = Blogs.findOne({ author: user._id, date: date.toDate() });
                           if (exists) {
                             blogId = exists._id;
                           }
-                          UltiSite.Blogs.upsert(blogId, {
+                          Blogs.upsert(blogId, {
                             $set: {
                               lastChange: new Date(),
                               _id: blogId,
@@ -201,9 +201,9 @@ const fetchPart = function (imap, blogId, uid, part) {
           file.comments = [];
           file.name = part.disposition.filename||part.params.name;
           file.attachData(buf,{type:part.type+'/'+part.subtype});
-              let id = UltiSite.Images.insert(file);
+              let id = Images.insert(file);
               Meteor.setTimeout(()=>{
-                  UltiSite.Blogs.update(blogId,{
+                  Blogs.update(blogId,{
                       $set:{
                           image:id
                       }
@@ -211,13 +211,13 @@ const fetchPart = function (imap, blogId, uid, part) {
               },100);
           }
           else
-              UltiSite.Documents.insert(file);
+              Documents.insert(file);
           console.log(uid + ': fetched doc/image '+part.disposition.filename);
           */
               } else if (part.type === 'text') {
                 let text = quotedPrintable.decode(buffer);
                 text = sanitizeHtml(text);
-                UltiSite.Blogs.upsert(blogId, {
+                Blogs.upsert(blogId, {
                   $set: {
                     _id: blogId,
                     content: text,
@@ -240,12 +240,12 @@ const fetchPart = function (imap, blogId, uid, part) {
 const sendMailinglistArticle = function (user, blogId, mailinglist) {
   const template = Assets.getText('mail-templates/article.html');
   const layout = Assets.getText('mail-templates/layout.html');
-  const blog = UltiSite.blogs.findOne(blogId);
+  const blog = blogs.findOne(blogId);
   const author = Meteor.users.findOne(blog.author);
-  UltiSite.Mail.send(
+  Mail.send(
     [user._id],
     blog.title,
-    UltiSite.renderMailTemplate(layout, template, {
+    renderMailTemplate(layout, template, {
       user,
       profilUrl: FlowRouter.url('user', { _id: user._id }),
       mailinglist,
