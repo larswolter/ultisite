@@ -1,11 +1,10 @@
 import { moment } from 'meteor/momentjs:moment';
 import { check } from 'meteor/check';
-import { Random } from 'meteor/random';
 import { Roles } from 'meteor/alanning:roles';
-import { CronJob } from 'cron';
 import Excel from 'exceljs';
 import { hatSort } from '../utils';
-import { sendHatPlaylistEmails } from './mails';
+import { HatParticipants } from '../schema';
+import { settings } from './server';
 
 WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   const { query } = Npm.require('url').parse(req.url, true);
@@ -19,7 +18,7 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   }
   const numTeams = Number(query.teams);
   const teams = [];
-  const participants = HatInfo.HatParticipants.find(
+  const participants = HatParticipants.find(
     { confirmed: true, payed: { $lte: new Date() } },
     { sort: hatSort(), limit: Number(settings().hatNumPlayers) }
   ).fetch();

@@ -1,3 +1,19 @@
+import {
+  Cities,
+  Countries,
+  Documents,
+  Events,
+  Folders,
+  Images,
+  isAdmin,
+  Practices,
+  Settings,
+  settings,
+  Teams,
+  Tournaments,
+  WikiPages,
+} from '../common/lib/ultisite';
+
 const handleStuff = function () {
   Folders.upsert(
     {

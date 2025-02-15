@@ -1,4 +1,5 @@
 import handlebars from 'handlebars';
+import { settings, WikiPages } from '../common/lib/ultisite';
 
 WebApp.connectHandlers.use('/staticStartpage', function (req, res, next) {
   const wiki = WikiPages.findOne(settings().wikiStart);

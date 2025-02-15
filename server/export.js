@@ -1,5 +1,6 @@
 import { WebApp } from 'meteor/webapp';
 import Excel from 'exceljs';
+import { Statistics } from '../common/lib/ultisite';
 
 WebApp.connectHandlers.use('/_myTournaments.xlsx', (req, resp) => {
   if (!req.query.token) {

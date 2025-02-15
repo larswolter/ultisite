@@ -1,5 +1,6 @@
 import { onPageLoad } from 'meteor/server-render';
 import handlebars from 'handlebars';
+import { settings, WikiPages } from '../common/lib/ultisite';
 
 onPageLoad((sink) => {
   sink.appendToHead(

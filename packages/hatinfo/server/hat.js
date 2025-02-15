@@ -7,15 +7,17 @@ import Excel from 'exceljs';
 import { sendHatReminderEmails } from './mails';
 import './teamDrawing';
 import { hatSort } from '../utils';
+import { HatInfo, HatParticipants } from '../schema';
+import { isAdmin, Mail, renderMailTemplate, settings } from './server';
 
 Meteor.startup(function () {
-  HatInfo.HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
+  HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
 
   if (!_.find(Roles.getAllRoles().fetch(), (r) => r.name === 'hatAdmin')) {
     Roles.createRole('hatAdmin');
   }
-  HatInfo.HatParticipants.find({ payed: { $exists: false } }).forEach((elem) => {
-    HatInfo.HatParticipants.update(elem._id, {
+  HatParticipants.find({ payed: { $exists: false } }).forEach((elem) => {
+    HatParticipants.update(elem._id, {
       $set: { payed: moment(elem.createdAt).clone().add(10, 'years').toDate() },
     });
   });
@@ -44,7 +46,7 @@ Meteor.methods({
     sendHatReminderEmails();
   },
   async hatHomeTeams() {
-    const res = await HatInfo.HatParticipants.rawCollection()
+    const res = await HatParticipants.rawCollection()
       .aggregate([
         { $match: { hatId: settings().hatId } },
         { $group: { _id: null, hometeams: { $addToSet: '$hometeam' } } },
@@ -57,11 +59,11 @@ Meteor.methods({
     check(payed, Number);
     check(confirmed, Number);
     if (!isAdmin(this.userId)) return;
-    HatInfo.HatParticipants.remove({});
+    HatParticipants.remove({});
 
     for (let i = 0; i < total; i += 1) {
       const createdAt = moment().subtract(Math.floor(Math.random() * 10) + 3, 'days');
-      HatInfo.HatParticipants.insert({
+      HatParticipants.insert({
         createdAt: createdAt.toDate(),
         modifiedAt: createdAt.toDate(),
         confirmed: i < confirmed,
@@ -84,9 +86,9 @@ Meteor.methods({
   },
   hatConfirmParticipant(accessKey) {
     check(accessKey, String);
-    const part = HatInfo.HatParticipants.findOne({ accessKey });
+    const part = HatParticipants.findOne({ accessKey });
     if (part.allowPublic) {
-      HatInfo.HatParticipants.update(
+      HatParticipants.update(
         { accessKey },
         {
           $set: {
@@ -100,7 +102,7 @@ Meteor.methods({
         }
       );
     } else {
-      HatInfo.HatParticipants.update(
+      HatParticipants.update(
         { accessKey },
         {
           $set: { confirmed: true },
@@ -122,14 +124,14 @@ Meteor.methods({
     participant.accessKey = Random.id(34);
     participant.hatId = settings().hatId;
     if (
-      HatInfo.HatParticipants.findOne({
+      HatParticipants.findOne({
         email: participant.email,
         hatId: participant.hatId,
       })
     ) {
       throw new Meteor.Error('Teilnehmer mit dieser E-Mail existiert schon!');
     }
-    HatInfo.HatParticipants.insert(participant);
+    HatParticipants.insert(participant);
     const template = Assets.getText('private/confirm.html');
     Mail.send(
       [participant.email],
@@ -148,7 +150,7 @@ Meteor.methods({
     if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
-    const participant = HatInfo.HatParticipants.findOne({ accessKey });
+    const participant = HatParticipants.findOne({ accessKey });
     const template = Assets.getText('private/confirm.html');
     Mail.send(
       [participant.email],
@@ -163,7 +165,7 @@ Meteor.methods({
   },
   hatParticipationPayed(accessKey) {
     check(accessKey, String);
-    const part = HatInfo.HatParticipants.findOne({ accessKey });
+    const part = HatParticipants.findOne({ accessKey });
     if (!part) {
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
@@ -171,13 +173,13 @@ Meteor.methods({
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
 
-    HatInfo.HatParticipants.update(part._id, { $set: { payed: moment().subtract(1, 'minute').toDate() } });
+    HatParticipants.update(part._id, { $set: { payed: moment().subtract(1, 'minute').toDate() } });
     return 'payed';
   },
   hatUpdateParticipation(participant) {
     check(participant, Object);
     check(participant.accessKey, String);
-    const part = HatInfo.HatParticipants.findOne({ accessKey: participant.accessKey });
+    const part = HatParticipants.findOne({ accessKey: participant.accessKey });
     if (!part) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
@@ -187,7 +189,7 @@ Meteor.methods({
     participant.modifiedAt = new Date();
 
     if (participant.allowPublic && part.confirmed) {
-      HatInfo.HatParticipants.update(part._id, {
+      HatParticipants.update(part._id, {
         $set: {
           ...participant,
           public: {
@@ -196,7 +198,7 @@ Meteor.methods({
         },
       });
     } else {
-      HatInfo.HatParticipants.update(part._id, {
+      HatParticipants.update(part._id, {
         $set: participant,
         $unset: { public: 1 },
       });
@@ -205,7 +207,7 @@ Meteor.methods({
   },
   hatRemoveParticipation(accessKey) {
     check(accessKey, String);
-    const part = HatInfo.HatParticipants.findOne({ accessKey });
+    const part = HatParticipants.findOne({ accessKey });
     if (!part) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
@@ -215,7 +217,7 @@ Meteor.methods({
       `<p>Der folgende Teilnehmer hat sich abgemeldet:</p><pre>${JSON.stringify(part, null, 2)}</pre>`
     );
 
-    HatInfo.HatParticipants.remove(part._id);
+    HatParticipants.remove(part._id);
     return 'removed';
   },
 });
@@ -233,10 +235,10 @@ Meteor.publish('hatParticipants', function () {
       ];
   */
   if (Roles.userIsInRole(this.userId, ['hatAdmin'])) {
-    return HatInfo.HatParticipants.find(filter, { sort });
+    return HatParticipants.find(filter, { sort });
   }
 
-  return HatInfo.HatParticipants.find(filter, {
+  return HatParticipants.find(filter, {
     sort,
     fields: {
       strength: 1,
@@ -252,7 +254,7 @@ Meteor.publish('hatParticipants', function () {
 });
 Meteor.publish('hatParticipant', function (accessKey) {
   check(accessKey, String);
-  return HatInfo.HatParticipants.find({ accessKey });
+  return HatParticipants.find({ accessKey });
 });
 
 WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
@@ -276,7 +278,7 @@ WebApp.connectHandlers.use('/_hatInfoExport', function (req, res, next) {
     key: column,
     width: 20,
   }));
-  HatInfo.HatParticipants.find({
+  HatParticipants.find({
     hatId: settings().hatId || undefined,
   }).forEach((entry) =>
     sheet.addRow({

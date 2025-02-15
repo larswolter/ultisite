@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import handlebars from 'handlebars';
 import fs from 'fs';
+import { settings, translate } from '../common/lib/ultisite';
 
 export const renderMailTemplate = function (layout, source, context) {
   const compiled = handlebars.compile(layout);

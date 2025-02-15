@@ -1,16 +1,29 @@
 /* global __meteor_runtime_config__ */
 
-export const Settings = new Meteor.Collection('Settings');
+import {
+  Documents,
+  Events,
+  Folders,
+  Images,
+  isAdmin,
+  Practices,
+  Tournaments,
+  WikiPages,
+  Settings,
+} from '../common/lib/ultisite';
 
 function syncSettings() {
   _.extend(Meteor.settings, Settings.findOne() || {});
+
   Object.keys(Meteor.settings).forEach((key) => {
     if (key === 'mailingListConfigs') {
       __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key].map((config) => _.omit(config, 'password'));
+    } else if (key === 'public') {
     } else if (key.toLowerCase().indexOf('password') < 0) {
       __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key];
     }
   });
+
   __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (
     Folders.findOne({
       name: '/',

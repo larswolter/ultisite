@@ -1,3 +1,5 @@
+import { Cities, Countries } from '../common/lib/ultisite';
+
 Meteor.methods({
   getCityNames: function (term, country) {
     check(country, String);

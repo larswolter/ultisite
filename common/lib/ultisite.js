@@ -62,12 +62,15 @@ export const Blogs = new Mongo.Collection('Blogs');
 export const Statistics = new Mongo.Collection('Statistics');
 export const Practices = new Mongo.Collection('Practices');
 export const Tournaments = new Mongo.Collection('Tournaments');
+export const Teams = new Mongo.Collection('Teams');
 export const TournamentList = new Mongo.Collection('tournamentList');
 export const Participants = new Mongo.Collection('Participants');
 export const Events = new Mongo.Collection('Events');
 export const Countries = new Mongo.Collection('Countries');
 export const Cities = new Mongo.Collection('Cities');
 export const ContentVersions = new Mongo.Collection('ContentVersions');
+export const Settings = new Mongo.Collection('Settings');
+
 export const Images = new Mongo.Collection('photos', {
   transform(doc) {
     if (Meteor.isServer) {
@@ -236,7 +239,7 @@ export function settings(upd) {
     }
     return Meteor.settings.public;
   }
-  return UltiSite.Settings.findOne() || {};
+  return Settings.findOne() || {};
 }
 export async function isAdmin(userid) {
   if (!userid && Meteor.isServer) {
@@ -394,7 +397,9 @@ UltiSite = {
   Blogs,
   Statistics,
   Practices,
+  Settings,
   Tournaments,
+  Teams,
   TournamentList,
   Participants,
   Events,
@@ -404,6 +409,16 @@ UltiSite = {
   Images,
   Documents,
   Folders,
+  settings,
+  settingsDep,
+  isAdmin,
+  textState,
+  getAlias,
+  getAnyById,
+
+  hostname,
+  userByAlias,
+  translate,
   baseLayoutData,
   tournamentsReady,
   wikiPagesReady,

@@ -1,3 +1,6 @@
+import { moment } from 'meteor/momentjs:moment';
+import { ContentVersions } from '../common/lib/ultisite';
+
 Meteor.methods({
   storeContentVersion: function (id, content) {
     var lastEntry = ContentVersions.findOne(

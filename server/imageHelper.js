@@ -1,4 +1,5 @@
 import sharp from 'sharp';
+import { Images } from '../common/lib/ultisite';
 
 WebApp.connectHandlers.use('/_image', (req, resp) => {
   if (!req.query.imageId) {

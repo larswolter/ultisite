@@ -4,6 +4,7 @@ import { WebApp } from 'meteor/webapp';
 
 import { moment } from 'meteor/momentjs:moment';
 import crypto from 'crypto';
+import { offlineCollections, Tournaments } from '../common/lib/ultisite';
 
 const sha256 = crypto.createHash('sha256');
 

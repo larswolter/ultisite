@@ -1,3 +1,5 @@
+import { Blogs, isAdmin, Tournaments } from '../common/lib/ultisite';
+
 Accounts.onLogin(function (attempt) {
   if (attempt.user) {
     Roles.addUsersToRoles(attempt.user, ['user']);

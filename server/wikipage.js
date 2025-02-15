@@ -1,3 +1,5 @@
+import { WikiPageDiscussions, WikiPages } from '../common/lib/ultisite';
+
 Meteor.startup(function () {
   // UserStatus.events.on("connectionLogout", function (fields) {
   //     WikiPages.update({

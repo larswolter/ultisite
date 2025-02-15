@@ -1,3 +1,5 @@
+import { Practices } from '../common/lib/ultisite';
+
 Meteor.methods({
   updatePracticeImage(image) {
     check(image, Object);

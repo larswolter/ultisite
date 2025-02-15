@@ -1,3 +1,6 @@
+import { hostname, isAdmin, settings } from '../common/lib/ultisite';
+import { Mail } from './mail';
+
 Meteor.startup(function () {
   Accounts.validateLoginAttempt(function (attempt) {
     if (attempt.user) {
@@ -117,7 +120,6 @@ Meteor.methods({
       if (user) {
         throw new Meteor.Error('duplicate-email', 'Ein Nutzer mit dieser E-Mail Adresse existiert bereits');
       }
-      const alias = {};
       user = Meteor.users.findOne(
         { username: { $regex: userData.alias, $options: 'i' } },
         {
@@ -134,7 +136,6 @@ Meteor.methods({
       } else {
         profile.unverified = true;
       }
-    } else {
     }
     console.log('Input data ok, creating user');
 

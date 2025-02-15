@@ -1,3 +1,16 @@
+import {
+  Blogs,
+  Documents,
+  Folders,
+  Images,
+  isAdmin,
+  Participants,
+  Practices,
+  Tournaments,
+  WikiPageDiscussions,
+  WikiPages,
+} from '../common/lib/ultisite';
+
 let allowByUser = {
   update(userId, doc, fields) {
     if (userId) return true;
@@ -126,7 +139,6 @@ Meteor.users.allow({
     var allowed = false;
     Object.keys(modifier.$set).forEach(function (key) {
       var area = key.split('.')[0];
-      var setting = key.split('.')[1];
       console.log('checking role:', userId, area);
 
       if (Roles.userIsInRole(userId, [area])) allowed = true;

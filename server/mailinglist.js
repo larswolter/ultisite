@@ -5,6 +5,8 @@ import sanitizeHtml from 'sanitize-html';
 import { CronJob } from 'cron';
 import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
+import { Blogs, settings } from '../common/lib/ultisite';
+import { Mail, renderMailTemplate } from './mail';
 
 Meteor.startup(function () {
   const job = new CronJob(
@@ -240,7 +242,7 @@ const fetchPart = function (imap, blogId, uid, part) {
 const sendMailinglistArticle = function (user, blogId, mailinglist) {
   const template = Assets.getText('mail-templates/article.html');
   const layout = Assets.getText('mail-templates/layout.html');
-  const blog = blogs.findOne(blogId);
+  const blog = Blogs.findOne(blogId);
   const author = Meteor.users.findOne(blog.author);
   Mail.send(
     [user._id],

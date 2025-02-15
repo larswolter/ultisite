@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import { moment } from 'meteor/momentjs:moment';
+import { Statistics, Tournaments } from '../common/lib/ultisite';
 
 Meteor.startup(() => {
   Statistics.remove({});

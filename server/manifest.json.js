@@ -1,3 +1,5 @@
+import { settings } from '../common/lib/ultisite';
+
 const manifest = {
   start_url: Meteor.absoluteUrl('/'),
   name: settings().siteTitle,

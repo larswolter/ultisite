@@ -1,4 +1,20 @@
 import { moment } from 'meteor/momentjs:moment';
+import {
+  Blogs,
+  ContentVersions,
+  Countries,
+  Documents,
+  Events,
+  Folders,
+  Images,
+  isAdmin,
+  LastChanges,
+  Practices,
+  Statistics,
+  Tournaments,
+  WikiPageDiscussions,
+  WikiPages,
+} from '../common/lib/ultisite';
 
 Meteor.startup(function () {
   Meteor.publish('Blogs', function (limit) {

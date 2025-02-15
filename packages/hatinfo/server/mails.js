@@ -1,4 +1,7 @@
 import { moment } from 'meteor/momentjs:moment';
+import { HatParticipants } from '../schema';
+import { Mail, renderMailTemplate } from './server';
+import { settings } from './server';
 
 export const sendHatReminderEmails = () => {
   const template = Assets.getText('private/reminder.html');
@@ -9,7 +12,7 @@ export const sendHatReminderEmails = () => {
     },
     $or: [{ confirmed: { $ne: true } }, { payed: { $gt: new Date() } }],
   };
-  HatInfo.HatParticipants.find(query).forEach((participant) => {
+  HatParticipants.find(query).forEach((participant) => {
     console.log(`sending reminder to ${participant.email}`);
     Mail.send(
       [participant.email],

@@ -1,14 +1,11 @@
 import Grid from 'gridfs-locking-stream';
-
-const gridFS = Grid(Documents.rawDatabase(), Npm.require('mongodb'), 'documents-grid');
+import { Blogs, Events, Practices, Teams, Tournaments } from '../common/lib/ultisite';
 
 Meteor.startup(function () {
   console.log('starting migrations...');
   Events.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
   Blogs.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
   Practices.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
-
-  const Teams = new Meteor.Collection('Teams');
 
   Tournaments.find({ participants: { $exists: false } }).forEach((tournament) => {
     const participants = [];

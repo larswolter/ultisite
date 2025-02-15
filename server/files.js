@@ -1,9 +1,9 @@
 import fs from 'fs';
 import os from 'os';
 import sharp from 'sharp';
-import Grid from 'gridfs-locking-stream';
 import Base64Decode from 'base64-stream';
 import { GridFSBucket, ObjectId } from 'mongodb';
+import { Documents, Images, isAdmin, settings } from '../common/lib/ultisite';
 
 const bucket = new GridFSBucket(Documents.rawDatabase(), { bucketName: 'documents-grid' });
 
@@ -201,7 +201,7 @@ Meteor.methods({
       if (file.gridId) {
         bucket.delete(
           ObjectId(file.gridId),
-          Meteor.bindEnvironment((err, res) => {
+          Meteor.bindEnvironment((err) => {
             if (err) {
               console.log('Error removing gridfs file', err);
             } else {
@@ -234,7 +234,7 @@ Meteor.startup(function () {
   }); */
 });
 
-WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res, next) {
+WebApp.connectHandlers.use('/dynamicAppIcon.png', function (req, res) {
   const { query } = req;
   const icon = Images.findOne(settings().imageIcon);
   if (!icon) {
