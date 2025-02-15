@@ -1,5 +1,4 @@
 import { moment } from 'meteor/momentjs:moment';
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 import './team.js';
 import './tournament.js';
@@ -7,7 +6,6 @@ import './tournament.scss';
 import './tournamentList.html';
 
 const months = new Meteor.Collection(null);
-const integratedTournamentList = new Meteor.Collection(null);
 const prefillData = new ReactiveVar(undefined);
 const tournamentQuery = new ReactiveVar({});
 const tournamentFilter = new ReactiveVar({
@@ -15,7 +13,6 @@ const tournamentFilter = new ReactiveVar({
   category: 'Alle',
   division: 'Alle',
   type: 'Alle',
-  withTeams: true,
   year: 'Kommende',
 });
 const currentMonth = new ReactiveVar(moment().startOf('month'));
@@ -27,7 +24,6 @@ const filterMap = {
 };
 
 Meteor.startup(function () {
-  UltiSite.integratedTournamentList = integratedTournamentList;
   Tracker.autorun(function () {
     if (UltiSite.screenSize.get() > 767) {
       if (tabSelection.get().length !== 3) {
@@ -45,7 +41,7 @@ Meteor.startup(function () {
 });
 
 Template.tournamentList.events({
-  'click .action-add-tournament': function (evt, tmpl) {
+  'click .action-add-tournament': function (evt) {
     evt.preventDefault();
     UltiSite.showModal(
       'tournamentUpdate',
@@ -93,23 +89,23 @@ Template.tournamentList.events({
     });
     console.log('months', months.find().fetch());
   },
-  'click .action-prev-month': function (evt, tmpl) {
+  'click .action-prev-month': function (evt) {
     evt.preventDefault();
     currentMonth.set(currentMonth.get().subtract(1, 'month'));
   },
-  'click .action-next-month': function (evt, tmpl) {
+  'click .action-next-month': function (evt) {
     evt.preventDefault();
     currentMonth.set(currentMonth.get().add(1, 'month'));
   },
-  'click .action-use-filter': function (evt, tmpl) {
+  'click .action-use-filter': function (evt) {
     evt.preventDefault();
     tabSelection.set(_.union(_.without(tabSelection.get(), 'month', 'map'), ['filter']));
   },
-  'click .action-use-map': function (evt, tmpl) {
+  'click .action-use-map': function (evt) {
     evt.preventDefault();
     tabSelection.set(_.union(_.without(tabSelection.get(), 'filter', 'month'), ['map']));
   },
-  'click .action-use-month': function (evt, tmpl) {
+  'click .action-use-month': function (evt) {
     evt.preventDefault();
     tabSelection.set(_.union(_.without(tabSelection.get(), 'filter', 'map'), ['month']));
   },
@@ -117,7 +113,7 @@ Template.tournamentList.events({
     evt.preventDefault();
     tabSelection.set([tmpl.$(evt.currentTarget).attr('data-target')]);
   },
-  'click .btn-add-tournament': function (evt) {
+  'click .btn-add-tournament': function () {
     prefillData.set({
       date: new Date(),
       address: {
@@ -134,36 +130,6 @@ Template.tournamentList.events({
 Template.tournamentList.onCreated(function () {
   this.showFilter = new ReactiveVar(false);
   this.topListEntries = new ReactiveVar(10);
-  this.autorun(() => {
-    const lastSync = moment(localStorage.getItem('offlineLastSync'));
-    this.subscribe('Tournaments', lastSync.toDate());
-  });
-  Meteor.defer(() => {
-    this.autorun(() => {
-      UltiSite.offlineTournamentDependency.depend();
-      integratedTournamentList.update({ fromOfflineStore: true }, { $set: { removeMe: true } }, { multi: true });
-      UltiSite.offlineTournaments.forEach((t) => {
-        let exists;
-        Tracker.nonreactive(() => {
-          exists = integratedTournamentList.findOne(t._id);
-        });
-        if (!exists) {
-          integratedTournamentList.insert(_.extend({ fromOfflineStore: true, removeMe: false }, t));
-        } else {
-          integratedTournamentList.update(
-            { _id: t._id, lastChange: { $lte: t.lastChange } },
-            _.extend({ fromOfflineStore: true, removeMe: false }, t)
-          );
-        }
-      });
-      integratedTournamentList.remove({ fromOfflineStore: true, removeMe: true });
-    });
-  });
-  this.autorun(() => {
-    if (this.subscriptionsReady()) {
-      UltiSite.Tournaments.find().forEach((t) => integratedTournamentList.upsert(t._id, t));
-    }
-  });
 
   this.autorun(() => {
     const query = {};
@@ -186,11 +152,8 @@ Template.tournamentList.onCreated(function () {
         query[filterMap[key]] = { $regex: filter[key], $options: 'i' };
       }
     });
-    if (filter.year && filter.year !== moment().format('YYYY') && filter.year !== 'Kommende') {
-      console.log('Rebuilding query:', filter);
-      this.subscribe('Tournaments', false, query);
-      UltiSite.notify('Alte Turniere werden geladen...', 'info');
-    }
+    console.log('Rebuilding query:', filter);
+    this.subscribe('Tournaments', false, query);
     tournamentQuery.set(query);
   });
 
@@ -241,7 +204,7 @@ Template.tournamentList.helpers({
     return moment(this.date).isBefore(moment().subtract(this.numDays));
   },
   plannedTournaments() {
-    const cursor = integratedTournamentList.find(tournamentQuery.get());
+    const cursor = UltiSite.Tournaments.find(tournamentQuery.get());
     Template.instance().topListEntries.set(Math.max(cursor.count(), 10));
     const grouped = _.groupBy(_.sortBy(cursor.fetch(), 'date'), (t) => moment(t.date).format('MMMM YYYY'));
     return Object.keys(grouped).map((key) => ({
@@ -252,7 +215,7 @@ Template.tournamentList.helpers({
   },
   playedTournaments() {
     if (Template.instance().topListEntries.get()) {
-      return integratedTournamentList.find({
+      return UltiSite.Tournaments.find({
         date: { $lte: new Date() },
         'teams.state': 'dabei',
       });

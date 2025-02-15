@@ -74,7 +74,7 @@ Meteor.startup(function () {
     }
     return res;
   });
-  Meteor.publish('Files', function (associatedIds, others) {
+  Meteor.publish('Files', function (associatedIds) {
     if (!Array.isArray(associatedIds)) {
       associatedIds = [associatedIds];
     }
@@ -158,10 +158,15 @@ Meteor.startup(function () {
   });
 
   Meteor.publish('Tournaments', function (since, query) {
-    if (!since && query) {
-      return UltiSite.Tournaments.find(query, { fields: { description: 0, 'reports.content': 0 } });
-    }
-    return UltiSite.Tournaments.find({ lastChange: { $gte: since } }, { limit: 10 });
+    return UltiSite.Tournaments.find(
+      {
+        $or: [
+          query ? query : { date: { $gte: moment().subtract(1, 'week').toDate() } },
+          { date: { $gte: moment().subtract(3, 'year').toDate() }, 'teams.state': 'dabei' },
+        ],
+      },
+      { fields: { description: 0, 'reports.content': 0 } }
+    );
   });
 
   Meteor.publish('WikiPageDiscussions', function (id) {
@@ -197,7 +202,7 @@ Meteor.startup(function () {
   Meteor.publish('Practices', function () {
     return UltiSite.Practices.find({});
   });
-  Meteor.publish('Places', function (country) {
+  Meteor.publish('Places', function () {
     return UltiSite.Countries.find();
   });
 });

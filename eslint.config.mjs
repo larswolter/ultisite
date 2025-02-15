@@ -3,6 +3,10 @@ import pluginJs from '@eslint/js';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  { languageOptions: { globals: { ...globals.browser, ...globals.meteor, ...globals.node, UltiSite: false } } },
+  {
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.meteor, ...globals.node, UltiSite: false, _: false, Roles: false },
+    },
+  },
   pluginJs.configs.recommended,
 ];
