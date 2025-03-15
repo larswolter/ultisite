@@ -30,8 +30,8 @@ describe('Tournaments', function () {
       resetDatabase();
     });
   }
-  it('list tournaments', function () {
-    assert.equal(UltiSite.Tournaments.find().count(), 0);
+  it('list tournaments', async function() {
+    assert.equal(await UltiSite.Tournaments.find().countAsync(), 0);
   });
   if (Meteor.isClient) {
     describe('show tournaments', function () {

@@ -27,7 +27,7 @@ function getSearchFilter(term, fields) {
   });
   return search;
 }
-export function search(term, type) {
+export async function search(term, type) {
   if (!this.userId) {
     return;
   }
@@ -35,12 +35,12 @@ export function search(term, type) {
   let res = [];
   if (_.contains(type, 'Tournaments')) {
     res = res.concat(
-      UltiSite.Tournaments.find(getSearchFilter(term, ['name', 'address.city', 'date']), {
+      await UltiSite.Tournaments.find(getSearchFilter(term, ['name', 'address.city', 'date']), {
         limit: 10,
         sort: {
           date: -1,
         },
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           name: elem.name + ' (' + moment(elem.date).format('YYYY') + ')',
           additional: elem.address ? elem.address.city : undefined,
@@ -58,9 +58,9 @@ export function search(term, type) {
 
   if (_.contains(type, 'Images')) {
     res = res.concat(
-      UltiSite.Images.find(getSearchFilter(term, ['name', 'tags']), {
+      await UltiSite.Images.find(getSearchFilter(term, ['name', 'tags']), {
         limit: 10,
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           name: elem.name,
           icon: 'fa-picture-o',
@@ -76,9 +76,9 @@ export function search(term, type) {
   }
   if (_.contains(type, 'Documents')) {
     res = res.concat(
-      UltiSite.Documents.find(getSearchFilter(term, ['name', 'tags']), {
+      await UltiSite.Documents.find(getSearchFilter(term, ['name', 'tags']), {
         limit: 10,
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           name: elem.name,
           icon: 'fa-file-o',
@@ -92,9 +92,9 @@ export function search(term, type) {
   }
   if (_.contains(type, 'WikiPages')) {
     res = res.concat(
-      UltiSite.WikiPages.find(getSearchFilter(term, ['name']), {
+      await UltiSite.WikiPages.find(getSearchFilter(term, ['name']), {
         limit: 10,
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           name: elem.name,
           icon: 'fa-book',
@@ -110,9 +110,9 @@ export function search(term, type) {
   }
   if (_.contains(type, 'Blogs')) {
     res = res.concat(
-      UltiSite.Blogs.find(getSearchFilter(term, ['title']), {
+      await UltiSite.Blogs.find(getSearchFilter(term, ['title']), {
         limit: 10,
-      }).map(function (elem) {
+      }).mapAsync(function (elem) {
         return {
           name: elem.title,
           icon: 'fa-newspaper-o',
@@ -130,11 +130,11 @@ export function search(term, type) {
     const search = getSearchFilter(term, ['profile.name', 'profile.surname', 'emails.address', 'username']);
 
     res = res.concat(
-      Meteor.users
+      await Meteor.users
         .find(search, {
           limit: 10,
         })
-        .map(function (elem) {
+        .mapAsync(function (elem) {
           return {
             name: elem.username + ' (' + elem.profile.name + ' ' + elem.profile.surname + ')',
             sex: elem.profile.sex,

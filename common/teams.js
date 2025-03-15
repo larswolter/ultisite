@@ -40,8 +40,8 @@ export function participantList(teamId) {
       'drawing'
     );
   }
-  const partUser = participants.map(function (participant, idx) {
-    const user = Meteor.users.findOne(participant.user);
+  const partUser = participants.map(async function(participant, idx) {
+    const user = await Meteor.users.findOneAsync(participant.user);
     const p = _.extend(
       {
         teamId: team._id,

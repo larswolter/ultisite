@@ -236,7 +236,7 @@ Meteor.startup(function () {
 
 WebApp.connectHandlers.use('/dynamicAppIcon.png', async function(req, res) {
   const { query } = req;
-  const icon = await Images.findOneAsync(settings().imageIcon);
+  const icon = await Images.findOneAsync((await settings()).imageIcon);
   if (!icon) {
     res.writeHead(404);
     res.end();

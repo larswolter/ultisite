@@ -1,6 +1,12 @@
-
 UltiSite.screenSize = new ReactiveVar(window.innerWidth);
-
+UltiSite.settings = (upd) => {
+  UltiSite.settingsDep.depend();
+  if (upd) {
+    Meteor.settings.public = upd;
+    this.settingsDep.changed();
+  }
+  return Meteor.settings.public;
+};
 Meteor.startup(function () {
   window.onresize = function () {
     UltiSite.screenSize.set(window.innerWidth);
@@ -15,7 +21,9 @@ Template.baseLayout.onCreated(function () {
 Template.baseLayout.helpers({
   content() {
     const data = UltiSite.baseLayoutData.get();
-    if (data) { return data.content; }
+    if (data) {
+      return data.content;
+    }
   },
   dialogTemplates() {
     return UltiSite.dialogTemplates.find();
@@ -24,7 +32,7 @@ Template.baseLayout.helpers({
 
 Template.offlineInfo.helpers({
   nextTry() {
-    return moment.duration(Meteor.status().retryTime - (new Date()).getTime()).humanize(true);
+    return moment.duration(Meteor.status().retryTime - new Date().getTime()).humanize(true);
   },
 });
 
@@ -65,7 +73,8 @@ _.extend(UltiSite, {
       $('.navigation-area').toggleClass('active');
       $('.content-overlay').fadeToggle(200);
     }
-    if ($('.navigation-area').hasClass('active')) { }
+    if ($('.navigation-area').hasClass('active')) {
+    }
   },
   startPageTemplates: new Meteor.Collection(null),
   adminPageTemplates: new Meteor.Collection(null),
@@ -87,21 +96,31 @@ _.extend(UltiSite, {
     });
   },
   userFeedbackFunction(text, element, successCallback) {
-    if (!text) { text = 'Aktion'; }
+    if (!text) {
+      text = 'Aktion';
+    }
     return function (err) {
       if (err) {
         UltiSite.notify(text + ' fehlgeschlagen:' + err, 'error');
       } else {
         UltiSite.notify(text + ' erfolgreich', 'success');
-        if (successCallback) { successCallback(); }
+        if (successCallback) {
+          successCallback();
+        }
       }
     };
   },
   notifyUser(title, text, options) {
-    if (('Notification' in window) && Notification.permission === 'granted') {
-      new Notification(title, _.extend({
-        body: text,
-      }, options));
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(
+        title,
+        _.extend(
+          {
+            body: text,
+          },
+          options
+        )
+      );
     }
   },
 });

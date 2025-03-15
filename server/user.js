@@ -140,7 +140,7 @@ Meteor.onConnection(function (connection) {
     }
   );
   connection.onClose(() => {
-    activeConnections.remove(connection.id);
+    activeConnections.removeAsync(connection.id);
   });
 });
 

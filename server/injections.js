@@ -5,14 +5,14 @@ import { settings, WikiPages } from '../common/lib/ultisite';
 onPageLoad(async sink => {
   sink.appendToHead(
     `<style type="text/css">@media(min-width: 768px) {#serverRendered .page-content {  padding-top: ${
-      Number(settings().titleImageHeight) + 90
+      Number((await settings()).titleImageHeight) + 90
     }px; } }</style>`
   );
 
-  const wiki = await WikiPages.findOneAsync(settings().wikiStart);
+  const wiki = await WikiPages.findOneAsync((await settings()).wikiStart);
   const layout = handlebars.compile(Assets.getText('mail-templates/static-layout.html'));
   const context = {
-    settings: settings(),
+    settings: await settings(),
     content: wiki && wiki.content,
   };
 

@@ -89,16 +89,16 @@ function setupMailServer(club) {
 }
 
 export const Nodemailer = nodemailer;
-Meteor.startup(function () {
+Meteor.startup(async function() {
   handlebars.registerHelper('translate', (term) => {
     return translate(term);
   });
 
-  setupMailServer(settings());
+  setupMailServer(await settings());
 });
 
 Meteor.methods({
   async updateMailserver() {
-    setupMailServer(settings());
+    setupMailServer(await settings());
   },
 });

@@ -66,7 +66,7 @@ const handleStuff = async function() {
     }
   }
   // Add default Settings
-  if (!settings()) {
+  if (!(await settings())) {
     await Settings.insertAsync({
       imageLogo: null,
       imageTitleImage: null,
@@ -145,7 +145,7 @@ Meteor.methods({
     if (!(await isAdmin())) {
       return;
     }
-    if (settings() && settings().databaseCreated) {
+    if ((await settings()) && (await settings()).databaseCreated) {
       return;
     }
     Tracker.nonreactive(async function() {

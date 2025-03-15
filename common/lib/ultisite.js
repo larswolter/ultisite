@@ -230,16 +230,8 @@ export function hostname() {
   return host;
 }
 export const settingsDep = new Tracker.Dependency();
-export function settings(upd) {
-  if (Meteor.isClient) {
-    this.settingsDep.depend();
-    if (upd) {
-      Meteor.settings.public = upd;
-      this.settingsDep.changed();
-    }
-    return Meteor.settings.public;
-  }
-  return Settings.findOne() || {};
+export async function settings(upd) {
+  return (await Settings.findOneAsync()) || {};
 }
 export async function isAdmin(userid) {
   if (!userid && Meteor.isServer) {

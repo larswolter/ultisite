@@ -11,11 +11,11 @@ import { Mail, renderMailTemplate } from './mail';
 Meteor.startup(function () {
   const job = new CronJob(
     '0 9 15 * * *',
-    Meteor.bindEnvironment(() => {
-      if (!settings().mailingListConfigs) {
+    Meteor.bindEnvironment(async () => {
+      if (!(await settings()).mailingListConfigs) {
         return;
       }
-      settings().mailingListConfigs.forEach(function (config) {
+      (await settings()).mailingListConfigs.forEach(function (config) {
         const options = _.extend({ tls: true }, config);
         console.log(config.from + ':connecting to mail-server');
         const imap = new Imap(options);

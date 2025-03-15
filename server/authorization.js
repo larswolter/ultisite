@@ -2,9 +2,9 @@ import { hostname, isAdmin, settings } from '../common/lib/ultisite';
 import { Mail } from './mail';
 
 Meteor.startup(async function () {
-  Accounts.validateLoginAttempt(function (attempt) {
+  Accounts.validateLoginAttempt(async function(attempt) {
     if (attempt.user) {
-      if (settings().siteRegistration === 'admin' && attempt.user.profile.unverified) {
+      if ((await settings()).siteRegistration === 'admin' && attempt.user.profile.unverified) {
         throw new Meteor.Error('login-failed', 'The user is not verified by a Site Admin');
       }
     }
@@ -99,12 +99,12 @@ Meteor.methods({
     if ((await Meteor.users.find().countAsync()) > 0) {
       if (!this.userId) {
         // we need to check the registration password
-        if (settings().siteRegistration === 'password') {
+        if ((await settings()).siteRegistration === 'password') {
           if (!userData.sitePassword) {
             throw new Meteor.Error('wrong-password', 'Ein Registrierungspasswort muss angegeben werden');
           }
 
-          if (userData.sitePassword !== settings().sitePassword) {
+          if (userData.sitePassword !== (await settings()).sitePassword) {
             throw new Meteor.Error('wrong-password', 'Das Registrierungspasswort ist falsch');
           }
         }
@@ -152,7 +152,7 @@ Meteor.methods({
     } else {
       console.log('Created user:', userId, userData.email);
       // send enrollment link to new user if a admin adds a new one
-      if (settings().siteRegistration !== 'admin') {
+      if ((await settings()).siteRegistration !== 'admin') {
         const token = await createEmailVerificationToken(userId, userData.email);
         console.log('Created token:', token);
 
