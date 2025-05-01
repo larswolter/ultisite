@@ -32,7 +32,6 @@ Package.onUse(function (api) {
     'spacebars',
     'underscore',
     'check',
-    'alanning:roles',
     'reactive-var',
     'ultisite:autoform',
   ]);

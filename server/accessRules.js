@@ -7,6 +7,7 @@ import {
   Participants,
   Practices,
   Tournaments,
+  userIsInRoleAsync,
   WikiPageDiscussions,
   WikiPages,
 } from '../common/lib/ultisite';
@@ -128,21 +129,21 @@ Practices.allow({
 });
 
 Meteor.users.allow({
-  update(userId, doc, fieldNames, modifier) {
-    if (Roles.userIsInRole(userId, ['admin'])) return true;
+  async update(userId, doc, fieldNames, modifier) {
+    if (await userIsInRoleAsync(userId, ['admin'])) return true;
     if (fieldNames.length > 1) return false;
     console.log('user update', fieldNames, modifier);
     if (fieldNames[0] === 'profile' || fieldNames[0] === 'settings' || fieldNames[0] === 'username') {
       if (userId === doc._id) return true;
-      if (Roles.userIsInRole(userId, [doc._id])) return true;
+      if (await userIsInRoleAsync(userId, [doc._id])) return true;
     }
     var allowed = false;
-    Object.keys(modifier.$set).forEach(function (key) {
+    for (const key of Object.keys(modifier.$set)) {
       var area = key.split('.')[0];
       console.log('checking role:', userId, area);
 
-      if (Roles.userIsInRole(userId, [area])) allowed = true;
-    });
+      if (await userIsInRoleAsync(userId, [area])) allowed = true;
+    }
     return allowed;
   },
 });

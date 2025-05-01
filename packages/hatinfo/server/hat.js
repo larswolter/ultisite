@@ -1,21 +1,19 @@
 import { moment } from 'meteor/momentjs:moment';
 import { check } from 'meteor/check';
 import { Random } from 'meteor/random';
-import { Roles } from 'meteor/alanning:roles';
+
 import { CronJob } from 'cron';
 import Excel from 'exceljs';
 import { sendHatReminderEmails } from './mails';
 import './teamDrawing';
 import { hatSort } from '../utils';
 import { HatInfo, HatParticipants } from '../schema';
-import { isAdmin, Mail, renderMailTemplate, settings } from './server';
+import { isAdmin, Mail, renderMailTemplate, settings, Roles } from './server';
 
 Meteor.startup(async function () {
-  HatParticipants._ensureIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
+  HatParticipants.createIndexAsync({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 60 });
 
-  if (!_.find(Roles.getAllRoles().fetch(), (r) => r.name === 'hatAdmin')) {
-    Roles.createRole('hatAdmin');
-  }
+  await Roles.createRoleAsync('hatAdmin', { unlessExists: true });
   await HatParticipants.find({ payed: { $exists: false } }).forEachAsync(async (elem) => {
     await HatParticipants.updateAsync(elem._id, {
       $set: { payed: moment(elem.createdAt).clone().add(10, 'years').toDate() },
@@ -40,7 +38,7 @@ Meteor.startup(async function () {
 
 Meteor.methods({
   async hatTriggerMailReminder() {
-    if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
+    if (!(await Roles.userIsInRoleAsync(this.userId, ['hatAdmin']))) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
     sendHatReminderEmails();
@@ -132,7 +130,7 @@ Meteor.methods({
       throw new Meteor.Error('Teilnehmer mit dieser E-Mail existiert schon!');
     }
     await HatParticipants.insertAsync(participant);
-    const template = Assets.getText('private/confirm.html');
+    const template = await Assets.getTextAsync('private/confirm.html');
     Mail.send(
       [participant.email],
       `Anmeldung beim ${settings().hatName} bestätigen`,
@@ -147,11 +145,11 @@ Meteor.methods({
   },
   async hatResendMail(accessKey) {
     check(accessKey, String);
-    if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
+    if (!(await Roles.userIsInRoleAsync(this.userId, ['hatAdmin']))) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
     const participant = await HatParticipants.findOneAsync({ accessKey });
-    const template = Assets.getText('private/confirm.html');
+    const template = await Assets.getTextAsync('private/confirm.html');
     Mail.send(
       [participant.email],
       `Anmeldung beim ${settings().hatName} bestätigen`,
@@ -169,7 +167,7 @@ Meteor.methods({
     if (!part) {
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
-    if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
+    if (!(await Roles.userIsInRoleAsync(this.userId, ['hatAdmin']))) {
       throw new Meteor.Error('access-denied', 'Zahlung nicht erlaubt');
     }
 
@@ -183,7 +181,7 @@ Meteor.methods({
     if (!part) {
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
-    if (!Roles.userIsInRole(this.userId, ['hatAdmin'])) {
+    if (!(await Roles.userIsInRoleAsync(this.userId, ['hatAdmin']))) {
       participant = _.pick(participant, 'name', 'city', 'hometeam', 'strength', 'years', 'allowPublic');
     }
     participant.modifiedAt = new Date();
@@ -234,7 +232,7 @@ Meteor.publish('hatParticipants', async function () {
           { email: new RegExp(search, 'i') }
       ];
   */
-  if (Roles.userIsInRole(this.userId, ['hatAdmin'])) {
+  if (await Roles.userIsInRoleAsync(this.userId, ['hatAdmin'])) {
     return HatParticipants.find(filter, { sort });
   }
 
@@ -260,14 +258,14 @@ Meteor.publish('hatParticipant', async function (accessKey) {
 WebApp.connectHandlers.use('/_hatInfoExport', async function (req, res, next) {
   const { query } = Npm.require('url').parse(req.url, true);
   const user = await Meteor.users.findOneAsync({ 'profile.downloadToken': query.downloadToken });
-  if (!user || !Roles.userIsInRole(user._id, ['hatAdmin'])) {
+  if (!user || !(await Roles.userIsInRoleAsync(user._id, ['hatAdmin']))) {
     res.writeHead(403);
     res.end();
     return;
   }
 
   const workbook = new Excel.Workbook();
-  workbook.creator = 'Ultisite';
+  workbook.creator = 'Roles';
   workbook.lastModifiedBy = user.username;
   workbook.created = new Date();
   workbook.modified = new Date();

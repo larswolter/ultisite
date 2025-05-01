@@ -1,5 +1,5 @@
 import '../common/lib/ultisite.js';
-import { isAdmin, settings } from '../common/lib/ultisite.js';
+import { createRoleAsync, isAdmin, settings, userIsInRoleAsync } from '../common/lib/ultisite.js';
 import '../common/routes.js';
 import '../common/schemas.js';
 import '../common/search.js';
@@ -35,4 +35,4 @@ import './wikipage.js';
 import './wikitranslator.js';
 import { configureHat } from 'meteor/ultisite:hatinfo';
 
-configureHat({ settings, Mail, renderMailTemplate, isAdmin });
+configureHat({ settings, Mail, renderMailTemplate, isAdmin, Roles: { userIsInRoleAsync, createRoleAsync } });

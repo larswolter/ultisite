@@ -2,7 +2,7 @@ import { onPageLoad } from 'meteor/server-render';
 import handlebars from 'handlebars';
 import { settings, WikiPages } from '../common/lib/ultisite';
 
-onPageLoad(async sink => {
+onPageLoad(async (sink) => {
   sink.appendToHead(
     `<style type="text/css">@media(min-width: 768px) {#serverRendered .page-content {  padding-top: ${
       Number((await settings()).titleImageHeight) + 90
@@ -10,7 +10,7 @@ onPageLoad(async sink => {
   );
 
   const wiki = await WikiPages.findOneAsync((await settings()).wikiStart);
-  const layout = handlebars.compile(Assets.getText('mail-templates/static-layout.html'));
+  const layout = handlebars.compile(await Assets.getTextAsync('mail-templates/static-layout.html'));
   const context = {
     settings: await settings(),
     content: wiki && wiki.content,

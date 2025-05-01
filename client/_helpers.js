@@ -1,4 +1,5 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
+import { userIsInRole } from '../common/lib/ultisite';
 
 Template.registerHelper('pathFor', function (params, params2, params3) {
   // console.log("pathFor:", params, params2, params3);
@@ -139,8 +140,13 @@ Template.registerHelper('colorState', function (state) {
   return 'muted';
 });
 
+Template.registerHelper('isInRole', function (role) {
+  return userIsInRole(Meteor.user(), role);
+});
+
 Template.registerHelper('isAdmin', function () {
-  return UltiSite.isAdmin();
+  const user = Meteor.user();
+  return user && user.activeAdmin && userIsInRole(user, 'admin');
 });
 
 Template.registerHelper('formatFileSize', function (size) {
@@ -172,7 +178,7 @@ Template.registerHelper('not', function (a) {
   return !a;
 });
 
-Template.registerHelper('getAlias', function (aliase) {
+Template.registerHelper('getAlias', async function (aliase) {
   return UltiSite.getAlias(aliase);
 });
 

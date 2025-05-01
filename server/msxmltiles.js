@@ -2,7 +2,7 @@ import { Images } from '../common/lib/ultisite';
 import { getEvents } from './events';
 import { renderMailTemplate } from './mail';
 
-WebApp.connectHandlers.use('/msxmltiles', async function(req, res, next) {
+WebApp.connectHandlers.use('/msxmltiles', async function (req, res, next) {
   let query = Npm.require('url').parse(req.url, true).query;
   let content = query.content;
   if (!content) {
@@ -10,8 +10,8 @@ WebApp.connectHandlers.use('/msxmltiles', async function(req, res, next) {
     res.end();
     return;
   }
-  var template = Assets.getText('xml-templates/ms-tiles.xml');
-  var layout = Assets.getText('xml-templates/ms-tile-layout.xml');
+  var template = await Assets.getTextAsync('xml-templates/ms-tiles.xml');
+  var layout = await Assets.getTextAsync('xml-templates/ms-tile-layout.xml');
   var data = {};
   if (content === 'events') {
     let eventList = await getEvents(5);

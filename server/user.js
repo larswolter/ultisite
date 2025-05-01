@@ -1,10 +1,10 @@
-import { Blogs, isAdmin, Tournaments } from '../common/lib/ultisite';
+import { addUserToRoleAsync, Blogs, isAdmin, Tournaments } from '../common/lib/ultisite';
 
 Accounts.onLogin(async function (attempt) {
   if (attempt.user) {
-    Roles.addUsersToRoles(attempt.user, ['user']);
+    await addUserToRoleAsync(attempt.user, 'user');
     if (await Tournaments.findOneAsync({ 'participants.user': attempt.user._id })) {
-      Roles.addUsersToRoles(attempt.user, ['player']);
+      await addUserToRoleAsync(attempt.user, 'player');
     }
     if (!attempt.user.settings) {
       await Meteor.users.updateAsync(attempt.user._id, { $set: { settings: {} } });
@@ -57,7 +57,7 @@ Meteor.methods({
       .join(',');
   },
   async totalUsers() {
-    return await Meteor.users.find().countAsync();
+    return Meteor.users.find().countAsync();
   },
   async userUpdateEmail(userid, oldAddress, newAddress) {
     if (!(await isAdmin(this.userId))) {

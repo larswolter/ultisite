@@ -7,7 +7,6 @@ import {
   Events,
   Folders,
   Images,
-  isAdmin,
   LastChanges,
   Practices,
   Statistics,
@@ -63,12 +62,6 @@ Meteor.startup(function () {
   });
   Meteor.publish('Blog', async function (_id) {
     return Blogs.find({ _id });
-  });
-  Meteor.publish('UserRoles', async function () {
-    if (await isAdmin(this.userId)) {
-      return Roles.getAllRoles();
-    }
-    this.ready();
   });
   Meteor.publish('LastChanges', async function (types) {
     if (types) {

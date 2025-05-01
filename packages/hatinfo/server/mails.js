@@ -4,7 +4,7 @@ import { Mail, renderMailTemplate } from './server';
 import { settings } from './server';
 
 export const sendHatReminderEmails = async () => {
-  const template = Assets.getText('private/reminder.html');
+  const template = await Assets.getTextAsync('private/reminder.html');
   const query = {
     createdAt: {
       $gt: moment().subtract(1, 'week').startOf('day').toDate(),

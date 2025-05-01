@@ -14,7 +14,7 @@ import {
   WikiPages,
 } from '../common/lib/ultisite';
 
-const handleStuff = async function() {
+const handleStuff = async function () {
   await Folders.upsertAsync(
     {
       name: '/',
@@ -29,8 +29,8 @@ const handleStuff = async function() {
 
   if (!Meteor.isAppTest) {
     // Read countries
-    const rows = JSON.parse(Assets.getText('countries.json'));
-    rows.forEach(async function(entry) {
+    const rows = JSON.parse(await Assets.getTextAsync('countries.json'));
+    rows.forEach(async function (entry) {
       await Countries.upsertAsync(entry.cca2, {
         _id: entry.cca2,
         name: (entry.translations.deu && entry.translations.deu.common) || entry.name.common,
@@ -42,9 +42,9 @@ const handleStuff = async function() {
     // read cities
     if ((await Cities.find().countAsync()) === 0) {
       console.log('Recreating cities database');
-      const cities = Assets.getText('cities5000.csv');
+      const cities = await Assets.getTextAsync('cities5000.csv');
       let count = 0;
-      cities.split('\n').forEach(async function(line) {
+      cities.split('\n').forEach(async function (line) {
         try {
           const lineAr = line.split('\t');
           const city = {
@@ -148,7 +148,7 @@ Meteor.methods({
     if ((await settings()) && (await settings()).databaseCreated) {
       return;
     }
-    Tracker.nonreactive(async function() {
+    Tracker.nonreactive(async function () {
       await handleStuff();
     });
   },
@@ -157,7 +157,7 @@ Meteor.methods({
     if (!(await isAdmin())) {
       return;
     }
-    Tracker.nonreactive(async function() {
+    Tracker.nonreactive(async function () {
       console.log('Start cleaning all databases');
       await Settings.removeAsync({});
       await Meteor.users.removeAsync({});
@@ -182,19 +182,19 @@ Meteor.methods({
   },
 });
 
-Meteor.startup(async function() {
+Meteor.startup(async function () {
   await Meteor.callAsync('createDatabases');
-  Tournaments._ensureIndex({ date: -1 });
-  Tournaments._ensureIndex({ lastChange: -1 });
-  Tournaments._ensureIndex({ name: 1 });
-  Tournaments._ensureIndex({ 'address.city': 1 });
-  Tournaments._ensureIndex({ 'teams._id': 1 });
-  Tournaments._ensureIndex({ 'participants.team': 1, 'participants.user': 1 });
-  Cities._ensureIndex({ country: 1, name: 1 });
-  Events._ensureIndex({ 'detail.time': -1 });
-  Images._ensureIndex({ associated: 1 });
-  Images._ensureIndex({ name: 1, tags: 1 });
-  Documents._ensureIndex({ name: 1, tags: 1 });
-  Documents._ensureIndex({ associated: 1 });
-  Meteor.users._ensureIndex({ username: 1, 'profile.name': 1, 'emails.address': 1 });
+  Tournaments.createIndexAsync({ date: -1 });
+  Tournaments.createIndexAsync({ lastChange: -1 });
+  Tournaments.createIndexAsync({ name: 1 });
+  Tournaments.createIndexAsync({ 'address.city': 1 });
+  Tournaments.createIndexAsync({ 'teams._id': 1 });
+  Tournaments.createIndexAsync({ 'participants.team': 1, 'participants.user': 1 });
+  Cities.createIndexAsync({ country: 1, name: 1 });
+  Events.createIndexAsync({ 'detail.time': -1 });
+  Images.createIndexAsync({ associated: 1 });
+  Images.createIndexAsync({ name: 1, tags: 1 });
+  Documents.createIndexAsync({ name: 1, tags: 1 });
+  Documents.createIndexAsync({ associated: 1 });
+  Meteor.users.createIndexAsync({ username: 1, 'profile.name': 1, 'emails.address': 1 });
 });

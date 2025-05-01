@@ -61,7 +61,7 @@ Meteor.startup(function () {
                     });
                     msg.on(
                       'end',
-                      Meteor.bindEnvironment(async function(attrs) {
+                      Meteor.bindEnvironment(async function (attrs) {
                         const address = addressparser(header.from[0]);
                         const user = Accounts.findUserByEmail(address[0].address);
                         const date = moment(header.date[0], 'ddd, DD MMM YYYY HH:mm:ss ZZ');
@@ -123,7 +123,7 @@ Meteor.startup(function () {
                           imap.addFlags(
                             uid,
                             'Deleted',
-                            Meteor.bindEnvironment(async function(err) {
+                            Meteor.bindEnvironment(async function (err) {
                               if (err) {
                                 console.log('deletion failed:', err);
                               }
@@ -136,7 +136,7 @@ Meteor.startup(function () {
                               imap.end();
                               const search = {};
                               search['settings.email.' + config.from.toCamelCase()] = 'immediate';
-                              await Meteor.users.find(search).forEachAsync(async function(user) {
+                              await Meteor.users.find(search).forEachAsync(async function (user) {
                                 await sendMailinglistArticle(user, blogId);
                               });
                             })
@@ -192,7 +192,7 @@ const fetchPart = function (imap, blogId, uid, part) {
           );
           stream.once(
             'end',
-            Meteor.bindEnvironment(async function() {
+            Meteor.bindEnvironment(async function () {
               if (part.disposition && part.disposition.type === 'attachment') {
                 /* TODO: image from mail
           if (file.isImage()) {
@@ -239,9 +239,9 @@ const fetchPart = function (imap, blogId, uid, part) {
   });
 };
 
-const sendMailinglistArticle = async function(user, blogId, mailinglist) {
-  const template = Assets.getText('mail-templates/article.html');
-  const layout = Assets.getText('mail-templates/layout.html');
+const sendMailinglistArticle = async function (user, blogId, mailinglist) {
+  const template = await Assets.getTextAsync('mail-templates/article.html');
+  const layout = await Assets.getTextAsync('mail-templates/layout.html');
   const blog = await Blogs.findOneAsync(blogId);
   const author = await Meteor.users.findOneAsync(blog.author);
   Mail.send(

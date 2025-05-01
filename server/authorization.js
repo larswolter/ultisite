@@ -1,8 +1,18 @@
-import { hostname, isAdmin, settings } from '../common/lib/ultisite';
+import {
+  addUserToRoleAsync,
+  createRoleAsync,
+  hostname,
+  isAdmin,
+  settings,
+  userIsInRoleAsync,
+} from '../common/lib/ultisite';
+
 import { Mail } from './mail';
 
 Meteor.startup(async function () {
-  Accounts.validateLoginAttempt(async function(attempt) {
+  await createRoleAsync('user');
+  await createRoleAsync('admin');
+  Accounts.validateLoginAttempt(async function (attempt) {
     if (attempt.user) {
       if ((await settings()).siteRegistration === 'admin' && attempt.user.profile.unverified) {
         throw new Meteor.Error('login-failed', 'The user is not verified by a Site Admin');
@@ -26,7 +36,7 @@ Accounts.onLogin(async function (attempt) {
 Meteor.methods({
   async makeMeAdmin() {
     check(this.userId, String);
-    if (Roles.userIsInRole(this.userId, ['admin'])) {
+    if (await userIsInRoleAsync(this.userId, ['admin'])) {
       await Meteor.users.updateAsync(this.userId, { $set: { activeAdmin: true } });
     }
   },
@@ -148,7 +158,6 @@ Meteor.methods({
     });
     if ((await Meteor.users.find().countAsync()) === 1) {
       Accounts.setPassword(userId, 'blubs');
-      Roles.addUsersToRoles(await Meteor.users.findOneAsync(userId), ['admin', 'club']);
     } else {
       console.log('Created user:', userId, userData.email);
       // send enrollment link to new user if a admin adds a new one

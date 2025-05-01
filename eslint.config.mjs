@@ -5,8 +5,11 @@ import pluginJs from '@eslint/js';
 export default [
   {
     languageOptions: {
-      globals: { ...globals.browser, ...globals.meteor, ...globals.node, UltiSite: false, _: false, Roles: false },
+      globals: { ...globals.browser, ...globals.meteor, ...globals.node, UltiSite: false, _: false },
     },
   },
   pluginJs.configs.recommended,
+  {
+    rules: { 'no-unused-vars': 'warn' },
+  },
 ];

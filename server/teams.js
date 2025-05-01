@@ -36,7 +36,10 @@ Meteor.methods({
     }
     // first insert, then remove, to not loose the team
     await Tournaments.updateAsync(tournamentId, { $push: { teams: team } });
-    await Tournaments.updateAsync({ _id: { $ne: tournamentId, 'teams._id': teamId } }, { $pull: { teams: { _id: teamId } } });
+    await Tournaments.updateAsync(
+      { _id: { $ne: tournamentId, 'teams._id': teamId } },
+      { $pull: { teams: { _id: teamId } } }
+    );
   },
   async teamMakeMeResponsible(teamId) {
     check(teamId, String);
@@ -130,8 +133,8 @@ Meteor.methods({
         text = `${resp.username} wurde als Verantwortliche(r) für ein Team ausgelost. Du bist für diesen Spieler verantwortlich.`;
       }
 
-      const template = Assets.getText('mail-templates/team-tournament.html');
-      const layout = Assets.getText('mail-templates/layout.html');
+      const template = await Assets.getTextAsync('mail-templates/team-tournament.html');
+      const layout = await Assets.getTextAsync('mail-templates/layout.html');
       Mail.send(
         [update.responsible],
         'Als Verantwortlicher gelost',

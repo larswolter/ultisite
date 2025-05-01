@@ -5,7 +5,7 @@ import { Blogs, Events, getAlias, isAdmin, LastChanges, Tournaments, WikiPages }
 import { getTournamentsStates } from './tournament';
 import { Mail, renderMailTemplate } from './mail';
 
-Accounts.onLogin(async function(attempt) {
+Accounts.onLogin(async function (attempt) {
   if (attempt.user) {
     if (!attempt.user.settings || !attempt.user.settings.email) {
       await Meteor.users.updateAsync(attempt.user._id, {
@@ -21,7 +21,7 @@ Accounts.onLogin(async function(attempt) {
   }
 });
 
-export const getEvents = async function(limitCount, days = 1) {
+export const getEvents = async function (limitCount, days = 1) {
   let search = { 'detail.time': { $gte: moment().subtract(days, 'day').toDate() } };
   if (limitCount) {
     search = {};
@@ -53,7 +53,7 @@ Meteor.startup(function () {
       let result = 0;
       console.log('sending digests');
       const eventList = await getEvents();
-      await Meteor.users.find().forEachAsync(async function(user) {
+      await Meteor.users.find().forEachAsync(async function (user) {
         if (await sendEventDigest(user, eventList)) {
           result += 1;
         }
@@ -70,15 +70,15 @@ Meteor.startup(function () {
   }
 });
 
-export const sendEventDigest = async function(user, eventList, force = false) {
+export const sendEventDigest = async function (user, eventList, force = false) {
   if (!force && eventList.length === 0) {
     return false;
   }
   if (!force && user.settings && user.settings.noDigestMail) {
     return false;
   }
-  const template = Assets.getText('mail-templates/events.html');
-  const layout = Assets.getText('mail-templates/layout.html');
+  const template = await Assets.getTextAsync('mail-templates/events.html');
+  const layout = await Assets.getTextAsync('mail-templates/layout.html');
   const tournaments = await getTournamentsStates(user._id);
 
   Mail.send(
@@ -95,9 +95,9 @@ export const sendEventDigest = async function(user, eventList, force = false) {
   return true;
 };
 
-const sendEvent = function (user, event) {
-  const template = Assets.getText('mail-templates/event.html');
-  const layout = Assets.getText('mail-templates/layout.html');
+const sendEvent = async function (user, event) {
+  const template = await Assets.getTextAsync('mail-templates/event.html');
+  const layout = await Assets.getTextAsync('mail-templates/layout.html');
 
   Mail.send(
     [user._id],
@@ -110,7 +110,7 @@ const sendEvent = function (user, event) {
   );
   return true;
 };
-export const addEvent = async function(info) {
+export const addEvent = async function (info) {
   info.time = new Date();
   await LastChanges.upsertAsync(
     {
@@ -169,13 +169,13 @@ export const addEvent = async function(info) {
     event.additional = info.additional;
   }
   event.detail = info;
-  await Events.insertAsync(event, async function(err, res) {
+  await Events.insertAsync(event, async function (err, res) {
     console.log('inserted event:', err, res);
     const search = {};
     if (['team', 'tournament'].includes(info.type)) {
       search['settings.email.' + event.route] = 'immediate';
-      await Meteor.users.find(search).forEachAsync(async function(user) {
-        sendEvent(user, await Events.findOneAsync(res));
+      await Meteor.users.find(search).forEachAsync(async function (user) {
+        await sendEvent(user, await Events.findOneAsync(res));
       });
     }
   });
@@ -186,7 +186,7 @@ Meteor.methods({
     check(this.userId, String);
     const eventList = await getEvents(20, 100);
     console.log('gathering digest');
-    await Meteor.users.find({ _id: this.userId }).forEachAsync(async function(user) {
+    await Meteor.users.find({ _id: this.userId }).forEachAsync(async function (user) {
       console.log('sendign to', user.username);
       await sendEventDigest(user, eventList, true);
     });

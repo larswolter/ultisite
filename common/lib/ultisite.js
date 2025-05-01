@@ -1,7 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
-import { Roles } from 'meteor/alanning:roles';
 
 moment.locale('de', {
   months: [
@@ -235,13 +234,13 @@ export async function settings(upd) {
 }
 export async function isAdmin(userid) {
   if (!userid && Meteor.isServer) {
-    userid = this.userId;
+    userid = this?.userId;
   }
   if (!userid && Meteor.isClient) {
     userid = Meteor.userId();
   }
-  const user = await Meteor.users.findOneAsync(userid);
-  return Roles.userIsInRole(userid, ['admin']) && user && user.activeAdmin;
+  const user = userid && (await Meteor.users.findOneAsync(userid));
+  return (await userIsInRoleAsync(userid, ['admin'])) && user && user.activeAdmin;
 }
 
 export async function userByAlias(alias) {
@@ -265,12 +264,53 @@ export function textState(state) {
 export function translate(term) {
   return translationTable[term] || term;
 }
+const roles = { user: true, player: true, club: true, admin: true };
+export const createRoleAsync = (role, options) => {
+  roles[role] = true;
+};
+
+export const userIsInRoleAsync = async (userOrId, roles) => {
+  const user = typeof userOrId === 'string' ? await Meteor.users.findOneAsync(userOrId) : userOrId;
+  return !!user?.roles?.find((r) => roles.includes(r));
+};
+
+export const userIsInRole = (user, roles) => {
+  return !!user?.roles?.find((r) => roles.includes(r));
+};
+export const getAllRoles = () => {
+  return Object.keys(roles);
+};
+
+export const addUserToRoleAsync = async (userOrId, role) => {
+  const user = typeof userOrId === 'string' ? await Meteor.users.findOneAsync(userOrId) : userOrId;
+  (await user) && user._id && Meteor.users.updateAsync(user._id, { $addToSet: { roles: role } });
+};
+export const removeUserFromRoleAsync = async (userOrId, role) => {
+  const user = typeof userOrId === 'string' ? await Meteor.users.findOneAsync(userOrId) : userOrId;
+  (await user) && user._id && Meteor.users.updateAsync(user._id, { $pull: { roles: role } });
+};
 
 Meteor.methods({
-  getAnyObjectById(id) {
+  async removeUserFromRole(userId, role) {
+    check(userId, String);
+    check(role, String);
+    check(this.userId, String);
+    if (await isAdmin(this.userId)) {
+      await removeUserFromRoleAsync(userId, role);
+    }
+  },
+  async addUserToRole(userId, role) {
+    check(userId, String);
+    check(role, String);
+    check(this.userId, String);
+    if (await isAdmin(this.userId)) {
+      await addUserToRoleAsync(userId, role);
+    }
+  },
+  async getAnyObjectById(id) {
     check(id, String);
     check(this.userId, String);
-    const res = this.getAnyObjectByIds([id]);
+    const res = await this.getAnyObjectByIds([id]);
     if (res.length === 1) {
       if (res[0].count() === 1) {
         return res[0].fetch()[0];
@@ -379,7 +419,7 @@ String.prototype.toCamelCase = function () {
   return str;
 };
 
-UltiSite = {
+globalThis.UltiSite = {
   offlineCollections,
   LookupId,
   AdminNotifications,

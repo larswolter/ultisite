@@ -1,17 +1,17 @@
 import { moment } from 'meteor/momentjs:moment';
 import { check } from 'meteor/check';
-import { Roles } from 'meteor/alanning:roles';
+
 import Excel from 'exceljs';
 import { hatSort } from '../utils';
 import { HatParticipants } from '../schema';
-import { settings } from './server';
+import { settings, Roles } from './server';
 
-WebApp.connectHandlers.use('/_hatTeamDrawing', async function(req, res, next) {
+WebApp.connectHandlers.use('/_hatTeamDrawing', async function (req, res, next) {
   const { query } = Npm.require('url').parse(req.url, true);
   check(query.downloadToken, String);
   check(query.teams, String);
   const user = await Meteor.users.findOneAsync({ 'profile.downloadToken': query.downloadToken });
-  if (!user || !Roles.userIsInRole(user._id, ['hatAdmin'])) {
+  if (!user || !(await Roles.userIsInRoleAsync(user._id, ['hatAdmin']))) {
     res.writeHead(403);
     res.end();
     return;
