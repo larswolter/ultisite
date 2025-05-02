@@ -19,6 +19,7 @@ async function syncSettings() {
     if (key === 'mailingListConfigs') {
       __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key].map((config) => _.omit(config, 'password'));
     } else if (key === 'public') {
+      // noop
     } else if (key.toLowerCase().indexOf('password') < 0) {
       __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key];
     }
@@ -33,7 +34,7 @@ async function syncSettings() {
   console.log('synced settings');
   return __meteor_runtime_config__.PUBLIC_SETTINGS;
 }
-Meteor.startup(async function() {
+Meteor.startup(async function () {
   if (!(await Settings.findOneAsync())) {
     await Settings.insertAsync({});
   }
@@ -53,9 +54,11 @@ Meteor.methods({
     await Meteor.callAsync('cleanDatabases');
     await Meteor.callAsync('createDatabases');
     Accounts.setPassword(
-      (await Meteor.users.findOneAsync({
-        'emails.address': 'lars@larswolter.de',
-      }))._id,
+      (
+        await Meteor.users.findOneAsync({
+          'emails.address': 'lars@larswolter.de',
+        })
+      )._id,
       'blubs'
     );
   },

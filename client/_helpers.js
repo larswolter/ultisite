@@ -1,3 +1,4 @@
+import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { userIsInRole } from '../common/lib/ultisite';
 

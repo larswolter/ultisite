@@ -5,7 +5,7 @@ UltiSite.settings = (upd) => {
     Meteor.settings.public = upd;
     this.settingsDep.changed();
   }
-  return Meteor.settings.public;
+  return UltiSite.Settings.findOne() || Meteor.settings.public;
 };
 Meteor.startup(function () {
   window.onresize = function () {

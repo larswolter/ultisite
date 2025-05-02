@@ -16,6 +16,11 @@ import {
 } from '../common/lib/ultisite';
 
 Meteor.startup(function () {
+  // publish settings, because old settings might be cached in the service worker
+  Meteor.publish(null, async function () {
+    this.added('Settings', '1', Meteor.settings.public);
+    this.ready();
+  });
   Meteor.publish('Blogs', async function (limit) {
     check(limit, Match.Maybe(Number));
 
