@@ -24,7 +24,7 @@ Meteor.startup(async function () {
 });
 
 Meteor.publish(null, async function () {
-  return this.userId && Meteor.users.find({ _id: this.userId }, { fields: { activeAdmin: 1 } });
+  return this.userId && Meteor.users.find({ _id: this.userId }, { fields: { activeAdmin: 1, roles: 1 } });
 });
 
 Accounts.onLogin(async function (attempt) {

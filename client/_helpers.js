@@ -179,7 +179,7 @@ Template.registerHelper('not', function (a) {
   return !a;
 });
 
-Template.registerHelper('getAlias', async function (aliase) {
+Template.registerHelper('getAlias', function (aliase) {
   return UltiSite.getAlias(aliase);
 });
 

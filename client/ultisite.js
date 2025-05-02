@@ -1,3 +1,5 @@
+import { userIsInRole } from '../common/lib/ultisite';
+
 UltiSite.screenSize = new ReactiveVar(window.innerWidth);
 UltiSite.settings = (upd) => {
   UltiSite.settingsDep.depend();
@@ -7,6 +9,31 @@ UltiSite.settings = (upd) => {
   }
   return UltiSite.Settings.findOne() || Meteor.settings.public;
 };
+
+UltiSite.isAdmin = (userid) => {
+  if (!userid) {
+    userid = Meteor.userId();
+  }
+  const user = userid && Meteor.users.findOne(userid);
+  return userIsInRole(user, ['admin']) && user && user.activeAdmin;
+};
+
+UltiSite.getAlias = (userOrId) => {
+  if (typeof userOrId === 'undefined') {
+    return 'Unbekannt';
+  }
+  if (userOrId === null) {
+    return 'Unbekannt';
+  }
+  const user = Meteor.users.findOne(userOrId);
+  if (user) {
+    return user.username;
+  }
+  if (userOrId.username) {
+    return userOrId.username;
+  }
+};
+
 Meteor.startup(function () {
   window.onresize = function () {
     UltiSite.screenSize.set(window.innerWidth);

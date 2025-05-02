@@ -50,7 +50,7 @@ Meteor.methods({
         { $group: { _id: null, hometeams: { $addToSet: '$hometeam' } } },
       ])
       .toArray();
-    return [...(settings().arrayHatHomeTeams || []), ...res[0].hometeams];
+    return res[0] ? [...(settings().arrayHatHomeTeams || []), ...res[0].hometeams] : settings().arrayHatHomeTeams;
   },
   async createRandomData(total, payed, confirmed) {
     check(total, Number);
