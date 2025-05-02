@@ -13,7 +13,7 @@ Package.describe({
 
 /* This defines your actual package */
 Package.onUse(function (api) {
-  api.versionsFrom('2.13');
+  api.versionsFrom(['2.13', '3.1']);
   api.use([
     'fourseven:scss',
     'ecmascript',
@@ -22,15 +22,14 @@ Package.onUse(function (api) {
     'meteor-base',
     'mobile-experience',
     'mongo',
-    'blaze-html-templates',
     'session',
     'tracker',
     'logging',
     'reload',
     'random',
     'ejson',
-    'spacebars',
     'underscore',
+    'templating',
     'check',
     'reactive-var',
     'ultisite:autoform',

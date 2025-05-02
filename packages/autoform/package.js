@@ -11,21 +11,20 @@ Package.describe({
 
 /* This defines your actual package */
 Package.onUse(function (api) {
-  api.versionsFrom('1.4.3.1');
+  api.versionsFrom(['2.13', '3.1']);
   api.use(['ecmascript', 'meteor-base', 'modules', 'mongo', 'underscore', 'check']);
   api.use(
     [
       'fourseven:scss',
       'standard-minifiers',
       'mobile-experience',
-      'blaze-html-templates',
       'session',
       'tracker',
       'logging',
       'reload',
       'random',
+      'templating',
       'ejson',
-      'spacebars',
       'reactive-var',
     ],
     'client'
