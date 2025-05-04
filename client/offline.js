@@ -36,6 +36,7 @@ Meteor.methods({
     Meteor.users.insert(user);
   },
   offlineInitCollections() {
+    return;
     UltiSite.offlineCollections.forEach((col) => {
       if (UltiSite[col.name].find().count() > 0) return;
       localForage.getItem('ultisiteOffline' + col.name, (err, offline) => {
