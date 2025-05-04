@@ -1,11 +1,11 @@
 import $ from 'jquery';
+import bootstrap from 'bootstrap';
 
 window.$ = $;
 window.jQuery = $;
+window.bootstrap = bootstrap;
 
-require('bootstrap');
-
-const viewMap = window.viewMap = {};
+const viewMap = (window.viewMap = {});
 const HTML = Package.htmljs.HTML;
 
 Template.cacher = new Template('Template.cacher', function () {

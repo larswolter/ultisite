@@ -4,7 +4,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Bild / Dokument wählen</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span class="fa fa-close"></span>
                     </button>
                 </div>
@@ -133,11 +133,11 @@
                         </div>
                         <div class="col-sm-1 col-2">
                             {{#unless isParent}}
-                                <div class="btn-group pull-right" role="group">
-                                    <button type="button" class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                                <div class="btn-group float-end" role="group">
+                                    <button type="button" class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-bs-toggle="dropdown" aria-expanded="false">
                                         <span class="caret"></span>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <ul class="dropdown-menu dropdown-menu-end" role="menu">
                                         <li class="dropdown-item"><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
                                         <li class="dropdown-item"><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
                                     </ul>
@@ -198,11 +198,11 @@
                 {{#if needsSelect}}
                     <button class="btn btn-light btn-sm select-file" title="auswählen"><span class="fa fa-check"></span></button>
                 {{else}}
-                    <div class="btn-group pull-right" role="group">
-                        <button type="button" class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                    <div class="btn-group float-end" role="group">
+                        <button type="button" class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-bs-toggle="dropdown" aria-expanded="false">
                             <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <ul class="dropdown-menu dropdown-menu-end" role="menu">
                             <li class="dropdown-header">Von {{getAlias creator}}</li>
                             <li class="dropdown-divider" role="separator"></li>
                             <li class="dropdown-item"><a href="{{url}}" target="_top"><span class="fa fa-download"></span> runterladen</a></li>
@@ -251,7 +251,7 @@
             <div class="modal-content">
                 {{#with file}}
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span class="fa fa-close"></span>
                         </button>
                         <h5 class="modal-title" id="myModalLabel">

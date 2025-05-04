@@ -81,10 +81,10 @@
                             <div class="input-group">
                             <input name="{{name}}" class="form-control {{validity}}" value="{{getFieldValue}}" autocomplete="{{autocomplete}}" placeholder="{{placeholder}}" {{autoform.inputAttribs}}/>
                             <span class="input-group-btn">
-                                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="fa fa-calendar"></span>
                                 </button>
-                                <div class="dropdown-menu dropdown-menu-right">
+                                <div class="dropdown-menu dropdown-menu-end">
                                 {{>autoformCalendar}}
                                 </div>
                                 </span>
@@ -117,12 +117,12 @@
         <div class="list-group">
             {{#each elements}}
                 <div class="list-group-item clearfix">
-                    <button class="btn btn-danger action-remove pull-right">
+                    <button class="btn btn-danger action-remove float-end">
                         <span class="fa fa-close"></span>
                     </button>
                     {{#each properties}}
                         {{#if value}}
-                        <div class="pull-left af-array-property">
+                        <div class="float-start af-array-property">
                             <span class="strong">{{label}}</span>:
                             <span>{{value}}</span>
                         </div>

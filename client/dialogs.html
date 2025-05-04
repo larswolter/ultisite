@@ -3,7 +3,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span class="fa fa-close"></span>
             </button>
           <h5 class="modal-title">Suche</h5>
@@ -12,27 +12,27 @@
             {{#if meteorStatus.connected}}
             <div>
                 <div class="btn-group">
-                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Users"}}checked{{/if}}" data-target="Users">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Users"}}checked{{/if}}" data-bs-target="Users">
                     <span class="fa fa-fw {{#if isActive "Users"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Nutzer
                 </button>
-                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Tournaments"}}checked{{/if}}" data-target="Tournaments">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Tournaments"}}checked{{/if}}" data-bs-target="Tournaments">
                     <span class="fa fa-fw {{#if isActive "Tournaments"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Turniere
                 </button>
-                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "WikiPages"}}checked{{/if}}" data-target="WikiPages">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "WikiPages"}}checked{{/if}}" data-bs-target="WikiPages">
                     <span class="fa fa-fw {{#if isActive "WikiPages"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Wikiseiten
                 </button>
-                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Blogs"}}checked{{/if}}" data-target="Blogs">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Blogs"}}checked{{/if}}" data-bs-target="Blogs">
                     <span class="fa fa-fw {{#if isActive "Blogs"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Artikel
                 </button>
-                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Images"}}checked{{/if}}" data-target="Images">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Images"}}checked{{/if}}" data-bs-target="Images">
                     <span class="fa fa-fw {{#if isActive "Images"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Bilder
                 </button>
-                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Documents"}}checked{{/if}}" data-target="Documents">
+                <button type="button" class="btn btn-light btn-mit-teams {{#if isActive "Documents"}}checked{{/if}}" data-bs-target="Documents">
                     <span class="fa fa-fw {{#if isActive "Documents"}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                     Dokumente
                 </button>
@@ -44,7 +44,7 @@
         {{/if}}
         </div>
         <div class="modal-footer d-none d-sm-block">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                 Schließen
             </button>
         </div>
@@ -59,7 +59,7 @@
       <div class="modal-dialog">
           <div class="modal-content">
               <div class="modal-header">
-                  <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                  <button type="button" class="close float-end" data-bs-dismiss="modal" aria-label="Close">
                       <span class="fa fa-close"></span>
                   </button>
                   <h5 class="modal-title">Bestätigung</h5>
@@ -68,7 +68,7 @@
                   {{options.text}}
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-light" data-dismiss="modal">
+                  <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                       Abbrechen
                   </button>
                   <button type="button" class="btn btn-light action-confirm">
@@ -87,7 +87,7 @@
               <form >
                   {{#with options}}
                   <div class="modal-header">
-                      <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                      <button type="button" class="close float-end" data-bs-dismiss="modal" aria-label="Close">
                           <span class="fa fa-close"></span>
                       </button>
                   <h5 class="modal-title">{{#if header}}{{header}}{{else}}Text eingeben{{/if}}</h5>
@@ -96,7 +96,7 @@
                       <input type="text" class="form-control text-input" value="{{text}}" autofocus />
                   </div>
                   <div class="modal-footer">
-                      <button type="button" class="btn btn-light" data-dismiss="modal">
+                      <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                           Abbrechen
                       </button>
                       <button type="submit" class="btn btn-light send-text">
@@ -117,7 +117,7 @@
               {{#with options}}
               <div class="modal-header">
                   <h5 class="modal-title">{{#with this.header}}{{this}}{{else}}Text eingeben{{/with}}</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                       <span class="fa fa-close"></span>
                   </button>
               </div>
@@ -129,7 +129,7 @@
                   {{/if}}
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-light" data-dismiss="modal">
+                  <button type="button" class="btn btn-light" data-bs-dismiss="modal">
                       Abbrechen
                   </button>
                   <button type="button" class="btn btn-primary action-save">

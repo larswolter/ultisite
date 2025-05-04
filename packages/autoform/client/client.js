@@ -1,6 +1,6 @@
-import './forms.js';
-import './forms.scss';
 import SimpleSchema from 'simpl-schema';
+import './forms.js';
+import './forms.less';
 
 console.log('configuring simple schema');
 
@@ -14,17 +14,23 @@ const AutoForm = {
   hooks(hook) {
     _.extend(this._hooks, hook);
   },
-  setDefaultTemplateForType() {
-
-  },
+  setDefaultTemplateForType() {},
   formData(local) {
-    if (local && local.form && local.form.schema) { return local.form; }
-    if (local && local.schema) { return local; }
+    if (local && local.form && local.form.schema) {
+      return local.form;
+    }
+    if (local && local.schema) {
+      return local;
+    }
     for (let i = 0; i < 6; i++) {
       try {
-        if (Template.parentData(i) && Template.parentData(i).form && Template.parentData(i).form.schema) { return Template.parentData(i).form; }
-        if (Template.parentData(i) && Template.parentData(i).schema) { return Template.parentData(i); }
-      } catch (err) { }
+        if (Template.parentData(i) && Template.parentData(i).form && Template.parentData(i).form.schema) {
+          return Template.parentData(i).form;
+        }
+        if (Template.parentData(i) && Template.parentData(i).schema) {
+          return Template.parentData(i);
+        }
+      } catch (err) {}
     }
   },
   arrayCheck(fieldName) {
@@ -35,7 +41,9 @@ const AutoForm = {
     return fieldName;
   },
   transformValue(value, fieldName, form) {
-    if (value === undefined) { return ''; }
+    if (value === undefined) {
+      return '';
+    }
     const fieldDef = form.schema.mergedSchema()[fieldName];
     if (form.schema.getQuickTypeForKey(fieldName) === 'date') {
       const mom = moment(value);
@@ -55,12 +63,18 @@ const AutoForm = {
     });
   },
   getFieldValue(fieldName, form) {
-    if (!fieldName) { return; }
+    if (!fieldName) {
+      return;
+    }
     form = AutoForm.formData(form);
-    const content = (AutoForm.content.findOne(form && form.formId || {}) || {}).doc;
+    const content = (AutoForm.content.findOne((form && form.formId) || {}) || {}).doc;
     if (content) {
       let value = content;
-      this.arrayCheck(fieldName).split('.').forEach((x) => { value = value && value[x]; });
+      this.arrayCheck(fieldName)
+        .split('.')
+        .forEach((x) => {
+          value = value && value[x];
+        });
       if (form) {
         return this.transformValue(value, fieldName, form);
       }

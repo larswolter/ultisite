@@ -1,6 +1,6 @@
 import '../common/lib/ultisite.js';
 import './lib/blazer.js';
-import './lib/custom.bootstrap.import.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './_templates.html';
 import './authorization.html';
 import './autoform.html';

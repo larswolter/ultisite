@@ -198,5 +198,5 @@ Template.Loading.events({
 });
 
 Template.popoverIcon.onRendered(function () {
-  this.$('[data-toggle="tooltip"]').tooltip();
+  this.$('[data-bs-toggle="tooltip"]').tooltip();
 });

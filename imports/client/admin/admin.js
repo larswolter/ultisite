@@ -1,6 +1,6 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
 import './admin.html';
-import './admin.scss';
+import './admin.less';
 import '../files/files.js';
 
 Template.adminPanel.onCreated(function () {
@@ -18,9 +18,7 @@ function handleUpdate(err, res) {
     UltiSite.settings(res);
   }
 }
-Template.adminPanel.onRendered(function () {
-
-});
+Template.adminPanel.onRendered(function () {});
 
 Template.linksEditDialog.helpers({
   jsonLinks() {
@@ -48,7 +46,9 @@ Template.mailServerDialog.helpers({
     return UltiSite.schemas.emailServerSchema.get();
   },
   mailConfig() {
-    if (UltiSite.settings().mailingListConfigs.length > Template.instance().activeConfig.get()) { return UltiSite.settings().mailingListConfigs[Template.instance().activeConfig.get()]; }
+    if (UltiSite.settings().mailingListConfigs.length > Template.instance().activeConfig.get()) {
+      return UltiSite.settings().mailingListConfigs[Template.instance().activeConfig.get()];
+    }
   },
 });
 Template.mailServerDialog.events({
@@ -67,14 +67,16 @@ Template.adminPanel.helpers({
     return UltiSite.AdminNotifications.find();
   },
   imageProperties() {
-    return Object.keys(UltiSite.settings()).filter(function (entry) {
-      return entry.indexOf('image') === 0;
-    }).map(function (entry) {
-      return {
-        name: entry.substr(5),
-        id: UltiSite.settings()[entry],
-      };
-    });
+    return Object.keys(UltiSite.settings())
+      .filter(function (entry) {
+        return entry.indexOf('image') === 0;
+      })
+      .map(function (entry) {
+        return {
+          name: entry.substr(5),
+          id: UltiSite.settings()[entry],
+        };
+      });
   },
   additionalAdminPageTemplates() {
     return UltiSite.adminPageTemplates.find();
@@ -93,7 +95,9 @@ Template.adminPanel.helpers({
     let name = '';
     if (UltiSite.State.get('wikiPageNames')) {
       UltiSite.State.get('wikiPageNames').forEach(function (page) {
-        if (page._id == id) { name = page.name; }
+        if (page._id == id) {
+          name = page.name;
+        }
       });
     }
     return name;
@@ -115,26 +119,37 @@ Template.adminPanel.events({
     e.preventDefault();
     const val = {};
     val[t.$(e.currentTarget).attr('data-name')] = t.$(e.currentTarget).attr('data-id');
-    Meteor.call('updateSettings', {
-      $set: val,
-    }, handleUpdate);
+    Meteor.call(
+      'updateSettings',
+      {
+        $set: val,
+      },
+      handleUpdate
+    );
   },
   'click .action-select-design': function (e, t) {
     e.preventDefault();
-    Meteor.call('updateSettings', {
-      $set: { design: this + '' },
-    }, handleUpdate);
+    Meteor.call(
+      'updateSettings',
+      {
+        $set: { design: this + '' },
+      },
+      handleUpdate
+    );
   },
   'click .image-setting': function (e, t) {
     const name = 'image' + t.$(e.currentTarget).attr('data-name');
     UltiSite.fileBrowserShowDialog(UltiSite.settings().rootFolderId, function (fileObj) {
       const val = {};
       val[name] = fileObj ? fileObj._id : null;
-      Meteor.call('updateSettings', {
-        $set: val,
-      }, handleUpdate);
+      Meteor.call(
+        'updateSettings',
+        {
+          $set: val,
+        },
+        handleUpdate
+      );
       if (name === 'imageIcon') {
-
       }
       UltiSite.fileBrowserHideDialog();
     });
@@ -142,14 +157,20 @@ Template.adminPanel.events({
   'change .direct-admin input, change .direct-admin textarea': function (e, t) {
     const name = t.$(e.currentTarget).attr('name');
     let value = t.$(e.currentTarget).val();
-    if (name.indexOf('array') === 0) { value = value.split(','); }
+    if (name.indexOf('array') === 0) {
+      value = value.split(',');
+    }
     const val = {};
 
     val[name] = value;
     console.log('Updating:', name, val);
-    Meteor.call('updateSettings', {
-      $set: val,
-    }, handleUpdate);
+    Meteor.call(
+      'updateSettings',
+      {
+        $set: val,
+      },
+      handleUpdate
+    );
   },
   'click .btn-update-mailserver': function () {
     Meteor.call('updateMailserver', UltiSite.userFeedbackFunction('Update Mail Konfiguration'));
@@ -162,9 +183,13 @@ Template.adminPanel.events({
     if (name) {
       const upd = {};
       upd[name] = '';
-      Meteor.call('updateSettings', {
-        $set: upd,
-      }, handleUpdate);
+      Meteor.call(
+        'updateSettings',
+        {
+          $set: upd,
+        },
+        handleUpdate
+      );
     }
   },
   'click .all-settings-header': function () {

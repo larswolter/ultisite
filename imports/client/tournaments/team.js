@@ -2,7 +2,7 @@ import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { AutoForm } from 'meteor/ultisite:autoform';
 import './team.html';
-import './team.scss';
+import './team.less';
 
 Template.participant.events({
   'click .action-participate': function (evt, tmpl) {

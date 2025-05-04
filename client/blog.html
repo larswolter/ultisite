@@ -100,9 +100,9 @@
             <div class="blog col-12 col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
                 <h5 class="blog-title">
                     {{#if currentUser}}
-                        <a class="btn btn-light btn-sm pull-right" href="{{pathFor route='blog' _id=blog._id edit='edit'}}">Artikel bearbeiten</a>
+                        <a class="btn btn-light btn-sm float-end" href="{{pathFor route='blog' _id=blog._id edit='edit'}}">Artikel bearbeiten</a>
                         {{#if canRemove}}
-                            <button class="btn btn-danger btn-sm action-remove-blog pull-right" >Artikel löschen</button>
+                            <button class="btn btn-danger btn-sm action-remove-blog float-end" >Artikel löschen</button>
                         {{/if}}
                     {{/if}}
                     {{blog.title}}

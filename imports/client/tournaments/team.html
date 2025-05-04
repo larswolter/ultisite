@@ -2,12 +2,12 @@
   <div class="card">
     <div class="card-header tournament-heading">
       {{#if isMyTeam}}
-        <div class="btn-group d-block d-md-none">
-          <div class="dropdown pull-right">
-            <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-toggle="dropdown" type="button">
+        <div class="btn-group d-block d-sm-none">
+          <div class="dropdown float-end">
+            <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" type="button">
               <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            <ul class="dropdown-menu dropdown-menu-end" role="menu">
               <li class="dropdown-item">
                 <a class="action-edit-team" href="#">
                   <span class="fa fa-edit"></span> editieren
@@ -36,7 +36,7 @@
             </ul>
           </div>
         </div>
-        <div class="d-none d-sm-block d-sm-none pull-right">
+        <div class="d-none d-sm-block float-end">
           <div>
             {{#if currentUser}}
               <div class="btn-group">
@@ -76,7 +76,7 @@
         <span class="d-none d-sm-inline btn-height-text">das Team ist</span>
         {{#if isResponsible}}
           <div class="btn-group" role="group">
-            <button aria-expanded="false" class="btn btn-{{teamColorState}} dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
+            <button aria-expanded="false" class="btn btn-{{teamColorState}} dropdown-toggle" data-bs-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
               {{state}}
               <span class="caret"></span>
             </button>
@@ -199,7 +199,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5>Für ein Team eintragen</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span class="fa fa-close"></span>
           </button>
         </div>
@@ -286,7 +286,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-light" data-dismiss="modal" aria-label="Close">Abbrechen</button>
+          <button class="btn btn-light" data-bs-dismiss="modal" aria-label="Close">Abbrechen</button>
         </div>
       </div>
     </div>
@@ -300,17 +300,17 @@
       <div class="woman-indicator"></div>
     {{/if}}
     {{#unless noChangeRights}}
-      <button class="btn btn-link action-comment pull-right">
+      <button class="btn btn-link action-comment float-end">
         <span class="fa fa-comment"></span>
       </button>{{!--
-    <button class="btn btn-link action-transport pull-right">
+    <button class="btn btn-link action-transport float-end">
       <span class="fa fa-car"></span>3
     </button>
-    <button class="btn btn-link action-sleep pull-right">
+    <button class="btn btn-link action-sleep float-end">
       <span class="fa fa-home"></span>1
     </button>--}}
       <div class="btn-group participant-state" role="group">
-        <button aria-expanded="false" class="btn btn-{{colorState this.state}} btn-block dropdown-toggle" data-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
+        <button aria-expanded="false" class="btn btn-{{colorState this.state}} btn-block dropdown-toggle" data-bs-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
           <span class="fa {{iconState}} fa-fw"></span>
           <span class="d-none d-sm-inline">
             {{textState this.state}}
@@ -372,7 +372,7 @@
               <button class="confirm" type="submit">
                 {{#if team._id}} Speichern {{else}} Anlegen {{/if}}
               </button>
-              <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+              <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
                 <span class="fa fa-close"></span>
               </button>
             </div>
@@ -441,12 +441,12 @@
     <div class="card">
       <div class="card-header tournament-heading">
         {{#unless noChangeRights}}
-          <span class="d-inline d-sm-none pull-right">
+          <span class="d-inline d-sm-none float-end">
             <div class="dropdown">
-              <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-toggle="dropdown" type="button">
+              <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" type="button">
                 <span class="caret"></span>
               </button>
-              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+              <ul class="dropdown-menu dropdown-menu-end" role="menu">
                 {{#if teamRemovable}}
                   <li class="dropdown-item">
                     <a href="#" class="action-delete-team">
@@ -485,24 +485,24 @@
             </div>
           </span>
           <span class="d-none d-sm-inline">
-            <button class="btn btn-light action-historic-view pull-right">
+            <button class="btn btn-light action-historic-view float-end">
               <span class="fa fa-line-chart"></span> Historie
             </button>
             {{#if teamRemovable}}
-              <button class="btn btn-danger action-delete-team pull-right" title="Team löschen">
+              <button class="btn btn-danger action-delete-team float-end" title="Team löschen">
                 Team löschen
               </button>
             {{/if}}
             {{#unless myTeamState}}
-              <button class="btn btn-light action-add-me pull-right">Mich eintragen</button>
+              <button class="btn btn-light action-add-me float-end">Mich eintragen</button>
             {{else}}
-              <button class="btn btn-light action-remove-me pull-right">Mich austragen</button>
+              <button class="btn btn-light action-remove-me float-end">Mich austragen</button>
             {{/unless}}
 
             {{#if equals this.state "dabei"}}
-              <button class="btn btn-light action-remove-team pull-right">Auf nicht angetreten setzen</button>
+              <button class="btn btn-light action-remove-team float-end">Auf nicht angetreten setzen</button>
             {{else}}
-              <button class="btn btn-light action-add-team pull-right">Auf angetreten setzen</button>
+              <button class="btn btn-light action-add-team float-end">Auf angetreten setzen</button>
             {{/if}}
           </span>
         {{/unless}}
@@ -596,7 +596,7 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <button aria-label="Close" class="close" data-bs-dismiss="modal" type="button">
               <span class="fa fa-close"></span>
             </button>
             <h5 class="modal-title">Historische Ansicht</h5>
@@ -624,7 +624,7 @@
             {{/each}}
           </div>
           <div class="modal-footer">
-            <button aria-label="Close" class="btn btn-primary" data-dismiss="modal" type="button">
+            <button aria-label="Close" class="btn btn-primary" data-bs-dismiss="modal" type="button">
               Ok
             </button>
           </div>

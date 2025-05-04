@@ -2,7 +2,7 @@ import { moment } from 'meteor/momentjs:moment';
 
 import './team.js';
 import './tournament.js';
-import './tournament.scss';
+import './tournament.less';
 import './tournamentList.html';
 
 const months = new Meteor.Collection(null);

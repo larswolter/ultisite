@@ -32,7 +32,7 @@ Template.searchField.events({
       if (t.data.onResultClick(this)) {
         t.$('.search-field').val('');
         t.results.set(['Mind. zwei Zeichen']);
-        t.$('[data-toggle="dropdown"]').dropdown('toggle');
+        t.$('[data-bs-toggle="dropdown"]').dropdown('toggle');
       }
     } else if (this.link) {
       FlowRouter.go(this.link);

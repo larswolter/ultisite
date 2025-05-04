@@ -6,7 +6,7 @@
                 <div class="form-group {{#if afFieldIsInvalid name='address.country'}}is-invalid{{/if}}" data-required="true">
                     <label class="col-form-label col-12 col-lg-3">{{afFieldLabelText name="address.country"}}</label>
                     <div class="col-lg-9 col-12 dropdown-country dropdown">
-                        <div class="input-group" data-toggle="dropdown">
+                        <div class="input-group" data-bs-toggle="dropdown">
                             <input value="Deutschland" class="form-control address-country-search" autocomplete="off" />
                         </div>
                         <ul class="dropdown-menu">
@@ -25,7 +25,7 @@
                 <div class="form-group {{#if afFieldIsInvalid name='address.city'}}is-invalid{{/if}}" data-required="true">
                     <label class="col-form-label col-12 col-lg-3">{{afFieldLabelText name="address.city"}}</label>
                     <div class="col-lg-9 col-12 dropdown-city dropdown">
-                        <div class="input-group" data-toggle="dropdown">
+                        <div class="input-group" data-bs-toggle="dropdown">
                             {{> afFieldInput name="address.city" autocomplete="off"}}
                         </div>
                         <ul class="dropdown-menu">
@@ -48,7 +48,7 @@
                 <div class="form-group {{#if afFieldIsInvalid name='address.street'}}is-invalid{{/if}}" data-required="false">
                     <label class="col-form-label col-6 col-lg-3">{{afFieldLabelText name="address.street"}}</label>
                     <div class="col-12 col-lg-9 dropdown-street dropdown">
-                        <div class="input-group" data-toggle="dropdown">
+                        <div class="input-group" data-bs-toggle="dropdown">
                             {{> afFieldInput name="address.street" class="form-control address-street" autocomplete="off"}}
                         </div>
                         <ul class="dropdown-menu">

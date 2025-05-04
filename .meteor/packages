@@ -26,14 +26,14 @@ shell-server@0.5.0
 templating
 
 matb33:collection-hooks
-blaze@2.3.2
+blaze@2.7.1
 dynamic-import@0.7.3
 underscore@1.6.1
 server-render@0.4.1
-fourseven:scss@4.15.1
 jquery
 ostrio:flow-router-extra
 
 jkuester:migration-helper
 ultisite:autoform
 ultisite:hatinfo
+less

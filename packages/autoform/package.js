@@ -15,7 +15,7 @@ Package.onUse(function (api) {
   api.use(['ecmascript', 'meteor-base', 'modules', 'mongo', 'underscore', 'check']);
   api.use(
     [
-      'fourseven:scss',
+      'less',
       'standard-minifiers',
       'mobile-experience',
       'session',

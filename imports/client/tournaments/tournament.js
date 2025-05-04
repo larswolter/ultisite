@@ -1,7 +1,7 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
-import './tournament.scss';
+import './tournament.less';
 import './tournament.html';
 import './team';
 import '../forms/address';

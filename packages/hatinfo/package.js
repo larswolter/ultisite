@@ -15,7 +15,7 @@ Package.describe({
 Package.onUse(function (api) {
   api.versionsFrom(['2.13', '3.1']);
   api.use([
-    'fourseven:scss',
+    'less',
     'ecmascript',
     'ostrio:flow-router-extra',
     'standard-minifiers',

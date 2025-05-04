@@ -48,7 +48,7 @@
 					<span class="fa fa-question-circle fa-lg"></span>
 				</a>
 				<span class="d-none d-md-inline dropdown">
-					<a href="#" class="header-link text-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+					<a href="#" class="header-link text-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
 						<span class="fa fa-user fa-lg"></span>
 					</a>
 					{{>userHeader}}
@@ -78,7 +78,7 @@
 		{{#if showMenuEntry}}
 			{{#if this.submenu}}
 				<span class="dropdown">
-					<a href="#" class="header-link dropdown-toggle {{../liClass}} {{#if isActive}}active{{/if}}" data-toggle="dropdown" role="button" aria-expanded="false">
+					<a href="#" class="header-link dropdown-toggle {{../liClass}} {{#if isActive}}active{{/if}}" data-bs-toggle="dropdown" role="button" aria-expanded="false">
 						{{this.text}} <span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
@@ -197,7 +197,7 @@
 
 <template name="userHeader">
 	{{#if currentUser}}
-		<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownUserMenu">
+		<ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="dropdownUserMenu">
 			<li class="dropdown-header">
 				{{currentUser.username}} ({{currentUser.profile.name}} {{currentUser.profile.surname}})
 			</li>
@@ -221,7 +221,7 @@
 				<li class="dropdown-item" role="presentation">
 					<a href="{{pathFor route='admin'}}">
 						{{#with AdminNotifications}}
-							<span class="badge pull-right">{{this.count}}</span>
+							<span class="badge float-end">{{this.count}}</span>
 						{{/with}}
 						<span class="fa fa-cog fa-fw"></span> Admin
 					</a>
@@ -245,7 +245,7 @@
 
 
 <template name="footer">
-	<div class="pull-right">
+	<div class="float-end">
 		{{#if settings.wikiImpressum}}
 			<a href="{{pathFor route='wikipage' _id=settings.wikiImpressum}}">Impressum</a>
 		{{/if}}

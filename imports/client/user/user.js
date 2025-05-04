@@ -3,7 +3,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 import { moment } from 'meteor/momentjs:moment';
 
-import './user.scss';
+import './user.less';
 import './user.html';
 import './userlist.html';
 import { getAllRoles, userIsInRole } from '../../../common/lib/ultisite';

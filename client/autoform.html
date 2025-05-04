@@ -2,7 +2,7 @@
   <div class="card ultisite-array-field">    
     <div class="card-header">
         {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
-          <button type="button" class="btn btn-light autoform-add-item pull-right" data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}"><span class="fa fa-plus"></span></button>
+          <button type="button" class="btn btn-light autoform-add-item float-end" data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}"><span class="fa fa-plus"></span></button>
         {{/if}}
 
         {{afFieldLabelText name=this.atts.name}}

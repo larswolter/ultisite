@@ -6,7 +6,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="myModalLabel">Auf der Seite anmelden</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span class="fa fa-close"></span>
                         </button>
                     </div>
@@ -30,7 +30,7 @@
                                 {{#unless equals settings.siteRegistration 'invitation'}}
                                     <button type="button" class="btn btn-link btn-sm btn-register">Registrieren</button>
                                 {{/unless}}
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Abbrechen</button>
                                 <button type="submit" class="btn btn-primary {{#unless meteorStatus.connected}}disabled{{/unless}}" id="loginButton">Anmelden</button>
                             {{else}}
                                 <span class="fa fa-spin fa-spinner fa-3x"></span>
@@ -58,7 +58,7 @@
                             <h5 class="modal-title" id="myModalLabel">
                                     Passwort {{#if equals type "reset"}}zurück{{/if}}setzen
                             </h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                 <span class="fa fa-close"></span>
                             </button>
                         </div>
@@ -95,7 +95,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="myModalLabel">Passwort Ändern</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                 <span class="fa fa-close"></span>
                             </button>
                         </div>
@@ -114,7 +114,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Abbrechen</button>
                             <button type="submit" class="btn btn-primary" id="setPassword">Passwort Ändern</button>
                         </div>
                     </div>

@@ -14,8 +14,8 @@
                 {{#each this}}
                   <div class="list-group-item">
                     {{text}}
-                    <button class="btn btn-light pull-right btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="true">Zugriff erlauben</button>
-                    <button class="btn btn-warning pull-right btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="false">Zugriff ablehnen</button>
+                    <button class="btn btn-light float-end btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="true">Zugriff erlauben</button>
+                    <button class="btn btn-warning float-end btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="false">Zugriff ablehnen</button>
                   </div>
                 {{else}}
                   <div class="list-group-item">
@@ -48,7 +48,7 @@
                   </div>
                 {{/each}}
                 <div class="col-12 colsm-10 offset-sm-2">
-                  <button type="button" class="btn btn-light" data-toggle="modal" data-target="#linksEditDialog">
+                  <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#linksEditDialog">
                     <span class="fa fa-edit"></span> Bearbeiten
                   </button>
                 </div>
@@ -57,7 +57,7 @@
                 <div class="form-group row">
                   <label class="col-sm-2 col-form-label">Zuordnung der <a href="/wikipage">Wikiseiten</a></label>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Start:</small><br /> {{wikiPageName settings.wikiStart}}
 
                     </button>
@@ -70,7 +70,7 @@
                     </ul>
                   </div>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Trainings:</small><br /> {{wikiPageName settings.wikiPractice}}
 
                     </button>
@@ -83,7 +83,7 @@
                     </ul>
                   </div>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Impressum:</small><br /> {{wikiPageName settings.wikiImpressum}}
 
                     </button>
@@ -96,7 +96,7 @@
                     </ul>
                   </div>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Datenschutz:</small><br /> {{wikiPageName settings.wikiDatenschutz}}
 
                     </button>
@@ -109,7 +109,7 @@
                     </ul>
                   </div>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Hilfe:</small><br /> {{wikiPageName settings.wikiHelp}}
 
                     </button>
@@ -125,7 +125,7 @@
                 <div class="form-group row">
                   <label class="col-sm-2 col-form-label">Design</label>
                   <div class="dropdown col-sm-2">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       {{settings.design}}
 
                     </button>
@@ -267,7 +267,7 @@
                             &lt;leer&gt;
                           {{/if}}
                         </button>
-                        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#mailServerDialog" data-index="{{@index}}">
+                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#mailServerDialog" data-index="{{@index}}">
                           <span class="fa fa-edit"></span>
                         </button>
                         <button type="button" class="btn btn-light action-remove-mailinglist">
@@ -317,7 +317,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span class="fa fa-close"></span>
           </button>
           <h5 class="modal-title" id="myModalLabel">Links editieren</h5>
@@ -326,7 +326,7 @@
           <textarea rows="20" class="form-control">{{jsonLinks}}</textarea>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Abbrechen</button>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </div>
       </div>
@@ -339,7 +339,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span class="fa fa-close"></span>
           </button>
           <h5 class="modal-title">Mailserver editieren</h5>
@@ -351,7 +351,7 @@
                         buttonContent=false}}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Abbrechen</button>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { moment } from 'meteor/momentjs:moment';
 
-import './user.scss';
+import './user.less';
 import './userlist.html';
 
 const usersOverview = new Meteor.Collection('usersOverview');
@@ -92,34 +92,50 @@ Template.userItem.events({
     evt.preventDefault();
 
     if (tmpl.data.club && tmpl.data.club.state) {
-      Meteor.users.update({
-        _id: tmpl.data._id,
-      }, {
-        $unset: { 'club.state': 1 },
-      }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
+      Meteor.users.update(
+        {
+          _id: tmpl.data._id,
+        },
+        {
+          $unset: { 'club.state': 1 },
+        },
+        UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern')
+      );
     } else {
-      Meteor.users.update({
-        _id: tmpl.data._id,
-      }, {
-        $set: { 'club.state': 'Mitglied' },
-      }, UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern'));
+      Meteor.users.update(
+        {
+          _id: tmpl.data._id,
+        },
+        {
+          $set: { 'club.state': 'Mitglied' },
+        },
+        UltiSite.userFeedbackFunction('Vereinszugehörigkeit speichern')
+      );
     }
   },
   'click .action-club-dfv': function (evt, tmpl) {
     evt.preventDefault();
 
     if (tmpl.data.club && tmpl.data.club.dfv.includes(moment().year())) {
-      Meteor.users.update({
-        _id: tmpl.data._id,
-      }, {
-        $pull: { 'club.dfv': moment().year() },
-      }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
+      Meteor.users.update(
+        {
+          _id: tmpl.data._id,
+        },
+        {
+          $pull: { 'club.dfv': moment().year() },
+        },
+        UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern')
+      );
     } else {
-      Meteor.users.update({
-        _id: tmpl.data._id,
-      }, {
-        $addToSet: { 'club.dfv': moment().year() },
-      }, UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern'));
+      Meteor.users.update(
+        {
+          _id: tmpl.data._id,
+        },
+        {
+          $addToSet: { 'club.dfv': moment().year() },
+        },
+        UltiSite.userFeedbackFunction('DFV Anmeldestatus speichern')
+      );
     }
   },
   'click .action-debit': function (evt, tmpl) {
@@ -127,13 +143,21 @@ Template.userItem.events({
     UltiSite.getTextDialog({ text: this.profile.debit, header: 'Schulden eingeben (0 = keine)' }, function (text) {
       const debit = Number(text);
       if (debit > 0) {
-        Meteor.users.update(tmpl.data._id, {
-          $set: { 'profile.debit': debit },
-        }, UltiSite.userFeedbackFunction('Schulden speichern'));
+        Meteor.users.update(
+          tmpl.data._id,
+          {
+            $set: { 'profile.debit': debit },
+          },
+          UltiSite.userFeedbackFunction('Schulden speichern')
+        );
       } else {
-        Meteor.users.update(tmpl.data._id, {
-          $unset: { 'profile.debit': 0 },
-        }, UltiSite.userFeedbackFunction('Schulden entfernen'));
+        Meteor.users.update(
+          tmpl.data._id,
+          {
+            $unset: { 'profile.debit': 0 },
+          },
+          UltiSite.userFeedbackFunction('Schulden entfernen')
+        );
       }
     });
   },

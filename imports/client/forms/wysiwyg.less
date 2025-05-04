@@ -1,0 +1,29 @@
+
+.ultisite-wysiwyg {
+  position: relative;
+  padding: 0px;
+  @media (max-width: 576px) {
+    padding-top: 80px;
+  }
+  background-color: white;
+  .rich-text-input {
+    padding: 5px;
+    min-height: 4em;
+    border-top: 1px solid lightgray;
+  }
+  .wysiwyg-toolbar {
+    background-color: white;
+    white-space: normal;
+    .wysiwyg-toolbar-icon {
+      color: black;
+    }
+    .dropdown-menu.colors {
+      min-width: auto;
+    }
+  }
+  .wysiwyg-toolbar.fixed {
+    position: fixed;
+    top: 45px;
+    padding-top: 0px;
+  }
+}
