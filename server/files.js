@@ -13,27 +13,27 @@ Meteor.methods({
       return [];
     }
     return _.sortBy(
-      (await Images.find(
-        {},
-        {
-          limit: 5,
-          sort: {
-            created: -1,
-          },
-        }
-      )
-        .fetchAsync())
-        .concat(
-          await Documents.find(
-            {},
-            {
-              limit: 5,
-              sort: {
-                created: -1,
-              },
-            }
-          ).fetchAsync()
-        ),
+      (
+        await Images.find(
+          {},
+          {
+            limit: 5,
+            sort: {
+              created: -1,
+            },
+          }
+        ).fetchAsync()
+      ).concat(
+        await Documents.find(
+          {},
+          {
+            limit: 5,
+            sort: {
+              created: -1,
+            },
+          }
+        ).fetchAsync()
+      ),
       function (doc) {
         return doc.created;
       }
@@ -47,10 +47,11 @@ Meteor.methods({
     if (!this.userId) {
       return [];
     }
-    return (await Images.find({
-      associated: [],
-    })
-      .fetchAsync())
+    return (
+      await Images.find({
+        associated: [],
+      }).fetchAsync()
+    )
       .concat(
         await Documents.find({
           associated: [],
@@ -89,7 +90,7 @@ Meteor.methods({
         fs.readFile(
           `${os.tmpdir()}/${imgId}.image.temp`,
           { encoding: 'base64' },
-          Meteor.bindEnvironment(async function(err, data) {
+          Meteor.bindEnvironment(async function (err, data) {
             if (err) {
               console.log(err);
               throw err;
@@ -148,7 +149,7 @@ Meteor.methods({
       });
       wstream.on(
         'finish',
-        Meteor.bindEnvironment(async function(fileObj) {
+        Meteor.bindEnvironment(async function (fileObj) {
           await Documents.updateAsync(docId, {
             $set: {
               gridId: `${fileObj._id}`,
@@ -200,8 +201,8 @@ Meteor.methods({
       }
       if (file.gridId) {
         bucket.delete(
-          ObjectId(file.gridId),
-          Meteor.bindEnvironment(async err => {
+          ObjectId.createFromHexString(file.gridId),
+          Meteor.bindEnvironment(async (err) => {
             if (err) {
               console.log('Error removing gridfs file', err);
             } else {
@@ -234,7 +235,7 @@ Meteor.startup(function () {
   }); */
 });
 
-WebApp.connectHandlers.use('/dynamicAppIcon.png', async function(req, res) {
+WebApp.connectHandlers.use('/dynamicAppIcon.png', async function (req, res) {
   const { query } = req;
   const icon = await Images.findOneAsync((await settings()).imageIcon);
   if (!icon) {
@@ -274,7 +275,7 @@ WebApp.connectHandlers.use('/_document', async (req, resp) => {
     return;
   }
   console.log('opening stream', doc.gridId);
-  const readstream = bucket.openDownloadStream(ObjectId(doc.gridId));
+  const readstream = bucket.openDownloadStream(ObjectId.createFromHexString(doc.gridId));
   if (readstream) {
     console.log('got read stream, piping...');
     resp.setHeader('Content-Type', doc.type);
