@@ -255,31 +255,6 @@
                     <input name="arrayClubStates" class="form-control" value="{{settings.arrayClubStates}}" placeholder="a,b,c">
                   </div>
                 </div>
-                <div class="form-group row">
-                  <label class="col-sm-2 col-form-label">Mailinglisten</label>
-                  <div class="col-sm-10">
-                    {{#each settings.mailingListConfigs}}
-                      <div class="btn-group">
-                        <button type="button" class="btn btn-light disabled">
-                          {{#if this.from}}
-                            {{this.from}}
-                          {{else}}
-                            &lt;leer&gt;
-                          {{/if}}
-                        </button>
-                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#mailServerDialog" data-index="{{@index}}">
-                          <span class="fa fa-edit"></span>
-                        </button>
-                        <button type="button" class="btn btn-light action-remove-mailinglist">
-                          <span class="fa fa-close"></span>
-                        </button>
-                      </div>
-                    {{/each}}
-                    <button type="button" class="btn btn-light action-add-mailinglist">
-                      <span class="fa fa-plus"></span>
-                    </button>
-                  </div>
-                </div>
                 {{#each additionalAdminPageTemplates}}
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label">{{this.name}}</label>

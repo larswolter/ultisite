@@ -17,7 +17,6 @@ import './imageHelper.js';
 import './injections.js';
 import './mail.js';
 import { Mail, renderMailTemplate } from './mail.js';
-import './mailinglist.js';
 import './main.js';
 import './manifest.json.js';
 import './migrations.js';
