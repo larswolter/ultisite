@@ -1,8 +1,6 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "files.exclude": {
-        ".meteor/local": true,
-        "**/node_modules": true,
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
