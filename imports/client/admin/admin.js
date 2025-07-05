@@ -149,8 +149,6 @@ Template.adminPanel.events({
         },
         handleUpdate
       );
-      if (name === 'imageIcon') {
-      }
       UltiSite.fileBrowserHideDialog();
     });
   },
@@ -194,13 +192,6 @@ Template.adminPanel.events({
   },
   'click .all-settings-header': function () {
     UltiSite.State.set('adminPanel.viewAll', !UltiSite.State.get('adminPanel.viewAll'));
-  },
-  'click .action-add-mailinglist': function (e, t) {
-    e.preventDefault();
-    Meteor.call('updateSettings', { $push: { mailingListConfigs: { id: Random.id() } } }, handleUpdate);
-  },
-  'click .action-remove-mailinglist': function (e, t) {
-    Meteor.call('updateSettings', { $pull: { mailingListConfigs: { id: this.id } } }, handleUpdate);
   },
 });
 
