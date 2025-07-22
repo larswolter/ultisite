@@ -13,8 +13,8 @@ export function stateColor(state) {
   }
 }
 
-export function participantList(teamId) {
-  const tournament = UltiSite.Tournaments.findOne({ 'teams._id': teamId }) || UltiSite.getTournamentByTeam(teamId);
+export async function participantList(teamId) {
+  const tournament = await UltiSite.Tournaments.findOneAsync({ 'teams._id': teamId }) || UltiSite.getTournamentByTeam(teamId);
   const team = _.find(tournament.teams, (t) => t._id === teamId);
   let participants = _.sortBy(
     _.sortBy(
@@ -40,10 +40,11 @@ export function participantList(teamId) {
       'drawing'
     );
   }
-  const partUser = participants.map(async function(participant, idx) {
+  const partUser = await Promise.all( participants.map(async function(participant, idx) {
     const user = await Meteor.users.findOneAsync(participant.user);
-    const p = _.extend(
+    const p = 
       {
+        _id: participant.user,
         teamId: team._id,
         visible:
           participant.state > 0 ||
@@ -59,12 +60,12 @@ export function participantList(teamId) {
             : idx < team.maxPlayers / 2
             ? 'fa fa-clock-o'
             : 'fa fa-empty',
-      },
-      user,
-      participant
-    );
+      
+      ...user,
+      ...participant
+    }
     return p;
-  });
+  }));
   if (team.drawingResult) {
     // check females
     let females = 0;
@@ -110,8 +111,3 @@ export function participantList(teamId) {
     });
   });
 }
-
-_.extend(UltiSite, {
-  participantList,
-  stateColor,
-});

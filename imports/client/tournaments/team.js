@@ -3,6 +3,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { AutoForm } from 'meteor/ultisite:autoform';
 import './team.html';
 import './team.less';
+import { participantList, stateColor } from '../../../common/teams';
 
 Template.participant.events({
   'click .action-participate': function (evt, tmpl) {
@@ -301,7 +302,7 @@ Template.teamCountBar.helpers({
 
 Template.team.helpers({
   teamColorState() {
-    return UltiSite.stateColor(this.state);
+    return stateColor(this.state);
   },
   participantMails() {
     return Template.instance().teamEmails.get();
@@ -313,8 +314,8 @@ Template.team.helpers({
       return partUser;
     });
   },
-  participantUsers() {
-    return UltiSite.participantList(this._id);
+  async participantUsers() {
+    return await participantList(this._id);
   },
   teamRemovable() {
     if (_.find(this.participants, (p) => p.state === 100)) {

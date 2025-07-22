@@ -285,7 +285,7 @@ export const teamDrawings = async function() {
           },
         }
       );
-      const drawnParticipants = participantList(team._id)
+      const drawnParticipants = await participantList(team._id)
         .map((p) => p.username)
         .join(', ');
 

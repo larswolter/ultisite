@@ -308,7 +308,7 @@
     <button class="btn btn-link action-sleep float-end">
       <span class="fa fa-home"></span>1
     </button>--}}
-      <div class="btn-group participant-state d-grid" role="group">
+      <div class="btn-group participant-state" role="group">
         <button aria-expanded="false" class="btn btn-{{colorState this.state}} dropdown-toggle" data-bs-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
           <span class="fa {{iconState}} fa-fw"></span>
           <span class="d-none d-sm-inline">
@@ -316,21 +316,21 @@
           </span>
         </button>
         <ul class="dropdown-menu" role="menu">
-          <li class="dropdown-item action-participate" data-participation='30'>
-            <a href="#">Interesse</a>
+          <li>
+            <a class="dropdown-item action-participate" data-participation='30' href="#">Interesse</a>
           </li>
-          <li class="dropdown-item">
-            <a class="bg-warning action-participate" href="#" data-participation='70'>Vielleicht</a>
+          <li>
+            <a class="dropdown-item bg-warning action-participate" href="#" data-participation='70'>Vielleicht</a>
           </li>
-          <li class="dropdown-item">
-            <a class="bg-success action-participate" href="#" data-participation='100'>Sicher</a>
+          <li>
+            <a class="dropdown-item bg-success action-participate" href="#" data-participation='100'>Sicher</a>
           </li>
-          <li class="dropdown-item">
-            <a class="text-muted action-participate" href="#" data-participation='0'>Kann nicht</a>
+          <li>
+            <a class="dropdown-item text-muted action-participate" href="#" data-participation='0'>Kann nicht</a>
           </li>
           {{#if isAdmin}}
-            <li class="dropdown-item">
-              <a class="action-remove" href="#">Austragen</a>
+            <li>
+              <a class="dropdown-item action-remove" href="#">Austragen</a>
             </li>
           {{/if}}
         </ul>

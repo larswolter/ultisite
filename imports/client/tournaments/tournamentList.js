@@ -4,6 +4,7 @@ import './team.js';
 import './tournament.js';
 import './tournament.less';
 import './tournamentList.html';
+import { stateColor } from '../../../common/teams.js';
 
 const months = new Meteor.Collection(null);
 const prefillData = new ReactiveVar(undefined);
@@ -398,7 +399,7 @@ const helpers = {
       return _.extend(
         {
           participants: this.participants.filter((p) => p.team === team._id),
-          stateColor: UltiSite.stateColor(team.state),
+          stateColor: stateColor(team.state),
         },
         team
       );

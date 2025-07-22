@@ -144,7 +144,7 @@ Meteor.methods({
           tournament,
           formatedDate: moment(tournament.date).format('DD.MM.YYYY'),
           team,
-          participants: participantList(team._id),
+          participants: await participantList(team._id),
           tournamentUrl: FlowRouter.url('tournament', { _id: tournament._id }),
         })
       );
