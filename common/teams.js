@@ -54,11 +54,11 @@ export async function participantList(teamId) {
               participant.responsible === Meteor.userId())),
         iconState:
           participant.drawing === 0
-            ? 'fa fa-clock-o'
+            ? 'fa fa-clock'
             : participant.drawing && participant.drawing !== 1000
             ? 'fa fa-magic'
             : idx < team.maxPlayers / 2
-            ? 'fa fa-clock-o'
+            ? 'fa fa-clock'
             : 'fa fa-empty',
       
       ...user,

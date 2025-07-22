@@ -48,7 +48,7 @@
 					<span class="fa fa-question-circle fa-lg"></span>
 				</a>
 				<span class="d-none d-md-inline dropdown">
-					<a href="#" class="header-link text-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="true">
+					<a href="#" class="header-link text-default" data-bs-toggle="dropdown" aria-expanded="true">
 						<span class="fa fa-user fa-lg"></span>
 					</a>
 					{{>userHeader}}
@@ -79,7 +79,7 @@
 			{{#if this.submenu}}
 				<span class="dropdown">
 					<a href="#" class="header-link dropdown-toggle {{../liClass}} {{#if isActive}}active{{/if}}" data-bs-toggle="dropdown" role="button" aria-expanded="false">
-						{{this.text}} <span class="caret"></span>
+						{{this.text}}
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						{{#each this.submenu}}
