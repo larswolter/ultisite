@@ -3,9 +3,9 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
+            <h5 class="modal-title">Suche</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
             </button>
-          <h5 class="modal-title">Suche</h5>
         </div>
         <div class="modal-body">
             {{#if meteorStatus.connected}}
@@ -58,10 +58,10 @@
       <div class="modal-dialog">
           <div class="modal-content">
               <div class="modal-header">
+                  <h5 class="modal-title">Bestätigung</h5>
                   <button type="button" class="close float-end" data-bs-dismiss="modal" aria-label="Close">
                       <span class="fa fa-close"></span>
                   </button>
-                  <h5 class="modal-title">Bestätigung</h5>
               </div>
               <div class="modal-body">
                   {{options.text}}
@@ -86,10 +86,10 @@
               <form >
                   {{#with options}}
                   <div class="modal-header">
+                      <h5 class="modal-title">{{#if header}}{{header}}{{else}}Text eingeben{{/if}}</h5>
                       <button type="button" class="close float-end" data-bs-dismiss="modal" aria-label="Close">
                           <span class="fa fa-close"></span>
                       </button>
-                  <h5 class="modal-title">{{#if header}}{{header}}{{else}}Text eingeben{{/if}}</h5>
                   </div>
                   <div class="modal-body">
                       <input type="text" class="form-control text-input" value="{{text}}" autofocus />
