@@ -19,7 +19,17 @@ body {
     animation-duration: 250ms;
     background-color: @hallunkenBeige;
     color: rgb(27, 63, 45);
-
+    a, .btn-link {
+        text-decoration: none;
+    }
+    .btn-link:hover,
+    .btn-link:focus,
+    .btn-link:active,
+    a:hover,
+    a:focus,
+    a:active {
+        text-decoration: underline;
+    }
     hr {
         border-color: darken(@hallunkenBeige, 20%);
     }
@@ -50,11 +60,14 @@ body {
         a:visited {
             color: @hallunkenOrange;
         }
-
+        .btn-link:hover,
+        .btn-link:focus,
+        .btn-link:active,
         a:hover,
         a:focus,
         a:active {
             color: @hallunkenOrangeDark;
+            text-decoration: underline;
         }
 
         .navbar-brand {
