@@ -25,9 +25,11 @@
 			{{#if equals meteorStatus.status 'connecting'}}
 				<h5><span class="fa fa-spinner fa-spin"></span> Versuche Verbindungsaufbau</h5>
 			{{else}}
-				<button class="btn btn-light btn-block action-reconnect">
+			<div class="d-grid">
+				<button class="btn btn-light action-reconnect">
                 Verbindungsversuch starten
-            </button>
+				</button>
+			</div>
 			{{/if}}
 		{{/if}}
 	</div>

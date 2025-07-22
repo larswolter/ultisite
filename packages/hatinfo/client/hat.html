@@ -83,9 +83,11 @@
                                 {{>hatParticipant}}
                             </ul>
                         {{else}}
-                            <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button">
-                                <span class="fa fa-plus"></span> Eintragen
-                            </button>
+                            <div class="d-grid">
+                                <button class="d-none d-md-block d-lg-block btn btn-primary action-participate" title="Anmelden" type="button">
+                                    <span class="fa fa-plus"></span> Eintragen
+                                </button>
+                            </div>
                         {{/with}}
                     {{/if}}
                 {{else}}
@@ -220,7 +222,7 @@
                         Musikhit: {{this.musicHit}}<br />
                     {{/if}}
                 </div>
-                <div class="col-12 col-sm-6 text-right participant-buttons">
+                <div class="col-12 col-sm-6 text-end participant-buttons">
                     <button class="btn btn-light action-participate" title="Ändern" type="button">
                         <span class="fa fa-edit"></span> Editieren
                     </button>

@@ -258,15 +258,15 @@
                       Dies ist ein Team nur für Frauen und {{selectedUser.username}} ist laut seinem <a href="/user/{{selectedUser._id}}">Profil</a> keine!
                     </div>
                   {{/if}}
-                  <div class="form-group">
+                  <div class="d-grid gap-1">
                     <label>Status</label><br />
-                    <button class="btn btn-success btn-block action-insert" data-value="100" type="button">
+                    <button class="btn btn-success action-insert" data-value="100" type="button">
                       Sicher
                     </button>
-                    <button class="btn btn-light btn-block action-insert" data-value="0" type="button">
+                    <button class="btn btn-light action-insert" data-value="0" type="button">
                       Kann nicht
                     </button>
-                    <button class="btn btn-light btn-block action-insert" data-value="70" type="button">
+                    <button class="btn btn-light action-insert" data-value="70" type="button">
                       Vielleicht
                     </button>
                     <small>
@@ -308,8 +308,8 @@
     <button class="btn btn-link action-sleep float-end">
       <span class="fa fa-home"></span>1
     </button>--}}
-      <div class="btn-group participant-state" role="group">
-        <button aria-expanded="false" class="btn btn-{{colorState this.state}} btn-block dropdown-toggle" data-bs-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
+      <div class="btn-group participant-state d-grid" role="group">
+        <button aria-expanded="false" class="btn btn-{{colorState this.state}} dropdown-toggle" data-bs-toggle="dropdown" data-value="{{state}}" disabled={{noChangeRights}} type="button">
           <span class="fa {{iconState}} fa-fw"></span>
           <span class="d-none d-sm-inline">
             {{textState this.state}}
