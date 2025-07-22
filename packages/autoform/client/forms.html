@@ -21,7 +21,7 @@
                 {{#if isArray}}
                     {{>afArrayField this}}
                 {{else}}
-                    <div class="form-group" title="{{this.name}}">
+                    <div class="mb-3" title="{{this.name}}">
                         {{#unless hasNoLabel}}
                             <label class="col-form-label">{{this.label}}</label>
                         {{/unless}}
@@ -100,7 +100,7 @@
 </template>
 
 <template name="afObjectField">
-    <div class="form-group">
+    <div class="mb-3">
         {{#unless noLabel}}
             <label class="col-form-label">{{this.label}}</label>
         {{/unless}}
@@ -110,7 +110,7 @@
     </div>
 </template>
 <template name="afArrayField">
-    <div class="form-group">
+    <div class="mb-3">
         {{#unless noLabel}}
             <label class="col-form-label">{{this.label}}</label>
         {{/unless}}

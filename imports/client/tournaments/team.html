@@ -205,7 +205,7 @@
         <div class="modal-body">
           <form class="" id="participantInsertForm">
             {{#if meteorStatus.connected}}
-              <div class="form-group">
+              <div class="mb-3">
                 <label>Team</label><br />
                 {{#if equals teams.length 1}}
                   {{#each teams}}
@@ -223,12 +223,12 @@
               </div>
               {{#if selectedTeam}}
                 {{#if dabei}}
-                  <div class="form-group">
+                  <div class="mb-3">
                     <label>Ich bin bereits dabei!</label><br />
                     Aber es kann auch ein anderer Spieler hinzugefügt werden, indem dessen Name in das Feld bei Spieler eingegeben wird
                   </div>
                 {{/if}}
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <div class="col-6">
                     <label>Spieler</label><br />
                     {{selectedUser.username}}
@@ -238,17 +238,17 @@
                     {{>searchField searchType="Users" inline=true leftMenu=true class="alias-field form-control" onResultClick=selectUser notFoundContent=notFound}}
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label>Kommentar</label><br />
                   <input class="form-control" placeholder="Kommentar" name="comment" />
                 </div>
                 {{#if selectedUser}}
                   {{#unless selectedUser._id}}
-                    <div class="form-group">
+                    <div class="mb-3">
                       Willst du diesen Namen in die Liste eintragen,
                       es ist kein eigener Nutzer und nur du kannst seinen Status ändern
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                       <input type="checkbox" name="female" value="1" checked={{femaleRequired}}>
                       <label>Weiblicher Spieler</label>
                     </div>
@@ -544,19 +544,19 @@
             </div>
             {{#unless noChangeRights}}
               <div class="col-12 col-sm-4 col-md-3 form-horizontal">
-                <div class="form-group">
+                <div class="mb-3">
                   <label class="col-6 col-form-label">Platz</label>
                   <div class="col-6">
                     <input class="form-control" name="results.placement" size="3" type="number" value="{{results.placement}}">
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label class="col-6 col-form-label">Spirit</label>
                   <div class="col-6">
                     <input class="form-control" name="results.spirit" size="3" type="number" value="{{results.spirit}}">
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                   <label class="col-6 col-form-label">Beerrace</label>
                   <div class="col-6">
                     <input class="form-control" name="results.beerrace" size="3" type="number" value="{{results.beerrace}}">

@@ -14,10 +14,10 @@
                         <div class="alert alert-{{message.type}}" role="alert">{{message.msg}}</div>
                         {{/if}}
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <input type="email" class="form-control" autofocus id="loginEmail" placeholder="E-Mail Adresse" />
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <input type="password" class="form-control" id="loginPassword" placeholder="Passwort" />
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                                 ein 
                                 {{/if}}
                                 Passwort ein:
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <input type="password" name="password" id="password" class="form-control" value="">
                                     <input type="hidden" name="token" id="token" value="{{token}}">
                                 </div>
@@ -97,15 +97,15 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>Altes Passwort</label>
                                 <input type="password" name="oldPassword" id="oldPassword" class="form-control" value="">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>Neues Passwort</label>
                                 <input type="password" name="newPassword" id="newPassword" class="form-control" value="">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>Neues Passwort wiederholen</label>
                                 <input type="password" name="newPassword2" id="newPassword2" class="form-control" value="">
                             </div>

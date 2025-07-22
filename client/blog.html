@@ -26,11 +26,11 @@
                 </h5>
                 <form class="blogUpdateForm">
                     <input type="hidden" class="id" value="{{blog._id}}">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Titel</label>
                         <input class="form-control title" value="{{blog.title}}">
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Inhalt</label>
                         {{#if wysiwygLoaded}}
                             {{>ultisiteWysiwyg value=blog.content source=blog}}
@@ -38,7 +38,7 @@
                             {{>Loading}}
                         {{/if}}
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Bild</label>
                         {{#if blog._id}}
                         <div class="thumbnail" style="background-image:url('{{imageUrl imageId 120}}')">
@@ -62,7 +62,7 @@
                         <div>Um ein Bild hinzuzufügen, bitte erst den Artikel erstellenund dann editieren.</div>
                         {{/if}}
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Veröffentlichung</label>
                         <div class="radio">
                               <span class="fa fa-check-square-o fa-fw btn-public {{#if isPublic}}inactive{{/if}}"></span>
@@ -76,7 +76,7 @@
                             kann auch von nicht angemeldeten Benutzern gelesen werden
                         </div>
                     </div>
-                    <div class="form-group text-end">
+                    <div class="mb-3 text-end">
                         <button type="button" class="btn btn-light btn-cancel">
                             Abbrechen
                         </button>

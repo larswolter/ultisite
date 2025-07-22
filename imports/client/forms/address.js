@@ -28,14 +28,14 @@ Template.ultisiteAddress.onRendered(function () {
       AutoForm.getFieldValue('address.city'),
       (err, res) => {
         if (res && res.validCity) {
-          this.$('input[name="address.city"]').parents('.form-group').addClass('has-success');
+          this.$('input[name="address.city"]').parents('.mb-3').addClass('has-success');
         } else {
-          this.$('input[name="address.city"]').parents('.form-group').removeClass('has-success');
+          this.$('input[name="address.city"]').parents('.mb-3').removeClass('has-success');
         }
         if (res && res.validCountry) {
-          this.$('.address-country-search').parents('.form-group').addClass('has-success');
+          this.$('.address-country-search').parents('.mb-3').addClass('has-success');
         } else {
-          this.$('.address-country-search').parents('.form-group').removeClass('has-success');
+          this.$('.address-country-search').parents('.mb-3').removeClass('has-success');
         }
       }
     );
@@ -110,7 +110,7 @@ Template.ultisiteAddress.events({
     tmpl.$('.dropdown-street [data-bs-toggle="dropdown"]').dropdown('toggle');
   },
   'keyup input[name="address.city"], focus input[name="address.city"]': function (evt, tmpl) {
-    tmpl.$(evt.currentTarget).parents('.form-group').removeClass('has-success');
+    tmpl.$(evt.currentTarget).parents('.mb-3').removeClass('has-success');
     const value = tmpl.$(evt.currentTarget).val().trim();
     const country = AutoForm.getFieldValue('address.country', this);
     console.log('searching city:', country, value);
@@ -131,7 +131,7 @@ Template.ultisiteAddress.events({
     tmpl.$('.dropdown-city [data-bs-toggle="dropdown"]').dropdown('toggle');
   },
   'keyup .address-country-search,focus .address-country-search': function (evt, tmpl) {
-    tmpl.$('.address-country-search').parents('.form-group').removeClass('has-success');
+    tmpl.$('.address-country-search').parents('.mb-3').removeClass('has-success');
     tmpl.$('.address-country').val('');
     const value = tmpl.$(evt.currentTarget).val().trim();
     Meteor.call('getCountryNames', value, function (err, res) {
