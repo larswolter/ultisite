@@ -1,4 +1,5 @@
 import { moment } from 'meteor/momentjs:moment';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 import './user.less';
 import './userlist.html';
@@ -32,6 +33,12 @@ Template.userList.events({
     evt.preventDefault();
     UltiSite.showModal('userCreateDialog', {}, { dynamicImport: '/imports/client/user/user.js' });
   },
+  'click .action-goto-user': function (evt, tmpl) {
+    evt.preventDefault();
+    FlowRouter.go('user', {
+      _id: this._id,
+    });
+  },
   'click .action-more-users': function (evt, tmpl) {
     evt.preventDefault();
     tmpl.pagination.set(tmpl.pagination.get() + paginationEntries);
@@ -42,24 +49,24 @@ Template.userList.events({
     tmpl.pagination.set(Math.max(0, tmpl.pagination.get() - paginationEntries));
     $(window).scrollTop();
   },
-  'click .user-list-header .fa-sort': function (evt, tmpl) {
-    tmpl.$('.user-list-header .fa').removeClass().addClass('fa fa-sort');
+  'click th .fa-sort': function (evt, tmpl) {
+    tmpl.$('th .fa').removeClass().addClass('fa fa-sort');
     tmpl.$(evt.currentTarget).removeClass('fa-sort');
     tmpl.$(evt.currentTarget).addClass('fa-sort-asc');
     const sort = {};
     sort[tmpl.$(evt.currentTarget).attr('data-sort')] = -1;
     tmpl.sortOpts.set(sort);
   },
-  'click .user-list-header .fa-sort-asc': function (evt, tmpl) {
-    tmpl.$('.user-list-header .fa').removeClass().addClass('fa fa-sort');
+  'click th .fa-sort-asc': function (evt, tmpl) {
+    tmpl.$('th .fa').removeClass().addClass('fa fa-sort');
     tmpl.$(evt.currentTarget).removeClass('fa-sort');
     tmpl.$(evt.currentTarget).addClass('fa-sort-desc');
     const sort = {};
     sort[tmpl.$(evt.currentTarget).attr('data-sort')] = 1;
     tmpl.sortOpts.set(sort);
   },
-  'click .user-list-header .fa-sort-desc': function (evt, tmpl) {
-    tmpl.$('.user-list-header .fa').removeClass().addClass('fa fa-sort');
+  'click th .fa-sort-desc': function (evt, tmpl) {
+    tmpl.$('th .fa').removeClass().addClass('fa fa-sort');
     const sort = {};
     tmpl.sortOpts.set(sort);
   },
@@ -90,6 +97,7 @@ Template.userItem.helpers({
 Template.userItem.events({
   'click .action-club-state': function (evt, tmpl) {
     evt.preventDefault();
+    evt.stopPropagation();
 
     if (tmpl.data.club && tmpl.data.club.state) {
       Meteor.users.update(
@@ -115,7 +123,7 @@ Template.userItem.events({
   },
   'click .action-club-dfv': function (evt, tmpl) {
     evt.preventDefault();
-
+    evt.stopPropagation();
     if (tmpl.data.club && tmpl.data.club.dfv.includes(moment().year())) {
       Meteor.users.update(
         {
@@ -140,6 +148,7 @@ Template.userItem.events({
   },
   'click .action-debit': function (evt, tmpl) {
     evt.preventDefault();
+    evt.stopPropagation();
     UltiSite.getTextDialog({ text: this.profile.debit, header: 'Schulden eingeben (0 = keine)' }, function (text) {
       const debit = Number(text);
       if (debit > 0) {
