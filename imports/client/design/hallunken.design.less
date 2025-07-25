@@ -1,6 +1,6 @@
 
 body {
-    background-color: @hallunkenBeige;
+    background-color: @backgroundColor;
     font-size: 14px;
 }
 
@@ -17,7 +17,7 @@ body {
 .ultisite-hallunken {
     animation-name: fullSiteAnimation;
     animation-duration: 250ms;
-    background-color: @hallunkenBeige;
+    background-color: @backgroundColor;
     color: rgb(27, 63, 45);
     a, .btn-link {
         text-decoration: none;
@@ -31,7 +31,7 @@ body {
         text-decoration: underline;
     }
     hr {
-        border-color: darken(@hallunkenBeige, 20%);
+        border-color: darken(@backgroundColor, 20%);
     }
 
     .list-group-item list-group-item-action {
@@ -45,20 +45,20 @@ body {
 
     .navbar-light,
     .navbar.navbar-light.navbar-fixed-top {
-        background-color: @hallunkenGreen;
-        border: 0px solid darken(@hallunkenGreen, 20%);
+        background-color: @secondary;
+        border: 0px solid darken(@secondary, 20%);
         border-radius: 0px;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
-        color: @hallunkenOrange;
+        color: @primary;
 
         >.row>div>a {
-            background-color: @hallunkenGreen;
-            border-bottom-color: @hallunkenOrange;
+            background-color: @secondary;
+            border-bottom-color: @primary;
         }
 
         a,
         a:visited {
-            color: @hallunkenOrange;
+            color: @primary;
         }
         .btn-link:hover,
         .btn-link:focus,
@@ -66,32 +66,32 @@ body {
         a:hover,
         a:focus,
         a:active {
-            color: @hallunkenOrangeDark;
+            color: @primaryDark;
             text-decoration: underline;
         }
 
         .navbar-brand {
-            color: @hallunkenOrange;
+            color: @primary;
             font-weight: bold;
         }
 
         .navbar-brand:hover,
         .navbar-brand:focus,
         .navbar-brand:active {
-            color: @hallunkenOrangeDark;
+            color: @primaryDark;
         }
 
         .navbar-nav>li>a,
         .navbar-nav>li>a:visited {
             transition: background 200ms;
-            color: @hallunkenOrange;
-            border-bottom: 3px solid @hallunkenGreen;
+            color: @primary;
+            border-bottom: 3px solid @secondary;
         }
 
         .navbar-nav>li>a:hover,
         .navbar-nav>li>a:focus,
         .navbar-nav>li>a:active {
-            color: @hallunkenOrangeDark;
+            color: @primaryDark;
         }
 
         .dropdown-menu>.dropdown-item>a {
@@ -104,8 +104,8 @@ body {
     }
 
     .sidebar {
-        background-color: @hallunkenGreen;
-        color: @hallunkenOrange;
+        background-color: @secondary;
+        color: @primary;
 
         a.user-link {
             color: white;
@@ -120,47 +120,47 @@ body {
             background-color: transparent;
             border: 0px;
             border-radius: 0px;
-            border-top: 1px solid darken(@hallunkenGreen, 5%);
-            border-left: 3px solid @hallunkenGreen;
-            color: @hallunkenOrange;
+            border-top: 1px solid darken(@secondary, 5%);
+            border-left: 3px solid @secondary;
+            color: @primary;
         }
 
         a:hover,
         a:focus,
         a:active {
-            background-color: lighten(@hallunkenGreen, 5%);
-            color: @hallunkenOrangeDark;
+            background-color: lighten(@secondary, 5%);
+            color: @primaryDark;
         }
 
         a.active {
-            border-left: 3px solid @hallunkenOrange;
+            border-left: 3px solid @primary;
         }
     }
 
     .btn-primary,
     .bg-primary {
-        color: @hallunkenOrange;
-        background-color: @hallunkenGreen;
-        border-color: @hallunkenGreen;
+        color: @primary;
+        background-color: @secondary;
+        border-color: @secondary;
     }
 
     .btn-primary:hover {
-        background-color: lighten(@hallunkenGreen, 5%);
+        background-color: lighten(@secondary, 5%);
     }
 
     .list-group-item-info {
-        color: @hallunkenOrange;
+        color: @primary;
         background-color: white;
     }
 
     .list-group-item.active {
-        color: @hallunkenOrange;
-        background-color: @hallunkenGreen;
+        color: @primary;
+        background-color: @secondary;
     }
 
     .list-group-item.active:hover {
-        color: @hallunkenOrangeDark;
-        background-color: lighten(@hallunkenGreen, 5%);
+        color: @primaryDark;
+        background-color: lighten(@secondary, 5%);
     }
 
     .table {
@@ -168,12 +168,12 @@ body {
     }
 
     .text-muted {
-        color: darken(@hallunkenBeige, 20%);
+        color: darken(@backgroundColor, 20%);
     }
 
     .tournament-tabs {
         a.active {
-            border-bottom-color: @hallunkenOrange;
+            border-bottom-color: @primary;
         }
     }
 
