@@ -12,7 +12,7 @@ const manifest = {
     };
   }),
   background_color: (await settings()).backgroundColor,
-  theme_color: (await settings()).themeColor,
+  theme_color: (await settings()).secondaryColor,
   display: 'standalone',
   orientation: 'portrait',
 };

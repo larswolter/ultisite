@@ -84,9 +84,6 @@ Template.adminPanel.helpers({
   viewAll() {
     return UltiSite.State.get('adminPanel.viewAll');
   },
-  designs() {
-    return ['hallunken', 'default'];
-  },
   wikiPages() {
     const pages = UltiSite.State.get('wikiPageNames');
     return pages && pages.concat([{ _id: '', name: '[Keine]' }]);
@@ -123,16 +120,6 @@ Template.adminPanel.events({
       'updateSettings',
       {
         $set: val,
-      },
-      handleUpdate
-    );
-  },
-  'click .action-select-design': function (e, t) {
-    e.preventDefault();
-    Meteor.call(
-      'updateSettings',
-      {
-        $set: { design: this + '' },
       },
       handleUpdate
     );

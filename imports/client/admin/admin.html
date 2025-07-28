@@ -124,27 +124,26 @@
                 </div>
                 <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Design</label>
-                  <div class="dropdown col-sm-2">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
-                      {{settings.design}}
-
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                      {{#each designs}}
-                        <li class="dropdown-item" role="presentation">
-                          <a href="#" role="menuitem" class="action-select-design">{{this}}</a>
-                        </li>
-                      {{/each}}
-                    </ul>
-                  </div>
                   <div class="col-sm-2">
                     <input name="titleImageHeight" type="number" class="form-control" value="{{settings.titleImageHeight}}" placeholder="Titelbildhöhe" title="Höhe des Bildes über der Titelleiste">
                   </div>
+                </div>
+                <div class="mb-3 row">
+                  <label class="col-sm-2 col-form-label">Farben</label>
                   <div class="col-sm-2">
-                    <input name="backgroundColor" type="color" class="form-control" value="{{settings.backgroundColor}}" placeholder="HIntergrundfarbe" title="Hintergrundfarbe">
+                    <input name="backgroundColor" type="text" class="form-control" value="{{settings.backgroundColor}}" placeholder="Hintergrundfarbe" title="Hintergrundfarbe">
                   </div>
                   <div class="col-sm-2">
-                    <input name="themeColor" type="color" class="form-control" value="{{settings.themeColor}}" placeholder="Primärfarbe" title="Primärfarbe">
+                    <input name="primaryColor" type="text" class="form-control" value="{{settings.primaryColor}}" placeholder="Primärfarbe" title="Primärfarbe">
+                  </div>
+                  <div class="col-sm-2">
+                    <input name="primaryColorDark" type="text" class="form-control" value="{{settings.primaryColorDark}}" placeholder="Primärfarbe Dunkel" title="Primärfarbe Dunkel">
+                  </div>
+                  <div class="col-sm-2">
+                    <input name="secondaryColor" type="text" class="form-control" value="{{settings.secondaryColor}}" placeholder="Sekundärfarbe" title="Sekundärfarbe">
+                  </div>
+                  <div class="col-sm-2">
+                    <input name="secondaryColorDark" type="text" class="form-control" value="{{settings.secondaryColorDark}}" placeholder="Sekundärfarbe Dunkel" title="Sekundärfarbe Dunkel">
                   </div>
                 </div>
                 <div class="mb-3 row">

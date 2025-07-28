@@ -14,7 +14,7 @@ body {
     }
 }
 
-.ultisite-hallunken {
+.ultisite-root {
     animation-name: fullSiteAnimation;
     animation-duration: 250ms;
     background-color: @backgroundColor;
@@ -31,7 +31,7 @@ body {
         text-decoration: underline;
     }
     hr {
-        border-color: darken(@backgroundColor, 20%);
+        border-color: @backgroundColorDark;
     }
 
     .list-group-item list-group-item-action {
@@ -46,7 +46,7 @@ body {
     .navbar-light,
     .navbar.navbar-light.navbar-fixed-top {
         background-color: @secondary;
-        border: 0px solid darken(@secondary, 20%);
+        border: 0px solid @secondaryDark;
         border-radius: 0px;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
         color: @primary;
@@ -120,7 +120,7 @@ body {
             background-color: transparent;
             border: 0px;
             border-radius: 0px;
-            border-top: 1px solid darken(@secondary, 5%);
+            border-top: 1px solid @secondary;
             border-left: 3px solid @secondary;
             color: @primary;
         }
@@ -128,7 +128,7 @@ body {
         a:hover,
         a:focus,
         a:active {
-            background-color: lighten(@secondary, 5%);
+            background-color: @secondary;
             color: @primaryDark;
         }
 
@@ -145,7 +145,7 @@ body {
     }
 
     .btn-primary:hover {
-        background-color: lighten(@secondary, 5%);
+        background-color: @secondary;
     }
 
     .list-group-item-info {
@@ -160,7 +160,7 @@ body {
 
     .list-group-item.active:hover {
         color: @primaryDark;
-        background-color: lighten(@secondary, 5%);
+        background-color: @secondary;
     }
 
     .table {
@@ -168,7 +168,7 @@ body {
     }
 
     .text-muted {
-        color: darken(@backgroundColor, 20%);
+        color: @backgroundColorDark;
     }
 
     .tournament-tabs {
