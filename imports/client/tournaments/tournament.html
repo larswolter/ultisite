@@ -71,10 +71,10 @@
             <div class="card">
                 <div class="card-header tournament-heading">
                     {{#if currentUser}}
-                        <div class="d-none d-sm-block d-sm-none float-end">
+                        <div class="d-none d-md-block d-xs-none float-end">
                             <div>
                                 <button class="btn btn-{{#if teamObjects}}default{{else}}primary{{/if}} action-add-team" title="Team anlegen" type="button">
-                                    <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
+                                    <span class="fa fa-group-add"></span>
                                     <span class=""> Team anlegen</span>
                                 </button>
                                 <button class="btn btn-light action-edit-tournament" title="Turnier editieren" type="button">
@@ -95,7 +95,7 @@
                                 <ul class="dropdown-menu dropdown-menu-end" role="menu">
                                     <li class="dropdown-item">
                                         <a title="Team anlegen" class="action-add-team">
-                                            <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub> Team anlegen
+                                            <span class="fa fa-group-add"></span> Team anlegen
                                         </a>
                                     </li>
                                     <li class="dropdown-item">
@@ -291,7 +291,7 @@
                         </button>
                     {{else}}
                         <button class="d-block d-md-none btn btn-light btn-floating action-add-team" title="Team anlegen" type="button">
-                            <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
+                            <span class="fa fa-group-add"></span>
                         </button>
                     {{/if}}
                 {{/if}}
