@@ -2,7 +2,7 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 FlowRouter.decodeQueryParamsOnce = true;
 if (Meteor.isClient) {
   Meteor.startup(() => {
-    if (FlowRouter.current().queryParams.modalDialog) {
+    if (FlowRouter.current().queryParams?.modalDialog) {
       FlowRouter.go(FlowRouter.current().route.name);
     }
     Meteor.defer(() => {
@@ -22,7 +22,7 @@ if (Meteor.isClient) {
   ]);
   FlowRouter.triggers.exit([
     function (param) {
-      if (param.queryParams && param.queryParams.modalDialog) {
+      if (param.queryParams && param.queryParams?.modalDialog) {
         UltiSite.hideModal();
       }
     },

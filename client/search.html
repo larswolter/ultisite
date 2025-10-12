@@ -6,13 +6,13 @@
         <span class="{{#if icon}}{{icon}}{{else}}fa fa-search{{/if}}"></span> {{buttonText}}
       </button>
 		{{else}}
-      <input autofocus="autofocus" type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
+      <input autofocus="autofocus" type="text" class="search-field form-control {{class}}" placeholder="{{placeHolder}}" value="{{value}}">
 		{{/if}}
 		<ul class="{{#unless inlineResults}}dropdown-menu {{#unless leftMenu}}dropdown-menu-end{{/unless}}{{else}}list-group{{/unless}}" role="menu">
 			{{#if equals type "button"}}
 				<li class="dropdown-item" role="presentation">
 					<div class="input-group">
-						<input autofocus="autofocus" type="text" class="search-field form-control fa {{class}}" placeholder="&#xf002; {{placeHolder}}" value="{{value}}">
+						<input autofocus="autofocus" type="text" class="search-field form-control {{class}}" placeholder="{{placeHolder}}" value="{{value}}">
 					</div>
 				</li>
 			{{/if}}
