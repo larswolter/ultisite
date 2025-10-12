@@ -1,31 +1,33 @@
 import { moment } from 'meteor/momentjs:moment';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { CronJob } from 'cron';
+import { textState, Tournaments } from '../common/lib/ultisite';
+import { participantList } from '../common/teams';
 
-UltiSite.Tournaments.before.update(function (userId, doc, fieldNames, modifier, options) {
+Tournaments.before.update(function (userId, doc, fieldNames, modifier, options) {
   modifier.$set = modifier.$set || {};
   modifier.$set.lastChange = new Date();
 });
 
-UltiSite.Tournaments.before.insert(function (userId, doc) {
+Tournaments.before.insert(function (userId, doc) {
   doc.lastChange = new Date();
   doc.participants = [];
 });
 
-UltiSite.getTeam = function (id) {
-  const tournament = UltiSite.Tournaments.findOne({ 'teams._id': id });
+export const getTeam = async function(id) {
+  const tournament = await Tournaments.findOneAsync({ 'teams._id': id });
   return tournament && tournament.teams[id];
 };
 
-UltiSite.getTournamentsStates = function (userId) {
+export const getTournamentsStates = async function(userId) {
   const teams = [];
-  UltiSite.Tournaments.find(
+  await Tournaments.find(
     {
       date: { $gte: new Date() },
       participants: { $elemMatch: { user: userId, state: { $gt: 50 } } },
     },
     { sort: { date: 1 } }
-  ).forEach((tournament) => {
+  ).forEachAsync((tournament) => {
     tournament.participants
       .filter((p) => p.user === userId)
       .forEach((part) => {
@@ -35,7 +37,7 @@ UltiSite.getTournamentsStates = function (userId) {
           name: tournament.name,
           date: moment(tournament.date).format('DD.MM.'),
           city: tournament.address && tournament.address.city,
-          state: UltiSite.textState(part.state),
+          state: textState(part.state),
           comment: part.comment,
           teamName: team.name,
           teamState: team.state,
@@ -51,16 +53,16 @@ UltiSite.getTournamentsStates = function (userId) {
 };
 
 Meteor.methods({
-  offlineTournamentCheck(ids) {
+  async offlineTournamentCheck(ids) {
     check(ids, [String]);
-    const existing = UltiSite.Tournaments.find({ _id: { $in: ids } }).map((t) => t._id);
+    const existing = await Tournaments.find({ _id: { $in: ids } }).mapAsync((t) => t._id);
     return _.without(ids, existing);
   },
-  myTournamentStates() {
-    return UltiSite.getTournamentsStates(this.userId);
+  async myTournamentStates() {
+    return await getTournamentsStates(this.userId);
   },
-  myTournaments() {
-    const ids = UltiSite.Tournaments.find(
+  async myTournaments() {
+    const ids = await Tournaments.find(
       {
         date: {
           $gte: moment().toDate(),
@@ -68,11 +70,11 @@ Meteor.methods({
         $or: [{ 'teams.clubTeam': true }, { 'participants.user': this.userId }],
       },
       { fields: { _id: 1 } }
-    ).map(function (t) {
+    ).mapAsync(function (t) {
       return t._id;
     });
     ids.concat(
-      UltiSite.Tournaments.find(
+      await Tournaments.find(
         {
           tournamentDate: {
             $lte: moment().toDate(),
@@ -85,20 +87,19 @@ Meteor.methods({
           limit: 5,
           fields: { _id: 1 },
         }
-      ).map(function (t) {
+      ).mapAsync(function (t) {
         return t._id;
       })
     );
     return ids;
   },
-  addTeam(teamData, tournamentId) {
+  async addTeam(teamData, tournamentId) {
     check(teamData, Object);
     check(tournamentId, String);
     if (!this.userId) {
       throw new Meteor.Error('not-logged-in', 'Nicht angemeldet');
     }
-    const userId = this.userId;
-    const tourney = UltiSite.Tournaments.findOne(tournamentId);
+    const tourney = await Tournaments.findOneAsync(tournamentId);
     if (!tourney) {
       throw new Meteor.Error('does-not-exist', `Das Turnier ${tournamentId} existiert nicht`);
     }
@@ -119,26 +120,26 @@ Meteor.methods({
     } else {
       teamData.clubTeam = false;
       teamData.responsible = this.userId;
-      teamData.responsibleName = Meteor.users.findOne(this.userId).username;
+      teamData.responsibleName = (await Meteor.users.findOneAsync(this.userId)).username;
     }
     teamData._id = Random.id();
     console.log(`Created Team ${teamData._id} `);
-    UltiSite.Tournaments.update(tournamentId, {
+    await Tournaments.updateAsync(tournamentId, {
       $set: { lastChange: new Date() },
       $push: { teams: teamData },
     });
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'tournament',
       _id: tournamentId,
       text: `Neues Team ${teamData.name}`,
     });
     return teamData._id;
   },
-  tournamentUpdateInfos(id, infoId, content) {
+  async tournamentUpdateInfos(id, infoId, content) {
     check(id, String);
     check(infoId, String);
     check(content, String);
-    UltiSite.Tournaments.update(
+    await Tournaments.updateAsync(
       {
         _id: id,
         'description._id': infoId,
@@ -150,17 +151,17 @@ Meteor.methods({
         },
       }
     );
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'tournament',
       _id: id,
       text: `Neue Infos zum Turnier: ${content.substr(0, 20)}`,
     });
   },
-  tournamentUpdateReport(id, infoId, content) {
+  async tournamentUpdateReport(id, infoId, content) {
     check(id, String);
     check(infoId, String);
     check(content, String);
-    UltiSite.Tournaments.update(
+    await Tournaments.updateAsync(
       {
         _id: id,
         'reports._id': infoId,
@@ -173,10 +174,10 @@ Meteor.methods({
       }
     );
   },
-  tournamentAddReport(id, report) {
+  async tournamentAddReport(id, report) {
     check(id, String);
     check(report, Object);
-    UltiSite.Tournaments.update(
+    await Tournaments.updateAsync(
       {
         _id: id,
       },
@@ -192,14 +193,14 @@ Meteor.methods({
         },
       }
     );
-    Meteor.call('addEvent', {
+    await Meteor.callAsync('addEvent', {
       type: 'tournament',
       _id: id,
       text: 'Neuer Bericht zum Turnier',
     });
   },
-  tournamentCoordinates() {
-    return UltiSite.Tournaments.find(
+  async tournamentCoordinates() {
+    return await Tournaments.find(
       {
         $and: [
           {
@@ -224,83 +225,82 @@ Meteor.methods({
           date: 1,
         },
       }
-    ).fetch();
+    ).fetchAsync();
   },
 });
 
-Meteor.startup(function () {
-  UltiSite.teamDrawings = function () {
-    UltiSite.Tournaments.find({
-      date: {
-        $gte: moment().startOf('day').toDate(),
-      },
-      'teams.drawingResult': { $exists: false },
-      'teams.drawingDate': {
-        $lte: moment().endOf('day').toDate(),
-      },
-    }).forEach(function (tournament) {
-      tournament.teams.forEach((team) => {
-        if (team.drawingResult) {
-          return;
-        }
-        if (moment(team.drawingDate).isAfter(moment().startOf('day'))) {
-          return;
-        }
-        const participants = tournament.participants.filter((p) => p.team === team._id);
+export const teamDrawings = async function() {
+  await Tournaments.find({
+    date: {
+      $gte: moment().startOf('day').toDate(),
+    },
+    'teams.drawingResult': { $exists: false },
+    'teams.drawingDate': {
+      $lte: moment().endOf('day').toDate(),
+    },
+  }).forEachAsync(function (tournament) {
+    tournament.teams.forEach(async team => {
+      if (team.drawingResult) {
+        return;
+      }
+      if (moment(team.drawingDate).isAfter(moment().startOf('day'))) {
+        return;
+      }
+      const participants = tournament.participants.filter((p) => p.team === team._id);
 
-        const partCount = participants.length;
-        let numbers = [];
-        const result = {
-          date: new Date(),
-        };
-        for (let i = 1; i <= partCount; i += 1) {
-          numbers[i - 1] = i;
-        }
-        const orderedParticipants = _.sortBy(_.sortBy(participants, 'safeStateDate'), (p) => 100 - p.state);
+      const partCount = participants.length;
+      let numbers = [];
+      const result = {
+        date: new Date(),
+      };
+      for (let i = 1; i <= partCount; i += 1) {
+        numbers[i - 1] = i;
+      }
+      const orderedParticipants = _.sortBy(_.sortBy(participants, 'safeStateDate'), (p) => 100 - p.state);
 
-        orderedParticipants.forEach((part, idx) => {
-          const selection = (Math.random() * numbers.length).toFixed();
-          let pos = numbers[selection];
-          numbers = _.without(numbers, pos);
-          if (idx < team.maxPlayers / 2) {
-            pos = 0;
-          }
-          if (part.state !== 100) {
-            pos = 1000;
-          }
-          UltiSite.Tournaments.update(
-            { _id: tournament._id, 'participants.user': part.user },
-            {
-              $set: { 'participants.$.drawing': pos },
-            }
-          );
-          result[part.user.toCamelCase()] = pos;
-        });
-        UltiSite.Tournaments.update(
-          { _id: tournament._id, 'teams._id': team._id },
+      orderedParticipants.forEach(async (part, idx) => {
+        const selection = (Math.random() * numbers.length).toFixed();
+        let pos = numbers[selection];
+        numbers = _.without(numbers, pos);
+        if (idx < team.maxPlayers / 2) {
+          pos = 0;
+        }
+        if (part.state !== 100) {
+          pos = 1000;
+        }
+        await Tournaments.updateAsync(
+          { _id: tournament._id, 'participants.user': part.user },
           {
-            $set: {
-              'teams.$.drawingResult': result,
-              lastChange: new Date(),
-            },
+            $set: { 'participants.$.drawing': pos },
           }
         );
-        const drawnParticipants = UltiSite.participantList(team._id)
-          .map((p) => p.username)
-          .join(', ');
-
-        console.log(`finished drawing:${drawnParticipants}`);
-        if (team.maxPlayers < partCount * 2) {
-          Meteor.call('addEvent', {
-            type: 'tournament',
-            _id: tournament._id,
-            text: `Auslosung bei ${team.name}:${drawnParticipants}`,
-          });
-        }
+        result[part.user.toCamelCase()] = pos;
       });
-    });
-  };
+      await Tournaments.updateAsync(
+        { _id: tournament._id, 'teams._id': team._id },
+        {
+          $set: {
+            'teams.$.drawingResult': result,
+            lastChange: new Date(),
+          },
+        }
+      );
+      const drawnParticipants = await participantList(team._id)
+        .map((p) => p.username)
+        .join(', ');
 
-  const job = new CronJob('0 17 3 * * *', Meteor.bindEnvironment(UltiSite.teamDrawings), null, false, 'Europe/Berlin');
+      console.log(`finished drawing:${drawnParticipants}`);
+      if (team.maxPlayers < partCount * 2) {
+        await Meteor.callAsync('addEvent', {
+          type: 'tournament',
+          _id: tournament._id,
+          text: `Auslosung bei ${team.name}:${drawnParticipants}`,
+        });
+      }
+    });
+  });
+};
+Meteor.startup(function () {
+  const job = new CronJob('0 17 3 * * *', Meteor.bindEnvironment(teamDrawings), null, false, 'Europe/Berlin');
   job.start();
 });

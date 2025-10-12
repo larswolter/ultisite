@@ -6,8 +6,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="myModalLabel">Auf der Seite anmelden</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span class="fa fa-close"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
                     <div class="modal-body">
@@ -15,10 +14,10 @@
                         <div class="alert alert-{{message.type}}" role="alert">{{message.msg}}</div>
                         {{/if}}
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <input type="email" class="form-control" autofocus id="loginEmail" placeholder="E-Mail Adresse" />
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <input type="password" class="form-control" id="loginPassword" placeholder="Passwort" />
                         </div>
                     </div>
@@ -30,7 +29,7 @@
                                 {{#unless equals settings.siteRegistration 'invitation'}}
                                     <button type="button" class="btn btn-link btn-sm btn-register">Registrieren</button>
                                 {{/unless}}
-                                <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Abbrechen</button>
                                 <button type="submit" class="btn btn-primary {{#unless meteorStatus.connected}}disabled{{/unless}}" id="loginButton">Anmelden</button>
                             {{else}}
                                 <span class="fa fa-spin fa-spinner fa-3x"></span>
@@ -58,8 +57,7 @@
                             <h5 class="modal-title" id="myModalLabel">
                                     Passwort {{#if equals type "reset"}}zurück{{/if}}setzen
                             </h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span class="fa fa-close"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             </button>
                         </div>
                         <form class="form" id="password-reset-form">
@@ -71,7 +69,7 @@
                                 ein 
                                 {{/if}}
                                 Passwort ein:
-                                <div class="form-group">
+                                <div class="mb-3">
                                     <input type="password" name="password" id="password" class="form-control" value="">
                                     <input type="hidden" name="token" id="token" value="{{token}}">
                                 </div>
@@ -95,26 +93,25 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="myModalLabel">Passwort Ändern</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span class="fa fa-close"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>Altes Passwort</label>
                                 <input type="password" name="oldPassword" id="oldPassword" class="form-control" value="">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>Neues Passwort</label>
                                 <input type="password" name="newPassword" id="newPassword" class="form-control" value="">
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label>Neues Passwort wiederholen</label>
                                 <input type="password" name="newPassword2" id="newPassword2" class="form-control" value="">
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Abbrechen</button>
                             <button type="submit" class="btn btn-primary" id="setPassword">Passwort Ändern</button>
                         </div>
                     </div>

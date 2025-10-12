@@ -15,7 +15,7 @@
                         </div>
                         {{#if currentUser}}
                         <div class="col-4">
-                            <button class="btn btn-light pull-right action-new"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-light float-end action-new"><i class="fa fa-plus"></i></button>
                         </div>
                         {{/if}}
 
@@ -37,12 +37,11 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span class="fa fa-close"></span>
-                    </button>
                     <h5 class="modal-title">
                         Training {{#if this._id}}bearbeiten{{else}}anlegen{{/if}}
                     </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
                 </div>
                 {{#autoForm schema=practiceSchema doc=this id="practiceDialogForm"}}
                     <div class="modal-body">
@@ -105,7 +104,7 @@
                       </fieldset>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">Abbrechen</button>
+                      <button type="button" class="btn btn-light" data-bs-dismiss="modal" aria-label="Close">Abbrechen</button>
                       <button type="submit" class="btn btn-primary">Speichern</button>
                     </div>
                 {{/autoForm}}
@@ -175,7 +174,7 @@
     <div class="modal fade" id="practice-dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <button type="button" class="btn btn-light pull-right" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn btn-light float-end" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 {{#with selPractice}}

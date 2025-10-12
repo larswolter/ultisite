@@ -1,12 +1,13 @@
 import sharp from 'sharp';
+import { Images } from '../common/lib/ultisite';
 
-WebApp.connectHandlers.use('/_image', (req, resp) => {
+WebApp.connectHandlers.use('/_image', async (req, resp) => {
   if (!req.query.imageId) {
     resp.writeHead(404);
     resp.end('Param imageId required');
     return;
   }
-  const image = UltiSite.Images.findOne({ _id: req.query.imageId, base64: { $exists: true } });
+  const image = await Images.findOneAsync({ _id: req.query.imageId, base64: { $exists: true } });
   if (!image) {
     resp.writeHead(404);
     resp.end('image not found');
@@ -32,11 +33,11 @@ WebApp.connectHandlers.use('/_image', (req, resp) => {
         .toFormat('jpeg')
         .toBuffer()
         .then(
-          Meteor.bindEnvironment((data) => {
+          Meteor.bindEnvironment(async data => {
             if (scale[0] + scale[1] < 400 || scale[0] + scale[1] === 1600) {
               const thumb = {};
               thumb['thumb.' + size] = data.toString('base64');
-              UltiSite.Images.update(image._id, { $set: thumb });
+              await Images.updateAsync(image._id, { $set: thumb });
             }
             resp.setHeader('Content-Length', data.length + '');
             resp.writeHead(200);

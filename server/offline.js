@@ -4,6 +4,7 @@ import { WebApp } from 'meteor/webapp';
 
 import { moment } from 'meteor/momentjs:moment';
 import crypto from 'crypto';
+import { offlineCollections, Tournaments } from '../common/lib/ultisite';
 
 const sha256 = crypto.createHash('sha256');
 
@@ -29,7 +30,7 @@ const sha256 = crypto.createHash('sha256');
 const clientHashes = new Mongo.Collection(null);
 /*
 Meteor.startup(function () {
-  UltiSite.Tournaments.find().observe({
+  Tournaments.find().observe({
     changed(doc) {
       clientHashes.update({ 'docs.i': doc._id }, { $set: { 'docs.$.h': null } }, { multi: true });
     },
@@ -45,25 +46,25 @@ const getOfflineSyncDate = function () {
 
 const offlineForce = moment();
 
-const refreshDownloadToken = function (userId) {
-  Meteor.users.update(userId, {
+const refreshDownloadToken = async function (userId) {
+  await Meteor.users.updateAsync(userId, {
     $set: {
       'profile.downloadToken': Random.id(40),
     },
   });
 };
 
-Accounts.onLogin(function (attempt) {
-  refreshDownloadToken(attempt.user && attempt.user._id);
+Accounts.onLogin(async function (attempt) {
+  await refreshDownloadToken(attempt.user && attempt.user._id);
 });
-Accounts.onLogout(function (attempt) {
-  refreshDownloadToken(attempt.user && attempt.user._id);
+Accounts.onLogout(async function (attempt) {
+  await refreshDownloadToken(attempt.user && attempt.user._id);
 });
 
-Meteor.publish('lastChangedElements', function (modifiedAfter) {
+Meteor.publish('lastChangedElements', async function (modifiedAfter) {
   if (!this.userId) return this.ready();
 
-  return UltiSite.offlineCollections.map((col) => {
+  return offlineCollections.map((col) => {
     if (modifiedAfter && modifiedAfter[col.name]) {
       return UltiSite[col.name].find(
         {
@@ -79,9 +80,9 @@ Meteor.publish('lastChangedElements', function (modifiedAfter) {
 });
 
 Meteor.methods({
-  ping() {
+  async ping() {
     if (this.connection.httpHeaders && this.connection.httpHeaders['save-data'] === 'on') {
-      Meteor.users.update(
+      await Meteor.users.updateAsync(
         {
           _id: this.userId,
           $or: [{ 'connection.saveData': { $exists: false } }, { 'connection.saveData': false }],
@@ -89,7 +90,7 @@ Meteor.methods({
         { $set: { 'connection.saveData': true } }
       );
     } else {
-      Meteor.users.update(
+      await Meteor.users.updateAsync(
         {
           _id: this.userId,
           $or: [{ 'connection.saveData': { $exists: false } }, { 'connection.saveData': true }],
@@ -98,15 +99,15 @@ Meteor.methods({
       );
     }
   },
-  offlineCheckForNew(since) {
+  async offlineCheckForNew(since) {
     check(since, Date);
     const info = {
-      tournamentCount: UltiSite.Tournaments.find({ date: getOfflineSyncDate() }, { sort: { date: -1 } }).count(),
+      tournamentCount: await Tournaments.find({ date: getOfflineSyncDate() }, { sort: { date: -1 } }).countAsync(),
     };
     if (offlineForce.isAfter(moment(since))) {
       info.mustSync = true;
     } else {
-      const tChange = UltiSite.Tournaments.find({ lastChange: { $gte: since } }).count();
+      const tChange = await Tournaments.find({ lastChange: { $gte: since } }).countAsync();
       if (tChange > 3) {
         info.mustSync = true;
       }
@@ -115,13 +116,13 @@ Meteor.methods({
   },
 });
 
-WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => {
+WebApp.connectHandlers.use('/_rest/offlineTournaments.json', async (req, response) => {
   if (!req.query.accessToken) {
     response.writeHead(403);
     response.end('Missing accessToken');
     return;
   }
-  const user = Meteor.users.findOne({ 'profile.downloadToken': req.query.accessToken });
+  const user = await Meteor.users.findOneAsync({ 'profile.downloadToken': req.query.accessToken });
   if (!user) {
     response.writeHead(403);
     response.end('Invalid accessToken');
@@ -136,7 +137,7 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
     teamSearch._lastChange = { $gte: moment(req.query.since).toDate() };
   }
   const offline = {
-    tournaments: UltiSite.Tournaments.find(tournamentSearch, { sort: { date: -1 } }).fetch(),
+    tournaments: await Tournaments.find(tournamentSearch, { sort: { date: -1 } }).fetchAsync(),
     removed: [],
   };
 
@@ -145,17 +146,17 @@ WebApp.connectHandlers.use('/_rest/offlineTournaments.json', (req, response) => 
   response.end(content);
 });
 Meteor.methods({
-  clientData() {
+  async clientData() {
     return WebApp.clientPrograms;
   },
 });
 
 WebApp.connectHandlers.use('/sw.js', (req, response) => {
   // set Timeout to ensure that the manifest ist build
-  Meteor.setTimeout(() => {
+  Meteor.setTimeout(async () => {
     const cr = WebApp.categorizeRequest(req);
 
-    let serviceWorker = Assets.getText('serviceWorker.js');
+    let serviceWorker = await Assets.getTextAsync('serviceWorker.js');
     const arch = isModern(cr.browser) ? 'web.browser' : 'web.browser.legacy';
 
     const clientHash = WebApp.clientPrograms[arch].version;

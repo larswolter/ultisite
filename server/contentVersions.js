@@ -1,23 +1,31 @@
-Meteor.methods({
-    storeContentVersion: function (id, content) {
-        var lastEntry = UltiSite.ContentVersions.findOne({
-            associated: id
-        }, {
-            order: {
-                date: -1
-            }
-        });
+import { moment } from 'meteor/momentjs:moment';
+import { ContentVersions } from '../common/lib/ultisite';
 
-        if (lastEntry && (lastEntry.author === Meteor.userId()))
-            if (moment().diff(lastEntry.date, "minutes") < 60) {
-                console.log("ignoring this version, " + lastEntry.author + " saved " + moment().diff(lastEntry.date, "minutes") + " ago");
-                return;
-            }
-        UltiSite.ContentVersions.insert({
-            associated: id,
-            author: Meteor.userId(),
-            date: new Date(),
-            content: content
-        });
-    }
+Meteor.methods({
+  storeContentVersion: async function(id, content) {
+    var lastEntry = await ContentVersions.findOneAsync(
+      {
+        associated: id,
+      },
+      {
+        order: {
+          date: -1,
+        },
+      }
+    );
+
+    if (lastEntry && lastEntry.author === Meteor.userId())
+      if (moment().diff(lastEntry.date, 'minutes') < 60) {
+        console.log(
+          'ignoring this version, ' + lastEntry.author + ' saved ' + moment().diff(lastEntry.date, 'minutes') + ' ago'
+        );
+        return;
+      }
+    await ContentVersions.insertAsync({
+      associated: id,
+      author: Meteor.userId(),
+      date: new Date(),
+      content: content,
+    });
+  },
 });

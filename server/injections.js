@@ -1,13 +1,26 @@
 import { onPageLoad } from 'meteor/server-render';
 import handlebars from 'handlebars';
+import { settings, WikiPages } from '../common/lib/ultisite';
 
-onPageLoad((sink) => {
-  sink.appendToHead(`<style type="text/css">@media(min-width: 768px) {#serverRendered .page-content {  padding-top: ${Number(UltiSite.settings().titleImageHeight) + 90}px; } }</style>`);
+onPageLoad(async (sink) => {
+  const set = await settings();
+  const colorProps = [];
+  if(set.secondaryColor)colorProps.push(`--secondary-color: ${set.secondaryColor};`);
+  if(set.primaryColor)colorProps.push(`--primary-color: ${set.primaryColor};`);
+  if(set.backgroundColor)colorProps.push(`--background-color: ${set.backgroundColor};`);
+  sink.appendToHead(
+    `<style type="text/css">@media(min-width: 768px) {
+      :root {
+        ${colorProps.join('\n')}
+      }
 
-  const wiki = UltiSite.WikiPages.findOne(UltiSite.settings().wikiStart);
-  const layout = handlebars.compile(Assets.getText('mail-templates/static-layout.html'));
+      #serverRendered .page-content {  padding-top: ${Number((await settings()).titleImageHeight) + 90}px; } }</style>`
+  );
+
+  const wiki = await WikiPages.findOneAsync((await settings()).wikiStart);
+  const layout = handlebars.compile(await Assets.getTextAsync('mail-templates/static-layout.html'));
   const context = {
-    settings: UltiSite.settings(),
+    settings: await settings(),
     content: wiki && wiki.content,
   };
 

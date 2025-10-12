@@ -1,6 +1,6 @@
 import { moment } from 'meteor/momentjs:moment';
 import './practiceView.html';
-import './practice.scss';
+import './practice.less';
 
 const mapImageUrl = new ReactiveVar();
 
@@ -47,7 +47,10 @@ Template.practice.helpers({
     return `${this.duration} Minuten`;
   },
   planned() {
-    const planned = _.find(this.planned || [], (p) => p.day === moment().format('DD.MM.') || p.day === moment().add(1, 'day').format('DD.MM.'));
+    const planned = _.find(
+      this.planned || [],
+      (p) => p.day === moment().format('DD.MM.') || p.day === moment().add(1, 'day').format('DD.MM.')
+    );
     if (planned && planned.yes > 3) {
       return planned;
     }

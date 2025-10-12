@@ -1,41 +1,39 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-    "files.exclude": {
-        ".meteor/local": true,
-        "**/node_modules": true,
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true
-    },
-    "files.watcherExclude": {
-        ".meteor/local": true,
-        "**/node_modules": true,
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true
-    },
-    "search.exclude": {
-        ".meteor/local": true,
-        "**/node_modules": true
-    },
-    // Gibt an, ob die automatische Aktualisierung aktiviert ist.
-	"git.autofetch": false,
-    "git.autorefresh": false,
-    "html.format.wrapLineLength": 0,
-    // Format and indent {{#foo}} and {{/foo}}.
-    "html.format.indentHandlebars": true,
-    "eslint.autoFixOnSave": true,
-    "javascript.validate.enable": false,
-    "editor.formatOnSave": true,
-    "javascript.format.enable": true,
-      "editor.tabSize": 2,
-    "files.associations": {
-        "*.html": "handlebars"
-    },
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-    }
-
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true
+  },
+  "files.watcherExclude": {
+    ".meteor/local": true,
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true
+  },
+  "search.exclude": {
+    ".meteor/local": true,
+    "**/node_modules": true
+  },
+  // Gibt an, ob die automatische Aktualisierung aktiviert ist.
+  "git.autofetch": false,
+  "git.autorefresh": false,
+  "html.format.wrapLineLength": 0,
+  // Format and indent {{#foo}} and {{/foo}}.
+  "html.format.indentHandlebars": true,
+  "eslint.autoFixOnSave": true,
+  "javascript.validate.enable": false,
+  "editor.formatOnSave": false,
+  "javascript.format.enable": true,
+  "editor.tabSize": 2,
+  "files.associations": {
+    "*.html": "handlebars"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.formatOnSaveMode": "modifications"
 }

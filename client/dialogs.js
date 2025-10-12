@@ -1,3 +1,4 @@
+import bootstrap from 'bootstrap';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 let getTextCallback;
@@ -34,6 +35,7 @@ UltiSite.showModal = function (templateName, data, options) {
     const view = Blaze.renderWithData(Template[templateName], data, parentNode);
     const domRange = view._domrange;
     const modal = domRange.$('.modal');
+    console.log('showingMOdal:', { modal, domRange, templateName });
     modal.on('shown.bs.modal', function (event) {
       modal.find('[autofocus]').focus();
     });
@@ -44,8 +46,9 @@ UltiSite.showModal = function (templateName, data, options) {
         window.history.back();
       }
     });
+    new bootstrap.Modal(modal, options || {}).show();
+
     UltiSite.modalDialogTemplate = modal;
-    modal.modal(options || {});
     FlowRouter.go(FlowRouter.current().path, {}, Object.assign({ modalDialog: 1 }, FlowRouter.current().queryParams));
   }
 };

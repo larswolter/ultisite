@@ -8,11 +8,11 @@
                             <strong>Aktuelles</strong>
                             {{#each startPageTemplates}}
                                 {{#unless equals @index 0}}
-                                    <span class="pull-right">
+                                    <span class="float-end">
                                         &nbsp;/&nbsp; 
                                     </span>
                                 {{/unless}}
-                                <a href="{{pathFor route=this.route}}" class="pull-right">
+                                <a href="{{pathFor route=this.route}}" class="float-end">
                                     {{this.name}}
                                 </a>
                             {{/each}}
@@ -34,6 +34,7 @@
                     {{#with settings}} 
                         {{>wikipage pageName=this.wikiStart}} 
                     {{/with}}
+                    <div>&nbsp;</div>
                     {{>blogsStart}}
                 </div>
                 <div class="col-lg-4 col-md-5 col-sm-6 col-12 start-content">
@@ -59,7 +60,7 @@
 <template name="eventList">
     <div class="card">
         <div class="card-header">
-            <a href="/tournaments" class="pull-right">
+            <a href="/tournaments" class="float-end">
                 Turniere
             </a>
             <strong>Ereignisse</strong>

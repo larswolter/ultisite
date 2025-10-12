@@ -1,6 +1,5 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
 import './address.html';
-import './address.scss';
 
 Template.ultisiteAddress.onCreated(function () {
   console.log('Address:', this);
@@ -14,25 +13,32 @@ Template.ultisiteAddress.onCreated(function () {
       this.geocoords.set(AutoForm.getFieldValue('address.geocoords'));
       if (AutoForm.getFieldValue('address.street')) {
         this.zoom.set(14);
-      } else if (AutoForm.getFieldValue('address.city')) { this.zoom.set(11); }
+      } else if (AutoForm.getFieldValue('address.city')) {
+        this.zoom.set(11);
+      }
     }
   });
 });
 Template.ultisiteAddress.onRendered(function () {
   this.autorun(() => {
     console.log('Checking Address:', AutoForm.getFieldValue('address.country'), AutoForm.getFieldValue('address.city'));
-    Meteor.call('checkAddress', AutoForm.getFieldValue('address.country'), AutoForm.getFieldValue('address.city'), (err, res) => {
-      if (res && res.validCity) {
-        this.$('input[name="address.city"]').parents('.form-group').addClass('has-success');
-      } else {
-        this.$('input[name="address.city"]').parents('.form-group').removeClass('has-success');
+    Meteor.call(
+      'checkAddress',
+      AutoForm.getFieldValue('address.country'),
+      AutoForm.getFieldValue('address.city'),
+      (err, res) => {
+        if (res && res.validCity) {
+          this.$('input[name="address.city"]').parents('.mb-3').addClass('has-success');
+        } else {
+          this.$('input[name="address.city"]').parents('.mb-3').removeClass('has-success');
+        }
+        if (res && res.validCountry) {
+          this.$('.address-country-search').parents('.mb-3').addClass('has-success');
+        } else {
+          this.$('.address-country-search').parents('.mb-3').removeClass('has-success');
+        }
       }
-      if (res && res.validCountry) {
-        this.$('.address-country-search').parents('.form-group').addClass('has-success');
-      } else {
-        this.$('.address-country-search').parents('.form-group').removeClass('has-success');
-      }
-    });
+    );
   });
 });
 
@@ -68,20 +74,26 @@ Template.ultisiteAddress.events({
     const city = AutoForm.getFieldValue('address.city');
     if (country && city && tmpl.$(evt.currentTarget).val()) {
       const url = 'http://nominatim.openstreetmap.org/search';
-      HTTP.get(url, {
-        params: {
-          country: country.toLowerCase(),
-          city: city.toLowerCase(),
-          street: tmpl.$(evt.currentTarget).val(),
-          format: 'json',
-          limit: 10,
-          addressdetails: 1,
+      HTTP.get(
+        url,
+        {
+          params: {
+            country: country.toLowerCase(),
+            city: city.toLowerCase(),
+            street: tmpl.$(evt.currentTarget).val(),
+            format: 'json',
+            limit: 10,
+            addressdetails: 1,
+          },
         },
-      }, function (err, res) {
-        if (err) { console.error(err); } else {
-          tmpl.streetSearch.set(res.data);
+        function (err, res) {
+          if (err) {
+            console.error(err);
+          } else {
+            tmpl.streetSearch.set(res.data);
+          }
         }
-      });
+      );
     }
   },
   'click .street-select': function (evt, tmpl) {
@@ -91,12 +103,14 @@ Template.ultisiteAddress.events({
     tmpl.geocoords.set(_.clone(this.lon + ',' + this.lat));
     tmpl.$('input[name="address.geocoords"]').val(tmpl.geocoords.get());
     tmpl.$('input[name="address.geocoords"]').trigger('change');
-    if (tmpl.$('input[name="address.postcode"]').val() === '') { tmpl.$('input[name="address.postcode"]').val(this.address.postcode); }
+    if (tmpl.$('input[name="address.postcode"]').val() === '') {
+      tmpl.$('input[name="address.postcode"]').val(this.address.postcode);
+    }
     tmpl.zoom.set(14);
-    tmpl.$('.dropdown-street [data-toggle="dropdown"]').dropdown('toggle');
+    tmpl.$('.dropdown-street [data-bs-toggle="dropdown"]').dropdown('toggle');
   },
   'keyup input[name="address.city"], focus input[name="address.city"]': function (evt, tmpl) {
-    tmpl.$(evt.currentTarget).parents('.form-group').removeClass('has-success');
+    tmpl.$(evt.currentTarget).parents('.mb-3').removeClass('has-success');
     const value = tmpl.$(evt.currentTarget).val().trim();
     const country = AutoForm.getFieldValue('address.country', this);
     console.log('searching city:', country, value);
@@ -114,10 +128,10 @@ Template.ultisiteAddress.events({
     tmpl.$('input[name="address.geocoords"]').val(tmpl.geocoords.get());
     tmpl.$('input[name="address.geocoords"]').trigger('change');
     tmpl.zoom.set(11);
-    tmpl.$('.dropdown-city [data-toggle="dropdown"]').dropdown('toggle');
+    tmpl.$('.dropdown-city [data-bs-toggle="dropdown"]').dropdown('toggle');
   },
   'keyup .address-country-search,focus .address-country-search': function (evt, tmpl) {
-    tmpl.$('.address-country-search').parents('.form-group').removeClass('has-success');
+    tmpl.$('.address-country-search').parents('.mb-3').removeClass('has-success');
     tmpl.$('.address-country').val('');
     const value = tmpl.$(evt.currentTarget).val().trim();
     Meteor.call('getCountryNames', value, function (err, res) {
@@ -133,7 +147,6 @@ Template.ultisiteAddress.events({
     tmpl.$('input[name="address.geocoords"]').val(tmpl.geocoords.get());
     tmpl.$('input[name="address.geocoords"]').trigger('change');
     tmpl.zoom.set(4);
-    tmpl.$('.dropdown-country [data-toggle="dropdown"]').dropdown('toggle');
+    tmpl.$('.dropdown-country [data-bs-toggle="dropdown"]').dropdown('toggle');
   },
 });
-

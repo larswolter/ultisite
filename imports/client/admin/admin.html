@@ -14,8 +14,8 @@
                 {{#each this}}
                   <div class="list-group-item">
                     {{text}}
-                    <button class="btn btn-light pull-right btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="true">Zugriff erlauben</button>
-                    <button class="btn btn-warning pull-right btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="false">Zugriff ablehnen</button>
+                    <button class="btn btn-light float-end btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="true">Zugriff erlauben</button>
+                    <button class="btn btn-warning float-end btn-call-method" data-id="{{_id}}" data-method="{{method}}" data-value="false">Zugriff ablehnen</button>
                   </div>
                 {{else}}
                   <div class="list-group-item">
@@ -34,7 +34,7 @@
               <h5>Konfiguration</h5>
             </div>
             <div class="card-body">
-              <div class="form-group row">
+              <div class="mb-3 row">
                 <label class="col-12 col-sm-2 col-form-label">Links in der Titelleiste</label>
                 {{#each settings.objectHeaderLinks.links}}
                   <div class="col-12 col-sm-2 {{#if loggedIn}}{{#if loggedOut}}text-success{{else}}text-warning{{/if}}{{else}}{{#if loggedOut}}text-info{{/if}}{{/if}}">
@@ -48,16 +48,16 @@
                   </div>
                 {{/each}}
                 <div class="col-12 colsm-10 offset-sm-2">
-                  <button type="button" class="btn btn-light" data-toggle="modal" data-target="#linksEditDialog">
+                  <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#linksEditDialog">
                     <span class="fa fa-edit"></span> Bearbeiten
                   </button>
                 </div>
               </div>
               <form class="form-horizontal direct-admin">
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Zuordnung der <a href="/wikipage">Wikiseiten</a></label>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Start:</small><br /> {{wikiPageName settings.wikiStart}}
 
                     </button>
@@ -70,7 +70,7 @@
                     </ul>
                   </div>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Trainings:</small><br /> {{wikiPageName settings.wikiPractice}}
 
                     </button>
@@ -83,7 +83,7 @@
                     </ul>
                   </div>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Impressum:</small><br /> {{wikiPageName settings.wikiImpressum}}
 
                     </button>
@@ -96,7 +96,7 @@
                     </ul>
                   </div>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Datenschutz:</small><br /> {{wikiPageName settings.wikiDatenschutz}}
 
                     </button>
@@ -109,7 +109,7 @@
                     </ul>
                   </div>
                   <div class="dropdown col-sm-2 wiki-association">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
                       <small>Hilfe:</small><br /> {{wikiPageName settings.wikiHelp}}
 
                     </button>
@@ -122,32 +122,31 @@
                     </ul>
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Design</label>
-                  <div class="dropdown col-sm-2">
-                    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
-                      {{settings.design}}
-
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                      {{#each designs}}
-                        <li class="dropdown-item" role="presentation">
-                          <a href="#" role="menuitem" class="action-select-design">{{this}}</a>
-                        </li>
-                      {{/each}}
-                    </ul>
-                  </div>
                   <div class="col-sm-2">
                     <input name="titleImageHeight" type="number" class="form-control" value="{{settings.titleImageHeight}}" placeholder="Titelbildhöhe" title="Höhe des Bildes über der Titelleiste">
                   </div>
+                </div>
+                <div class="mb-3 row">
+                  <label class="col-sm-2 col-form-label">Farben</label>
                   <div class="col-sm-2">
-                    <input name="backgroundColor" type="color" class="form-control" value="{{settings.backgroundColor}}" placeholder="HIntergrundfarbe" title="Hintergrundfarbe">
+                    <input name="backgroundColor" type="text" class="form-control" value="{{settings.backgroundColor}}" placeholder="Hintergrundfarbe" title="Hintergrundfarbe">
                   </div>
                   <div class="col-sm-2">
-                    <input name="themeColor" type="color" class="form-control" value="{{settings.themeColor}}" placeholder="Primärfarbe" title="Primärfarbe">
+                    <input name="primaryColor" type="text" class="form-control" value="{{settings.primaryColor}}" placeholder="Primärfarbe" title="Primärfarbe">
+                  </div>
+                  <div class="col-sm-2">
+                    <input name="primaryColorDark" type="text" class="form-control" value="{{settings.primaryColorDark}}" placeholder="Primärfarbe Dunkel" title="Primärfarbe Dunkel">
+                  </div>
+                  <div class="col-sm-2">
+                    <input name="secondaryColor" type="text" class="form-control" value="{{settings.secondaryColor}}" placeholder="Sekundärfarbe" title="Sekundärfarbe">
+                  </div>
+                  <div class="col-sm-2">
+                    <input name="secondaryColorDark" type="text" class="form-control" value="{{settings.secondaryColorDark}}" placeholder="Sekundärfarbe Dunkel" title="Sekundärfarbe Dunkel">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Bilder</label>
                   {{#each imageProperties}}
                     <div class="col-sm-2">
@@ -158,7 +157,7 @@
                     </div>
                   {{/each}}
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Optionen</label>
                   <div class="col-sm-10">
                     <label class="radio-inline">
@@ -167,7 +166,7 @@
                     </label>
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Registrierung</label>
                   <div class="col-sm-8">
                     <label class="radio-inline">
@@ -187,7 +186,7 @@
                     <input name="sitePassword" class="form-control" value="" placeholder="Registrierungspasswort" title="Registrierungspasswort">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">E-Mail</label>
                   <div class="col-sm-2">
                     <input name="emailServer" class="form-control" value="{{settings.emailServer}}" placeholder="smtp://mail.server.de" title="SMTP Server">
@@ -207,7 +206,7 @@
                     </button>
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Bezeichner</label>
                   <div class="col-sm-3">
                     <input name="siteTitle" class="form-control" value="{{settings.siteTitle}}" placeholder="Seitentitel" title="Seitentitel">
@@ -231,57 +230,32 @@
                     <input name="multiplePlayers" class="form-control" value="{{settings.multiplePlayers}}" placeholder="Mehrere Spieler" title="Mehrere Spieler">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Divisionen</label>
                   <div class="col-sm-10">
                     <input name="arrayDivisions" class="form-control" value="{{settings.arrayDivisions}}" placeholder="a,b,c">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Kategorien</label>
                   <div class="col-sm-10">
                     <input name="arrayCategorys" class="form-control" value="{{settings.arrayCategorys}}" placeholder="a,b,c">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Untergründe</label>
                   <div class="col-sm-10">
                     <input name="arraySurfaces" class="form-control" value="{{settings.arraySurfaces}}" placeholder="a,b,c">
                   </div>
                 </div>
-                <div class="form-group row">
+                <div class="mb-3 row">
                   <label class="col-sm-2 col-form-label">Vereinsstatii</label>
                   <div class="col-sm-10">
                     <input name="arrayClubStates" class="form-control" value="{{settings.arrayClubStates}}" placeholder="a,b,c">
                   </div>
                 </div>
-                <div class="form-group row">
-                  <label class="col-sm-2 col-form-label">Mailinglisten</label>
-                  <div class="col-sm-10">
-                    {{#each settings.mailingListConfigs}}
-                      <div class="btn-group">
-                        <button type="button" class="btn btn-light disabled">
-                          {{#if this.from}}
-                            {{this.from}}
-                          {{else}}
-                            &lt;leer&gt;
-                          {{/if}}
-                        </button>
-                        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#mailServerDialog" data-index="{{@index}}">
-                          <span class="fa fa-edit"></span>
-                        </button>
-                        <button type="button" class="btn btn-light action-remove-mailinglist">
-                          <span class="fa fa-close"></span>
-                        </button>
-                      </div>
-                    {{/each}}
-                    <button type="button" class="btn btn-light action-add-mailinglist">
-                      <span class="fa fa-plus"></span>
-                    </button>
-                  </div>
-                </div>
                 {{#each additionalAdminPageTemplates}}
-                  <div class="form-group row">
+                  <div class="mb-3 row">
                     <label class="col-sm-2 col-form-label">{{this.name}}</label>
                     {{>Template.dynamic template=this.template}}
                   </div>
@@ -317,16 +291,15 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span class="fa fa-close"></span>
-          </button>
           <h5 class="modal-title" id="myModalLabel">Links editieren</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
         </div>
         <div class="modal-body">
           <textarea rows="20" class="form-control">{{jsonLinks}}</textarea>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Abbrechen</button>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </div>
       </div>
@@ -339,10 +312,9 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span class="fa fa-close"></span>
-          </button>
           <h5 class="modal-title">Mailserver editieren</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
         </div>
         <div class="modal-body">
           {{> quickForm schema=schema
@@ -351,7 +323,7 @@
                         buttonContent=false}}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-dismiss="modal">Abbrechen</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Abbrechen</button>
           <button type="submit" class="btn btn-primary">Speichern</button>
         </div>
       </div>

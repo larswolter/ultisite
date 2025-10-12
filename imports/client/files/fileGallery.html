@@ -5,12 +5,12 @@
             {{#each folders}}
                 <div class="file-browser-gallery-item">
                     {{#unless isParent}}
-                    <div class="btn-group pull-right" role="group">
+                    <div class="btn-group float-end" role="group">
                       <button type="button"
-                              class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                              class="btn btn-light btn-xs dropdown-toggle" data-value="{{state}}" data-bs-toggle="dropdown" aria-expanded="false">
                          <span class="caret"></span>
                       </button>
-                      <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                      <ul class="dropdown-menu dropdown-menu-end" role="menu">
                         <li class="dropdown-item"><a href="#" class="rename-folder"><span class="fa fa-edit"></span> umbenennen</a></li>
                         <li class="dropdown-item"><a href="#" class="remove-folder"><span class="fa fa-close"></span> löschen</a></li>
                       </ul>
@@ -47,9 +47,9 @@
 
 <template name="fileBrowserGalleryItem">
     <div class="file-browser-gallery-item">
-        <div class="btn-group pull-right" role="group">
+        <div class="btn-group float-end" role="group">
           <button type="button"
-                  class="btn btn-light btn-sm dropdown-toggle" data-value="{{state}}" data-toggle="dropdown" aria-expanded="false">
+                  class="btn btn-light btn-sm dropdown-toggle" data-value="{{state}}" data-bs-toggle="dropdown" aria-expanded="false">
              <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">

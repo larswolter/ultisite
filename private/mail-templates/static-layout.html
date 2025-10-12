@@ -1,53 +1,9 @@
-<div id="serverRendered" 
-  style="position: absolute;top:0px;z-index:10000"
-  class="ultisite-{{settings.design}} base-layout {{#if settings.imageTitleImage}}with-title-image{{/if}}">
-  <nav class="navbar navbar-light navbar-fixed-top">
-    {{#if settings.imageTitleImage}}
-      <div class="title-image d-none d-md-block" style="height:{{settings.titleImageHeight}}px">
-        <div style="background-image:url('/_image?imageId={{settings.imageTitleImage}}&size=80')"> </div>
-        <img src="/_image?imageId={{settings.imageLogo}}" />
-      </div>
-    {{/if}}
-		<div class="row" style="height:40px">
-			<div class="col-12">
-        <a href="#">
-          <span class="fa fa-spinner fa-spin" ></span> Lade {{settings.teamname}} WebApp
-        </a>
-			</div>
-		</div>
-	</nav>
-  <div class="container-fluid page-content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="offset-lg-1 col-lg-6 col-md-7 col-12 start-content">
-          <div class="wikipage">
-            <div class="page-details">
-              <span class="">
-                  Zuletzt geändert am ...
-              </span>
-            </div>
-            <div>
-              {{{content}}}
-            </div>  
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-5 col-12 start-content">
-          <div class="card">
-            <div class="card-header">&nbsp;</div>
-            <div class="card-body" style="height:400px">&nbsp;</div>
-          </div>
-        </div>
-      </div>
-    </div>
+<div id="serverRendered" style="position: absolute;top:0px;z-index:10000" class="ultisite-root base-layout">
+  <div class="text-center text-muted" style="padding:25px;">
+    <span class="fa fa-spinner fa-spin fa-3x"></span>
+    <h2>
+      Lade WebApp
+    </h2>
   </div>
-  <nav class="d-none d-sm-block navbar navbar-light navbar-footer">
-    <div class="pull-right">
-      <a href="#">Impressum</a>
-      &nbsp;&nbsp;
-      <a href="/wikipage/#">Datenschutz</a>
-  	</div>
-    <a href="https://github.com/larswolter/ultisite" target="github">
-      <span class="fa fa-github"></span> Quellen und Feedback
-    </a>
-  </nav>  
+
 </div>

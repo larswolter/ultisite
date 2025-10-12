@@ -1,15 +1,17 @@
+import { Practices } from '../common/lib/ultisite';
+
 Meteor.methods({
-  updatePracticeImage(image) {
+  async updatePracticeImage(image) {
     check(image, Object);
     console.log('Updated practices map');
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
-    UltiSite.Practices.update(image.associated[0], {
+    await Practices.updateAsync(image.associated[0], {
       $set: { mapImage: image._id, lastChange: new Date() },
     });
   },
-  updatePractice(id, practice) {
+  async updatePractice(id, practice) {
     check(id, Match.Maybe(String));
     check(practice, Object);
     if (!this.userId) {
@@ -19,21 +21,21 @@ Meteor.methods({
     if (id) {
       if (!practice.$set) throw new Meteor.Error('update needs to be an update');
       practice.$set.lastChange = new Date();
-      UltiSite.Practices.update(id, practice);
+      await Practices.updateAsync(id, practice);
       console.log('updated practice');
     } else {
       console.log('inserting practice');
-      return UltiSite.Practices.insert({ ...practice, lastChange: new Date() });
+      return await Practices.insertAsync({ ...practice, lastChange: new Date() });
     }
     return id;
   },
-  removePractice(id) {
+  async removePractice(id) {
     check(id, String);
     if (!this.userId) {
       throw new Meteor.Error('access-denied');
     }
 
-    UltiSite.Practices.remove(id);
+    await Practices.removeAsync(id);
     console.log('deleted practice');
   },
 });

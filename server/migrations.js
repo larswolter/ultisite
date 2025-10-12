@@ -1,34 +1,35 @@
-import Grid from 'gridfs-locking-stream';
+import { Blogs, Events, Practices, Teams, Tournaments } from '../common/lib/ultisite';
 
-const gridFS = Grid(UltiSite.Documents.rawDatabase(), Npm.require('mongodb'), 'documents-grid');
-
-
-Meteor.startup(function () {
+Meteor.startup(async function () {
   console.log('starting migrations...');
-  UltiSite.Events.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
-  UltiSite.Blogs.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
-  UltiSite.Practices.update({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
+  await Events.updateAsync({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
+  await Blogs.updateAsync({ lastChange: { $exists: false } }, { $set: { lastChange: new Date() } }, { multi: true });
+  await Practices.updateAsync(
+    { lastChange: { $exists: false } },
+    { $set: { lastChange: new Date() } },
+    { multi: true }
+  );
 
-  const Teams = new Meteor.Collection('Teams');
-
-  UltiSite.Tournaments.find({ 'participants': { $exists: false } }).forEach((tournament) => {
+  await Tournaments.find({ participants: { $exists: false } }).forEachAsync(async (tournament) => {
     const participants = [];
     const teams = [];
-    tournament.teams && tournament.teams.forEach((teamId) => {
-      const team = Teams.findOne(teamId);
-      if (team) {
-        team.participants && team.participants.forEach((p) => {
-          p.team = team._id;
-          participants.push(p);
-        });
-        delete team.participants;
-        delete team.tournamentId;
-        delete team.tournamentDate;
-        delete team.lastChange;
-        teams.push(team);
-      }
-    });
-    UltiSite.Tournaments.update(tournament._id, {
+    tournament.teams &&
+      tournament.teams.forEach(async (teamId) => {
+        const team = await Teams.findOneAsync(teamId);
+        if (team) {
+          team.participants &&
+            team.participants.forEach((p) => {
+              p.team = team._id;
+              participants.push(p);
+            });
+          delete team.participants;
+          delete team.tournamentId;
+          delete team.tournamentDate;
+          delete team.lastChange;
+          teams.push(team);
+        }
+      });
+    await Tournaments.updateAsync(tournament._id, {
       $set: {
         participants,
         teams,
@@ -36,12 +37,12 @@ Meteor.startup(function () {
       },
     });
   });
-  Meteor.users.find({ 'club.dfv': { $exists: true } }).forEach((u) => {
+  await Meteor.users.find({ 'club.dfv': { $exists: true } }).forEachAsync(async (u) => {
     if (!Array.isArray(u.club.dfv)) {
       if (u.club.dfv) {
-        Meteor.users.update(u._id, { $set: { 'club.dfv': [2018] } });
+        await Meteor.users.updateAsync(u._id, { $set: { 'club.dfv': [2018] } });
       } else {
-        Meteor.users.update(u._id, { $set: { 'club.dfv': [] } })
+        await Meteor.users.updateAsync(u._id, { $set: { 'club.dfv': [] } });
       }
     }
   });

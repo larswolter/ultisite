@@ -1,28 +1,27 @@
 import { moment } from 'meteor/momentjs:moment';
 import { check } from 'meteor/check';
-import { Random } from 'meteor/random';
-import { Roles } from 'meteor/alanning:roles';
-import { CronJob } from 'cron';
+
 import Excel from 'exceljs';
 import { hatSort } from '../utils';
-import { sendHatPlaylistEmails } from './mails';
+import { HatParticipants } from '../schema';
+import { settings, Roles } from './server';
 
-WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
+WebApp.connectHandlers.use('/_hatTeamDrawing', async function (req, res, next) {
   const { query } = Npm.require('url').parse(req.url, true);
   check(query.downloadToken, String);
   check(query.teams, String);
-  const user = Meteor.users.findOne({ 'profile.downloadToken': query.downloadToken });
-  if (!user || !Roles.userIsInRole(user._id, ['hatAdmin'])) {
+  const user = await Meteor.users.findOneAsync({ 'profile.downloadToken': query.downloadToken });
+  if (!user || !(await Roles.userIsInRoleAsync(user._id, ['hatAdmin']))) {
     res.writeHead(403);
     res.end();
     return;
   }
   const numTeams = Number(query.teams);
   const teams = [];
-  const participants = UltiSite.HatInfo.HatParticipants.find(
+  const participants = await HatParticipants.find(
     { confirmed: true, payed: { $lte: new Date() } },
-    { sort: hatSort(), limit: Number(UltiSite.settings().hatNumPlayers) }
-  ).fetch();
+    { sort: hatSort(), limit: Number(settings().hatNumPlayers) }
+  ).fetchAsync();
   const partStrength = (p) => {
     return Number(p.strength) + Number(p.years) + Number(p.experience) + Number(p.fitness);
   };
@@ -123,7 +122,7 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', function (req, res, next) {
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader(
     'Content-Disposition',
-    `attachment; filename="${UltiSite.settings().hatId}-Teams-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
+    `attachment; filename="${settings().hatId}-Teams-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
   );
   res.writeHead(200);
   workbook.xlsx.write(res).then(() => {

@@ -1,7 +1,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { Template } from 'meteor/templating';
 import './images.html';
-import './images.scss';
+import './images.less';
 
 Template.imageViewer.onCreated(function () {
   this.imageStatus = new ReactiveVar();

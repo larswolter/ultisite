@@ -3,11 +3,10 @@
     <div class="card user-list">
       <div class="card-header">
         <button class="btn btn-light action-create-user" style="margin-left:5px;margin-top:5px;">
-          <span class="fa fa-plus"></span>
-          <span class="fa fa-user"></span>
+          <span class="fa fa-user-add"></span>
           <span class="d-none d-sm-inline"> Neuen Nutzer anlegen</span>
         </button>
-        <div class="pull-right">
+        <div class="float-end">
           <button type="button" class="btn btn-light action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
             <span class="fa fa-chevron-left"></span>
           </button>
@@ -18,58 +17,60 @@
             <span class="fa fa-chevron-right"></span>
           </button>
         </div>
-        <div class="d-none d-sm-block user-list-item">
-          <div class="row user-list-item user-list-header">
-            <div class="col-12 col-sm-1">
-              Bild
-              <span class="fa fa-sort" data-sort="profile.avatar"></span>
-            </div>
-            <div class="col-12 col-sm-2">
-              Name
-              <span class="fa fa-sort-desc" data-sort="username"></span>
-            </div>
-            <div class="col-6 col-sm-2">
-              Vorname
-              <span class="fa fa-sort" data-sort="profile.name"></span>
-            </div>
-            <div class="col-6 col-sm-2">
-              Nachname
-              <span class="fa fa-sort" data-sort="profile.surname"></span>
-            </div>
-            <div class="col-6 col-sm-2">
-              Geburtstag
-              <span class="fa fa-sort" data-sort="profile.birthday"></span>
-            </div>
-            <div class="col-6 col-sm-1">
-              Aktionen
-            </div>
-            <div class="col-6 col-sm-2">
-              Verein
-              <span class="fa fa-sort" data-sort="club.state"></span>
-            </div>
-          </div>
-        </div>
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">
+                Bild
+                <span class="fa fa-sort" data-sort="profile.avatar"></span>
+              </th>
+              <th scope="col">
+                Name
+                <span class="fa fa-sort-desc" data-sort="username"></span>
+              </th>
+              <th scope="col">
+                Vorname
+                <span class="fa fa-sort" data-sort="profile.name"></span>
+              </th>
+              <th scope="col">
+                Nachname
+                <span class="fa fa-sort" data-sort="profile.surname"></span>
+              </th>
+              <th scope="col">
+                Geburtstag
+                <span class="fa fa-sort" data-sort="profile.birthday"></span>
+              </th>
+              <th scope="col">
+                Aktionen
+              </th>
+              <th scope="col">
+                Verein
+                <span class="fa fa-sort" data-sort="club.state"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#if Template.subscriptionsReady}}
+                {{#each users}}
+                  <tr class="action-goto-user pointer">
+                    {{>userItem}}
+                  </tr>
+                {{else}}
+                  {{> Empty}}
+                {{/each}}
+            {{else}}
+              <tr><td colspan="7">{{> Loading}}</td></tr>
+              
+            {{/if}}
+          </tbody>
+        </table>
       </div>
-      {{#if Template.subscriptionsReady}}
-        <div class="list-group">
-          {{#each users}}
-            <a href="{{pathFor route='user' _id=_id}}" class="list-group-item user-list-item">
-              {{>userItem}}
-            </a>
-          {{else}}
-            {{> Empty}}
-          {{/each}}
-        </div>
-      {{else}}
-        {{> Loading}}
-      {{/if}}
       <div class="card-footer">
         <button class="btn btn-light action-create-user" style="margin-left:5px;margin-top:5px;">
-          <span class="fa fa-plus"></span>
-          <span class="fa fa-user"></span>
+          <span class="fa fa-user-add"></span>
           <span class="d-none d-sm-inline"> Neuen Nutzer anlegen</span>
         </button>
-        <div class="pull-right">
+        <div class="float-end">
           <button type="button" class="btn btn-light action-less-users {{#if equals paginationPos 1}}disabled{{/if}}">
             <span class="fa fa-chevron-left"></span>
           </button>
@@ -86,33 +87,26 @@
 </template>
 
 <template name="userItem">
-  <div class="row">
-    <div class="col-3 col-sm-1">
+    <td>
       {{#if profile.avatar}}
-        <img src="{{imageUrl profile.avatar 160}}">
+        <img height="48px" src="{{imageUrl profile.avatar 160}}">
       {{else}}
-        <img src="/placeholder/player.svg">
+        <img height="48px" src="/placeholder/player.svg">
       {{/if}}
-    </div>
-    <div class="col-7 d-block d-sm-none">
-      <h5>{{getAlias this}}
-        {{#if profile.sex}}<small>{{profile.sex}}</small>{{/if}}
-      </h5>
-      {{profile.name}} {{profile.surname}} - {{formatDate profile.birthday}} {{club.state}}
-    </div>
-    <div class="d-none d-sm-block col-sm-2">
+    </td>
+    <td>
       {{getAlias this}}
-    </div>
-    <div class="d-none d-sm-block col-sm-2">
+    </td>
+    <td>
       {{profile.name}}
-    </div>
-    <div class="d-none d-sm-block col-sm-2">
+    </td>
+    <td>
       {{profile.surname}}
-    </div>
-    <div class="d-none d-sm-block col-sm-2">
+    </td>
+    <td>
       {{formatDate profile.birthday}}
-    </div>
-    <div class="col-2 col-sm-1">
+    </td>
+    <td>
       {{#each emails}}
         <a href="mailto:{{this.address}}" class="btn btn-link"><span class="fa fa-envelope"></span></a>
       {{/each}}
@@ -121,8 +115,8 @@
           <a href="tel:{{this.detail}}" class="btn btn-link"><span class="fa fa-phone"></span></a>
         {{/if}}
       {{/each}}
-    </div>
-    <div class="d-none d-sm-block col-sm-2">
+    </td>
+    <td>
       {{#if isInRole "club,admin"}}
         {{#if settings.clubName}}
           <button class="btn btn-light action-club-state">
@@ -137,6 +131,5 @@
         </button>
 
       {{else}}{{club.state}} {{/if}}
-    </div>
-  </div>
+    </td>
 </template>

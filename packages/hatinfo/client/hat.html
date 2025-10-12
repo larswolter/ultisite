@@ -9,7 +9,7 @@
             <div class="card">
                 <div class="card-header">
                     {{#if isInRole "hatAdmin"}}
-                        <button class="d-none d-md-block d-lg-block btn btn-primary pull-right action-participate" title="Anmelden" type="button">
+                        <button class="d-none d-md-block d-lg-block btn btn-primary float-end action-participate" title="Anmelden" type="button">
                             <span class="fa fa-plus"></span> Eintragen
                         </button>
                     {{/if}}
@@ -44,17 +44,17 @@
                     {{/if}}
 
                     {{#if isInRole "hatAdmin"}}
-                        <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-light pull-right" title="Export" type="button">
+                        <a href="/_hatInfoExport?downloadToken={{currentUser.profile.downloadToken}}" target="_blank" class="btn btn-light float-end" title="Export" type="button">
                             <span class="fa fa-download"></span> Exportieren
                         </a>
-                        <a href="#" class="btn btn-light pull-right action-draw-teams" title="Export" type="button">
+                        <a href="#" class="btn btn-light float-end action-draw-teams" title="Export" type="button">
                             <span class="fa fa-random"></span> Auslosen
                         </a>
-                        <a href="mailto:no-reply@hallunken.de?bcc={{emails}}" class="btn btn-light pull-right" title="Export" type="button">
+                        <a href="mailto:no-reply@hallunken.de?bcc={{emails}}" class="btn btn-light float-end" title="Export" type="button">
                             <span class="fa fa-envelope"></span> Mail an alle
                         </a>
                         <form class="form-inline">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="participant-filter">Teilnehmer filtern</label>
                                 <input type="text" class="form-control participant-filter" id="participant-filter" placeholder="">
                             </div>
@@ -83,9 +83,11 @@
                                 {{>hatParticipant}}
                             </ul>
                         {{else}}
-                            <button class="d-none d-md-block d-lg-block btn btn-primary btn-block action-participate" title="Anmelden" type="button">
-                                <span class="fa fa-plus"></span> Eintragen
-                            </button>
+                            <div class="d-grid">
+                                <button class="d-none d-md-block d-lg-block btn btn-primary action-participate" title="Anmelden" type="button">
+                                    <span class="fa fa-plus"></span> Eintragen
+                                </button>
+                            </div>
                         {{/with}}
                     {{/if}}
                 {{else}}
@@ -96,7 +98,7 @@
                 <div class="card">
                     <div class="card-header">
                         {{#if isInRole "hatAdmin"}}
-                            <a href="mailto:no-reply@hallunken.de?bcc={{emailsParticipate}}" class="btn btn-light pull-right" title="Export" type="button">
+                            <a href="mailto:no-reply@hallunken.de?bcc={{emailsParticipate}}" class="btn btn-light float-end" title="Export" type="button">
                                 <span class="fa fa-envelope"></span> Mail an Spieler
                             </a>
                         {{/if}}
@@ -117,7 +119,7 @@
                 <div class="card">
                     <div class="card-header">
                         {{#if isInRole "hatAdmin"}}
-                            <a href="mailto:no-reply@hallunken.de?bcc={{emailsWaiting}}" class="btn btn-light pull-right" title="Export" type="button">
+                            <a href="mailto:no-reply@hallunken.de?bcc={{emailsWaiting}}" class="btn btn-light float-end" title="Export" type="button">
                                 <span class="fa fa-envelope"></span> Mail an Wartende
                             </a>
                         {{/if}}
@@ -220,7 +222,7 @@
                         Musikhit: {{this.musicHit}}<br />
                     {{/if}}
                 </div>
-                <div class="col-12 col-sm-6 text-right participant-buttons">
+                <div class="col-12 col-sm-6 text-end participant-buttons">
                     <button class="btn btn-light action-participate" title="Ändern" type="button">
                         <span class="fa fa-edit"></span> Editieren
                     </button>
@@ -244,7 +246,7 @@
 
 <template name="hatInfoSettings">
     <div class="dropdown col-sm-2 wiki-association">
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
             HatInfo: {{wikiPageName settings.hatWikipage}}
 
         </button>
@@ -272,7 +274,7 @@
         <input name="arrayHatHomeTeams" class="form-control" value="{{settings.arrayHatHomeTeams}}" placeholder="Team1,Team2,TEam3" title="Hometeam Defaults">
     </div>
     <div class="dropdown col-sm-3 wiki-association">
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
             Sortierung: {{settings.hatSort}}
 
         </button>
@@ -306,8 +308,7 @@
                             Für das {{settings.hatName}} eintragen
                         {{/if}}
                     </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span class="fa fa-close"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 {{#autoForm schema=schema doc=existing id="hatParticipantForm" meteormethod=method type="method"}}
@@ -339,7 +340,7 @@
                         </datalist>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-light">Abbrechen</button>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-light">Abbrechen</button>
                         <button type="submit" class="btn btn-primary">{{#if existing._id}}Ändern{{else}}Eintragen{{/if}}</button>
                     </div>
                 {{/autoForm}}
@@ -363,7 +364,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" aria-label="Ok" class="btn btn-light">Ok</button>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Ok" class="btn btn-light">Ok</button>
                 </div>
             </div>
         </div>
@@ -381,13 +382,13 @@
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-success" role="alert">
-                        <span class="fa fa-envelope-o fa-3x pull-left"></span>
+                        <span class="fa fa-envelope-o fa-3x float-start"></span>
                         Um die Anmeldung abzuschließen, wird eine E-Mail an die angegebene Adresse geschickt.
                         Du musst auf den Link klicken, der in der E-Mail enthalten ist, um die Anmeldung abzuschließen.
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" aria-label="Ok" class="btn btn-light">Ok</button>
+                    <button type="button" data-bs-dismiss="modal" aria-label="Ok" class="btn btn-light">Ok</button>
                 </div>
             </div>
         </div>
@@ -409,7 +410,7 @@
                         {{> afQuickFields}}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-light">Schließen</button>
+                        <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-light">Schließen</button>
                         <a target="_blank" href="/_hatTeamDrawing?downloadToken={{currentUser.profile.downloadToken}}{{drawingParams}}" class="btn btn-primary">Auslosen</a>
                     </div>
                 {{/autoForm}}

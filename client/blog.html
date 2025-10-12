@@ -26,11 +26,11 @@
                 </h5>
                 <form class="blogUpdateForm">
                     <input type="hidden" class="id" value="{{blog._id}}">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Titel</label>
                         <input class="form-control title" value="{{blog.title}}">
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Inhalt</label>
                         {{#if wysiwygLoaded}}
                             {{>ultisiteWysiwyg value=blog.content source=blog}}
@@ -38,7 +38,7 @@
                             {{>Loading}}
                         {{/if}}
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Bild</label>
                         {{#if blog._id}}
                         <div class="thumbnail" style="background-image:url('{{imageUrl imageId 120}}')">
@@ -62,7 +62,7 @@
                         <div>Um ein Bild hinzuzufügen, bitte erst den Artikel erstellenund dann editieren.</div>
                         {{/if}}
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Veröffentlichung</label>
                         <div class="radio">
                               <span class="fa fa-check-square-o fa-fw btn-public {{#if isPublic}}inactive{{/if}}"></span>
@@ -76,7 +76,7 @@
                             kann auch von nicht angemeldeten Benutzern gelesen werden
                         </div>
                     </div>
-                    <div class="form-group text-right">
+                    <div class="mb-3 text-end">
                         <button type="button" class="btn btn-light btn-cancel">
                             Abbrechen
                         </button>
@@ -100,9 +100,9 @@
             <div class="blog col-12 col-sm-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
                 <h5 class="blog-title">
                     {{#if currentUser}}
-                        <a class="btn btn-light btn-sm pull-right" href="{{pathFor route='blog' _id=blog._id edit='edit'}}">Artikel bearbeiten</a>
+                        <a class="btn btn-light btn-sm float-end" href="{{pathFor route='blog' _id=blog._id edit='edit'}}">Artikel bearbeiten</a>
                         {{#if canRemove}}
-                            <button class="btn btn-danger btn-sm action-remove-blog pull-right" >Artikel löschen</button>
+                            <button class="btn btn-danger btn-sm action-remove-blog float-end" >Artikel löschen</button>
                         {{/if}}
                     {{/if}}
                     {{blog.title}}
@@ -158,7 +158,7 @@
         <h5 class="blog-title">
             <a class = "" href= {{pathFor route='blog' _id=_id}}>{{blog.title}}</a>
             <br />
-            <small>
+            <small class="text-body-secondary">
                 {{#if currentUser}}
                     <span class="author">{{blog.authorName}}</span>
                 {{/if}}

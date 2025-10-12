@@ -2,7 +2,7 @@ import { moment } from 'meteor/momentjs:moment';
 import { AutoForm } from 'meteor/ultisite:autoform';
 import '../forms/address';
 import '../files/files';
-import './practice.scss';
+import './practice.less';
 import './practice.html';
 
 let mapImageFile;

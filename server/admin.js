@@ -1,77 +1,96 @@
 /* global __meteor_runtime_config__ */
 
-UltiSite.Settings = new Meteor.Collection('Settings');
+import {
+  Documents,
+  Events,
+  Folders,
+  Images,
+  isAdmin,
+  Practices,
+  Tournaments,
+  WikiPages,
+  Settings,
+} from '../common/lib/ultisite';
 
-function syncSettings() {
-  _.extend(Meteor.settings, UltiSite.Settings.findOne() || {});
+async function syncSettings() {
+  _.extend(Meteor.settings, (await Settings.findOneAsync()) || {});
+
   Object.keys(Meteor.settings).forEach((key) => {
-    if (key === 'public') {
-
-    } else if (key === 'mailingListConfigs') {
-      __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key].map(config => _.omit(config, 'password'));
+    if (key === 'mailingListConfigs') {
+      __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key].map((config) => _.omit(config, 'password'));
+    } else if (key === 'public') {
+      // noop
     } else if (key.toLowerCase().indexOf('password') < 0) {
       __meteor_runtime_config__.PUBLIC_SETTINGS[key] = Meteor.settings[key];
     }
   });
-  __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (UltiSite.Folders.findOne({
-    name: '/',
-  }) || {})._id;
+
+  __meteor_runtime_config__.PUBLIC_SETTINGS.rootFolderId = (
+    (await Folders.findOneAsync({
+      name: '/',
+    })) || {}
+  )._id;
   WebAppInternals.generateBoilerplate();
   console.log('synced settings');
   return __meteor_runtime_config__.PUBLIC_SETTINGS;
 }
-Meteor.startup(function () {
-  if (!UltiSite.Settings.findOne()) {
-    UltiSite.Settings.insert({});
+Meteor.startup(async function () {
+  if (!(await Settings.findOneAsync())) {
+    await Settings.insertAsync({});
   }
-  syncSettings();
+  await syncSettings();
 });
 
 Meteor.methods({
-  updateSettings(modifier) {
-    if (!UltiSite.isAdmin(this.userId)) {
+  async updateSettings(modifier) {
+    if (!(await isAdmin(this.userId))) {
       throw new Meteor.error('access-denied', 'Zugriff nur für Admins');
     }
     console.log('updating settings', modifier);
-    UltiSite.Settings.update({}, modifier);
-    return syncSettings();
+    await Settings.updateAsync({}, modifier);
+    return await syncSettings();
   },
-  recreateCollections() {
-    Meteor.call('cleanDatabases');
-    Meteor.call('createDatabases');
-    Accounts.setPassword(Meteor.users.findOne({
-      'emails.address': 'lars@larswolter.de',
-    })._id, 'blubs');
+  async recreateCollections() {
+    await Meteor.callAsync('cleanDatabases');
+    await Meteor.callAsync('createDatabases');
+    Accounts.setPassword(
+      (
+        await Meteor.users.findOneAsync({
+          'emails.address': 'lars@larswolter.de',
+        })
+      )._id,
+      'blubs'
+    );
   },
-  queryCollectionStatus() {
+  async queryCollectionStatus() {
     return [
       {
         name: 'Settings',
-        count: UltiSite.Settings.find().count(),
+        count: await Settings.find().countAsync(),
       },
       {
         name: 'Users',
-        count: Meteor.users.find().count(),
+        count: await Meteor.users.find().countAsync(),
       },
       {
         name: 'Tournaments',
-        count: UltiSite.Tournaments.find().count(),
+        count: await Tournaments.find().countAsync(),
       },
       {
         name: 'Files',
-        count: UltiSite.Images.find().count() + UltiSite.Documents.find().count(),
+        count: (await Images.find().countAsync()) + (await Documents.find().countAsync()),
       },
       {
         name: 'Practices',
-        count: UltiSite.Practices.find().count(),
+        count: await Practices.find().countAsync(),
       },
       {
         name: 'Events',
-        count: UltiSite.Events.find().count(),
+        count: await Events.find().countAsync(),
       },
       {
         name: 'WikiPages',
-        count: UltiSite.WikiPages.find().count(),
+        count: await WikiPages.find().countAsync(),
       },
     ];
   },

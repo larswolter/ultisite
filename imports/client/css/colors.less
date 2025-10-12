@@ -1,0 +1,50 @@
+
+@property --primary-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d3d3d3;
+}
+
+@property --secondary-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #15624c;
+}
+
+@property --background-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d3d3d3;
+}
+
+@property --background-color-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: darken(#d3d3d3, 20%);
+}
+
+@property --primary-color-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: darken(#d3d3d3, 20%);
+}
+
+@property --secondary-color-dark {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: darken(#15624c, 20%);
+}
+
+@secondary: var(--secondary-color);
+@secondaryDark: var(--secondary-color-dark);
+@primary: var(--primary-color);
+@primaryDark: var(--primary-color-dark);
+@backgroundColor: var(--primary-color);
+@backgroundColorDark: var(--primary-color-dark);
+@warning: yellow;
+@success: green;
+@danger: red;
+@info: cyan;
+@gray-300: gray;
+@text-muted: gray;
+@input-border: gray;

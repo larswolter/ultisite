@@ -1,7 +1,7 @@
 import { ReactiveVar } from 'meteor/reactive-var';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
-import './wysiwyg.scss';
+import './wysiwyg.less';
 import './wysiwyg.html';
 
 const htmlEncode = function (string) {
@@ -249,7 +249,7 @@ Template.editImageDialog.events({
   'click .action-set-left': function (evt, tmpl) {
     evt.preventDefault();
     const cur = tmpl.imgInfo.get();
-    cur.pos = 'pull-left';
+    cur.pos = 'float-start';
     tmpl.imgInfo.set(cur);
   },
   'click .action-set-line': function (evt, tmpl) {
@@ -261,7 +261,7 @@ Template.editImageDialog.events({
   'click .action-set-right': function (evt, tmpl) {
     evt.preventDefault();
     const cur = tmpl.imgInfo.get();
-    cur.pos = 'pull-right';
+    cur.pos = 'float-end';
     tmpl.imgInfo.set(cur);
   },
   'click .action-apply': function (evt, tmpl) {

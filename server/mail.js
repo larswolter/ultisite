@@ -1,65 +1,71 @@
 import nodemailer from 'nodemailer';
 import handlebars from 'handlebars';
 import fs from 'fs';
+import { settings, translate } from '../common/lib/ultisite';
 
-UltiSite.renderMailTemplate = function (layout, source, context) {
+export const renderMailTemplate = function (layout, source, context) {
   const compiled = handlebars.compile(layout);
   source && handlebars.registerPartial('content', source);
 
   return compiled(context);
 };
 
+export const Mail = {};
 
 function setupMailServer(club) {
   // create reusable transporter object using SMTP transport
   if (!club.emailServer || Meteor.absoluteUrl().match(/localhost/)) {
     console.log('Creating file mail transport');
-    UltiSite.Mail = {
-      debug: true,
-      transport: UltiSite.Nodemailer.createTransport({
-        streamTransport: true,
-        buffer: true,
-      }),
-    };
+    Mail.debug = true;
+    Mail.transport = Nodemailer.createTransport({
+      streamTransport: true,
+      buffer: true,
+    });
   } else {
     console.log('Creating mail transport for ' + club.teamname + ':' + club.emailServer);
-    UltiSite.Mail = {
-      transport: UltiSite.Nodemailer.createTransport({
-        pool: true,
-        rateLimit: 3,
-        host: club.emailServer.split(':')[0],
-        port: Number(club.emailServer.split(':')[1]),
-        auth: {
-          user: club.emailLogin,
-          pass: club.emailPassword,
-        },
-        tls: {
-          maxVersion: 'TLSv1.3',
-          minVersion: 'TLSv1.2',
-          rejectUnauthorized: false,
-        },
-      }),
-    };
+    Mail.transport = Nodemailer.createTransport({
+      pool: true,
+      rateLimit: 3,
+      host: club.emailServer.split(':')[0],
+      port: Number(club.emailServer.split(':')[1]),
+      auth: {
+        user: club.emailLogin,
+        pass: club.emailPassword,
+      },
+      tls: {
+        maxVersion: 'TLSv1.3',
+        minVersion: 'TLSv1.2',
+        rejectUnauthorized: false,
+      },
+    });
   }
-  UltiSite.Mail.send = function (recievers, subject, content) {
+  Mail.send = async function (recievers, subject, content) {
     console.log('sending mail on ' + club.teamname);
 
     const mailOptions = {
       from: club.teamname + ' Verwaltung <' + club.emailFrom + '>',
-      to: Meteor.users.find({
-        _id: {
-          $in: recievers,
-        },
-      }).map(function (u) {
-        let vemail;
-        u.emails.forEach(function (mail) {
-          if (mail.verified) { vemail = mail.address; }
-        });
-        if (!vemail) { // Take the first unverified email
-          vemail = u.emails[0].address;
-        }
-        return u.username + ' <' + vemail + '>';
-      }).join(', ') || recievers.join(','),
+      to:
+        (
+          await Meteor.users
+            .find({
+              _id: {
+                $in: recievers,
+              },
+            })
+            .mapAsync(function (u) {
+              let vemail;
+              u.emails.forEach(function (mail) {
+                if (mail.verified) {
+                  vemail = mail.address;
+                }
+              });
+              if (!vemail) {
+                // Take the first unverified email
+                vemail = u.emails[0].address;
+              }
+              return u.username + ' <' + vemail + '>';
+            })
+        ).join(', ') || recievers.join(','),
       subject: '[' + club.teamname + '] ' + subject,
       html: content,
     };
@@ -82,18 +88,17 @@ function setupMailServer(club) {
   };
 }
 
-Meteor.startup(function () {
-  UltiSite.Nodemailer = nodemailer;
-  UltiSite.Mail = {};
+export const Nodemailer = nodemailer;
+Meteor.startup(async function() {
   handlebars.registerHelper('translate', (term) => {
-    return UltiSite.translate(term);
+    return translate(term);
   });
 
-  setupMailServer(UltiSite.settings());
+  setupMailServer(await settings());
 });
 
 Meteor.methods({
-  updateMailserver() {
-    setupMailServer(UltiSite.settings());
+  async updateMailserver() {
+    setupMailServer(await settings());
   },
 });

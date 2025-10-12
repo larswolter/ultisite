@@ -1,7 +1,10 @@
 import { moment } from 'meteor/momentjs:moment';
+import { HatParticipants } from '../schema';
+import { Mail, renderMailTemplate } from './server';
+import { settings } from './server';
 
-export const sendHatReminderEmails = () => {
-  const template = Assets.getText('private/reminder.html');
+export const sendHatReminderEmails = async () => {
+  const template = await Assets.getTextAsync('private/reminder.html');
   const query = {
     createdAt: {
       $gt: moment().subtract(1, 'week').startOf('day').toDate(),
@@ -9,18 +12,18 @@ export const sendHatReminderEmails = () => {
     },
     $or: [{ confirmed: { $ne: true } }, { payed: { $gt: new Date() } }],
   };
-  UltiSite.HatInfo.HatParticipants.find(query).forEach((participant) => {
+  await HatParticipants.find(query).forEachAsync((participant) => {
     console.log(`sending reminder to ${participant.email}`);
-    UltiSite.Mail.send(
+    Mail.send(
       [participant.email],
-      `Erinnerung - Anmeldung beim ${UltiSite.settings().hatName}`,
-      UltiSite.renderMailTemplate(template, null, {
-        additionalInfos: UltiSite.settings().hatConfirmInfos,
+      `Erinnerung - Anmeldung beim ${settings().hatName}`,
+      renderMailTemplate(template, null, {
+        additionalInfos: settings().hatConfirmInfos,
         participant,
         confirmed: participant.confirmed,
         payed: moment(participant.payed).isBefore(new Date()),
-        hatName: UltiSite.settings().hatName,
-        team: UltiSite.settings().teamname,
+        hatName: settings().hatName,
+        team: settings().teamname,
         url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
       })
     );

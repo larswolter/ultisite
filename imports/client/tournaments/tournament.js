@@ -1,11 +1,12 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
-import './tournament.scss';
+import './tournament.less';
 import './tournament.html';
 import './team';
 import '../forms/address';
 import '../files/files';
+import { stateColor } from '../../../common/teams';
 
 Template.tournament.onCreated(function () {
   this.bodyVisible = new ReactiveVar(!Meteor.user());
@@ -351,7 +352,7 @@ Template.tournament.helpers({
       return _.extend(
         {
           participants: (this.participants || []).filter((p) => p.team === team._id),
-          stateColor: UltiSite.stateColor(team.state),
+          stateColor: stateColor(team.state),
         },
         team
       );

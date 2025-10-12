@@ -1,7 +1,27 @@
 import { moment } from 'meteor/momentjs:moment';
+import {
+  Blogs,
+  ContentVersions,
+  Countries,
+  Documents,
+  Events,
+  Folders,
+  Images,
+  LastChanges,
+  Practices,
+  Statistics,
+  Tournaments,
+  WikiPageDiscussions,
+  WikiPages,
+} from '../common/lib/ultisite';
 
 Meteor.startup(function () {
-  Meteor.publish('Blogs', function (limit) {
+  // publish settings, because old settings might be cached in the service worker
+  Meteor.publish(null, async function () {
+    this.added('Settings', '1', Meteor.settings.public);
+    this.ready();
+  });
+  Meteor.publish('Blogs', async function (limit) {
     check(limit, Match.Maybe(Number));
 
     const search = {};
@@ -9,7 +29,7 @@ Meteor.startup(function () {
       search.public = true;
     }
 
-    return UltiSite.Blogs.find(search, {
+    return Blogs.find(search, {
       limit,
       sort: {
         date: -1,
@@ -19,12 +39,12 @@ Meteor.startup(function () {
       },
     });
   });
-  Meteor.publish('BlogsStart', function () {
+  Meteor.publish('BlogsStart', async function () {
     const search = {};
     if (!this.userId) {
       search.public = true;
     }
-    const newest = (UltiSite.Blogs.findOne(search, { sort: { date: -1 } }) || {})._id;
+    const newest = ((await Blogs.findOneAsync(search, { sort: { date: -1 } })) || {})._id;
     search.$or = [
       {
         date: {
@@ -35,7 +55,7 @@ Meteor.startup(function () {
       },
       { _id: newest },
     ];
-    return UltiSite.Blogs.find(search, {
+    return Blogs.find(search, {
       limit: 3,
       sort: {
         date: -1,
@@ -45,41 +65,35 @@ Meteor.startup(function () {
       },
     });
   });
-  Meteor.publish('Blog', function (_id) {
-    return UltiSite.Blogs.find({ _id });
+  Meteor.publish('Blog', async function (_id) {
+    return Blogs.find({ _id });
   });
-  Meteor.publish('UserRoles', function () {
-    if (UltiSite.isAdmin(this.userId)) {
-      return Roles.getAllRoles();
-    }
-    this.ready();
-  });
-  Meteor.publish('LastChanges', function (types) {
+  Meteor.publish('LastChanges', async function (types) {
     if (types) {
-      return UltiSite.LastChanges.find({
+      return LastChanges.find({
         type: {
           $in: types,
         },
       });
     }
-    return UltiSite.LastChanges.find();
+    return LastChanges.find();
   });
-  Meteor.publish('Statistics', function (target) {
+  Meteor.publish('Statistics', async function (target) {
     check(target, String);
-    const res = UltiSite.Statistics.find({
+    const res = Statistics.find({
       target,
     });
-    if (res.count() === 0) {
-      Meteor.call('computeStatistics', target);
+    if ((await res.countAsync()) === 0) {
+      await Meteor.callAsync('computeStatistics', target);
     }
     return res;
   });
-  Meteor.publish('Files', function (associatedIds) {
+  Meteor.publish('Files', async function (associatedIds) {
     if (!Array.isArray(associatedIds)) {
       associatedIds = [associatedIds];
     }
     return [
-      UltiSite.Images.find(
+      Images.find(
         {
           $or: [
             {
@@ -96,7 +110,7 @@ Meteor.startup(function () {
         },
         { fields: { base64: 0, thumb: 0 } }
       ),
-      UltiSite.Documents.find({
+      Documents.find({
         $or: [
           {
             associated: {
@@ -110,10 +124,10 @@ Meteor.startup(function () {
           },
         ],
       }),
-      UltiSite.Folders.find(),
+      Folders.find(),
     ];
   });
-  Meteor.publish('UserDetails', function (userId) {
+  Meteor.publish('UserDetails', async function (userId) {
     check(userId, String);
     if (!this.userId) {
       return this.ready();
@@ -137,11 +151,11 @@ Meteor.startup(function () {
       }
     );
   });
-  Meteor.publish('Events', function () {
+  Meteor.publish('Events', async function () {
     if (!this.userId) {
       return undefined;
     }
-    return UltiSite.Events.find(
+    return Events.find(
       {},
       {
         limit: 30,
@@ -149,16 +163,16 @@ Meteor.startup(function () {
       }
     );
   });
-  Meteor.publish('tournamentDetails', function (tournamentId) {
+  Meteor.publish('tournamentDetails', async function (tournamentId) {
     check(tournamentId, String);
     if (!this.userId) {
       return undefined;
     }
-    return UltiSite.Tournaments.find({ _id: tournamentId });
+    return Tournaments.find({ _id: tournamentId });
   });
 
-  Meteor.publish('Tournaments', function (since, query) {
-    return UltiSite.Tournaments.find(
+  Meteor.publish('Tournaments', async function (since, query) {
+    return Tournaments.find(
       {
         $or: [
           query ? query : { date: { $gte: moment().subtract(1, 'week').toDate() } },
@@ -169,17 +183,17 @@ Meteor.startup(function () {
     );
   });
 
-  Meteor.publish('WikiPageDiscussions', function (id) {
+  Meteor.publish('WikiPageDiscussions', async function (id) {
     check(id, String);
-    return UltiSite.WikiPageDiscussions.find({ pageId: id });
+    return WikiPageDiscussions.find({ pageId: id });
   });
-  Meteor.publish('ContentVersions', function (id) {
+  Meteor.publish('ContentVersions', async function (id) {
     check(id, String);
-    return UltiSite.ContentVersions.find({ associated: id }, { fields: { content: 0 } });
+    return ContentVersions.find({ associated: id }, { fields: { content: 0 } });
   });
-  Meteor.publish('WikiPage', function (id) {
+  Meteor.publish('WikiPage', async function (id) {
     check(id, String);
-    return UltiSite.WikiPages.find({
+    return WikiPages.find({
       $or: [
         {
           _id: id,
@@ -191,18 +205,18 @@ Meteor.startup(function () {
     });
   });
 
-  Meteor.publish('ContentVersion', function (id) {
+  Meteor.publish('ContentVersion', async function (id) {
     check(id, String);
     if (this.userId) {
-      return UltiSite.ContentVersions.find({ _id: id });
+      return ContentVersions.find({ _id: id });
     }
     this.ready();
   });
 
-  Meteor.publish('Practices', function () {
-    return UltiSite.Practices.find({});
+  Meteor.publish('Practices', async function () {
+    return Practices.find({});
   });
-  Meteor.publish('Places', function () {
-    return UltiSite.Countries.find();
+  Meteor.publish('Places', async function () {
+    return Countries.find();
   });
 });

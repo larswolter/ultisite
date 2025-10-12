@@ -3,8 +3,8 @@
         <div class="row tournament-filter-offset">
             <div class="col-12 d-block d-md-none tournament-tabs navbar-light">
                 {{#if currentUser}}
-                    <a href="#" class="{{#if showPlanned}}active{{/if}}" data-target="planned" role="tab">Geplant</a>
-                    <a href="#" class="{{#if showPlayed}}active{{/if}}" data-target="played" role="tab">Gespielt</a>
+                    <a href="#" class="{{#if showPlanned}}active{{/if}}" data-bs-target="planned" role="tab">Geplant</a>
+                    <a href="#" class="{{#if showPlayed}}active{{/if}}" data-bs-target="played" role="tab">Gespielt</a>
                 {{/if}}
             </div>
             {{#if currentUser}}
@@ -12,7 +12,7 @@
                     <div class="col-12 col-md-7">
                         <div class="card">
                             <div class="card-header">
-                                <button class="btn btn-link pull-right action-toggle-filter" type="button">
+                                <button class="btn btn-link float-end action-toggle-filter" type="button">
                                     <span class="fa fa-filter"></span>
                                     <span class="d-none d-md-inline">
                                         Filter
@@ -95,7 +95,7 @@
 <template name="tournamentFilter">
     <div class="tournament-filter">
         <div class="btn-group">
-            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.surface "Alle"}}
                     Untergrund
                 {{else}}
@@ -103,15 +103,15 @@
                 {{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li class="dropdown-item"><a data-target="surface" href="#">Alle</a></li>
+                <li class="dropdown-item"><a data-bs-target="surface" href="#">Alle</a></li>
                 <li class="dropdown-divider"></li>
                 {{#each settings.arraySurfaces}}
-                    <li class="dropdown-item"><a data-target="surface" href="#">{{this}}</a></li>
+                    <li class="dropdown-item"><a data-bs-target="surface" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.division "Alle"}}
                     Klasse
                 {{else}}
@@ -119,15 +119,15 @@
                 {{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li class="dropdown-item"><a data-target="division" href="#">Alle</a></li>
+                <li class="dropdown-item"><a data-bs-target="division" href="#">Alle</a></li>
                 <li class="dropdown-divider"></li>
                 {{#each settings.arrayDivisions}}
-                    <li class="dropdown-item"><a data-target="division" href="#">{{this}}</a></li>
+                    <li class="dropdown-item"><a data-bs-target="division" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 {{#if equals filter.category "Alle"}}
                     Typ
                 {{else}}
@@ -135,27 +135,27 @@
                 {{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li class="dropdown-item"><a data-target="category" href="#">Alle</a></li>
+                <li class="dropdown-item"><a data-bs-target="category" href="#">Alle</a></li>
                 <li class="dropdown-divider"></li>
                 {{#each settings.arrayCategorys}}
-                    <li class="dropdown-item"><a data-target="category" href="#">{{this}}</a></li>
+                    <li class="dropdown-item"><a data-bs-target="category" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 {{#if filter.year}}{{filter.year}}{{else}}Kommende{{/if}}
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li class="dropdown-item"><a data-target="year" href="#">Kommende</a></li>
+                <li class="dropdown-item"><a data-bs-target="year" href="#">Kommende</a></li>
                 <li class="dropdown-divider"></li>
                 {{#each tournamentYears}}
-                    <li class="dropdown-item"><a data-target="year" href="#">{{this}}</a></li>
+                    <li class="dropdown-item"><a data-bs-target="year" href="#">{{this}}</a></li>
                 {{/each}}
             </ul>
         </div>
         <div class="btn-group">
-            <button type="button" class="btn btn-light btn-mit-teams {{#if filter.withTeams}}checked{{/if}}" data-target="withTeams">
+            <button type="button" class="btn btn-light btn-mit-teams {{#if filter.withTeams}}checked{{/if}}" data-bs-target="withTeams">
                 <span class="fa {{#if filter.withTeams}}fa-check-square-o{{else}}fa-square-o{{/if}}"></span>
                 Mit Teams
             </button>
@@ -168,7 +168,7 @@
     <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item list-group-item-action tournament-list-item" title="{{name}}">
         <div class="row">
             <div class="col-12 cutoff-text">
-                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none pull-right" />
+                <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-block d-sm-none float-end" />
                 {{dayOfDate date}}. <strong>{{name}}</strong> in {{address.city}}
                 <img src="/icons/countries/{{address.country}}.png" alt="{{address.country}}" title="{{address.country}}" class="d-none d-sm-block" />
             </div>
@@ -177,7 +177,7 @@
             <div class="row">
                 <div class="col-8 cutoff-text">
                     {{#with myTeamState}}
-                        <div class="pull-right">
+                        <div class="float-end">
                             <span class="fa fa-user text-{{colorState this.state}}" title="{{this.state}}"></span>
                         </div>
                     {{/with}}
@@ -206,9 +206,9 @@
         <a href='{{pathFor "tournament" _id=_id}}' class="list-group-item list-group-item-action tournament-list-item" title="{{name}}">
             <div class="row">
                 <div class="col-12">
-                    <span class="badge pull-right" title="Anzahl Berichte">{{reports.length}}</span>
+                    <span class="badge float-end" title="Anzahl Berichte">{{reports.length}}</span>
                     {{#each teamImages}}
-                        <div class="detail-team-image d-sm-none pull-left" style="background-image:url('{{imageUrl this '160x160'}}');">
+                        <div class="detail-team-image d-sm-none float-start" style="background-image:url('{{imageUrl this '160x160'}}');">
                         </div>
                     {{/each}}
                     <strong>{{name}}</strong><br />

@@ -11,10 +11,10 @@
 							von {{editorName}} 
 						{{/if}}
 						<div class="dropdown">
-							<button aria-expanded="false" class="btn btn-link dropdown-toggle" data-toggle="dropdown" type="button">
+							<button aria-expanded="false" class="btn btn-link dropdown-toggle" data-bs-toggle="dropdown" type="button">
 								<span class="fa fa-ellipsis-v"></span>
 							</button>
-							<ul class="dropdown-menu dropdown-menu-right wikipage-nav" role="menu">
+							<ul class="dropdown-menu dropdown-menu-end wikipage-nav" role="menu">
 								<li class="dropdown-header">{{name}}</li>
 								<li role="presentation" class="dropdown-item {{#unless showEditStuff}}active{{/unless}}">
 									<a href="#" aria-controls="">Artikel</a></li>
@@ -92,7 +92,7 @@
 							</h5>
 						{{else}}
 							{{>ultisiteWysiwyg value=wikiEntry.content source=wikiEntry}}
-							<div class="text-right">
+							<div class="text-end">
 								<button class="btn btn-light action-cancel">Abbrechen</button>
 								<button class="btn btn-primary action-save">Übernehmen</button>
 							</div>
@@ -131,7 +131,7 @@
 		{{/each}}
 		<h5>Neue Wikiseite anlegen</h5>
 		<form class="" id="new-wikipage">
-			<div class="form-group">
+			<div class="mb-3">
 				<div class="form-inline">
 					<input type="text" class="wiki-page-name" placeholder="Name der Wikiseite">
 					<button type="submit" class="btn btn-primary">Seite anlegen</button>

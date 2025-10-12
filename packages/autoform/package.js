@@ -11,27 +11,24 @@ Package.describe({
 
 /* This defines your actual package */
 Package.onUse(function (api) {
-  api.versionsFrom('1.4.3.1');
-  api.use(['ecmascript',
-    'meteor-base',
-    'modules',
-    'mongo',
-    'underscore',
-    'check',
-  ]);
-  api.use(['fourseven:scss',
-    'standard-minifiers',
-    'mobile-experience',
-    'blaze-html-templates',
-    'session',
-    'tracker',
-    'logging',
-    'reload',
-    'random',
-    'ejson',
-    'spacebars',
-    'reactive-var',
-  ], 'client');
+  api.versionsFrom(['2.13', '3.1']);
+  api.use(['ecmascript', 'meteor-base', 'modules', 'mongo', 'underscore', 'check']);
+  api.use(
+    [
+      'less',
+      'standard-minifiers',
+      'mobile-experience',
+      'session',
+      'tracker',
+      'logging',
+      'reload',
+      'random',
+      'templating',
+      'ejson',
+      'reactive-var',
+    ],
+    'client'
+  );
   //    api.addFiles('server.js','server');
   //    api.addFiles(['client.js', 'forms.html', 'forms.js'],'client');
   api.mainModule('client/client.js', 'client');

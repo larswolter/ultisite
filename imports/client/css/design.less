@@ -1,0 +1,184 @@
+
+body {
+    background-color: @backgroundColor;
+    font-size: 14px;
+}
+
+@keyframes fullSiteAnimation {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.ultisite-root {
+    animation-name: fullSiteAnimation;
+    animation-duration: 250ms;
+    background-color: @backgroundColor;
+    color: rgb(27, 63, 45);
+    a, .btn-link {
+        text-decoration: none;
+    }
+    .btn-link:hover,
+    .btn-link:focus,
+    .btn-link:active,
+    a:hover,
+    a:focus,
+    a:active {
+        text-decoration: underline;
+    }
+    hr {
+        border-color: @backgroundColorDark;
+    }
+
+    .list-group-item list-group-item-action {
+        color: rgb(27, 63, 45);
+    }
+
+    .dropdown-menu,
+    .dropdown-menu>.dropdown-item>a {
+        color: black;
+    }
+
+    .navbar-light,
+    .navbar.navbar-light.navbar-fixed-top {
+        background-color: @secondary;
+        border: 0px solid @secondaryDark;
+        border-radius: 0px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+        color: @primary;
+
+        >.row>div>a {
+            background-color: @secondary;
+            border-bottom-color: @primary;
+        }
+
+        a,
+        a:visited {
+            color: @primary;
+        }
+        .btn-link:hover,
+        .btn-link:focus,
+        .btn-link:active,
+        a:hover,
+        a:focus,
+        a:active {
+            color: @primaryDark;
+            text-decoration: underline;
+        }
+
+        .navbar-brand {
+            color: @primary;
+            font-weight: bold;
+        }
+
+        .navbar-brand:hover,
+        .navbar-brand:focus,
+        .navbar-brand:active {
+            color: @primaryDark;
+        }
+
+        .navbar-nav>li>a,
+        .navbar-nav>li>a:visited {
+            transition: background 200ms;
+            color: @primary;
+            border-bottom: 3px solid @secondary;
+        }
+
+        .navbar-nav>li>a:hover,
+        .navbar-nav>li>a:focus,
+        .navbar-nav>li>a:active {
+            color: @primaryDark;
+        }
+
+        .dropdown-menu>.dropdown-item>a {
+            color: black;
+        }
+    }
+
+    .navbar-light.navbar-footer {
+        min-height: 25px;
+        padding: 8px;
+    }
+
+    .sidebar {
+        background-color: @secondary;
+        color: @primary;
+
+        a.user-link {
+            color: white;
+        }
+
+        .list-group>a,
+        a.active,
+        .list-group-item .list-group-item-action,
+        .list-group-item list-group-item-action.active,
+        .list-group-item,
+        .list-group-item.active {
+            background-color: transparent;
+            border: 0px;
+            border-radius: 0px;
+            border-top: 1px solid @secondary;
+            border-left: 3px solid @secondary;
+            color: @primary;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+            background-color: @secondary;
+            color: @primaryDark;
+        }
+
+        a.active {
+            border-left: 3px solid @primary;
+        }
+    }
+
+    .btn-primary,
+    .bg-primary {
+        color: @primary;
+        background-color: @secondary;
+        border-color: @secondary;
+    }
+
+    .btn-primary:hover {
+        background-color: @secondary;
+    }
+
+    .list-group-item-info {
+        color: @primary;
+        background-color: white;
+    }
+
+    .list-group-item.active {
+        color: @primary;
+        background-color: @secondary;
+    }
+
+    .list-group-item.active:hover {
+        color: @primaryDark;
+        background-color: @secondary;
+    }
+
+    .table {
+        background-color: white;
+    }
+
+    .text-muted {
+        color: @backgroundColorDark;
+    }
+
+    .tournament-tabs {
+        a.active {
+            border-bottom-color: @primary;
+        }
+    }
+
+    .wiki-footer {
+        border-top-color: darkgray;
+    }
+}

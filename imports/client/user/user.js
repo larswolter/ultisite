@@ -1,11 +1,12 @@
 import { AutoForm } from 'meteor/ultisite:autoform';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
-import { Roles } from 'meteor/alanning:roles';
+
 import { moment } from 'meteor/momentjs:moment';
 
-import './user.scss';
+import './user.less';
 import './user.html';
 import './userlist.html';
+import { getAllRoles, userIsInRole } from '../../../common/lib/ultisite';
 
 Meteor.startup(function () {
   if (Meteor.userId()) {
@@ -58,11 +59,11 @@ const userHelper = {
   },
   userRoles() {
     const self = this;
-    if (UltiSite.isAdmin(Meteor.userId())) {
-      return Roles.getAllRoles().map(function (r) {
+    if (UltiSite.isAdmin()) {
+      return getAllRoles().map(function (r) {
         return {
-          name: r.name,
-          active: Roles.userIsInRole(self, r.name),
+          name: r,
+          active: userIsInRole(self, r),
         };
       });
     }
@@ -177,7 +178,6 @@ Template.user.onCreated(function () {
     if (!userId) {
       return;
     }
-    this.subscribe('UserRoles');
     this.subscribe('UserDetails', FlowRouter.getParam('_id'));
     this.subscribe('Statistics', FlowRouter.getParam('_id'));
     this.subscribe('Files', [FlowRouter.getParam('_id')]);
@@ -288,11 +288,11 @@ Template.user.events({
   },
   'click .action-remove-role': function (evt) {
     evt.preventDefault();
-    Roles.removeUsersFromRoles(FlowRouter.getParam('_id'), this.name);
+    Meteor.call('removeUserFromRole', FlowRouter.getParam('_id'), this.name);
   },
   'click .action-add-role': function (evt) {
     evt.preventDefault();
-    Roles.addUsersToRoles(FlowRouter.getParam('_id'), this.name);
+    Meteor.call('addUserToRole', FlowRouter.getParam('_id'), this.name);
   },
   'click .action-immediate': function (evt) {
     evt.preventDefault();

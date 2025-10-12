@@ -14,8 +14,7 @@
                                 <h5 class="modal-title" id="myModalLabel">Turnier eintragen</h5>
                             {{/if}}
                             <button type="submit" class="confirm">Speichern</button>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span class="fa fa-close"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             </button>
                         </div>
                         <div class="modal-body">
@@ -72,10 +71,10 @@
             <div class="card">
                 <div class="card-header tournament-heading">
                     {{#if currentUser}}
-                        <div class="d-none d-sm-block d-sm-none pull-right">
+                        <div class="d-none d-md-block d-xs-none float-end">
                             <div>
                                 <button class="btn btn-{{#if teamObjects}}default{{else}}primary{{/if}} action-add-team" title="Team anlegen" type="button">
-                                    <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
+                                    <span class="fa fa-group-add"></span>
                                     <span class=""> Team anlegen</span>
                                 </button>
                                 <button class="btn btn-light action-edit-tournament" title="Turnier editieren" type="button">
@@ -88,15 +87,15 @@
                                 {{/unless}}
                             </div>
                         </div>
-                        <div class="btn-group d-block d-md-none pull-right text-right">
+                        <div class="btn-group d-block d-md-none float-end text-end">
                             <div class="dropdown">
-                                <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <button type="button" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                <ul class="dropdown-menu dropdown-menu-end" role="menu">
                                     <li class="dropdown-item">
                                         <a title="Team anlegen" class="action-add-team">
-                                            <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub> Team anlegen
+                                            <span class="fa fa-group-add"></span> Team anlegen
                                         </a>
                                     </li>
                                     <li class="dropdown-item">
@@ -129,7 +128,7 @@
                     <div class="row">
                         <div class="col-12 col-sm-4 col-md-3 col-lg-2 info-area">
                             <div class="tournament-value">
-                                <span class="fa fa-clock-o fa-fw"></span>
+                                <span class="fa fa-clock fa-fw"></span>
                                 {{#if equals numDays 1}}Ein Tag{{else}}{{numDays}} Tage{{/if}}
                             </div>
                             <div class="tournament-value">
@@ -222,8 +221,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12">
-                        <button class="btn btn-light btn-block btn-xs toggle-tournament-body" type="button">
+                    <div class="col-12 d-grid">
+                        <button class="btn btn-light btn-xs toggle-tournament-body" type="button">
                             {{#if tournamentBodyVisible}}
                                 <span class="fa fa-caret-up"></span><span class="fa fa-caret-up"></span><span class="fa fa-caret-up"></span>
                             {{else}}
@@ -292,7 +291,7 @@
                         </button>
                     {{else}}
                         <button class="d-block d-md-none btn btn-light btn-floating action-add-team" title="Team anlegen" type="button">
-                            <span class="fa fa-group"></span><sub><span class="fa fa-plus"></span></sub>
+                            <span class="fa fa-group-add"></span>
                         </button>
                     {{/if}}
                 {{/if}}
