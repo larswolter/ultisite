@@ -104,30 +104,28 @@ export const HatInfo = {
       },
       experience: {
         type: String,
-        label: 'Wie erfahren schlägt das Tanzbein auf der Platte und rotiert deine Frisbee in der Luft?',
+        label: 'Experience / Spielerfahrung',
         optional: false,
         autoform: {
           firstOption: 'Bitte wählen',
           options() {
             return [
-              { label: 'Mini-Playback-Show - Ich bin neu dabei.', value: '1' },
+              { label: 'Ich bin neu dabei.', value: '1' },
               {
-                label: 'Die Standardtänze sind kein Problem - die wichtigsten Tricks und Basics habe ich drauf.',
+                label:
+                  'Die wichtigsten Tricks und Basics habe ich drauf (Zonenverteidigung, Indoorwürfe, Vertical u. Horizontal  Stack sind kein Neuland).',
                 value: '2',
               },
               {
-                label:
-                  'Kleines Orchester passt gut zu mir - ich spiele schon recht sicher und kann andere im Training unterstützen.',
+                label: 'Ich spiele schon recht sicher und kann mich im Team einbringen.',
                 value: '3',
               },
               {
-                label:
-                  'Helene Fischer macht mir nichts vor - ich übernehme viel Verantwortung im Team, kann Training und Coaching übernehmen.',
+                label: 'Ich übernehme Verantwortung im Spiel und auch ein paar Ansagen im Team.',
                 value: '4',
               },
               {
-                label:
-                  'Double von Freddy Mercury - In der 1. Liga und/oder auf internationalem Niveau, da fühle ich mich zu Hause.',
+                label: 'In der 1. Liga und/oder auf internationalem Niveau fühle ich mich zu Hause.',
                 value: '5',
               },
             ];
@@ -136,28 +134,17 @@ export const HatInfo = {
       },
       fitness: {
         type: String,
-        label: 'Wie laut kannst Du schreien, wie schnell kannst Du laufen - Wie ist es mit Deiner Fitness?',
+        label: 'Fitness',
         optional: false,
         autoform: {
           firstOption: 'Bitte wählen',
           options() {
             return [
-              { label: 'Laufen und viel bewegen? Och, ich bin lieber gemütlich unterwegs.', value: '1' },
-              { label: 'Laufen beim Training ist schon drin für mich.', value: '2' },
-              {
-                label: 'Ich bin auf der Tanzfläche flott dabei und laufe meinem Tanzpartner auch schon mal davon.',
-                value: '3',
-              },
-              {
-                label:
-                  'Extraeinheiten an Tanzschritten und Fitnessschabernack zusätzlich zum Training, sind voll mein Ding.',
-                value: '4',
-              },
-              {
-                label:
-                  'Vor, nach und zwischen den Trainings, sind Sport-, Lauf und Krafteinheiten selbstverständlich für mich.',
-                value: '5',
-              },
+              { label: 'Ich mag Bewegung, aber bei Hitze bleibe ich lieber im Schatten.', value: '1' },
+              { label: 'Ich halte bei normalem Training gut mit.', value: '2' },
+              { label: 'Ich bin fit und entwische dem Bademeister regelmäßig.', value: '3' },
+              { label: 'Forderndes Training in der strahlenden Sonne sind voll mein Ding.', value: '4' },
+              { label: 'Ich bin topfit und bereit für jede Hitzeschlacht.', value: '5' },
             ];
           },
         },
@@ -199,12 +186,6 @@ export const HatInfo = {
       allowPublic: {
         type: Boolean,
         label: 'Mein Name, Stadt und Heimatteam sollen allen gezeigt werden',
-        optional: true,
-      },
-      musicHit: {
-        type: String,
-        label:
-          'Und jetzt kannst du uns für die Playlist noch deinen Musikhit nennen, bei dem du auf dem Feld vor Freude eine kleine Tanzperformance hinlest, egal was dort gerade los ist (gern mit YouTube-Link)',
         optional: true,
       },
       createdAt: {
