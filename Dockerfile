@@ -1,5 +1,5 @@
 FROM node:22.18 as builder
-RUN apt-get update && apt-get install -y curl git python build-essential
+RUN apt-get update && apt-get install -y curl git python-is-python3 build-essential
 RUN curl https://install.meteor.com/?release=3.3.1 | sh
 
 # Base image done, pulling sources for build
