@@ -46,11 +46,11 @@ Meteor.methods({
   async hatHomeTeams() {
     const res = await HatParticipants.rawCollection()
       .aggregate([
-        { $match: { hatId: settings().hatId } },
+        { $match: { hatId: (await settings()).hatId } },
         { $group: { _id: null, hometeams: { $addToSet: '$hometeam' } } },
       ])
       .toArray();
-    return res[0] ? [...(settings().arrayHatHomeTeams || []), ...res[0].hometeams] : settings().arrayHatHomeTeams;
+    return res[0] ? [...((await settings()).arrayHatHomeTeams || []), ...res[0].hometeams] : (await settings()).arrayHatHomeTeams;
   },
   async createRandomData(total, payed, confirmed) {
     check(total, Number);
@@ -77,7 +77,7 @@ Meteor.methods({
                 .toDate()
             : moment().add(10, 'years').toDate(),
         accessKey: Random.id(34),
-        hatId: settings().hatId,
+        hatId: (await settings()).hatId,
       });
       console.log(createdAt);
     }
@@ -114,13 +114,13 @@ Meteor.methods({
     const participant = _.clone(p);
     participant.createdAt = new Date();
     participant.modifiedAt = new Date();
-    if (participant.hometeam === settings().teamname) {
+    if (participant.hometeam === (await settings()).teamname) {
       participant.payed = moment().subtract(1, 'second').toDate();
     } else {
       participant.payed = moment().add(10, 'years').toDate();
     }
     participant.accessKey = Random.id(34);
-    participant.hatId = settings().hatId;
+    participant.hatId = (await settings()).hatId;
     if (
       await HatParticipants.findOneAsync({
         email: participant.email,
@@ -133,11 +133,11 @@ Meteor.methods({
     const template = await Assets.getTextAsync('private/confirm.html');
     Mail.send(
       [participant.email],
-      `Anmeldung beim ${settings().hatName} bestätigen`,
+      `Anmeldung beim ${(await settings()).hatName} bestätigen`,
       renderMailTemplate(template, null, {
-        additionalInfos: settings().hatConfirmInfos,
+        additionalInfos: (await settings()).hatConfirmInfos,
         participant,
-        team: settings().teamname,
+        team: (await settings()).teamname,
         url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
       })
     );
@@ -152,11 +152,11 @@ Meteor.methods({
     const template = await Assets.getTextAsync('private/confirm.html');
     Mail.send(
       [participant.email],
-      `Anmeldung beim ${settings().hatName} bestätigen`,
+      `Anmeldung beim ${(await settings()).hatName} bestätigen`,
       renderMailTemplate(template, null, {
-        additionalInfos: settings().hatConfirmInfos,
+        additionalInfos: (await settings()).hatConfirmInfos,
         participant,
-        team: settings().teamname,
+        team: (await settings()).teamname,
         url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
       })
     );
@@ -210,8 +210,8 @@ Meteor.methods({
       throw new Meteor.Error('access-denied', 'Änderung nicht erlaubt');
     }
     Mail.send(
-      [settings().hatEmail],
-      `Stornierung beim ${settings().hatName}`,
+      [(await settings()).hatEmail],
+      `Stornierung beim ${(await settings()).hatName}`,
       `<p>Der folgende Teilnehmer hat sich abgemeldet:</p><pre>${JSON.stringify(part, null, 2)}</pre>`
     );
 
@@ -223,7 +223,7 @@ Meteor.methods({
 Meteor.publish('hatParticipants', async function () {
   const sort = hatSort();
   const filter = {
-    hatId: settings().hatId || undefined,
+    hatId: (await settings()).hatId || undefined,
   };
   /*
   if(search && search.trim())
@@ -277,7 +277,7 @@ WebApp.connectHandlers.use('/_hatInfoExport', async function (req, res, next) {
     width: 20,
   }));
   await HatParticipants.find({
-    hatId: settings().hatId || undefined,
+    hatId: (await settings()).hatId || undefined,
   }).forEachAsync((entry) =>
     sheet.addRow({
       ...entry,
@@ -290,7 +290,7 @@ WebApp.connectHandlers.use('/_hatInfoExport', async function (req, res, next) {
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader(
     'Content-Disposition',
-    `attachment; filename="${settings().hatId}-Participants-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
+    `attachment; filename="${(await settings()).hatId}-Participants-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
   );
   res.writeHead(200);
   workbook.xlsx.write(res).then(() => {

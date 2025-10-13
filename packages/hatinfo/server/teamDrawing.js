@@ -20,7 +20,7 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', async function (req, res, next) {
   const teams = [];
   const participants = await HatParticipants.find(
     { confirmed: true, payed: { $lte: new Date() } },
-    { sort: hatSort(), limit: Number(settings().hatNumPlayers) }
+    { sort: hatSort(), limit: Number((await settings()).hatNumPlayers) }
   ).fetchAsync();
   const partStrength = (p) => {
     return Number(p.strength) + Number(p.years) + Number(p.experience) + Number(p.fitness);
@@ -122,7 +122,7 @@ WebApp.connectHandlers.use('/_hatTeamDrawing', async function (req, res, next) {
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader(
     'Content-Disposition',
-    `attachment; filename="${settings().hatId}-Teams-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
+    `attachment; filename="${(await settings()).hatId}-Teams-${moment().format('YYYY-MM-DD_HH-mm')}.xlsx"`
   );
   res.writeHead(200);
   workbook.xlsx.write(res).then(() => {

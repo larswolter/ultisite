@@ -65,12 +65,12 @@ export const HatInfo = {
           },
         },
       },
-      strength: {
+      experience: {
         type: String,
-        label: 'Spielstärke',
+        label: 'Experience / Spielerfahrung',
         optional: false,
         autoform: {
-          firstOption: 'Spielstärke wählen',
+          firstOption: 'Bitte wählen',
           options() {
             return [
               { label: 'Heureka, mein erstes Turnier.', value: '1' },
@@ -102,9 +102,9 @@ export const HatInfo = {
           },
         },
       },
-      experience: {
+      strength: {
         type: String,
-        label: 'Experience / Spielerfahrung',
+        label: 'Spielstärke',
         optional: false,
         autoform: {
           firstOption: 'Bitte wählen',
@@ -113,7 +113,7 @@ export const HatInfo = {
               { label: 'Ich bin neu dabei.', value: '1' },
               {
                 label:
-                  'Die wichtigsten Tricks und Basics habe ich drauf (Zonenverteidigung, Indoorwürfe, Vertical u. Horizontal  Stack sind kein Neuland).',
+                  'Die wichtigsten Tricks (Zone, Wwürfe, Vertical u. Horizontal Stack sind kein Neuland).',
                 value: '2',
               },
               {

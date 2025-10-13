@@ -16,14 +16,14 @@ export const sendHatReminderEmails = async () => {
     console.log(`sending reminder to ${participant.email}`);
     Mail.send(
       [participant.email],
-      `Erinnerung - Anmeldung beim ${settings().hatName}`,
+      `Erinnerung - Anmeldung beim ${(await settings()).hatName}`,
       renderMailTemplate(template, null, {
-        additionalInfos: settings().hatConfirmInfos,
+        additionalInfos: (await settings()).hatConfirmInfos,
         participant,
         confirmed: participant.confirmed,
         payed: moment(participant.payed).isBefore(new Date()),
-        hatName: settings().hatName,
-        team: settings().teamname,
+        hatName: (await settings()).hatName,
+        team: (await settings()).teamname,
         url: Meteor.absoluteUrl(`hat_confirm/${participant.accessKey}`),
       })
     );
