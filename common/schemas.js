@@ -19,41 +19,45 @@ function validateSettingsList() {
   return 'notAllowed';
 }
 
-UltiSite.schemas.emailServerSchema.set(new SimpleSchema({
-  from: {
-    label: 'Absenderadresse',
-    type: String,
-    regEx: SimpleSchema.RegEx.Email,
-    optional: false,
-  },
-  user: {
-    label: 'Login',
-    type: String,
-    optional: false,
-  },
-  password: {
-    label: 'Passwort',
-    type: String,
-    optional: false,
-  },
-  port: {
-    label: 'Port',
-    type: Number,
-    optional: false,
-    autoform: {
-      placeholder: '993',
+UltiSite.schemas.emailServerSchema.set(
+  new SimpleSchema(
+    {
+      from: {
+        label: 'Absenderadresse',
+        type: String,
+        regEx: SimpleSchema.RegEx.Email,
+        optional: false,
+      },
+      user: {
+        label: 'Login',
+        type: String,
+        optional: false,
+      },
+      password: {
+        label: 'Passwort',
+        type: String,
+        optional: false,
+      },
+      port: {
+        label: 'Port',
+        type: Number,
+        optional: false,
+        autoform: {
+          placeholder: '993',
+        },
+      },
+      host: {
+        label: 'HostUrl',
+        type: String,
+        optional: false,
+        autoform: {
+          placeholder: 'mail.server.de',
+        },
+      },
     },
-  },
-  host: {
-    label: 'HostUrl',
-    type: String,
-    regEx: SimpleSchema.RegEx.Domain,
-    optional: false,
-    autoform: {
-      placeholder: 'mail.server.de',
-    },
-  },
-}, { tracker: Tracker }));
+    { tracker: Tracker }
+  )
+);
 
 const addressSchema = new SimpleSchema({
   city: {
@@ -283,94 +287,98 @@ const setSchemas = function () {
       },
     },
   }, { tracker: Tracker }));
-  UltiSite.schemas.tournament.set(new SimpleSchema({
-    name: {
-      type: String,
-      label: 'Name',
-      max: 200,
-      optional: false,
-    },
-    date: {
-      type: Date,
-      label: 'Datum',
-      autoform: {
-        format: 'DD.MM.YYYY',
-        type: 'bootstrap-datepicker',
-        //                buttonClasses: "fa fa-calendar",
-        datePickerOptions: {
-          language: 'de-DE',
-          format: 'DD.MM.YYYY',
+  UltiSite.schemas.tournament.set(
+    new SimpleSchema(
+      {
+        name: {
+          type: String,
+          label: 'Name',
+          max: 200,
+          optional: false,
+        },
+        date: {
+          type: Date,
+          label: 'Datum',
+          autoform: {
+            format: 'DD.MM.YYYY',
+            type: 'bootstrap-datepicker',
+            //                buttonClasses: "fa fa-calendar",
+            datePickerOptions: {
+              language: 'de-DE',
+              format: 'DD.MM.YYYY',
+            },
+          },
+          optional: false,
+        },
+        surfaces: {
+          type: Array,
+          minCount: 1,
+          label: 'Untergründe',
+          autoform: {
+            multi: true,
+            options() {
+              return UltiSite.settings().arraySurfaces.map(function (element) {
+                return { label: element, value: element };
+              });
+            },
+          },
+          optional: true,
+        },
+        'surfaces.$': String,
+        divisions: {
+          type: Array,
+          minCount: 1,
+          label: 'Divisionen',
+          autoform: {
+            multi: true,
+            options() {
+              return UltiSite.settings().arrayDivisions.map(function (element) {
+                return { label: element, value: element };
+              });
+            },
+          },
+        },
+        'divisions.$': String,
+        numDays: {
+          type: Number,
+          label: 'Anzahl Tage',
+          defaultValue: 2,
+          min: 1,
+          max: 14,
+        },
+        category: {
+          type: String,
+          label: 'Kategorie',
+          optional: false,
+          defaultValue: 'Turnier',
+          custom: validateSettingsList,
+          autoform: {
+            options() {
+              return UltiSite.settings().arrayCategorys.map(function (element) {
+                return { label: element, value: element };
+              });
+            },
+          },
+        },
+        address: {
+          label: 'Adresse',
+          type: addressSchema,
+          defaultValue: { country: 'DE' },
+        },
+        tournamentDirector: {
+          type: String,
+          label: 'Kontaktperson',
+          optional: true,
+        },
+        website: {
+          type: String,
+          label: 'Webseite',
+          optional: true,
         },
       },
-      optional: false,
-    },
-    surfaces: {
-      type: Array,
-      minCount: 1,
-      label: 'Untergründe',
-      autoform: {
-        multi: true,
-        options() {
-          return UltiSite.settings().arraySurfaces.map(function (element) {
-            return { label: element, value: element };
-          });
-        },
-      },
-      optional: true,
-    },
-    'surfaces.$': String,
-    divisions: {
-      type: Array,
-      minCount: 1,
-      label: 'Divisionen',
-      autoform: {
-        multi: true,
-        options() {
-          return UltiSite.settings().arrayDivisions.map(function (element) {
-            return { label: element, value: element };
-          });
-        },
-      },
-    },
-    'divisions.$': String,
-    numDays: {
-      type: Number,
-      label: 'Anzahl Tage',
-      defaultValue: 2,
-      min: 1,
-      max: 14,
-    },
-    category: {
-      type: String,
-      label: 'Kategorie',
-      optional: false,
-      defaultValue: 'Turnier',
-      custom: validateSettingsList,
-      autoform: {
-        options() {
-          return UltiSite.settings().arrayCategorys.map(function (element) {
-            return { label: element, value: element };
-          });
-        },
-      },
-    },
-    address: {
-      label: 'Adresse',
-      type: addressSchema,
-      defaultValue: { country: 'DE' },
-    },
-    tournamentDirector: {
-      type: String,
-      label: 'Kontaktperson',
-      optional: true,
-    },
-    website: {
-      type: String,
-      regEx: SimpleSchema.RegEx.Url,
-      label: 'Webseite',
-      optional: true,
-    },
-  }, { tracker: Tracker }));
+      { tracker: Tracker }
+    )
+  );
   UltiSite.schemas.practice.set(new SimpleSchema({
     hostingTeam: {
       type: String,
@@ -473,45 +481,32 @@ const setSchemas = function () {
     },
   }, { tracker: Tracker }));
 };
-SimpleSchema.setDefaultMessages({
-  messages: {
-    en: {
-      minString: '{{label}} muss mindestens {{min}} Zeichen haben',
-      maxString: '{{label}} darf maximal {{max}} Zeichen haben',
-      minNumber: '{{label}} must be at least {{min}}',
-      maxNumber: '{{label}} cannot exceed {{max}}',
-      minDate: '{{label}} must be on or after {{min}}',
-      maxDate: '{{label}} cannot be after {{max}}',
-      badDate: '{{label}} is not a valid date',
-      minCount: 'You must specify at least {{minCount}} values',
-      maxCount: 'You cannot specify more than {{maxCount}} values',
-      noDecimal: '{{label}} must be an integer',
-      notAllowed: '{{value]] is not an allowed value',
-      expectedString: '{{label}} muss Text sein',
-      expectedNumber: '{{label}} muss eine Zahl sein',
-      expectedBoolean: '{{label}} must be a boolean',
-      expectedArray: '{{label}} must be an array',
-      expectedObject: '{{label}} must be an object',
-      expectedConstructor: '{{label}} must be a {{type}}',
-      regEx: [
-        { msg: '{{label}} failed regular expression validation' },
-        { exp: SimpleSchema.RegEx.Email, msg: '{{label}} muss eine gültige E-Mail sein' },
-        { exp: SimpleSchema.RegEx.WeakEmail, msg: '{{label}} muss eine gültige E-Mail sein' },
-        { exp: SimpleSchema.RegEx.Domain, msg: '{{label}} must be a valid domain' },
-        { exp: SimpleSchema.RegEx.WeakDomain, msg: '{{label}} must be a valid domain' },
-        { exp: SimpleSchema.RegEx.IP, msg: '{{label}} must be a valid IPv4 or IPv6 address' },
-        { exp: SimpleSchema.RegEx.IPv4, msg: '{{label}} must be a valid IPv4 address' },
-        { exp: SimpleSchema.RegEx.IPv6, msg: '{{label}} must be a valid IPv6 address' },
-        { exp: SimpleSchema.RegEx.Url, msg: '{{label}} must be a valid URL' },
-        { exp: SimpleSchema.RegEx.Id, msg: '{{label}} must be a valid alphanumeric ID' },
-      ],
-      keyNotInSchema: '{{key}} is not allowed by the schema',
-      required: '{{label}} ist ein Pflichtfeld',
-      'wrong-password': 'Falsches Passwort',
-      'invalid-username': 'Ungültiger Nutzername',
-      'duplicate-email': 'E-Mail bereits vorhanden',
-      'duplicate-username': 'Nutzername bereits vorhanden',
-    },
+globalThis.simpleSchemaGlobalConfig = {
+  getErrorMessage(error, label,...more) {
+    console.log('Error MEssage',{error,label,more})
+    if (error.type === 'regEx') return `${label} ist nicht gültig!`;
+    if (error.type === 'too_long') return `${label} is too long!`;
+    if (error.type === 'minString') return `${label} muss mindestens ${error.min} Zeichen haben`;
+    if (error.type === 'maxString') return `${label} darf maximal ${error.max} Zeichen haben`;
+    if (error.type === 'minNumber') return `${label} must be at least ${error.min}`;
+    if (error.type === 'maxNumber') return `${label} cannot exceed ${error.max}`;
+    if (error.type === 'minDate') return `${label} must be on or after ${error.min}`;
+    if (error.type === 'maxDate') return `${label} cannot be after ${error.max}`;
+    if (error.type === 'badDate') return `${label} is not a valid date`;
+    if (error.type === 'minCount') return `You must specify at least ${error.minCount} values`;
+    if (error.type === 'maxCount') return `You cannot specify more than ${error.maxCount} values`;
+    if (error.type === 'noDecimal') return `${label} must be an integer`;
+    if (error.type === 'notAllowed') return `is not an allowed value`;
+    if (error.type === 'expectedString') return `${label} muss Text sein`;
+    if (error.type === 'expectedNumber') return `${label} muss eine Zahl sein`;
+    if (error.type === 'expectedBoolean') return `${label} must be a boolean`;
+    if (error.type === 'expectedArray') return `${label} must be an array`;
+    if (error.type === 'expectedObject') return `${label} must be an object`;
+    if (error.type === 'expectedConstructor') return `${label} must be a ${error.type}`;
+    if (error.type === 'required') return `${label} ist ein Pflichtfeld`;
+    if (error.type === 'wrong-password') return `Falsches Passwort`;
+    if (error.type === 'invalid-username') return `Ungültiger Nutzername`;
+    if (error.type === 'duplicate-email') return `E-Mail bereits vorhanden`;
+    if (error.type === 'duplicate-username') return `Nutzername bereits vorhanden`;
   },
-});
-
+};

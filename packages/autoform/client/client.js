@@ -3,10 +3,12 @@ import './forms.js';
 import './forms.less';
 
 console.log('configuring simple schema');
+SimpleSchema.RegEx = {
+  Email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  ZipCode: /^\d{5}(?:[-\s]\d{4})?$/,
+}
 
-SimpleSchema.extendOptions({
-  autoform: Match.Optional(Object),
-});
+SimpleSchema.extendOptions(['autoform']);
 
 const AutoForm = {
   content: new Meteor.Collection(null),

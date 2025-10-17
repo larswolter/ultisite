@@ -45,7 +45,7 @@
     "quoted-printable": "^1.0.0",
     "sanitize-html": "^2.14.0",
     "sharp": "^0.34.3",
-    "simpl-schema": "^1.13.1",
+    "simpl-schema": "^3.4.6",
     "workbox-window": "^6.6.0",
     "wysiwyg.js": "^1.0.0"
   },

@@ -9,7 +9,10 @@ export { SimpleSchema };
 
 console.log('configuring simple schema');
 
-SimpleSchema.extendOptions({
-  autoform: Match.Optional(Object),
-});
+SimpleSchema.RegEx = {
+  Email: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  ZipCode: /^\d{5}(?:[-\s]\d{4})?$/,
+}
+
+SimpleSchema.extendOptions(['autoform']);
 
