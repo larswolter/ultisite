@@ -218,8 +218,7 @@ export const HatInfo = {
         label: 'Nachrücken bestätigt',
         optional: true,
       },
-    },
-    { tracker: Tracker }
+    }
   ),
 };
 Meteor.startup(function () {

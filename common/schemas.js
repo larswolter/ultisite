@@ -1,5 +1,4 @@
 import { SimpleSchema } from 'meteor/ultisite:autoform';
-import { Tracker } from 'meteor/tracker';
 
 Meteor.startup(function () {
   if (Meteor.isClient) { setSchemas(); }
@@ -54,8 +53,7 @@ UltiSite.schemas.emailServerSchema.set(
           placeholder: 'mail.server.de',
         },
       },
-    },
-    { tracker: Tracker }
+    }
   )
 );
 
@@ -89,7 +87,7 @@ const addressSchema = new SimpleSchema({
     type: String,
     optional: true,
   },
-}, { tracker: Tracker });
+});
 
 const setSchemas = function () {
   UltiSite.schemas.links.set(new SimpleSchema({
@@ -144,7 +142,7 @@ const setSchemas = function () {
       optional: false,
       max: 25,
     },
-  }, { tracker: Tracker }));
+  }));
   UltiSite.schemas.user.set(new SimpleSchema({
     email: {
       type: String,
@@ -196,7 +194,7 @@ const setSchemas = function () {
         },
       },
     },
-  }, { tracker: Tracker }));
+  }));
   UltiSite.schemas.userRegister.set(new SimpleSchema({
     sitePassword: {
       type: String,
@@ -206,7 +204,7 @@ const setSchemas = function () {
 
       },
     },
-  }, { tracker: Tracker }));
+  }));
   UltiSite.schemas.userRegister.get().extend(UltiSite.schemas.user.get());
   UltiSite.schemas.team.set(new SimpleSchema({
     name: {
@@ -286,7 +284,7 @@ const setSchemas = function () {
         rows: 3,
       },
     },
-  }, { tracker: Tracker }));
+  }));
   UltiSite.schemas.tournament.set(
     new SimpleSchema(
       {
@@ -375,8 +373,7 @@ const setSchemas = function () {
           label: 'Webseite',
           optional: true,
         },
-      },
-      { tracker: Tracker }
+      }
     )
   );
   UltiSite.schemas.practice.set(new SimpleSchema({
@@ -479,11 +476,10 @@ const setSchemas = function () {
       defaultValue: 120,
       optional: false,
     },
-  }, { tracker: Tracker }));
+  }));
 };
 globalThis.simpleSchemaGlobalConfig = {
-  getErrorMessage(error, label,...more) {
-    console.log('Error MEssage',{error,label,more})
+  getErrorMessage(error, label) {
     if (error.type === 'regEx') return `${label} ist nicht gültig!`;
     if (error.type === 'too_long') return `${label} is too long!`;
     if (error.type === 'minString') return `${label} muss mindestens ${error.min} Zeichen haben`;
