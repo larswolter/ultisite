@@ -53,12 +53,17 @@ export const getTournamentsStates = async function(userId) {
 };
 
 Meteor.methods({
+  async teamDrawings(){
+    check(this.userId);
+    return teamDrawings();
+  },
   async offlineTournamentCheck(ids) {
     check(ids, [String]);
     const existing = await Tournaments.find({ _id: { $in: ids } }).mapAsync((t) => t._id);
     return _.without(ids, existing);
   },
   async myTournamentStates() {
+    check(this.userId)
     return await getTournamentsStates(this.userId);
   },
   async myTournaments() {
@@ -285,7 +290,7 @@ export const teamDrawings = async function() {
           },
         }
       );
-      const drawnParticipants = await participantList(team._id)
+      const drawnParticipants = (await participantList(team._id))
         .map((p) => p.username)
         .join(', ');
 

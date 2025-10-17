@@ -113,7 +113,7 @@ export const HatInfo = {
               { label: 'Ich bin neu dabei.', value: '1' },
               {
                 label:
-                  'Die wichtigsten Tricks (Zone, Wwürfe, Vertical u. Horizontal Stack sind kein Neuland).',
+                  'Die wichtigsten Tricks (Zone, Würfe, Vertical u. Horizontal Stack sind kein Neuland).',
                 value: '2',
               },
               {
