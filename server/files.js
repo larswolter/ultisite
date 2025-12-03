@@ -149,10 +149,10 @@ Meteor.methods({
       });
       wstream.on(
         'finish',
-        Meteor.bindEnvironment(async function (fileObj) {
+        Meteor.bindEnvironment(async function () {
           await Documents.updateAsync(docId, {
             $set: {
-              gridId: `${fileObj._id}`,
+              gridId: `${wstream.id}`,
               size: fileStats.size,
             },
             $unset: { progress: 1 },
