@@ -151,7 +151,7 @@ Meteor.methods({
     }
     console.log('Input data ok, creating user');
 
-    const userId = Accounts.createUser({
+    const userId = await Accounts.createUser({
       username: userData.alias,
       email: userData.email,
       profile,
