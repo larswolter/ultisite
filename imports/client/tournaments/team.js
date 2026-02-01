@@ -360,6 +360,12 @@ Template.team.helpers({
     return false;
   },
   isResponsible() {
+    if (!Meteor.userId()) {
+      return false;
+    }
+    if (this.clubTeam) {
+      return true;
+    }
     if (UltiSite.isAdmin()) {
       return true;
     }

@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-header tournament-heading">
       {{#if isMyTeam}}
-        <div class="btn-group d-block d-sm-none">
+        <div class="btn-group d-block d-lg-none">
           <div class="dropdown float-end">
             <button aria-expanded="false" class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown" type="button">
               <span class="caret"></span>
@@ -36,7 +36,7 @@
             </ul>
           </div>
         </div>
-        <div class="d-none d-sm-block float-end">
+        <div class="d-none d-lg-block float-end">
           <div>
             {{#if currentUser}}
               <div class="btn-group">
@@ -51,16 +51,12 @@
                 Mail an das Team
               </a>
             {{/if}}
-            {{#if isResponsible}}
-              <button class="btn btn-light action-edit-team">
-                <span class="fa fa-edit"></span> Editieren
-              </button>
-            {{/if}}
-            {{#if isMyTeam}}
-              <button class="btn btn-light action-historic-view">
-                <span class="fa fa-line-chart"></span> Historie
-              </button>
-            {{/if}}
+            <button class="btn btn-light action-edit-team">
+              <span class="fa fa-edit"></span> Editieren
+            </button>
+            <button class="btn btn-light action-historic-view">
+              <span class="fa fa-line-chart"></span> Historie
+            </button>
             {{#unless participantUsers}}
               <button class="btn btn-danger team-remove" title="Team löschen" type="button">
                 <span class="fa fa-trash"></span>
