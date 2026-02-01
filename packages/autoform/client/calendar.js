@@ -1,3 +1,4 @@
+import { moment } from 'meteor/momentjs:moment';
 import { AutoForm } from './client.js';
 import { Template } from 'meteor/templating';
 
@@ -64,8 +65,8 @@ Template.autoformCalendar.helpers({
     if (!selected.isValid()) { selected = moment(); }
     const startOfMonth = selected.clone().startOf('month');
     const endOfMonth = selected.clone().endOf('month');
-    const before = (startOfMonth.day() !== 1) ? _.range(startOfMonth.clone().startOf('week').date(),
-      startOfMonth.clone().startOf('week').date() + startOfMonth.day() - 1).map(day => ({ day, active: false, muted: true, month: selected.month() - 1 })) : [];
+    const before = (startOfMonth.isoWeekday() !== 1) ? _.range(startOfMonth.clone().startOf('isoweek').date(),
+      startOfMonth.clone().startOf('isoweek').date() + startOfMonth.isoWeekday() - 1).map(day => ({ day, active: false, muted: true, month: selected.month() - 1 })) : [];
     const inMonth = _.range(1, selected.clone().endOf('month').date() + 1).map(day => ({ day, active: day === selected.date(), muted: false }));
     const after = (endOfMonth.day() !== 0) ? _.range(1, 7 - endOfMonth.day() + 1).map(day => ({ day, active: false, muted: true, month: selected.month() - 1 })) : [];
     return before.concat(inMonth).concat(after);
