@@ -1,3 +1,6 @@
+
+# This repo has moved to Codeberg [https://codeberg.org/larswolter/ultisite](https://codeberg.org/larswolter/ultisite)  
+
 # Ultisite
 
 Team Management Website for Ultimate Frisbee Teams
